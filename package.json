@@ -1,0 +1,27 @@
+{
+  "name": "dadaocheng-food-street",
+  "private": true,
+  "version": "0.1.0",
+  "description": "大稻埕食光街：走進170年的飲食記憶 — 3D 互動式歷史飲食文化探索網站（第一階段）",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.1",
+    "react": "~19.3.0",
+    "react-dom": "~19.3.0",
+    "three": "~0.186.1",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.2",
+    "vite": "^8.3.4"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}
