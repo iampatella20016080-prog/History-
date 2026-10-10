@@ -206,6 +206,15 @@ export function CameraRig({ blockers, shopModels }) {
       lambda = rig.followLambda
     }
 
+    // 開發模式：除錯用的自由鏡頭（截圖檢查建築用，正式版不包含）
+    if (import.meta.env.DEV && window.__DDC__?.cameraOverride) {
+      const { position, target } = window.__DDC__.cameraOverride
+      rig.desiredPosition.set(...position)
+      rig.desiredLook.set(...target)
+      rig.focus.set(...target)
+      cameraState.snap = true
+    }
+
     if (cameraState.snap || !rig.initialized) {
       rig.position.copy(rig.desiredPosition)
       rig.look.copy(rig.desiredLook)

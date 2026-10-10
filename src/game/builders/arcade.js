@@ -283,8 +283,9 @@ function decoFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wall
   } else {
     roundWindow(b, { x: 0, y: topY + 0.62, radius: 0.3, z: front + 0.04, frameTint: accent, lit: rng() < litChance })
   }
-  // 實牆陽臺
-  if (cfg.balcony ?? rng() < 0.35) {
+  // 實牆陽臺（騎樓上方掛著橫招牌時不加，避免擋住招牌）
+  const wantsBalcony = cfg.balcony ?? rng() < 0.35
+  if (wantsBalcony && !(cfg.sign && cfg.sign.placement !== 'parapet')) {
     balcony(b, { y: groundH + upperH * 0.25, width: w * 0.5, depth: 0.55, z: front, slabTint: cream, railTint: cream, style: 'solid' })
   }
   const plaqueText = cfg.parapetText ?? (cfg.sign?.placement === 'parapet' ? cfg.sign.text : null)

@@ -337,7 +337,7 @@ export const SHOPS = [
     year: 1934,
     category: '西餐廳',
     seal: '西餐',
-    summary: '1934年由廖水來創立的西餐廳，店名取自圓舞曲〈Bolero〉。',
+    summary: '1934年由廖水來創立的西餐廳，店名取自他喜愛的樂曲〈Bolero〉。',
     position: { x: 24.3, z: -4.5 },
     facing: 'south',
     interaction: { radius: 3.2 },

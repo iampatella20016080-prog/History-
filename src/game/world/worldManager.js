@@ -17,7 +17,8 @@ const SLICE_BUDGET = 7 // 主執行緒分段產生時，每段最多佔用的毫
 const cache = new Map() // eraId → { promise, world, lastUsed }
 let displayedEraId = null
 let worker = null
-let workerBroken = false
+// 網址加上 ?worker=0 可停用背景產生（除錯與測試主執行緒的備援流程）
+let workerBroken = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('worker') === '0'
 let requestId = 0
 const pending = new Map()
 

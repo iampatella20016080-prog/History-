@@ -26,7 +26,8 @@ export function EraDirector({ onSwap }) {
   const cancelPrefetch = useRef(null)
 
   useFrame((_, rawDelta) => {
-    const dt = Math.min(rawDelta, 0.05)
+    // 影格較慢時（例如上傳新街景的那一格）也讓轉場維持大致相同的長度
+    const dt = Math.min(rawDelta, 0.1)
     const store = useGameStore.getState()
     const request = store.eraTransition
     const state = transitionState
