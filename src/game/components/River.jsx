@@ -1,27 +1,45 @@
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Color, MeshToonMaterial } from 'three'
-import { RIVER } from '../config.js'
+import { CanvasTexture, Color, DoubleSide, MeshBasicMaterial, MeshToonMaterial, SRGBColorSpace } from 'three'
+import { LAYERS, RIVER } from '../config.js'
+import { getEra } from '../../data/eras.js'
+import { atmosphere } from '../atmosphere.js'
 import { PartBuilder } from '../builders/PartBuilder.js'
-import { buildJunk } from '../builders/environment.js'
+import { buildFerry, buildJunk, buildSampan } from '../builders/environment.js'
 import { getMaterials } from '../rendering/materials.js'
 import { getTextures } from '../rendering/textures.js'
 import { StaticBatches } from './StaticBatches.jsx'
 
-const BOATS = [
-  // 停靠在碼頭北側
-  { position: [-49.2, RIVER.waterLevel - 0.35, -3.4], rotationY: Math.PI, length: 9.5, sails: 2, furled: true, bob: 0.6 },
-  // 河面上的帆船
-  { position: [-92, RIVER.waterLevel - 0.35, 26], rotationY: 0.35, length: 10, sails: 2, bob: 1.3, drift: 0.35 },
-  { position: [-150, RIVER.waterLevel - 0.35, -46], rotationY: -0.25, length: 8, sails: 1, bob: 2.1, drift: -0.25, sailTint: '#a9805a' },
-  { position: [-60, RIVER.waterLevel - 0.3, 9], rotationY: -1.2, length: 6.2, sails: 1, bob: 0.9, furled: true, sailTint: '#9f7a58' },
-]
+const WL = RIVER.waterLevel
+
+/** 各年代河面上的船：清末到日治初期的戎克船、之後的舢舨，以及今日的遊船 */
+const BOATS = {
+  junks: [
+    { type: 'junk', position: [-49.2, WL - 0.35, -3.4], rotationY: Math.PI, length: 9.5, sails: 2, furled: true, bob: 0.6 },
+    { type: 'junk', position: [-92, WL - 0.35, 26], rotationY: 0.35, length: 10, sails: 2, bob: 1.3, drift: 0.35 },
+    { type: 'junk', position: [-150, WL - 0.35, -46], rotationY: -0.25, length: 8, sails: 1, bob: 2.1, drift: -0.25, sailTint: '#a9805a' },
+    { type: 'junk', position: [-60, WL - 0.3, 9], rotationY: -1.2, length: 6.2, sails: 1, bob: 0.9, furled: true, sailTint: '#9f7a58' },
+  ],
+  sampans: [
+    { type: 'sampan', position: [-48.6, WL - 0.2, -3.0], rotationY: Math.PI, length: 5.4, canopy: true, bob: 0.6 },
+    { type: 'sampan', position: [-50.8, WL - 0.2, 3.1], rotationY: Math.PI + 0.1, length: 4.8, canopy: false, bob: 1.4 },
+    { type: 'sampan', position: [-70, WL - 0.2, 14], rotationY: -1.1, length: 5.0, canopy: true, bob: 2.2, drift: 0.3 },
+    { type: 'junk', position: [-140, WL - 0.35, -40], rotationY: -0.25, length: 8, sails: 1, bob: 2.1, drift: -0.25, sailTint: '#a9805a' },
+  ],
+  ferry: [
+    { type: 'ferry', position: [-51.2, WL - 0.25, -4.4], rotationY: Math.PI, length: 13, bob: 0.4 },
+    { type: 'sampan', position: [-66, WL - 0.2, 12], rotationY: -1.1, length: 5.0, canopy: false, bob: 2.2, drift: 0.3 },
+    { type: 'ferry', position: [-160, WL - 0.25, 50], rotationY: 0.4, length: 12, bob: 1.7, drift: 0.2 },
+  ],
+}
 
 function Boat({ boat }) {
   const group = useRef()
   const batches = useMemo(() => {
     const b = new PartBuilder()
-    buildJunk(b, { length: boat.length, sails: boat.sails, furled: boat.furled, sailTint: boat.sailTint })
+    if (boat.type === 'sampan') buildSampan(b, { length: boat.length, canopy: boat.canopy })
+    else if (boat.type === 'ferry') buildFerry(b, { length: boat.length })
+    else buildJunk(b, { length: boat.length, sails: boat.sails, furled: boat.furled, sailTint: boat.sailTint })
     return b.build()
   }, [boat])
 
@@ -44,8 +62,51 @@ function Boat({ boat }) {
   )
 }
 
-/** 淡水河：卡通水面（貼圖緩慢流動）與往來的戎克船 */
-export function River() {
+/** 河面上的薄霧：幾片朝向街道的柔和霧帶，濃淡依年代的 riverMist 值 */
+function RiverMist() {
+  const material = useMemo(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 8
+    canvas.height = 128
+    const g = canvas.getContext('2d')
+    const grad = g.createLinearGradient(0, 0, 0, 128)
+    grad.addColorStop(0, 'rgba(255,255,255,0)')
+    grad.addColorStop(0.55, 'rgba(255,255,255,0.55)')
+    grad.addColorStop(0.85, 'rgba(255,255,255,0.9)')
+    grad.addColorStop(1, 'rgba(255,255,255,0.6)')
+    g.fillStyle = grad
+    g.fillRect(0, 0, 8, 128)
+    const texture = new CanvasTexture(canvas)
+    texture.colorSpace = SRGBColorSpace
+    return new MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false, fog: false, side: DoubleSide, opacity: 0.3 })
+  }, [])
+  const group = useRef()
+  useEffect(() => {
+    group.current?.traverse((object) => object.layers.set(LAYERS.NO_OUTLINE))
+  }, [])
+  useFrame((state) => {
+    const a = atmosphere.current
+    material.color.copy(a.fogColor)
+    material.opacity = a.riverMist * 0.75
+    if (group.current) group.current.position.z = Math.sin(state.clock.elapsedTime * 0.03) * 8
+  })
+  return (
+    <group ref={group}>
+      {[
+        [-70, 7, 0.9],
+        [-105, 10, 1.0],
+        [-150, 13, 1.0],
+      ].map(([x, h, s], i) => (
+        <mesh key={i} position={[x, WL + h / 2 - 0.4, 0]} rotation-y={Math.PI / 2} material={material} renderOrder={5}>
+          <planeGeometry args={[520 * s, h]} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+/** 淡水河：卡通水面（貼圖緩慢流動）、河面薄霧與各年代的船隻 */
+export function River({ eraId }) {
   const material = useMemo(() => {
     const texture = getTextures().water.clone()
     texture.needsUpdate = true
@@ -60,22 +121,20 @@ export function River() {
   useFrame((_, delta) => {
     material.map.offset.x -= delta * 0.004
     material.map.offset.y += delta * 0.0015
+    material.color.copy(atmosphere.current.water)
   })
 
+  const boats = BOATS[getEra(eraId)?.streetProps.boats] ?? BOATS.junks
   const width = 1100
   return (
     <group>
-      <mesh
-        position={[RIVER.edgeX - width / 2, RIVER.waterLevel, 0]}
-        rotation-x={-Math.PI / 2}
-        material={material}
-        receiveShadow
-      >
+      <mesh position={[RIVER.edgeX - width / 2, RIVER.waterLevel, 0]} rotation-x={-Math.PI / 2} material={material} receiveShadow>
         <planeGeometry args={[width, 1600]} />
       </mesh>
-      {BOATS.map((boat, i) => (
-        <Boat key={i} boat={boat} />
+      {boats.map((boat, i) => (
+        <Boat key={`${eraId}-${i}`} boat={boat} />
       ))}
+      <RiverMist />
     </group>
   )
 }

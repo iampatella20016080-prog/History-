@@ -1,8 +1,8 @@
 {
   "name": "dadaocheng-food-street",
   "private": true,
-  "version": "0.1.0",
-  "description": "大稻埕食光街：走進170年的飲食記憶 — 3D 互動式歷史飲食文化探索網站（第一階段）",
+  "version": "0.2.0",
+  "description": "大稻埕食光街：走進170年的飲食記憶 — 3D 互動式歷史飲食文化探索網站（第二版：五個年代、iPad 觸控）",
   "type": "module",
   "scripts": {
     "dev": "vite",

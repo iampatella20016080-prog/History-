@@ -75,9 +75,17 @@ export function Player({ collision, shopModels }) {
     const canMove = st.started && st.mode === 'explore'
     let forwardInput = 0
     let rightInput = 0
+    let stick = 0
     if (canMove) {
       forwardInput = (moveInput.forward ? 1 : 0) - (moveInput.back ? 1 : 0)
       rightInput = (moveInput.right ? 1 : 0) - (moveInput.left ? 1 : 0)
+      stick = Math.min(1, Math.hypot(moveInput.stickX, moveInput.stickY))
+      if (stick > 0.08 && forwardInput === 0 && rightInput === 0) {
+        forwardInput = moveInput.stickY
+        rightInput = moveInput.stickX
+      } else {
+        stick = 0
+      }
     }
     const yaw = cameraState.yaw
     let dx = -Math.sin(yaw) * forwardInput + Math.cos(yaw) * rightInput
@@ -88,7 +96,13 @@ export function Player({ collision, shopModels }) {
       dx /= length
       dz /= length
     }
-    const speed = moveInput.run ? PLAYER.runSpeed : PLAYER.walkSpeed
+    // 搖桿：輕推慢走、推到底小跑步；鍵盤：Shift 快走
+    let speed = moveInput.run ? PLAYER.runSpeed : PLAYER.walkSpeed
+    if (stick > 0) {
+      const walk = PLAYER.walkSpeed * clamp((stick - 0.08) / 0.62, 0.25, 1)
+      const runBlend = clamp((stick - 0.86) / 0.12, 0, 1)
+      speed = walk + (PLAYER.runSpeed * 0.82 - walk) * runBlend
+    }
     const targetVx = moving ? dx * speed : 0
     const targetVz = moving ? dz * speed : 0
     const accel = 1 - Math.exp(-(moving ? 9 : 13) * dt)

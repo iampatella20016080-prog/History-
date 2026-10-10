@@ -55,6 +55,44 @@ export function createBoxGeometry(w, h, d, tile, offset = [0, 0, 0]) {
 }
 
 /**
+ * 依面法線的主要軸向做平面投影 UV（適用於細分過、彎曲過的幾何）
+ */
+export function projectUV(geometry, tile) {
+  const pos = geometry.attributes.position
+  const normal = geometry.attributes.normal
+  const uv = geometry.attributes.uv
+  for (let i = 0; i < pos.count; i++) {
+    const nx = Math.abs(normal.getX(i))
+    const ny = Math.abs(normal.getY(i))
+    const nz = Math.abs(normal.getZ(i))
+    const x = pos.getX(i)
+    const y = pos.getY(i)
+    const z = pos.getZ(i)
+    if (ny >= nx && ny >= nz) uv.setXY(i, x / tile, z / tile)
+    else if (nx >= nz) uv.setXY(i, z / tile, y / tile)
+    else uv.setXY(i, x / tile, y / tile)
+  }
+  uv.needsUpdate = true
+}
+
+/**
+ * 兩端微微上翹的屋面板（閩南屋頂的「起翹」）。
+ * 在本地座標中沿 x 細分後彎曲，再交給 PartBuilder 旋轉擺放。
+ */
+export function createCurvedSlab(width, thickness, length, upturn, tile, segments = 10) {
+  const geometry = new BoxGeometry(width, thickness, length, segments, 1, 1)
+  const pos = geometry.attributes.position
+  const half = width / 2
+  for (let i = 0; i < pos.count; i++) {
+    const t = Math.abs(pos.getX(i)) / half
+    pos.setY(i, pos.getY(i) + upturn * t * t * t)
+  }
+  geometry.computeVertexNormals()
+  if (tile) projectUV(geometry, tile)
+  return geometry
+}
+
+/**
  * 程式化建模工具：把大量基本幾何形狀依材質分組，最後合併成少數網格。
  *
  * - push / pop：矩陣堆疊，方便以「建築本地座標」擺放零件
@@ -68,6 +106,45 @@ export class PartBuilder {
     this.stack = [new Matrix4()]
     this.colliders = []
     this.blockers = []
+    // 需要另外渲染的動態元素（全部以世界座標登記）
+    this.signs = [] // 招牌文字面板
+    this.glows = [] // 燈火光暈
+    this.pools = [] // 地面光暈
+    this.lanterns = [] // 會隨風擺動的燈籠（實例化渲染）
+    this.steam = [] // 蒸氣
+    this.banners = [] // 布幡
+  }
+
+  /** 登記招牌：position 為本地座標，rotationY 為本地旋轉 */
+  addSign(sign) {
+    const p = this.transformPoint(...sign.position)
+    this.signs.push({ ...sign, position: [p.x, p.y, p.z], rotationY: this.worldRotationY(sign.rotationY ?? 0) })
+  }
+
+  addGlow(x, y, z, size = 1, color = '#ffb36b', flicker = 0) {
+    const p = this.transformPoint(x, y, z)
+    this.glows.push({ position: [p.x, p.y, p.z], size, color, flicker })
+  }
+
+  addPool(x, z, radius = 2, color = '#ffb36b', y = 0.05) {
+    const p = this.transformPoint(x, y, z)
+    this.pools.push({ position: [p.x, p.y, p.z], radius, color })
+  }
+
+  addLantern(x, y, z, { scale = 1, color = '#c0553b', glow = true } = {}) {
+    const p = this.transformPoint(x, y, z)
+    this.lanterns.push({ position: [p.x, p.y, p.z], scale, color, rotationY: this.worldRotationY() })
+    if (glow) this.glows.push({ position: [p.x, p.y, p.z], size: 1.5 * scale, color: '#ff9a5c', flicker: 1 })
+  }
+
+  addSteam(x, y, z, strength = 1) {
+    const p = this.transformPoint(x, y, z)
+    this.steam.push({ position: [p.x, p.y, p.z], strength })
+  }
+
+  addBanner(banner) {
+    const p = this.transformPoint(...banner.position)
+    this.banners.push({ ...banner, position: [p.x, p.y, p.z], rotationY: this.worldRotationY(banner.rotationY ?? 0) })
   }
 
   get matrix() {
@@ -225,17 +302,21 @@ export class PartBuilder {
     })
   }
 
+  /** 只合併一種材質（可分段執行）；回傳 [] 或 [{ material, geometry }] */
+  buildMaterial(material) {
+    const list = this.groups.get(material)
+    this.groups.delete(material)
+    if (!list?.length) return []
+    const geometry = list.length === 1 ? list[0] : mergeGeometries(list, false)
+    if (list.length > 1) list.forEach((g) => g.dispose())
+    geometry.computeBoundingSphere()
+    geometry.computeBoundingBox()
+    return [{ material, geometry }]
+  }
+
   build() {
     const result = []
-    for (const [material, list] of this.groups) {
-      if (!list.length) continue
-      const geometry = list.length === 1 ? list[0] : mergeGeometries(list, false)
-      if (list.length > 1) list.forEach((g) => g.dispose())
-      geometry.computeBoundingSphere()
-      geometry.computeBoundingBox()
-      result.push({ material, geometry })
-    }
-    this.groups.clear()
+    for (const material of [...this.groups.keys()]) result.push(...this.buildMaterial(material))
     return result
   }
 }

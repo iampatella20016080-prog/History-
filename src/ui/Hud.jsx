@@ -1,7 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { getEra } from '../data/eras.js'
 import { getShopsByEra } from '../data/shops.js'
 import { useGameStore } from '../state/useGameStore.js'
+import { ChapterCard } from './ChapterCard.jsx'
+import { EraTimeline } from './EraTimeline.jsx'
+import { StoreDirectory } from './StoreDirectory.jsx'
+import { ExploreButton, Joystick } from './TouchControls.jsx'
 
 function TitleBadge() {
   return (
@@ -17,100 +21,11 @@ function TitleBadge() {
   )
 }
 
-function EraBanner({ era }) {
-  if (!era) return null
+function ControlsHint({ touch }) {
+  const [collapsed, setCollapsed] = useState(touch)
+  useEffect(() => setCollapsed(touch), [touch])
   return (
-    <div className="hud-era">
-      <div className="hud-era__main">
-        <span className="hud-era__ornament" aria-hidden="true" />
-        <span>
-          {era.years}｜{era.name}
-        </span>
-        <span className="hud-era__ornament" aria-hidden="true" />
-      </div>
-      <p className="hud-era__theme">{era.theme}</p>
-    </div>
-  )
-}
-
-function ShopMenu({ shops }) {
-  const open = useGameStore((state) => state.menuOpen)
-  const toggleMenu = useGameStore((state) => state.toggleMenu)
-  const travelToShop = useGameStore((state) => state.travelToShop)
-  const openShop = useGameStore((state) => state.openShop)
-  const visited = useGameStore((state) => state.visited)
-  const mode = useGameStore((state) => state.mode)
-  const container = useRef(null)
-
-  useEffect(() => {
-    if (!open) return undefined
-    const onPointerDown = (event) => {
-      if (!container.current?.contains(event.target)) toggleMenu(false)
-    }
-    window.addEventListener('pointerdown', onPointerDown)
-    return () => window.removeEventListener('pointerdown', onPointerDown)
-  }, [open, toggleMenu])
-
-  return (
-    <div className="hud-menu" ref={container}>
-      <button
-        type="button"
-        className="hud-menu__toggle paper"
-        aria-expanded={open}
-        aria-controls="shop-menu-panel"
-        disabled={mode !== 'explore'}
-        onClick={() => toggleMenu()}
-      >
-        <span className="hud-menu__icon" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-        </span>
-        店家選單
-      </button>
-      {open && (
-        <div id="shop-menu-panel" className="hud-menu__panel paper">
-          <p className="hud-menu__heading">目前可探索的店家</p>
-          <ul className="hud-menu__list">
-            {shops.map((shop) => (
-              <li key={shop.id} className="menu-shop">
-                <div className="menu-shop__info">
-                  <span className="menu-shop__name">{shop.name}</span>
-                  <span className="menu-shop__meta">
-                    {shop.year}年｜{shop.category}
-                  </span>
-                  {visited[shop.id] && <span className="menu-shop__badge">已探索</span>}
-                </div>
-                <p className="menu-shop__summary">{shop.summary}</p>
-                <div className="menu-shop__actions">
-                  <button type="button" className="button-ghost" onClick={() => travelToShop(shop.id)}>
-                    前往店門口
-                  </button>
-                  <button
-                    type="button"
-                    className="button-solid"
-                    onClick={() => {
-                      travelToShop(shop.id)
-                      openShop(shop.id)
-                    }}
-                  >
-                    閱讀故事
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <p className="hud-menu__note">其他店家與年代將在後續階段陸續開放。</p>
-        </div>
-      )}
-    </div>
-  )
-}
-
-function ControlsHint() {
-  const [collapsed, setCollapsed] = useState(false)
-  return (
-    <div className={`hud-controls paper${collapsed ? ' is-collapsed' : ''}`}>
+    <div className={`hud-controls paper${collapsed ? ' is-collapsed' : ''}${touch ? ' is-touch' : ''}`}>
       <button
         type="button"
         className="hud-controls__toggle"
@@ -119,7 +34,41 @@ function ControlsHint() {
       >
         操作說明 {collapsed ? '＋' : '－'}
       </button>
-      {!collapsed && (
+      {!collapsed && touch && (
+        <ul className="hud-controls__list">
+          <li>
+            <span className="keys">
+              <kbd>搖桿</kbd>
+            </span>
+            左下角移動，推得越遠走得越快
+          </li>
+          <li>
+            <span className="keys">
+              <kbd>單指拖曳</kbd>
+            </span>
+            旋轉視角
+          </li>
+          <li>
+            <span className="keys">
+              <kbd>雙指</kbd>
+            </span>
+            捏合縮放
+          </li>
+          <li>
+            <span className="keys">
+              <kbd>探索店家</kbd>
+            </span>
+            靠近店家後點一下
+          </li>
+          <li>
+            <span className="keys">
+              <kbd>時間軸</kbd>
+            </span>
+            點上方年代切換時空
+          </li>
+        </ul>
+      )}
+      {!collapsed && !touch && (
         <ul className="hud-controls__list">
           <li>
             <span className="keys">
@@ -148,51 +97,69 @@ function ControlsHint() {
             </span>
             探索店家　<kbd>Esc</kbd> 返回
           </li>
+          <li>
+            <span className="keys">
+              <kbd>1</kbd>–<kbd>5</kbd>
+            </span>
+            切換年代（或點上方時間軸）
+          </li>
         </ul>
       )}
     </div>
   )
 }
 
-function ObjectiveHint({ shops }) {
+function ObjectiveHint({ shops, touch }) {
   const started = useGameStore((state) => state.started)
   const visited = useGameStore((state) => state.visited)
   const mode = useGameStore((state) => state.mode)
   const nearby = useGameStore((state) => state.nearbyShopId)
-  const visitedCount = shops.filter((shop) => visited[shop.id]).length
+  const transitioning = useGameStore((state) => state.transitioning)
+  const openShops = shops.filter((shop) => shop.status === 'open')
+  const visitedCount = openShops.filter((shop) => visited[shop.id]).length
   const [showDone, setShowDone] = useState(false)
-  const firstUnvisited = shops.find((shop) => !visited[shop.id])
+  const firstUnvisited = openShops.find((shop) => !visited[shop.id])
 
   useEffect(() => {
     if (visitedCount === 0 || mode !== 'explore') return undefined
     setShowDone(true)
-    const timer = setTimeout(() => setShowDone(false), 6000)
+    const timer = setTimeout(() => setShowDone(false), 7000)
     return () => clearTimeout(timer)
   }, [visitedCount, mode])
 
   let text = null
-  if (started && mode === 'explore' && !nearby) {
+  if (started && mode === 'explore' && !nearby && !transitioning) {
     if (firstUnvisited) text = `沿著街道前進，尋找屋頂上有紅色標記的「${firstUnvisited.name}」`
-    else if (showDone) text = `已探索 ${visitedCount}／${shops.length} 間店家・更多店家將在後續階段開放`
+    else if (showDone) text = touch ? '點上方時間軸，看看這條街在其他年代的樣子' : '點上方時間軸（或按 1–5），看看這條街在其他年代的樣子'
   }
   return <div className={`hud-objective${text ? ' is-visible' : ''}`}>{text && <span>{text}</span>}</div>
 }
 
-/** 畫面上的固定介面：左上標題、上方年代、右上選單、左下操作說明、下方任務提示 */
+/**
+ * 畫面上的固定介面：
+ * 左上標題、上方中央年代時間軸、右上店家名錄、左下搖桿（觸控）或操作說明、
+ * 右下「探索店家」按鈕、中央的章節標題與下方的任務提示。
+ */
 export function Hud() {
   const started = useGameStore((state) => state.started)
   const mode = useGameStore((state) => state.mode)
   const eraId = useGameStore((state) => state.eraId)
+  const touch = useGameStore((state) => state.inputMode === 'touch')
   const era = getEra(eraId)
-  const shops = useMemo(() => getShopsByEra(eraId), [eraId])
+  const shops = useMemo(() => getShopsByEra(era), [era])
 
   return (
-    <div className={`hud${started ? ' is-started' : ''}${mode === 'reading' ? ' is-reading' : ''}`}>
+    <div
+      className={`hud${started ? ' is-started' : ''}${mode === 'reading' ? ' is-reading' : ''}${touch ? ' is-touch' : ''}`}
+    >
       <TitleBadge />
-      <EraBanner era={era} />
-      <ShopMenu shops={shops} />
-      <ControlsHint />
-      <ObjectiveHint shops={shops} />
+      <EraTimeline />
+      <StoreDirectory era={era} shops={shops} />
+      <ControlsHint touch={touch} />
+      <ObjectiveHint shops={shops} touch={touch} />
+      {touch && <Joystick />}
+      <ExploreButton />
+      <ChapterCard />
     </div>
   )
 }

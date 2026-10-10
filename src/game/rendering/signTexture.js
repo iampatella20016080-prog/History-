@@ -3,88 +3,267 @@ import { createRng } from '../utils/random.js'
 import { DISPLAY_FONT, registerFontTexture } from './fonts.js'
 
 /**
- * 招牌貼圖：以 Canvas 繪製木紋底板、框線與書法字。
- * 橫式招牌依清代習慣由右至左書寫；直式招牌由上而下。
+ * 招牌貼圖：以 Canvas 繪製底板、框線與書法字。
+ *
+ * 各年代的招牌樣式：
+ * - wood / lacquer / red / cloth  清末的木匾、漆金匾、紅底匾與布幡
+ * - gold      日治時期的「金字招牌」：深色漆底、金箔字
+ * - deco      1930 年代 Art Deco：祖母綠底、香檳金字與幾何框飾
+ * - letters   立體字（無底板，直接貼在立面上）
+ * - painted   戰後手繪招牌：米白底、紅或藍色字
+ * - vertical  戰後直立招牌：白底紅字、藍色邊框
+ * - menu      攤販的手寫菜單牌
+ * - modern    今日老屋新生的店招：簡潔、由左至右書寫
+ *
+ * 橫式招牌依舊日習慣由右至左書寫（modern 除外）；直式招牌由上而下。
  */
 const STYLES = {
   lacquer: { bg: '#2f221a', bg2: '#3e2c22', border: '#b8924f', text: '#e4c074', shadow: 'rgba(0,0,0,0.6)', grain: 'rgba(255,220,170,0.06)' },
   wood: { bg: '#a98159', bg2: '#94704b', border: '#5a3f2b', text: '#21160f', shadow: 'rgba(255,238,205,0.28)', grain: 'rgba(60,35,20,0.17)' },
   red: { bg: '#9d3b2a', bg2: '#873123', border: '#d9b46a', text: '#f2d99c', shadow: 'rgba(40,10,5,0.5)', grain: 'rgba(255,200,170,0.07)' },
   cloth: { bg: '#ece2cb', bg2: '#e0d4b9', border: '#9e3b2a', text: '#2c1f17', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,95,60,0.1)' },
+  gold: { bg: '#2a1a15', bg2: '#3b231b', border: '#d4ad5c', text: 'gold', shadow: 'rgba(0,0,0,0.65)', grain: 'rgba(255,215,150,0.05)', double: true },
+  deco: { bg: '#2f6b5a', bg2: '#275a4c', border: '#d6b77a', text: '#f3e3b8', shadow: 'rgba(10,30,24,0.55)', grain: 'rgba(255,255,255,0.03)', deco: true },
+  painted: { bg: '#f1e8d3', bg2: '#e6dbc2', border: '#a3392a', text: 'ink', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,100,70,0.12)', faded: true },
+  vertical: { bg: '#f7f2e6', bg2: '#ece5d5', border: '#2e4a7a', text: '#b3291d', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,110,90,0.08)' },
+  menu: { bg: '#f6efdf', bg2: '#ede3cd', border: '#7a4a2e', text: '#b3291d', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,95,60,0.12)' },
+  modern: { bg: '#2d2b28', bg2: '#353230', border: null, text: '#efe7d6', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.025)', ltr: true },
+  modernLight: { bg: '#d5b98f', bg2: '#c8aa7e', border: null, text: '#2b221b', shadow: 'rgba(255,240,215,0.2)', grain: 'rgba(80,50,25,0.12)', ltr: true },
+  letters: { bg: null, text: 'gold', shadow: 'rgba(30,20,10,0.75)', letters: true },
 }
 
-const cache = new Map()
+const PAINTED_INKS = ['#a8301f', '#2e4a7a', '#a8301f', '#2a231e']
 
-function drawSign(g, cw, ch, text, style, vertical) {
-  const s = STYLES[style] ?? STYLES.wood
-  const rng = createRng(text.charCodeAt(0) * 31 + cw * 7 + ch)
-  const grad = g.createLinearGradient(0, 0, vertical ? cw : 0, vertical ? 0 : ch)
-  grad.addColorStop(0, s.bg)
-  grad.addColorStop(1, s.bg2)
-  g.fillStyle = grad
-  g.fillRect(0, 0, cw, ch)
+function resolveStyle(style, text) {
+  if (style === 'modern') return text.length % 2 === 0 ? STYLES.modernLight : STYLES.modern
+  return STYLES[style] ?? STYLES.wood
+}
 
-  // 木紋／布紋
-  g.lineCap = 'round'
-  for (let i = 0; i < 46; i++) {
-    g.strokeStyle = s.grain
-    g.lineWidth = 0.8 + rng() * 2.2
+function goldFill(g, y0, y1) {
+  const grad = g.createLinearGradient(0, y0, 0, y1)
+  grad.addColorStop(0, '#fff0b8')
+  grad.addColorStop(0.45, '#e3b860')
+  grad.addColorStop(0.55, '#c99a45')
+  grad.addColorStop(1, '#f3d58c')
+  return grad
+}
+
+function drawDecoOrnaments(g, cw, ch, m, color) {
+  g.strokeStyle = color
+  g.lineWidth = Math.max(1.5, m * 0.12)
+  const step = m * 0.9
+  for (const [x, y, sx, sy] of [
+    [m, m, 1, 1],
+    [cw - m, m, -1, 1],
+    [m, ch - m, 1, -1],
+    [cw - m, ch - m, -1, -1],
+  ]) {
     g.beginPath()
-    if (vertical) {
-      const x = rng() * cw
-      g.moveTo(x, 0)
-      g.bezierCurveTo(x + (rng() - 0.5) * 10, ch * 0.33, x + (rng() - 0.5) * 10, ch * 0.66, x + (rng() - 0.5) * 6, ch)
-    } else {
-      const y = rng() * ch
-      g.moveTo(0, y)
-      g.bezierCurveTo(cw * 0.33, y + (rng() - 0.5) * 10, cw * 0.66, y + (rng() - 0.5) * 10, cw, y + (rng() - 0.5) * 6)
-    }
+    g.moveTo(x, y + sy * step * 2)
+    g.lineTo(x + sx * step, y + sy * step * 2)
+    g.lineTo(x + sx * step, y + sy * step)
+    g.lineTo(x + sx * step * 2, y + sy * step)
+    g.lineTo(x + sx * step * 2, y)
     g.stroke()
   }
+}
 
-  // 框線
+/** 在 (0,0)–(cw,ch) 的區域內畫一面招牌 */
+function drawSign(g, cw, ch, text, style, vertical) {
+  const s = resolveStyle(style, text)
+  const rng = createRng(text.charCodeAt(0) * 31 + cw * 7 + ch)
   const m = Math.min(cw, ch) * 0.075
-  g.strokeStyle = s.border
-  g.lineWidth = m * 0.32
-  g.strokeRect(m, m, cw - 2 * m, ch - 2 * m)
-  g.lineWidth = Math.max(1.5, m * 0.1)
-  g.strokeRect(m * 1.7, m * 1.7, cw - 3.4 * m, ch - 3.4 * m)
+
+  if (s.bg) {
+    const grad = g.createLinearGradient(0, 0, vertical ? cw : 0, vertical ? 0 : ch)
+    grad.addColorStop(0, s.bg)
+    grad.addColorStop(1, s.bg2)
+    g.fillStyle = grad
+    g.fillRect(0, 0, cw, ch)
+
+    // 木紋／布紋
+    g.lineCap = 'round'
+    for (let i = 0; i < 46; i++) {
+      g.strokeStyle = s.grain
+      g.lineWidth = 0.8 + rng() * 2.2
+      g.beginPath()
+      if (vertical) {
+        const x = rng() * cw
+        g.moveTo(x, 0)
+        g.bezierCurveTo(x + (rng() - 0.5) * 10, ch * 0.33, x + (rng() - 0.5) * 10, ch * 0.66, x + (rng() - 0.5) * 6, ch)
+      } else {
+        const y = rng() * ch
+        g.moveTo(0, y)
+        g.bezierCurveTo(cw * 0.33, y + (rng() - 0.5) * 10, cw * 0.66, y + (rng() - 0.5) * 10, cw, y + (rng() - 0.5) * 6)
+      }
+      g.stroke()
+    }
+
+    // 框線
+    if (s.border) {
+      g.strokeStyle = s.border
+      g.lineWidth = m * 0.32
+      g.strokeRect(m, m, cw - 2 * m, ch - 2 * m)
+      if (s.double || !s.deco) {
+        g.lineWidth = Math.max(1.5, m * 0.1)
+        g.strokeRect(m * 1.7, m * 1.7, cw - 3.4 * m, ch - 3.4 * m)
+      }
+      if (s.deco) drawDecoOrnaments(g, cw, ch, m * 1.6, s.border)
+    }
+    // 戰後招牌的日曬褪色
+    if (s.faded) {
+      for (let i = 0; i < 18; i++) {
+        g.fillStyle = `rgba(255,250,235,${0.04 + rng() * 0.06})`
+        g.beginPath()
+        g.ellipse(rng() * cw, rng() * ch, 10 + rng() * cw * 0.2, 6 + rng() * ch * 0.2, rng() * 3, 0, Math.PI * 2)
+        g.fill()
+      }
+    }
+  } else {
+    g.clearRect(0, 0, cw, ch)
+  }
 
   // 文字
   const chars = [...text]
   const n = chars.length
   g.textAlign = 'center'
   g.textBaseline = 'middle'
+  let ink = s.text
+  if (ink === 'ink') ink = PAINTED_INKS[(text.charCodeAt(0) + n) % PAINTED_INKS.length]
+  const weight = s.ltr ? 600 : 700
+  const positions = []
+  let size
   if (vertical) {
     const inner = ch - m * 4
-    const size = Math.min(cw * 0.64, (inner / n) * 0.9)
-    g.font = `700 ${size}px ${DISPLAY_FONT}`
-    chars.forEach((char, i) => {
-      const x = cw / 2
-      const y = m * 2 + (inner * (i + 0.5)) / n
-      g.fillStyle = s.shadow
-      g.fillText(char, x + size * 0.03, y + size * 0.04)
-      g.fillStyle = s.text
-      g.fillText(char, x, y)
-    })
+    size = Math.min(cw * (s.letters ? 0.86 : 0.64), (inner / n) * 0.9)
+    chars.forEach((char, i) => positions.push([char, cw / 2, m * 2 + (inner * (i + 0.5)) / n]))
   } else {
-    const display = chars.slice().reverse()
-    const inner = cw - m * 4
-    const size = Math.min(ch * 0.6, (inner / n) * 0.92)
-    g.font = `700 ${size}px ${DISPLAY_FONT}`
-    display.forEach((char, i) => {
-      const x = m * 2 + (inner * (i + 0.5)) / n
-      const y = ch / 2 + size * 0.03
+    const display = s.ltr ? chars : chars.slice().reverse()
+    const pad = s.letters ? m * 0.5 : m * 2
+    const inner = cw - pad * 2
+    size = Math.min(ch * (s.letters ? 0.86 : s.ltr ? 0.5 : 0.6), (inner / n) * (s.ltr ? 0.78 : 0.92))
+    display.forEach((char, i) => positions.push([char, pad + (inner * (i + 0.5)) / n, ch / 2 + size * 0.03]))
+  }
+  g.font = `${weight} ${size}px ${DISPLAY_FONT}`
+  for (const [char, x, y] of positions) {
+    if (s.letters) {
+      // 立體字：深色側邊＋金屬面
       g.fillStyle = s.shadow
-      g.fillText(char, x + size * 0.03, y + size * 0.04)
-      g.fillStyle = s.text
+      g.fillText(char, x + size * 0.04, y + size * 0.05)
+      g.lineWidth = Math.max(2, size * 0.05)
+      g.strokeStyle = '#4a3720'
+      g.strokeText(char, x, y)
+      g.fillStyle = goldFill(g, y - size / 2, y + size / 2)
       g.fillText(char, x, y)
-    })
+      continue
+    }
+    g.fillStyle = s.shadow
+    g.fillText(char, x + size * 0.03, y + size * 0.04)
+    g.fillStyle = ink === 'gold' ? goldFill(g, y - size / 2, y + size / 2) : ink
+    g.fillText(char, x, y)
   }
 }
 
+/* ───────────── 招牌圖集：一個年代的所有招牌共用一張貼圖、一次繪製 ───────────── */
+
+export function signKey({ text, style = 'wood', vertical = false, width, height }) {
+  return `${text}|${style}|${vertical ? 1 : 0}|${(width / height).toFixed(2)}`
+}
+
+const ATLAS_WIDTH = 2048
+const MAX_ATLAS_HEIGHT = 2048
+const PADDING = 6
+
+function packCells(entries, pxPerMeter) {
+  let x = PADDING
+  let y = PADDING
+  let shelf = 0
+  const sorted = [...entries].sort((a, b) => b.height - a.height)
+  for (const entry of sorted) {
+    const w = Math.round(Math.min(720, Math.max(48, entry.width * pxPerMeter)))
+    const h = Math.round(Math.min(720, Math.max(48, entry.height * pxPerMeter)))
+    if (x + w + PADDING > ATLAS_WIDTH) {
+      x = PADDING
+      y += shelf + PADDING
+      shelf = 0
+    }
+    entry.cell = { x, y, w, h }
+    x += w + PADDING
+    shelf = Math.max(shelf, h)
+  }
+  return y + shelf + PADDING
+}
+
+/**
+ * @param {Array} signs 招牌（含 text、style、vertical、width、height）
+ * @returns {{ texture, rects: Map<string, [u0, v0, u1, v1]>, dispose }}
+ */
+export function createSignAtlas(signs) {
+  const entries = new Map()
+  for (const sign of signs) {
+    const key = signKey(sign)
+    const existing = entries.get(key)
+    if (!existing || sign.width > existing.width) {
+      entries.set(key, { key, text: sign.text, style: sign.style ?? 'wood', vertical: !!sign.vertical, width: sign.width, height: sign.height })
+    }
+  }
+  const list = [...entries.values()]
+  let pxPerMeter = 300
+  let height = packCells(list, pxPerMeter)
+  while (height > MAX_ATLAS_HEIGHT && pxPerMeter > 60) {
+    pxPerMeter *= 0.85
+    height = packCells(list, pxPerMeter)
+  }
+  const canvasHeight = Math.min(MAX_ATLAS_HEIGHT, Math.max(64, Math.ceil(height / 64) * 64))
+  const canvas = document.createElement('canvas')
+  canvas.width = ATLAS_WIDTH
+  canvas.height = canvasHeight
+  const g = canvas.getContext('2d')
+  const texture = new CanvasTexture(canvas)
+  texture.colorSpace = SRGBColorSpace
+  texture.anisotropy = 4
+  texture.minFilter = LinearMipmapLinearFilter
+  texture.magFilter = LinearFilter
+  texture.flipY = false
+
+  const rects = new Map()
+  for (const entry of list) {
+    const { x, y, w, h } = entry.cell
+    rects.set(entry.key, [x / ATLAS_WIDTH, y / canvasHeight, (x + w) / ATLAS_WIDTH, (y + h) / canvasHeight])
+  }
+
+  const draw = () => {
+    g.clearRect(0, 0, ATLAS_WIDTH, canvasHeight)
+    for (const entry of list) {
+      const { x, y, w, h } = entry.cell
+      g.save()
+      g.translate(x, y)
+      g.beginPath()
+      g.rect(0, 0, w, h)
+      g.clip()
+      drawSign(g, w, h, entry.text, entry.style, entry.vertical)
+      g.restore()
+    }
+    texture.needsUpdate = true
+  }
+  const allText = [...new Set(list.map((entry) => entry.text).join(''))].join('')
+  const unregister = registerFontTexture(draw, `700 120px ${DISPLAY_FONT}`, allText || '茶')
+  return {
+    texture,
+    rects,
+    dispose: () => {
+      unregister()
+      texture.dispose()
+    },
+  }
+}
+
+/* ───────────── 單張招牌與燈籠貼圖 ───────────── */
+
+const cache = new Map()
+
 export function getSignTexture({ text, style = 'wood', vertical = false, width, height }) {
-  const key = `${text}|${style}|${vertical}|${(width / height).toFixed(2)}`
+  const key = signKey({ text, style, vertical, width, height })
   if (cache.has(key)) return cache.get(key)
   const pxPerMeter = 320
   const cw = Math.max(64, Math.round(width * pxPerMeter))

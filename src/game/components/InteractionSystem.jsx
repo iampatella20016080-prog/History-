@@ -12,6 +12,10 @@ export function InteractionSystem({ shopModels }) {
   useFrame(() => {
     const store = useGameStore.getState()
     if (!store.started || store.mode !== 'explore') return
+    if (store.transitioning) {
+      store.setNearbyShop(null)
+      return
+    }
     const p = playerState.position
     let nearest = null
     let nearestDistance = Infinity

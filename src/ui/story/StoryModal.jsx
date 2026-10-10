@@ -23,6 +23,7 @@ function Corner({ className }) {
  */
 export function StoryModal() {
   const mode = useGameStore((state) => state.mode)
+  const eraId = useGameStore((state) => state.eraId)
   const activeShopId = useGameStore((state) => state.activeShopId)
   const chapterIndex = useGameStore((state) => state.chapterIndex)
   const setChapter = useGameStore((state) => state.setChapter)
@@ -48,6 +49,25 @@ export function StoryModal() {
     tabs.current?.querySelector('.is-active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
   }, [chapterIndex])
 
+  // 觸控：在內文區左右滑動切換章節（上下滑動仍是捲動）
+  const swipe = useRef(null)
+  const onPointerDown = (event) => {
+    if (event.pointerType !== 'touch') return
+    swipe.current = { id: event.pointerId, x: event.clientX, y: event.clientY }
+  }
+  const onPointerUp = (event) => {
+    const start = swipe.current
+    swipe.current = null
+    if (!start || start.id !== event.pointerId || !shop) return
+    const dx = event.clientX - start.x
+    const dy = event.clientY - start.y
+    if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.8) return
+    const count = shop.chapters.length
+    const current = Math.min(useGameStore.getState().chapterIndex, count - 1)
+    const next = Math.max(0, Math.min(count - 1, current + (dx < 0 ? 1 : -1)))
+    if (next !== current) setChapter(next)
+  }
+
   if (!mounted || !shop) return null
 
   const chapters = shop.chapters
@@ -55,7 +75,8 @@ export function StoryModal() {
   const chapter = chapters[index]
   const View = CHAPTER_VIEWS[chapter.type] ?? CHAPTER_VIEWS.text
   const sourcesIndex = chapters.findIndex((item) => item.type === 'sources')
-  const era = getEra(shop.eraId)
+  const era = getEra(eraId)
+  const eraNote = shop.eraNotes?.[eraId]
 
   return (
     <div className="story-layer" data-state={state}>
@@ -80,14 +101,16 @@ export function StoryModal() {
           <div className="story__titles">
             {era && (
               <p className="story__eyebrow">
-                {era.years}｜{era.name}
+                {era.chapter}・{era.yearRange}｜{era.title}
               </p>
             )}
             <h2 id="story-title" className="story__title">
               {shop.name}
             </h2>
             <p className="story__meta">
-              {shop.year}年｜{shop.category}
+              {shop.year ? `${shop.year}年｜` : ''}
+              {shop.category}
+              {shop.reconstruction && <span className="story__badge">歷史情境重建</span>}
             </p>
           </div>
           <button type="button" className="story__close" onClick={closeShop}>
@@ -111,7 +134,23 @@ export function StoryModal() {
           ))}
         </nav>
 
-        <div ref={body} className="story__body" role="tabpanel">
+        <div
+          ref={body}
+          className="story__body"
+          role="tabpanel"
+          data-scrollable
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+          onPointerCancel={() => (swipe.current = null)}
+        >
+          {index === 0 && eraNote && era && (
+            <aside className="era-note">
+              <p className="era-note__label">
+                此時期的{shop.name}・{era.yearRange}
+              </p>
+              <p className="era-note__text">{eraNote}</p>
+            </aside>
+          )}
           <div key={chapter.id} className="story__page">
             <View
               chapter={chapter}

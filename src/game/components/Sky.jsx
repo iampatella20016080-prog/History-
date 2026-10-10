@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { BackSide, Color, IcosahedronGeometry, MeshToonMaterial, ShaderMaterial, Vector3 } from 'three'
-import { LAYERS, PALETTE, SUN } from '../config.js'
+import { LAYERS } from '../config.js'
+import { atmosphere } from '../atmosphere.js'
 import { PartBuilder } from '../builders/PartBuilder.js'
 import { getMaterials } from '../rendering/materials.js'
 import { createRng, range } from '../utils/random.js'
@@ -15,20 +16,45 @@ const SKY_VERTEX = /* glsl */ `
   }
 `
 
+/**
+ * 天空：三段漸層、太陽光暈與地平線的暖光帶；入夜時浮現星星。
+ */
 const SKY_FRAGMENT = /* glsl */ `
   uniform vec3 uTop;
   uniform vec3 uHorizon;
   uniform vec3 uBottom;
   uniform vec3 uSunDir;
   uniform vec3 uSunColor;
+  uniform float uStars;
+  uniform float uTime;
   varying vec3 vDir;
+
+  float hash13(vec3 p) {
+    p = fract(p * 0.1031);
+    p += dot(p, p.zyx + 31.32);
+    return fract((p.x + p.y) * p.z);
+  }
+
   void main() {
     vec3 d = normalize(vDir);
     float h = d.y;
     vec3 color = mix(uHorizon, uTop, smoothstep(0.02, 0.6, h));
     color = mix(color, uBottom, smoothstep(0.0, -0.25, h));
     float s = max(dot(d, uSunDir), 0.0);
-    color += uSunColor * (pow(s, 28.0) * 0.32 + pow(s, 5.0) * 0.1);
+    // 太陽光暈＋沿地平線擴散的暖光
+    float horizonBand = exp(-abs(h - max(uSunDir.y, 0.0) * 0.5) * 9.0) * pow(max(dot(normalize(vec3(d.x, 0.0, d.z)), normalize(vec3(uSunDir.x, 0.0, uSunDir.z))), 0.0), 3.0);
+    color += uSunColor * (pow(s, 28.0) * 0.32 + pow(s, 5.0) * 0.12 + horizonBand * 0.16);
+    if (uStars > 0.001 && h > 0.04) {
+      vec3 p = d * 260.0;
+      vec3 cell = floor(p);
+      float rnd = hash13(cell);
+      if (rnd > 0.982) {
+        vec3 f = fract(p) - 0.5;
+        float star = smoothstep(0.22, 0.0, length(f));
+        float twinkle = 0.65 + 0.35 * sin(uTime * (1.5 + rnd * 3.0) + rnd * 80.0);
+        color += vec3(1.0, 0.95, 0.85) * star * twinkle * uStars * smoothstep(0.04, 0.35, h) * (rnd - 0.982) * 55.0;
+      }
+    }
     gl_FragColor = vec4(color, 1.0);
   }
 `
@@ -39,7 +65,7 @@ function useNoOutlineLayer(ref) {
   }, [ref])
 }
 
-/** 漸層天空、太陽光暈與卡通雲朵 */
+/** 漸層天空、太陽光暈、星星與卡通雲朵 */
 export function Sky() {
   const dome = useRef()
   const clouds = useRef()
@@ -55,11 +81,13 @@ export function Sky() {
         depthWrite: false,
         fog: false,
         uniforms: {
-          uTop: { value: new Color(PALETTE.skyTop) },
-          uHorizon: { value: new Color(PALETTE.skyHorizon) },
-          uBottom: { value: new Color(PALETTE.haze) },
-          uSunDir: { value: new Vector3(...SUN.offset).normalize() },
-          uSunColor: { value: new Color('#ffe2b0') },
+          uTop: { value: new Color() },
+          uHorizon: { value: new Color() },
+          uBottom: { value: new Color() },
+          uSunDir: { value: new Vector3(0, 1, 0) },
+          uSunColor: { value: new Color() },
+          uStars: { value: 0 },
+          uTime: { value: 0 },
         },
       }),
     [],
@@ -96,9 +124,20 @@ export function Sky() {
     return { geometry: batch.geometry, material }
   }, [])
 
-  useFrame(({ camera }, delta) => {
+  useFrame(({ camera, clock }, delta) => {
     dome.current?.position.copy(camera.position)
     if (clouds.current) clouds.current.rotation.y += delta * 0.003
+    const a = atmosphere.current
+    const u = skyMaterial.uniforms
+    u.uTop.value.copy(a.skyTop)
+    u.uHorizon.value.copy(a.skyHorizon)
+    u.uBottom.value.copy(a.skyBottom)
+    u.uSunDir.value.copy(a.sunDirection)
+    u.uSunColor.value.copy(a.sunGlow)
+    u.uStars.value = a.stars
+    u.uTime.value = clock.elapsedTime
+    cloud.material.color.copy(a.cloudColor)
+    cloud.material.emissive.copy(a.cloudEmissive)
   })
 
   return (

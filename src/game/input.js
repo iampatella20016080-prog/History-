@@ -1,8 +1,10 @@
 /**
- * 鍵盤移動輸入（WASD／方向鍵、Shift 快走）
+ * 移動輸入：鍵盤（WASD／方向鍵、Shift 快走）與觸控搖桿（類比輸入）
  *
- * 只記錄按鍵狀態，由角色控制器在每一影格讀取。
- * 視窗失焦或分頁切換時會清除所有按鍵，避免角色卡在行走狀態。
+ * 只記錄輸入狀態，由角色控制器在每一影格讀取。
+ * 視窗失焦或分頁切換時會清除所有輸入，避免角色卡在行走狀態。
+ *
+ * 搖桿：stickX（右為正）、stickY（前為正），範圍 -1–1，推得越遠走得越快。
  */
 const KEY_ACTIONS = {
   KeyW: 'forward',
@@ -23,6 +25,8 @@ export const moveInput = {
   left: false,
   right: false,
   run: false,
+  stickX: 0,
+  stickY: 0,
 }
 
 function isTypingTarget(target) {
@@ -44,7 +48,13 @@ function handleKeyUp(event) {
 }
 
 export function clearMoveInput() {
-  for (const key of Object.keys(moveInput)) moveInput[key] = false
+  for (const key of Object.keys(moveInput)) moveInput[key] = typeof moveInput[key] === 'number' ? 0 : false
+}
+
+/** 觸控搖桿寫入類比輸入 */
+export function setStick(x, y) {
+  moveInput.stickX = x
+  moveInput.stickY = y
 }
 
 export function attachMoveInput() {

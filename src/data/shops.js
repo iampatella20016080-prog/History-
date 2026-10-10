@@ -1,27 +1,47 @@
 /**
  * 店家資料
  *
- * 每一間店家都是一筆資料，互動提示、鏡頭運鏡與店家介紹視窗全部共用：
+ * 所有店家共用同一套互動提示、鏡頭運鏡、店家選單與介紹視窗：
  *
- * - 基本資訊：name / year / category / eraId
+ * - 基本資訊：name / year / category / status（open 可探索、coming-soon 即將開放）
+ * - 年代：每個年代出現哪些店家由 eras.js 的 availableStores 決定
  * - 場景配置：position（店面立面中心的世界座標，單位：公尺）、facing（店面朝向）、
- *             building（交給共用建築產生器的外觀參數）、camera（探索時的鏡頭構圖）
- * - 介紹章節：chapters，支援三種版型
- *     text    ── 歷史敘述（lead、paragraphs、timeline、glossary、seals、facts）
- *     foods   ── 代表食物圖鑑卡片
- *     sources ── 文獻與歷史依據（以 id 參照 sources.js）
+ *             building（各年代共用的外觀）、buildingByEra（各年代的差異：樣式、新舊、招牌）、
+ *             camera（探索時的鏡頭構圖）
+ * - 介紹章節：chapters，支援 text / foods / sources 三種版型（open 店家使用）
  *
- * 新增店家時，只要在 SHOPS 加入一筆資料：街景會自動在該座標預留店面，
- * 並套用同一套互動、鏡頭與介紹介面，不需要改寫系統。
+ * 街道座標：街道沿 X 軸延伸（西側 x < 0 通往淡水河岸碼頭），中心線 z = 0；
+ * 北側街屋立面位於 z = -4.5（面南）、南側位於 z = 4.5（面北）。
+ * 店家在街上的位置為情境示意，並非實際門牌位置。
  *
- * 街道座標說明：街道沿 X 軸延伸（西側 x < 0 通往淡水河岸碼頭），
- * 街道中心線為 z = 0，北側街屋立面位於 z = -4.5、南側位於 z = 4.5。
+ * 店家所在的地段在五個年代都會保留；某年代沒有該店家時（buildingByEra 沒有該年代），
+ * 地段改由一般街屋補滿。
  */
+const LIN_FU_ZHEN_BASE = {
+  archetype: 'minnan',
+  width: 7.4,
+  depth: 12,
+  floors: 2,
+  groundHeight: 3.4,
+  ground: 'brick',
+  upper: 'plaster',
+  plasterTint: '#f1e6cd',
+  roofTint: '#ffffff',
+  woodTint: '#cdb293',
+  gable: 'horseback',
+  ridge: 'swallowtail',
+  storefront: 'open',
+  hangingSign: { text: '南北貨', style: 'wood' },
+  lanterns: { text: '林' },
+  // 店前展示的貨品（對應食物圖鑑的 id）
+  display: ['shiitake', 'dried-shrimp', 'mullet-roe', 'dried-goods'],
+}
+
 export const SHOPS = [
   {
     id: 'lin-fu-zhen',
     name: '林復振',
-    eraId: 'qing-port',
+    status: 'open',
     year: 1853,
     category: '南北貨商號',
     seal: '南北貨', // 介紹視窗左上角的印章文字
@@ -31,25 +51,27 @@ export const SHOPS = [
     position: { x: -2, z: -4.5 },
     facing: 'south',
     interaction: { radius: 3.4 },
-    building: {
-      type: 'shophouse',
-      width: 7.4,
-      depth: 12,
-      floors: 2,
-      groundHeight: 3.4,
-      ground: 'brick',
-      upper: 'plaster',
-      plasterTint: '#f1e6cd',
-      roofTint: '#ffffff',
-      woodTint: '#cdb293',
-      gable: 'horseback',
-      ridge: 'swallowtail',
-      storefront: 'open',
-      sign: { text: '林復振', style: 'lacquer' },
-      hangingSign: { text: '南北貨', style: 'wood' },
-      lanterns: { text: '林' },
-      // 店前展示的貨品（對應食物圖鑑的 id）
-      display: ['shiitake', 'dried-shrimp', 'mullet-roe', 'dried-goods'],
+    building: LIN_FU_ZHEN_BASE,
+    // 招牌依〈林復振商行〉所載各時期的店號呈現；文獻未載者以營業內容示意
+    buildingByEra: {
+      'qing-port': { condition: 'new', sign: { text: '林復振', style: 'lacquer' } },
+      banquet: { condition: 'mature', sign: { text: '林振源', style: 'gold' } },
+      modern: { condition: 'mature', sign: { text: '復振商店', style: 'lacquer' }, lanterns: null },
+      postwar: { condition: 'aged', sign: { text: '南北雜貨', style: 'painted' }, lanterns: null, tinAwning: true },
+      revival: { condition: 'restored', sign: { text: '林復振', style: 'lacquer' } },
+    },
+    // 各年代介紹視窗上方的「此時期的林復振」（整理自〈林復振商行〉）
+    eraNotes: {
+      'qing-port':
+        '1853年頂下郊拚後，林右藻率眾移居大稻埕，家族在此開設「復振」、「復源」、「復興」三間商號。',
+      banquet:
+        '日治時期，家族結合復振、復源兩家店號的第二個字，以「林振源」為商號名稱，從事南北貨及海陸物產進口貿易；1915年，店東林子詵曾致函長崎泰益號，處理冬菇等貨品在海運途中受潮的海損理賠。',
+      modern:
+        '昭和年間林子詵過世後，其子林欽英、林欽典分號經營，店名分別為「復振英記」與「復振商店」；1933年，復振英記曾致函泰益號，懇請定期告知海產什貨的行情。',
+      postwar:
+        '林欽典一脈所傳承的商行，向來以南北雜貨為主要營業項目。此時期的招牌樣貌未見於本站引用的文獻，場景以「南北雜貨」示意。',
+      revival:
+        '今日迪化街上的林復振商行由林欽典所傳承，以南北雜貨為主要營業項目；1980年代也跨足喜餅禮盒，並以祖輩老店號「林振源」成立子公司經營喜餅業務。',
     },
     // 按 E 探索時的鏡頭：從店面往街道前進 distance、沿街側移 side、離地 height，
     // 注視店面 lookHeight 的高度（斜角取景，鏡頭留在街道範圍內）
@@ -153,9 +175,246 @@ export const SHOPS = [
         intro: '本店家介紹整理自下列資料，點選即可開啟原始網頁。',
         sourceIds: ['ith-lin-fu-zhen'],
         disclaimer:
-          '本網站的 3D 街景為 19 世紀大稻埕商業街區氛圍的概念性重建；建築外觀、招牌與擺設僅供情境想像，並非精確復原。',
+          '本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建；建築外觀、招牌、擺設與店家位置僅供情境想像，並非精確復原。',
       },
     ],
+  },
+
+  /* ── 以下店家先作為街景中的可見建築（即將開放），詳細故事與文獻於後續版本補上 ── */
+  {
+    id: 'lin-hua-tai',
+    name: '林華泰茶行',
+    status: 'coming-soon',
+    year: 1883,
+    category: '茶行',
+    seal: '茶行',
+    summary: '創立於1883年，是大稻埕歷史悠久的茶行之一。',
+    position: { x: -22, z: -4.5 },
+    facing: 'south',
+    interaction: { radius: 3.2 },
+    building: {
+      archetype: 'minnan',
+      width: 6,
+      depth: 11,
+      floors: 2,
+      groundHeight: 3.3,
+      ground: 'brick',
+      upper: 'plaster',
+      plasterTint: '#ecdfc2',
+      woodTint: '#c9ad8a',
+      gable: 'horseback',
+      ridge: 'curved',
+      storefront: 'open',
+      goods: 'tea',
+      sign: { text: '林華泰茶行', style: 'wood' },
+    },
+    buildingByEra: {
+      'qing-port': { condition: 'new' },
+      banquet: { condition: 'mature', sign: { text: '林華泰茶行', style: 'gold' } },
+      modern: { condition: 'mature', sign: { text: '林華泰茶行', style: 'lacquer' } },
+      postwar: { condition: 'aged', sign: { text: '林華泰茶行', style: 'painted' } },
+      revival: { condition: 'restored', sign: { text: '林華泰茶行', style: 'lacquer' } },
+    },
+  },
+  {
+    id: 'you-ji',
+    name: '有記名茶',
+    status: 'coming-soon',
+    year: 1890,
+    category: '茶行',
+    seal: '茶行',
+    summary: '前身為王有記茶行，1890年創立的製茶老字號，至今仍在大稻埕營業。',
+    position: { x: 11.6, z: -4.5 },
+    facing: 'south',
+    interaction: { radius: 3.2 },
+    building: {
+      archetype: 'baroque',
+      width: 6,
+      depth: 11,
+      floors: 2,
+      plasterTint: '#ebdcc0',
+      trimTint: '#f6efe0',
+      storefront: 'open',
+      goods: 'tea',
+      sign: { text: '王有記茶行', style: 'gold' },
+      parapet: 'scroll',
+    },
+    buildingByEra: {
+      banquet: { condition: 'new' },
+      modern: { condition: 'mature' },
+      postwar: { condition: 'aged', sign: { text: '王有記茶行', style: 'painted' } },
+      revival: { condition: 'restored', sign: { text: '有記名茶', style: 'modern' } },
+    },
+  },
+  {
+    id: 'li-ting-xiang',
+    name: '李亭香',
+    status: 'coming-soon',
+    year: 1895,
+    category: '餅店',
+    seal: '糕餅',
+    summary: '創立於1895年的糕餅老店，大稻埕的創始店至今仍在營業。',
+    position: { x: 16.7, z: 4.5 },
+    facing: 'north',
+    interaction: { radius: 3.2 },
+    building: {
+      archetype: 'minnan',
+      width: 5.4,
+      depth: 11,
+      floors: 2,
+      groundHeight: 3.3,
+      ground: 'plaster',
+      upper: 'plaster',
+      plasterTint: '#f0e2c8',
+      woodTint: '#c7a986',
+      gable: 'gable',
+      ridge: 'curved',
+      storefront: 'open',
+      goods: 'pastry',
+      sign: { text: '李亭香', style: 'red' },
+    },
+    buildingByEra: {
+      banquet: { condition: 'new', sign: { text: '李亭香', style: 'gold' } },
+      modern: { condition: 'mature' },
+      postwar: { condition: 'aged', sign: { text: '李亭香', style: 'painted' } },
+      revival: { condition: 'restored', sign: { text: '李亭香', style: 'modern' } },
+    },
+  },
+  {
+    id: 'jiang-shan-lou',
+    name: '江山樓',
+    status: 'coming-soon',
+    year: 1917,
+    category: '酒樓',
+    seal: '酒樓',
+    reconstruction: true,
+    summary: '日治時期大稻埕著名的臺灣料理酒樓，以經營者吳江山之名命名，也是仕紳社交的重要場所。',
+    note: '江山樓建築今已不存，場景為歷史情境重建，並非精確復原。',
+    position: { x: -13.5, z: 4.5 },
+    facing: 'north',
+    interaction: { radius: 4.2 },
+    building: {
+      archetype: 'grand-restaurant',
+      width: 11,
+      depth: 12,
+      floors: 4,
+      sign: { text: '江山樓', style: 'gold' },
+      hangingSign: { text: '臺灣料理', style: 'red' },
+    },
+    buildingByEra: {
+      banquet: { condition: 'new' },
+    },
+  },
+  {
+    id: 'xin-fang-chun',
+    name: '新芳春茶行',
+    status: 'coming-soon',
+    year: 1934,
+    category: '茶行',
+    seal: '茶行',
+    summary: '1934年落成的住商合一洋樓，結合閩南式與仿洋式建築，2009年列為臺北市定古蹟。',
+    position: { x: -27, z: 4.5 },
+    facing: 'north',
+    interaction: { radius: 3.4 },
+    building: {
+      archetype: 'tea-mansion',
+      width: 7.2,
+      depth: 12,
+      floors: 3,
+      sign: { text: '新芳春茶行', style: 'gold' },
+      goods: 'tea',
+    },
+    buildingByEra: {
+      modern: { condition: 'new' },
+      postwar: { condition: 'aged' },
+      revival: { condition: 'restored' },
+    },
+  },
+  {
+    id: 'bolero',
+    name: '波麗路',
+    status: 'coming-soon',
+    year: 1934,
+    category: '西餐廳',
+    seal: '西餐',
+    summary: '1934年由廖水來創立的西餐廳，店名取自他喜愛的樂曲〈Bolero〉。',
+    position: { x: 24.3, z: -4.5 },
+    facing: 'south',
+    interaction: { radius: 3.2 },
+    building: {
+      archetype: 'deco',
+      width: 6.6,
+      depth: 11,
+      floors: 2,
+      wallTint: '#f1e8d6',
+      trimTint: '#2f6b5a',
+      awningTint: '#7a2e33',
+      sign: { text: '波麗路', style: 'letters' },
+      smallSign: { text: '西餐', style: 'deco' },
+      cafe: true,
+    },
+    buildingByEra: {
+      modern: { condition: 'new' },
+      postwar: { condition: 'aged' },
+      revival: { condition: 'restored' },
+    },
+  },
+  {
+    id: 'ci-sheng-gong',
+    name: '慈聖宮廟口小吃',
+    status: 'coming-soon',
+    category: '廟口小吃',
+    seal: '小吃',
+    summary: '慈聖宮前榕樹下的小吃攤，是老台北熟悉的庶民味道。',
+    position: { x: 4, z: 4.5 },
+    facing: 'north',
+    interaction: { radius: 5 },
+    building: {
+      archetype: 'temple',
+      width: 12,
+      depth: 16,
+      sign: { text: '慈聖宮', style: 'gold' },
+    },
+    // 慈聖宮於日治時期遷建於此，因此清末時期這個地段仍是一般街屋
+    buildingByEra: {
+      banquet: { condition: 'mature', stalls: false },
+      modern: { condition: 'mature', stalls: false },
+      postwar: { condition: 'aged', stalls: true },
+      revival: { condition: 'restored', stalls: true },
+    },
+  },
+  {
+    id: 'dao-she',
+    name: '稻舍',
+    status: 'coming-soon',
+    category: '食堂',
+    seal: '稻米',
+    summary: '由迪化街北段的老米行整修而成的食堂與稻米文化空間。',
+    position: { x: 29.2, z: 4.5 },
+    facing: 'north',
+    interaction: { radius: 3.2 },
+    building: {
+      archetype: 'minnan',
+      width: 5.6,
+      depth: 11,
+      floors: 2,
+      groundHeight: 3.3,
+      ground: 'brick',
+      upper: 'plaster',
+      plasterTint: '#eadcc0',
+      gable: 'horseback',
+      ridge: 'plain',
+      storefront: 'open',
+      goods: 'rice',
+      sign: { text: '米', style: 'wood' },
+    },
+    // 清末之後這裡是米行（以一般「米」字招牌示意），今日成為稻舍
+    buildingByEra: {
+      banquet: { condition: 'mature' },
+      modern: { condition: 'mature' },
+      postwar: { condition: 'aged', sign: { text: '米', style: 'painted' } },
+      revival: { condition: 'restored', modernFront: true, sign: { text: '稻舍', style: 'modern' } },
+    },
   },
 ]
 
@@ -163,6 +422,14 @@ export function getShop(id) {
   return SHOPS.find((shop) => shop.id === id) ?? null
 }
 
-export function getShopsByEra(eraId) {
-  return SHOPS.filter((shop) => shop.eraId === eraId)
+/** 某個年代出現在街上的店家（依 eras.js 的 availableStores 排序） */
+export function getShopsByEra(era) {
+  return (era?.availableStores ?? []).map(getShop).filter(Boolean)
+}
+
+/** 店家在某個年代的建築設定（共用外觀＋該年代差異）；該年代沒有特殊建築時回傳 null */
+export function getShopBuilding(shop, eraId) {
+  const override = shop.buildingByEra?.[eraId]
+  if (!override) return null
+  return { ...shop.building, ...override }
 }

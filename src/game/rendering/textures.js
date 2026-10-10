@@ -535,6 +535,314 @@ function teaLabelTexture() {
   return texture
 }
 
+/* ───────────────────────── 細灰泥（洋樓立面） ───────────────────────── */
+function stuccoTexture() {
+  const S = 512
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  const rng = createRng(1101)
+  g.fillStyle = '#f7f1e4'
+  g.fillRect(0, 0, S, S)
+  for (let i = 0; i < 60; i++) {
+    const x = rng() * S
+    const y = rng() * S
+    const r = 50 + rng() * 120
+    const dark = rng() < 0.5
+    const a = 0.025 + rng() * 0.035
+    wrapped(S, x, y, r, (px, py) => softBlot(g, px, py, r, dark ? '150,125,95' : '255,253,248', a))
+  }
+  // 由上往下的淡淡雨痕
+  for (let i = 0; i < 26; i++) {
+    const x = rng() * S
+    const w = 4 + rng() * 14
+    const a = 0.02 + rng() * 0.03
+    const grad = g.createLinearGradient(0, 0, 0, S)
+    grad.addColorStop(0, `rgba(120,100,80,${a})`)
+    grad.addColorStop(1, 'rgba(120,100,80,0)')
+    g.fillStyle = grad
+    g.fillRect(x, 0, w, S)
+    if (x + w > S) g.fillRect(x - S, 0, w, S)
+  }
+  speckle(g, S, rng, 1400, '110,90,70', 0.04, 0.1)
+  return toTexture(canvas)
+}
+
+/* ───────────────────────── 二丁掛磁磚（戰後立面） ───────────────────────── */
+function tileTexture() {
+  const S = 512
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  g.fillStyle = '#bdb6a8'
+  g.fillRect(0, 0, S, S)
+  const rows = 16
+  const rowH = S / rows
+  const perRow = 4
+  const tileW = S / perRow
+  for (let r = 0; r < rows; r++) {
+    const offset = (r % 2) * (tileW / 2)
+    for (let b = -1; b <= perRow; b++) {
+      const id = ((b % perRow) + perRow) % perRow
+      const h = hash2(r, id, 31)
+      const shadeValue = 228 + Math.floor(h * 24)
+      const x = b * tileW + offset + 2
+      const y = r * rowH + 2
+      g.fillStyle = `rgb(${shadeValue},${shadeValue - 4},${shadeValue - 12})`
+      g.fillRect(x, y, tileW - 4, rowH - 4)
+      g.fillStyle = 'rgba(255,255,255,0.35)'
+      g.fillRect(x + 3, y + 2, tileW - 12, 2)
+    }
+  }
+  const rng = createRng(1203)
+  for (let i = 0; i < 30; i++) {
+    const x = rng() * S
+    const y = rng() * S
+    const r = 30 + rng() * 80
+    wrapped(S, x, y, r, (px, py) => softBlot(g, px, py, r, '90,80,65', 0.05))
+  }
+  return toTexture(canvas)
+}
+
+/* ───────────────────────── 鐵捲門 ───────────────────────── */
+function shutterTexture() {
+  const S = 256
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  const rng = createRng(1301)
+  g.fillStyle = '#b9b8b2'
+  g.fillRect(0, 0, S, S)
+  for (let y = 0; y < S; y += 16) {
+    const grad = g.createLinearGradient(0, y, 0, y + 16)
+    grad.addColorStop(0, '#d9d8d2')
+    grad.addColorStop(0.5, '#b4b3ad')
+    grad.addColorStop(1, '#8e8d88')
+    g.fillStyle = grad
+    g.fillRect(0, y, S, 16)
+  }
+  for (let i = 0; i < 40; i++) {
+    const x = rng() * S
+    const y = rng() * S
+    const r = 4 + rng() * 16
+    wrapped(S, x, y, r, (px, py) => softBlot(g, px, py, r, '140,90,50', 0.12))
+  }
+  return toTexture(canvas)
+}
+
+/* ───────────────────────── 柏油路面（戰後） ───────────────────────── */
+function asphaltTexture() {
+  const S = 512
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  const rng = createRng(1401)
+  g.fillStyle = '#a19b91'
+  g.fillRect(0, 0, S, S)
+  for (let i = 0; i < 90; i++) {
+    const x = rng() * S
+    const y = rng() * S
+    const r = 20 + rng() * 70
+    const dark = rng() < 0.55
+    const a = 0.05 + rng() * 0.07
+    wrapped(S, x, y, r, (px, py) => softBlot(g, px, py, r, dark ? '60,56,50' : '170,164,152', a))
+  }
+  // 補丁
+  for (let i = 0; i < 3; i++) {
+    const x = rng() * S
+    const y = rng() * S
+    const w = 40 + rng() * 90
+    const h = 30 + rng() * 60
+    g.fillStyle = 'rgba(70,66,60,0.14)'
+    g.fillRect(x, y, w, h)
+    if (x + w > S) g.fillRect(x - S, y, w, h)
+    if (y + h > S) g.fillRect(x, y - S, w, h)
+  }
+  speckle(g, S, rng, 4200, '210,205,195', 0.12, 0.32, 1.4)
+  speckle(g, S, rng, 2600, '40,38,34', 0.12, 0.3, 1.4)
+  // 裂縫
+  for (let i = 0; i < 8; i++) {
+    let x = rng() * S
+    let y = rng() * S
+    g.strokeStyle = 'rgba(45,42,38,0.4)'
+    g.lineWidth = 1
+    g.beginPath()
+    g.moveTo(x, y)
+    for (let k = 0; k < 8; k++) {
+      x += (rng() - 0.5) * 30
+      y += (rng() - 0.5) * 30
+      g.lineTo(x, y)
+    }
+    g.stroke()
+  }
+  return toTexture(canvas)
+}
+
+/* ───────────────────────── 整齊地磚（當代） ───────────────────────── */
+function paversTexture() {
+  const S = 512
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  const rng = createRng(1501)
+  g.fillStyle = '#a49c8e'
+  g.fillRect(0, 0, S, S)
+  const rows = 8
+  const rowH = S / rows
+  const perRow = 4
+  const w = S / perRow
+  const tones = ['#d8d1c3', '#cfc7b8', '#ddd6c9', '#c9c1b2', '#d3ccbe']
+  for (let r = 0; r < rows; r++) {
+    const offset = (r % 2) * (w / 2)
+    for (let b = -1; b <= perRow; b++) {
+      const id = ((b % perRow) + perRow) % perRow
+      const tone = tones[Math.floor(hash2(r, id, 61) * tones.length)]
+      const x = b * w + offset + 2.5
+      const y = r * rowH + 2.5
+      g.fillStyle = tone
+      g.fillRect(x, y, w - 5, rowH - 5)
+      g.fillStyle = 'rgba(255,255,255,0.22)'
+      g.fillRect(x + 2, y + 2, w - 9, 2)
+    }
+  }
+  speckle(g, S, rng, 1800, '90,82,70', 0.05, 0.12)
+  return toTexture(canvas)
+}
+
+/* ───────────────────────── 條紋布篷 ───────────────────────── */
+function stripesTexture() {
+  const S = 128
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  for (let x = 0; x < S; x += 16) {
+    g.fillStyle = (x / 16) % 2 ? '#f6f0e4' : '#c9c2b5'
+    g.fillRect(x, 0, 16, S)
+  }
+  const rng = createRng(1601)
+  speckle(g, S, rng, 300, '90,70,50', 0.05, 0.12, 1)
+  return toTexture(canvas)
+}
+
+/* ───────────────────────── 雕花木格（門扇、窗扇） ───────────────────────── */
+function latticeTexture() {
+  const S = 256
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  g.fillStyle = '#5a3f2a'
+  g.fillRect(0, 0, S, S)
+  g.strokeStyle = '#c8a77c'
+  g.lineWidth = 7
+  g.lineCap = 'square'
+  // 方格中帶菱形的窗花
+  const cell = 64
+  for (let y = 0; y <= S; y += cell) {
+    for (let x = 0; x <= S; x += cell) {
+      g.strokeRect(x + 6, y + 6, cell - 12, cell - 12)
+      g.beginPath()
+      g.moveTo(x + cell / 2, y + 12)
+      g.lineTo(x + cell - 12, y + cell / 2)
+      g.lineTo(x + cell / 2, y + cell - 12)
+      g.lineTo(x + 12, y + cell / 2)
+      g.closePath()
+      g.stroke()
+    }
+  }
+  g.strokeStyle = 'rgba(40,25,15,0.5)'
+  g.lineWidth = 2
+  for (let y = 0; y <= S; y += cell) {
+    for (let x = 0; x <= S; x += cell) g.strokeRect(x + 2, y + 2, cell - 4, cell - 4)
+  }
+  return toTexture(canvas)
+}
+
+/* ───────────────────────── 玻璃櫥窗與室內暖光 ───────────────────────── */
+function interiorTexture() {
+  const W = 512
+  const H = 256
+  const canvas = makeCanvas(W, H)
+  const g = canvas.getContext('2d')
+  const rng = createRng(1701)
+  const bg = g.createRadialGradient(W / 2, H * 0.45, 20, W / 2, H * 0.5, W * 0.6)
+  bg.addColorStop(0, '#ffd49a')
+  bg.addColorStop(0.55, '#c98b52')
+  bg.addColorStop(1, '#5e3a24')
+  g.fillStyle = bg
+  g.fillRect(0, 0, W, H)
+  // 層架與商品剪影
+  g.fillStyle = 'rgba(70,40,22,0.75)'
+  for (const y of [H * 0.38, H * 0.62]) {
+    g.fillRect(W * 0.08, y, W * 0.84, 6)
+    for (let x = W * 0.1; x < W * 0.9; x += 22 + rng() * 18) {
+      const h = 14 + rng() * 22
+      const w = 10 + rng() * 14
+      if (rng() < 0.5) g.fillRect(x, y - h, w, h)
+      else {
+        g.beginPath()
+        g.ellipse(x + w / 2, y - h / 2, w / 2, h / 2, 0, 0, Math.PI * 2)
+        g.fill()
+      }
+    }
+  }
+  // 櫃台
+  g.fillStyle = 'rgba(60,34,20,0.85)'
+  g.fillRect(W * 0.55, H * 0.72, W * 0.38, H * 0.28)
+  // 吊燈
+  for (const x of [W * 0.25, W * 0.5, W * 0.75]) {
+    g.strokeStyle = 'rgba(60,35,20,0.6)'
+    g.lineWidth = 2
+    g.beginPath()
+    g.moveTo(x, 0)
+    g.lineTo(x, H * 0.16)
+    g.stroke()
+    const lamp = g.createRadialGradient(x, H * 0.19, 1, x, H * 0.19, 34)
+    lamp.addColorStop(0, 'rgba(255,248,220,1)')
+    lamp.addColorStop(0.25, 'rgba(255,214,150,0.8)')
+    lamp.addColorStop(1, 'rgba(255,200,120,0)')
+    g.fillStyle = lamp
+    g.beginPath()
+    g.arc(x, H * 0.19, 34, 0, Math.PI * 2)
+    g.fill()
+  }
+  // 玻璃反光
+  g.fillStyle = 'rgba(255,255,255,0.13)'
+  for (let i = 0; i < 4; i++) {
+    const x = rng() * W
+    g.beginPath()
+    g.moveTo(x, 0)
+    g.lineTo(x + 40, 0)
+    g.lineTo(x - 60, H)
+    g.lineTo(x - 100, H)
+    g.closePath()
+    g.fill()
+  }
+  const texture = toTexture(canvas, { repeat: false, anisotropy: 4 })
+  return texture
+}
+
+function glassTexture() {
+  const S = 256
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  const grad = g.createLinearGradient(0, 0, 0, S)
+  grad.addColorStop(0, '#8fb3b4')
+  grad.addColorStop(0.45, '#4d6e74')
+  grad.addColorStop(1, '#2d4248')
+  g.fillStyle = grad
+  g.fillRect(0, 0, S, S)
+  g.fillStyle = 'rgba(255,255,255,0.18)'
+  g.beginPath()
+  g.moveTo(S * 0.15, 0)
+  g.lineTo(S * 0.35, 0)
+  g.lineTo(S * 0.05, S)
+  g.lineTo(-S * 0.15, S)
+  g.closePath()
+  g.fill()
+  g.fillStyle = 'rgba(255,255,255,0.1)'
+  g.beginPath()
+  g.moveTo(S * 0.55, 0)
+  g.lineTo(S * 0.62, 0)
+  g.lineTo(S * 0.42, S)
+  g.lineTo(S * 0.35, S)
+  g.closePath()
+  g.fill()
+  return toTexture(canvas, { repeat: false, anisotropy: 4 })
+}
+
 /* ───────────────────────── 卡通渲染階調 ───────────────────────── */
 function toonGradient() {
   // dot(N, L) 由 -1 → 1 對應 8 格：背光、過渡、受光三段
@@ -564,6 +872,15 @@ export function getTextures() {
     burlap: burlapTexture(),
     bamboo: bambooTexture(),
     teaLabel: teaLabelTexture(),
+    stucco: stuccoTexture(),
+    tile: tileTexture(),
+    shutter: shutterTexture(),
+    asphalt: asphaltTexture(),
+    pavers: paversTexture(),
+    stripes: stripesTexture(),
+    lattice: latticeTexture(),
+    interior: interiorTexture(),
+    glass: glassTexture(),
     toonGradient: toonGradient(),
   }
   return cache
