@@ -1,9 +1,12 @@
-import { Component, useEffect, useMemo, useRef, useState } from 'react'
+import { Component, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { CAMERA, PALETTE } from './config.js'
 import { World } from './World.jsx'
-import { buildWorld } from './world/buildWorld.js'
-import { getShopsByEra } from '../data/shops.js'
+import { setAtmosphere } from './atmosphere.js'
+import { AdaptiveResolution } from './components/AdaptiveResolution.jsx'
+import { getQuality } from './quality.js'
+import { loadEraWorld, prefetchEraWorld, setDisplayedEra } from './world/worldManager.js'
+import { ERAS, getEra, getEraIndex } from '../data/eras.js'
 import { useGameStore } from '../state/useGameStore.js'
 
 class CanvasErrorBoundary extends Component {
@@ -33,34 +36,56 @@ class CanvasErrorBoundary extends Component {
   }
 }
 
-/** 3D 畫布：先讓介面顯示，再於下一個影格產生街景幾何 */
+/** 3D 畫布：先讓介面顯示，再產生目前年代的街景（Web Worker），並在閒置時預先產生下一個年代 */
 export function GameCanvas() {
-  const eraId = useGameStore((state) => state.eraId)
-  const shops = useMemo(() => getShopsByEra(eraId), [eraId])
   const [world, setWorld] = useState(null)
+  const [error, setError] = useState(null)
+  const quality = useMemo(() => getQuality(), [])
   // 店家提示框（Drei <Html>）掛載的固定圖層；
   // 若交給 Drei 自動選擇容器，畫布初始化時容器會改變，提示框內容會被清空。
   const promptLayer = useRef(null)
 
   useEffect(() => {
     let cancelled = false
-    const id = window.setTimeout(() => {
-      const startTime = performance.now()
-      const built = buildWorld(shops)
-      if (import.meta.env.DEV) console.info(`[大稻埕食光街] 街景產生耗時 ${(performance.now() - startTime).toFixed(0)} ms`)
-      if (!cancelled) setWorld(built)
-    }, 30)
+    let cancelPrefetch = () => {}
+    const eraId = useGameStore.getState().eraId
+    loadEraWorld(eraId).then(
+      (built) => {
+        if (cancelled) return
+        setAtmosphere(getEra(eraId))
+        setDisplayedEra(eraId)
+        setWorld(built)
+        useGameStore.getState().setWorldReady(true)
+        const next = ERAS[getEraIndex(eraId) + 1]
+        cancelPrefetch = prefetchEraWorld(next?.id, 1200)
+      },
+      (reason) => {
+        console.error('[大稻埕食光街] 街景產生失敗：', reason)
+        if (!cancelled) setError(reason)
+      },
+    )
     return () => {
       cancelled = true
-      window.clearTimeout(id)
+      cancelPrefetch()
     }
-  }, [shops])
+  }, [])
+
+  const swapWorld = useCallback((next) => setWorld(next), [])
+
+  if (error) {
+    return (
+      <div className="canvas-fallback paper" role="alert">
+        <h2>街景產生失敗</h2>
+        <p>請重新整理頁面再試一次。若問題持續發生，請改用最新版的 Chrome、Edge、Firefox 或 Safari。</p>
+      </div>
+    )
+  }
 
   return (
     <CanvasErrorBoundary>
       <Canvas
         className="game-canvas"
-        dpr={[1, 1.5]}
+        dpr={quality.dpr}
         shadows="percentage"
         flat
         gl={{ antialias: false, alpha: false, stencil: false, powerPreference: 'high-performance' }}
@@ -70,7 +95,8 @@ export function GameCanvas() {
           if (import.meta.env.DEV && window.__DDC__) window.__DDC__.gl = gl
         }}
       >
-        {world && <World world={world} promptLayer={promptLayer} />}
+        <AdaptiveResolution min={quality.dpr[0]} max={quality.dpr[1]} />
+        {world && <World world={world} promptLayer={promptLayer} onSwap={swapWorld} />}
       </Canvas>
       <div ref={promptLayer} className="prompt-layer" />
       {!world && <div className="scene-loading">街景繪製中…</div>}

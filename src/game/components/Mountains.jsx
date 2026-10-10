@@ -1,5 +1,7 @@
 import { useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 import { BufferAttribute, BufferGeometry, Color, DoubleSide, MeshBasicMaterial } from 'three'
+import { atmosphere } from '../atmosphere.js'
 import { useNoOutlineLayer } from './Sky.jsx'
 
 /**
@@ -122,6 +124,11 @@ export function Mountains() {
     const material = new MeshBasicMaterial({ vertexColors: true, fog: false, side: DoubleSide })
     return { geometries: [far, north, southEast, guanyin], material }
   }, [])
+
+  // 遠山的色調隨年代的天色變化（入夜時轉為藍紫色剪影）
+  useFrame(() => {
+    layers.material.color.copy(atmosphere.current.mountains)
+  })
 
   return (
     <group ref={group}>

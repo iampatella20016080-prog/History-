@@ -12,7 +12,7 @@ const UP = new Vector3(0, 1, 0)
 
 /**
  * 第三人稱鏡頭
- * - 平滑跟隨角色；滑鼠拖曳旋轉視角、滾輪縮放
+ * - 平滑跟隨角色；滑鼠拖曳旋轉視角、滾輪縮放；觸控單指旋轉、雙指縮放
  * - 會被建築遮擋時自動拉近，避免穿牆
  * - 探索店家時平滑移到店面前，並把店面留在介紹視窗左側
  */
@@ -42,36 +42,82 @@ export function CameraRig({ blockers, shopModels }) {
     camera.layers.enable(LAYERS.NO_OUTLINE)
   }, [camera])
 
-  // 滑鼠拖曳與滾輪
+  // 滑鼠拖曳與滾輪；觸控：單指拖曳旋轉、雙指捏合縮放（雙指左右移動也可旋轉）
   useEffect(() => {
     const element = gl.domElement
-    let pointerId = null
+    const touches = new Map()
+    let pinch = null
+    let mouseId = null
     let lastX = 0
     let lastY = 0
     const canControl = () => {
       const { started, mode } = useGameStore.getState()
       return started && mode === 'explore'
     }
+    const rotate = (dx, dy, k) => {
+      cameraState.targetYaw -= dx * 0.0055 * k
+      cameraState.targetPitch = clamp(cameraState.targetPitch + dy * 0.0038 * k, CAMERA.minPitch, CAMERA.maxPitch)
+    }
+    const pinchState = () => {
+      const [a, b] = [...touches.values()]
+      return { distance: Math.hypot(a.x - b.x, a.y - b.y), midX: (a.x + b.x) / 2, midY: (a.y + b.y) / 2 }
+    }
     const onDown = (event) => {
-      if (!canControl() || (event.button !== 0 && event.button !== 2)) return
-      pointerId = event.pointerId
+      if (!canControl()) return
+      if (event.pointerType === 'touch') {
+        event.preventDefault()
+        touches.set(event.pointerId, { x: event.clientX, y: event.clientY })
+        element.setPointerCapture?.(event.pointerId)
+        pinch = touches.size >= 2 ? pinchState() : null
+        element.classList.add('is-dragging')
+        return
+      }
+      if (event.button !== 0 && event.button !== 2) return
+      mouseId = event.pointerId
       lastX = event.clientX
       lastY = event.clientY
       element.setPointerCapture?.(event.pointerId)
       element.classList.add('is-dragging')
     }
     const onMove = (event) => {
-      if (event.pointerId !== pointerId) return
+      if (event.pointerType === 'touch') {
+        const touch = touches.get(event.pointerId)
+        if (!touch) return
+        const dx = event.clientX - touch.x
+        const dy = event.clientY - touch.y
+        touch.x = event.clientX
+        touch.y = event.clientY
+        if (!canControl()) return
+        if (touches.size === 1) {
+          rotate(dx, dy, 1.1)
+        } else if (touches.size >= 2) {
+          const next = pinchState()
+          if (pinch && next.distance > 1) {
+            const ratio = pinch.distance / next.distance
+            cameraState.targetDistance = clamp(cameraState.targetDistance * ratio, CAMERA.minDistance, CAMERA.maxDistance)
+            rotate(next.midX - pinch.midX, (next.midY - pinch.midY) * 0.6, 0.9)
+          }
+          pinch = next
+        }
+        return
+      }
+      if (event.pointerId !== mouseId) return
       const dx = event.clientX - lastX
       const dy = event.clientY - lastY
       lastX = event.clientX
       lastY = event.clientY
-      cameraState.targetYaw -= dx * 0.0055
-      cameraState.targetPitch = clamp(cameraState.targetPitch + dy * 0.0038, CAMERA.minPitch, CAMERA.maxPitch)
+      rotate(dx, dy, 1)
     }
     const onUp = (event) => {
-      if (event.pointerId !== pointerId) return
-      pointerId = null
+      if (event.pointerType === 'touch') {
+        if (!touches.delete(event.pointerId)) return
+        element.releasePointerCapture?.(event.pointerId)
+        pinch = touches.size >= 2 ? pinchState() : null
+        if (touches.size === 0) element.classList.remove('is-dragging')
+        return
+      }
+      if (event.pointerId !== mouseId) return
+      mouseId = null
       element.releasePointerCapture?.(event.pointerId)
       element.classList.remove('is-dragging')
     }
@@ -82,12 +128,16 @@ export function CameraRig({ blockers, shopModels }) {
       cameraState.targetDistance = clamp(cameraState.targetDistance * (1 + step), CAMERA.minDistance, CAMERA.maxDistance)
     }
     const onContextMenu = (event) => event.preventDefault()
+    // Safari：避免雙指手勢縮放整個網頁
+    const onGesture = (event) => event.preventDefault()
     element.addEventListener('pointerdown', onDown)
     element.addEventListener('pointermove', onMove)
     element.addEventListener('pointerup', onUp)
     element.addEventListener('pointercancel', onUp)
     element.addEventListener('wheel', onWheel, { passive: false })
     element.addEventListener('contextmenu', onContextMenu)
+    element.addEventListener('gesturestart', onGesture)
+    element.addEventListener('gesturechange', onGesture)
     return () => {
       element.removeEventListener('pointerdown', onDown)
       element.removeEventListener('pointermove', onMove)
@@ -95,6 +145,8 @@ export function CameraRig({ blockers, shopModels }) {
       element.removeEventListener('pointercancel', onUp)
       element.removeEventListener('wheel', onWheel)
       element.removeEventListener('contextmenu', onContextMenu)
+      element.removeEventListener('gesturestart', onGesture)
+      element.removeEventListener('gesturechange', onGesture)
     }
   }, [gl])
 

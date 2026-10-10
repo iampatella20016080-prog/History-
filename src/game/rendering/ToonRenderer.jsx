@@ -12,11 +12,15 @@ import {
   ShaderMaterial,
   UnsignedByteType,
   Vector2,
+  Vector3,
   WebGLRenderTarget,
 } from 'three'
 import { FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass.js'
 import { LAYERS, PALETTE } from '../config.js'
+import { atmosphere } from '../atmosphere.js'
+import { getQuality } from '../quality.js'
 import { renderState } from '../runtime.js'
+import { transitionState } from '../transition.js'
 
 /**
  * 卡通渲染管線（接管 R3F 的預設渲染）
@@ -24,7 +28,10 @@ import { renderState } from '../runtime.js'
  * 1. 法線＋深度：以 MeshNormalMaterial 覆寫全場景，取得法線與深度
  * 2. 色彩：正常渲染（卡通材質、陰影）
  * 3. 輪廓：依深度二階差分與法線差異描出細黑線，遠處線條淡出
- * 4. 輸出：輕微景深（遠景柔焦）、色調、暗角、紙張顆粒，最後轉為 sRGB
+ * 4. 輸出：輕微景深（遠景柔焦）、年代調色、暗角、紙張顆粒，最後轉為 sRGB
+ *
+ * 年代轉場：霧氣（以流動的雜訊形成柔和的霧團）＋「水墨暈染」顯影——
+ * 切換瞬間擷取舊畫面，再以筆刷般的遮罩由畫面中央向外逐步顯現新的街景。
  */
 
 const VERTEX = /* glsl */ `
@@ -90,12 +97,22 @@ const EDGE_FRAGMENT = /* glsl */ `
 const FINAL_FRAGMENT = /* glsl */ `
   uniform sampler2D tInput;
   uniform sampler2D tDepth;
+  uniform sampler2D tSnapshot;
   uniform vec2 uTexel;
   uniform float uFocus;
   uniform float uFocusRange;
   uniform float uBlurRamp;
   uniform float uMaxBlur;
   uniform float uExposure;
+  uniform float uSaturation;
+  uniform float uContrast;
+  uniform vec3 uTint;
+  uniform float uVignette;
+  uniform float uMist;
+  uniform vec3 uMistColor;
+  uniform float uDissolve;
+  uniform float uTime;
+  uniform float uAspect;
   varying vec2 vUv;
   ${COMMON}
 
@@ -129,17 +146,46 @@ const FINAL_FRAGMENT = /* glsl */ `
     return fract((p3.x + p3.y) * p3.z);
   }
 
+  float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(mix(hash12(i), hash12(i + vec2(1.0, 0.0)), u.x), mix(hash12(i + vec2(0.0, 1.0)), hash12(i + vec2(1.0, 1.0)), u.x), u.y);
+  }
+
+  float fbm(vec2 p) {
+    float v = 0.0;
+    float a = 0.5;
+    for (int i = 0; i < 4; i++) {
+      v += a * noise(p);
+      p = p * 2.03 + vec2(1.7, 9.2);
+      a *= 0.5;
+    }
+    return v;
+  }
+
+  vec3 grade(vec3 color) {
+    color *= uExposure;
+    color = neutralToneMap(color);
+    float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
+    color = mix(vec3(luma), color, uSaturation);
+    color = (color - 0.5) * uContrast + 0.5;
+    color *= uTint;
+    return color;
+  }
+
   void main() {
     float z0 = viewDistance(tDepth, vUv);
     float c0 = coc(z0);
     vec3 color = texture2D(tInput, vUv).rgb;
+    #if DOF_TAPS > 0
     if (c0 > 0.02) {
       vec3 acc = color;
       float wsum = 1.0;
       float radius = c0 * uMaxBlur;
-      for (int i = 0; i < 12; i++) {
+      for (int i = 0; i < DOF_TAPS; i++) {
         float fi = float(i);
-        float r = sqrt((fi + 0.5) / 12.0) * radius;
+        float r = sqrt((fi + 0.5) / float(DOF_TAPS)) * radius;
         float a = fi * 2.39996323;
         vec2 uv = vUv + vec2(cos(a), sin(a)) * r * uTexel;
         // 不把清晰的前景混進模糊的背景
@@ -149,21 +195,53 @@ const FINAL_FRAGMENT = /* glsl */ `
       }
       color = acc / wsum;
     }
-    color *= uExposure;
-    color = neutralToneMap(color);
-    float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
-    color = mix(vec3(luma), color, 0.9);
-    color *= vec3(1.025, 1.0, 0.955);
+    #endif
+
     vec2 q = vUv - 0.5;
+    vec2 aspectQ = q * vec2(uAspect, 1.0);
+
+    // 水墨暈染顯影：由畫面中央向外、沿著筆刷般的雜訊邊界逐步顯現新畫面
+    if (uDissolve < 0.999) {
+      vec3 previous = texture2D(tSnapshot, vUv).rgb;
+      float brush = fbm(aspectQ * 3.2 + vec2(0.0, uTime * 0.05)) * 0.65 + fbm(aspectQ * 9.0) * 0.35;
+      float radial = length(aspectQ) * 0.75;
+      float field = radial * 0.55 + brush * 0.6;
+      float edge = uDissolve * 1.25 - 0.08;
+      float reveal = smoothstep(field - 0.08, field + 0.08, edge);
+      // 暈染邊緣帶一點紙張的暖色
+      float rim = smoothstep(0.0, 0.08, edge - field + 0.08) * (1.0 - reveal);
+      color = mix(previous, color, reveal);
+      color = mix(color, uMistColor * 1.05, rim * 0.35);
+    }
+
+    color = grade(color);
+
+    // 霧氣：緩慢流動的霧團，邊緣較濃、中央較淡
+    if (uMist > 0.001) {
+      float drift = fbm(aspectQ * 2.4 + vec2(uTime * 0.07, -uTime * 0.03));
+      float wisps = fbm(aspectQ * 5.5 - vec2(uTime * 0.11, uTime * 0.02));
+      float density = uMist * (0.55 + drift * 0.55 + wisps * 0.2) * (0.75 + length(aspectQ) * 0.6);
+      color = mix(color, uMistColor, clamp(density, 0.0, 0.94));
+    }
+
     float vignette = smoothstep(0.92, 0.32, length(q * vec2(1.0, 1.12)));
-    color *= mix(0.83, 1.0, vignette);
+    color *= mix(1.0 - uVignette, 1.0, vignette);
     color = linearToSRGB(clamp(color, 0.0, 1.0));
     color += (hash12(gl_FragCoord.xy) - 0.5) * 0.024;
     gl_FragColor = vec4(color, 1.0);
   }
 `
 
+const COPY_FRAGMENT = /* glsl */ `
+  uniform sampler2D tInput;
+  varying vec2 vUv;
+  void main() {
+    gl_FragColor = texture2D(tInput, vUv);
+  }
+`
+
 function createPipeline(gl) {
+  const quality = getQuality()
   const supportsHalfFloat =
     gl.extensions.has('EXT_color_buffer_float') || gl.extensions.has('EXT_color_buffer_half_float')
   const colorType = supportsHalfFloat ? HalfFloatType : UnsignedByteType
@@ -174,12 +252,16 @@ function createPipeline(gl) {
   normalTarget.texture.generateMipmaps = false
   normalTarget.depthTexture = new DepthTexture(1, 1, FloatType)
 
-  const colorTarget = new WebGLRenderTarget(1, 1, { type: colorType, samples: 4 })
+  const colorTarget = new WebGLRenderTarget(1, 1, { type: colorType, samples: quality.msaa })
   colorTarget.texture.minFilter = LinearFilter
   colorTarget.texture.generateMipmaps = false
   const compositeTarget = new WebGLRenderTarget(1, 1, { type: colorType })
   compositeTarget.texture.minFilter = LinearFilter
   compositeTarget.texture.generateMipmaps = false
+  // 年代轉場時保存的舊畫面
+  const snapshotTarget = new WebGLRenderTarget(1, 1, { type: colorType })
+  snapshotTarget.texture.minFilter = LinearFilter
+  snapshotTarget.texture.generateMipmaps = false
 
   const normalMaterial = new MeshNormalMaterial({ side: DoubleSide })
 
@@ -205,11 +287,13 @@ function createPipeline(gl) {
   const finalMaterial = new ShaderMaterial({
     vertexShader: VERTEX,
     fragmentShader: FINAL_FRAGMENT,
+    defines: { DOF_TAPS: quality.dofTaps },
     depthTest: false,
     depthWrite: false,
     uniforms: {
       tInput: { value: compositeTarget.texture },
       tDepth: { value: normalTarget.depthTexture },
+      tSnapshot: { value: snapshotTarget.texture },
       uTexel: { value: new Vector2(1, 1) },
       uNear: { value: 0.3 },
       uFar: { value: 1600 },
@@ -218,23 +302,71 @@ function createPipeline(gl) {
       uBlurRamp: { value: 90 },
       uMaxBlur: { value: 4 },
       uExposure: { value: 1.0 },
+      uSaturation: { value: 0.9 },
+      uContrast: { value: 1.0 },
+      uTint: { value: new Vector3(1.025, 1.0, 0.955) },
+      uVignette: { value: 0.17 },
+      uMist: { value: 0 },
+      uMistColor: { value: new Color('#efe6d2') },
+      uDissolve: { value: 1 },
+      uTime: { value: 0 },
+      uAspect: { value: 1 },
     },
+  })
+
+  const copyMaterial = new ShaderMaterial({
+    vertexShader: VERTEX,
+    fragmentShader: COPY_FRAGMENT,
+    depthTest: false,
+    depthWrite: false,
+    uniforms: { tInput: { value: compositeTarget.texture } },
   })
 
   const edgeQuad = new FullScreenQuad(edgeMaterial)
   const finalQuad = new FullScreenQuad(finalMaterial)
+  const copyQuad = new FullScreenQuad(copyMaterial)
   const size = new Vector2()
   const current = new Vector2()
   const normalClear = new Color(0.5, 0.5, 1.0)
   const skyClear = new Color(PALETTE.skyHorizon)
   const savedClear = new Color()
+  const paper = new Color('#f4ecdc')
+  const startTime = performance.now()
 
   function resize(width, height) {
     normalTarget.setSize(width, height)
     colorTarget.setSize(width, height)
     compositeTarget.setSize(width, height)
+    snapshotTarget.setSize(width, height)
     edgeMaterial.uniforms.uTexel.value.set(1 / width, 1 / height)
     finalMaterial.uniforms.uTexel.value.set(1 / width, 1 / height)
+    finalMaterial.uniforms.uAspect.value = width / Math.max(1, height)
+  }
+
+  function updateUniforms(camera, dpr) {
+    const a = atmosphere.current
+    for (const material of [edgeMaterial, finalMaterial]) {
+      material.uniforms.uNear.value = camera.near
+      material.uniforms.uFar.value = camera.far
+    }
+    const edge = edgeMaterial.uniforms
+    edge.uThickness.value = Math.min(2, Math.max(1, dpr))
+    edge.uLineColor.value.copy(a.lineColor)
+    edge.uLineStrength.value = a.lineStrength
+    const u = finalMaterial.uniforms
+    u.uFocus.value = renderState.focusDistance
+    u.uMaxBlur.value = 3.6 * dpr * renderState.blurStrength
+    u.uExposure.value = a.exposure
+    u.uSaturation.value = a.saturation
+    u.uContrast.value = a.contrast
+    u.uTint.value.set(a.tintR, a.tintG, a.tintB)
+    u.uVignette.value = a.vignette
+    u.uMist.value = transitionState.mist
+    // 霧色：年代霧氣顏色往紙張白偏移，入夜時也保持柔和的亮度
+    u.uMistColor.value.copy(a.fogColor).lerp(paper, 0.55)
+    u.uDissolve.value = transitionState.dissolve
+    u.uTime.value = (performance.now() - startTime) / 1000
+    skyClear.copy(a.skyHorizon)
   }
 
   function render(scene, camera) {
@@ -243,14 +375,7 @@ function createPipeline(gl) {
       current.copy(size)
       resize(size.x, size.y)
     }
-    const dpr = gl.getPixelRatio()
-    for (const material of [edgeMaterial, finalMaterial]) {
-      material.uniforms.uNear.value = camera.near
-      material.uniforms.uFar.value = camera.far
-    }
-    edgeMaterial.uniforms.uThickness.value = Math.min(2, Math.max(1, dpr))
-    finalMaterial.uniforms.uFocus.value = renderState.focusDistance
-    finalMaterial.uniforms.uMaxBlur.value = 3.6 * dpr * renderState.blurStrength
+    updateUniforms(camera, gl.getPixelRatio())
 
     gl.getClearColor(savedClear)
     const savedAlpha = gl.getClearAlpha()
@@ -279,6 +404,14 @@ function createPipeline(gl) {
     gl.setRenderTarget(compositeTarget)
     edgeQuad.render(gl)
 
+    // 轉場：保存目前畫面
+    if (transitionState.snapshotRequested) {
+      gl.setRenderTarget(snapshotTarget)
+      copyQuad.render(gl)
+      transitionState.snapshotRequested = false
+      transitionState.snapshotReady = true
+    }
+
     // 4. 輸出到畫面
     gl.setRenderTarget(null)
     finalQuad.render(gl)
@@ -290,11 +423,14 @@ function createPipeline(gl) {
     normalTarget.dispose()
     colorTarget.dispose()
     compositeTarget.dispose()
+    snapshotTarget.dispose()
     normalMaterial.dispose()
     edgeMaterial.dispose()
     finalMaterial.dispose()
+    copyMaterial.dispose()
     edgeQuad.dispose()
     finalQuad.dispose()
+    copyQuad.dispose()
   }
 
   return { render, dispose }

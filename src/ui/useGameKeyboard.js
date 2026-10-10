@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { ERAS } from '../data/eras.js'
 import { getShop } from '../data/shops.js'
 import { attachMoveInput, clearMoveInput } from '../game/input.js'
 import { useGameStore } from '../state/useGameStore.js'
@@ -7,7 +8,7 @@ const REVEAL_DELAY = 750
 
 /**
  * 全域鍵盤操作：
- * E 探索店家、Esc 關閉介紹或選單、左右鍵切換章節；
+ * E 探索店家、Esc 關閉介紹或選單、左右鍵切換章節、1–5 切換年代；
  * 並在按下 E 後等鏡頭移到店面，再開啟介紹視窗。
  */
 export function useGameKeyboard() {
@@ -17,10 +18,14 @@ export function useGameKeyboard() {
     const onKeyDown = (event) => {
       const store = useGameStore.getState()
       if (event.code === 'KeyE' && !event.repeat) {
-        if (store.started && store.mode === 'explore' && store.nearbyShopId) {
+        const shop = store.nearbyShopId ? getShop(store.nearbyShopId) : null
+        if (store.started && store.mode === 'explore' && shop?.status === 'open' && !store.transitioning) {
           event.preventDefault()
           store.openShop(store.nearbyShopId)
         }
+      } else if (/^Digit[1-5]$/.test(event.code) && !event.repeat && store.started) {
+        const era = ERAS[Number(event.code.slice(5)) - 1]
+        if (era) store.requestEra(era.id)
       } else if (event.code === 'Escape') {
         if (store.mode !== 'explore') store.closeShop()
         else if (store.menuOpen) store.toggleMenu(false)
