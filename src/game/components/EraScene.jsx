@@ -12,8 +12,11 @@ import { TextLanterns } from './StoreMarkers.jsx'
  * 靜態網格由 worldManager 快取與釋放；其餘衍生資源隨元件卸載而釋放。
  */
 export function EraScene({ world }) {
+  // 通知轉場狀態機：這個年代的街景已經掛載到場景中
   useLayoutEffect(() => {
+    transitionState.mountedWorld = world
     transitionState.mountedEraId = world.eraId
+    if (typeof document !== 'undefined') document.documentElement.dataset.sceneEra = world.eraId
   }, [world])
 
   return (

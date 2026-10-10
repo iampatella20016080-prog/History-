@@ -678,6 +678,42 @@ kbd {
   }
 }
 
+.era-notice {
+  position: absolute;
+  top: calc(118px + var(--safe-top));
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: max-content;
+  max-width: min(560px, calc(100vw - 32px));
+  padding: 10px 12px 10px 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  pointer-events: auto;
+  border: 1px solid rgba(165, 64, 44, 0.55);
+  border-left: 3px solid var(--vermilion);
+  border-radius: 3px;
+  box-shadow: var(--shadow-soft);
+  transform: translateX(-50%);
+  animation: rise-in 0.3s ease;
+}
+
+.era-notice__close {
+  flex: none;
+  padding: 5px 10px;
+  font-size: 13px;
+  background: rgba(255, 250, 240, 0.6);
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+}
+
+@media (max-width: 900px) {
+  .era-notice {
+    top: calc(176px + var(--safe-top));
+  }
+}
+
 /* ── 章節標題（畫面中央，轉場時浮現） ─────────── */
 
 .chapter-card {

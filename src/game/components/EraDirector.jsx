@@ -1,115 +1,92 @@
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { getEra, getEraIndex, ERAS } from '../../data/eras.js'
+import { ERAS, getEra, getEraIndex } from '../../data/eras.js'
 import { useGameStore } from '../../state/useGameStore.js'
-import { beginAtmosphereTransition, setAtmosphereProgress } from '../atmosphere.js'
+import { beginAtmosphereTransition, setAtmosphere, setAtmosphereProgress } from '../atmosphere.js'
+import { createEraTransitionDirector } from '../eraTransition.js'
 import { transitionState } from '../transition.js'
-import { getCachedEraWorld, loadEraWorld, prefetchEraWorld, setDisplayedEra } from '../world/worldManager.js'
+import {
+  getCachedEraWorld,
+  loadEraWorld,
+  prefetchEraWorld,
+  releaseEraWorld,
+  retainEraWorld,
+  setDisplayedEra,
+} from '../world/worldManager.js'
 
 /**
- * 年代轉場導演（約 1.8 秒）：
+ * 年代轉場導演（約 1.8 秒）：把 eraTransition.js 的狀態機接到 store、天色與街景管理。
  *
- * 1. 起霧（0.7 秒）：柔和的霧氣從畫面邊緣湧入，天色與光線開始往新年代過渡
+ * 1. 起霧（0.7 秒）：柔和的霧氣湧入，天色與光線開始往新年代過渡
  * 2. 交換：霧最濃時擷取目前畫面，換上新年代的街景（若尚未產生完成則在霧中等待）
  * 3. 顯影（1.1 秒）：以水墨暈染般的遮罩，從畫面中央向外逐步顯現新的街景，霧氣散去
  *
  * 角色留在同一條街的同一個位置，不重新載入頁面、不黑屏。
+ * 每次轉場都會以該次請求的 id 呼叫 store.finishEraTransition，之後即可再次切換。
  */
-const OUT_DURATION = 0.7
-const IN_DURATION = 1.15
-const ATMOSPHERE_AT_SWAP = 0.42
-
-const ease = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t))
-
 export function EraDirector({ onSwap }) {
-  const job = useRef(null)
-  const cancelPrefetch = useRef(null)
+  const onSwapRef = useRef(onSwap)
+  onSwapRef.current = onSwap
+
+  const director = useMemo(() => {
+    let cancelPrefetch = null
+    const release = (job) => {
+      releaseEraWorld(job.from)
+      releaseEraWorld(job.target)
+    }
+    return createEraTransitionDirector({
+      visual: transitionState,
+      getWorld: getCachedEraWorld,
+      loadWorld: loadEraWorld,
+      begin: (job) => {
+        cancelPrefetch?.()
+        cancelPrefetch = null
+        retainEraWorld(job.from)
+        retainEraWorld(job.target)
+        beginAtmosphereTransition(getEra(job.target))
+      },
+      setAtmosphereProgress,
+      swap: (job) => {
+        // 先更新 store（同時確認這次轉場仍然有效），再換掉場景中的街景
+        if (!useGameStore.getState().swapEra(job.id, job.to)) throw new Error(`轉場已失效：#${job.id}`)
+        setDisplayedEra(job.to)
+        onSwapRef.current(job.world)
+      },
+      fail: (job, error) => {
+        console.error(`[大稻埕食光街] 無法切換到「${job.target}」，留在原本的年代：`, error)
+        const store = useGameStore.getState()
+        if (store.eraId !== job.from) store.swapEra(job.id, job.from)
+        setDisplayedEra(job.from)
+        const world = getCachedEraWorld(job.from)
+        if (world && transitionState.mountedWorld !== world) onSwapRef.current(world)
+        useGameStore.getState().reportEraError(job.id, job.target)
+      },
+      revertAtmosphere: (eraId) => beginAtmosphereTransition(getEra(eraId)),
+      finish: (job) => {
+        release(job)
+        useGameStore.getState().finishEraTransition(job.id)
+        // 閒置時預先產生下一個年代
+        const settled = useGameStore.getState().eraId
+        const index = getEraIndex(settled)
+        const next = ERAS[index + 1] ?? ERAS[index - 1]
+        cancelPrefetch = prefetchEraWorld(next?.id)
+      },
+      abandon: release,
+    })
+  }, [])
 
   useFrame((_, rawDelta) => {
     // 影格較慢時（例如上傳新街景的那一格）也讓轉場維持大致相同的長度
     const dt = Math.min(rawDelta, 0.1)
     const store = useGameStore.getState()
-    const request = store.eraTransition
-    const state = transitionState
-
-    // 開始新的轉場
-    if (request && request.nonce !== job.current?.nonce) {
-      cancelPrefetch.current?.()
-      const target = getEra(request.to)
-      job.current = {
-        nonce: request.nonce,
-        to: request.to,
-        phase: 'out',
-        elapsed: 0,
-        inElapsed: 0,
-        world: getCachedEraWorld(request.to),
-      }
-      const current = job.current
-      if (!current.world) {
-        loadEraWorld(request.to).then(
-          (world) => {
-            if (job.current === current) current.world = world
-          },
-          (error) => {
-            console.error('[大稻埕食光街] 年代街景產生失敗：', error)
-            if (job.current === current) current.failed = true
-          },
-        )
-      }
-      beginAtmosphereTransition(target)
-    }
-
-    const current = job.current
-    if (!current) return
-    current.elapsed += dt
-
-    if (current.phase === 'out') {
-      const t = current.elapsed / OUT_DURATION
-      state.mist = 0.82 * ease(t)
-      setAtmosphereProgress(Math.min(t, 1) * ATMOSPHERE_AT_SWAP)
-      if (current.failed) {
-        // 產生失敗：退回原本的年代
-        beginAtmosphereTransition(getEra(store.eraId))
-        current.phase = 'in'
-        current.to = store.eraId
-        current.inElapsed = 0
-        state.dissolve = 1
-      } else if (t >= 1 && current.world) {
-        state.snapshotRequested = true
-        state.snapshotReady = false
-        current.phase = 'snapshot'
-      }
-    } else if (current.phase === 'snapshot') {
-      if (state.snapshotReady) {
-        state.dissolve = 0
-        onSwap(current.world)
-        setDisplayedEra(current.to)
-        useGameStore.getState().swapEra(current.to)
-        current.phase = 'mount'
-      }
-    } else if (current.phase === 'mount') {
-      // 等新的街景掛載完成再開始顯影（避免看到尚未就緒的畫面）
-      state.mist = 0.82 + Math.sin(current.elapsed * 2) * 0.02
-      if (state.mountedEraId === current.to) {
-        current.phase = 'in'
-        current.inElapsed = 0
-      }
-    } else if (current.phase === 'in') {
-      current.inElapsed += dt
-      const t = current.inElapsed / IN_DURATION
-      state.dissolve = ease(t * 1.15)
-      state.mist = 0.82 * (1 - ease(t))
-      setAtmosphereProgress(ATMOSPHERE_AT_SWAP + (1 - ATMOSPHERE_AT_SWAP) * Math.min(1, t))
-      if (t >= 1) {
-        state.mist = 0
-        state.dissolve = 1
-        job.current = { ...current, phase: 'done', nonce: current.nonce }
-        useGameStore.getState().finishEraTransition()
-        // 閒置時預先產生下一個年代
-        const index = getEraIndex(current.to)
-        const next = ERAS[index + 1] ?? ERAS[index - 1]
-        cancelPrefetch.current = prefetchEraWorld(next?.id)
-      }
+    try {
+      director.update(dt, store.eraTransition)
+    } catch (error) {
+      // 非預期的錯誤：結束這次轉場、天色回到畫面上的年代，讓使用者可以繼續操作與再次切換
+      console.error('[大稻埕食光街] 年代轉場發生錯誤：', error)
+      director.recover()
+      const era = getEra(useGameStore.getState().eraId)
+      if (era) setAtmosphere(era)
     }
   }, -3)
 
