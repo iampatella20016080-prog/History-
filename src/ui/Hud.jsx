@@ -3,6 +3,7 @@ import { getEra } from '../data/eras.js'
 import { getShopsByEra } from '../data/shops.js'
 import { useGameStore } from '../state/useGameStore.js'
 import { ChapterCard } from './ChapterCard.jsx'
+import { EraNotice } from './EraNotice.jsx'
 import { EraTimeline } from './EraTimeline.jsx'
 import { StoreDirectory } from './StoreDirectory.jsx'
 import { ExploreButton, Joystick } from './TouchControls.jsx'
@@ -154,6 +155,7 @@ export function Hud() {
     >
       <TitleBadge />
       <EraTimeline />
+      <EraNotice />
       <StoreDirectory era={era} shops={shops} />
       <ControlsHint touch={touch} />
       <ObjectiveHint shops={shops} touch={touch} />

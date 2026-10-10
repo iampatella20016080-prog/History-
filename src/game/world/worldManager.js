@@ -7,14 +7,22 @@ import { unpackWorld } from './worldPacking.js'
 
 /**
  * 年代街景管理：
- * - 在 Web Worker 中產生街景（不支援時退回主執行緒分段產生）
- * - 最多快取兩個年代（目前顯示中＋最近使用），其餘釋放 GPU 資源
+ * - 在 Web Worker 中產生街景；不支援、出錯或逾時沒有回應時，改在主執行緒分段產生
+ * - 最多快取兩個年代（目前顯示中＋最近使用），其餘釋放 GPU 資源；
+ *   轉場進行中的起點與目標年代會被鎖定（retain），不會在轉場途中被釋放
  * - 閒置時預先產生下一個年代，讓切換更流暢
+ * - 產生失敗的年代不會留在快取中，下次切換會重新產生
  */
 const MAX_CACHED = 2
 const SLICE_BUDGET = 7 // 主執行緒分段產生時，每段最多佔用的毫秒數
+const DEV = Boolean(import.meta.env?.DEV)
+
+const config = {
+  workerTimeout: 20000, // Web Worker 多久沒有回應視為失敗（毫秒）
+}
 
 const cache = new Map() // eraId → { promise, world, lastUsed }
+const retained = new Map() // eraId → 鎖定次數
 let displayedEraId = null
 let worker = null
 // 網址加上 ?worker=0 可停用背景產生（除錯與測試主執行緒的備援流程）
@@ -28,7 +36,7 @@ function getWorker() {
   try {
     worker = new Worker(new URL('./world.worker.js', import.meta.url), { type: 'module' })
     worker.onmessage = (event) => {
-      const { id, ok, world, error } = event.data
+      const { id, ok, world, error } = event.data ?? {}
       const request = pending.get(id)
       if (!request) return
       pending.delete(id)
@@ -39,19 +47,27 @@ function getWorker() {
       event.preventDefault?.()
       failWorker(new Error(event.message || 'world worker error'))
     }
+    worker.onmessageerror = () => failWorker(new Error('world worker message error'))
   } catch (error) {
     failWorker(error)
   }
   return worker
 }
 
+/** Web Worker 無法使用：之後一律改在主執行緒產生，等待中的請求也立即改走主執行緒 */
 function failWorker(error) {
-  if (import.meta.env.DEV) console.warn('[大稻埕食光街] 背景產生街景失敗，改用主執行緒：', error)
+  if (DEV) console.warn('[大稻埕食光街] 背景產生街景失敗，改用主執行緒：', error)
   workerBroken = true
-  worker?.terminate()
+  const broken = worker
   worker = null
-  for (const request of pending.values()) request.fallback()
+  try {
+    broken?.terminate()
+  } catch {
+    // 忽略
+  }
+  const requests = [...pending.values()]
   pending.clear()
+  for (const request of requests) request.fallback()
 }
 
 const nextFrame = () =>
@@ -79,15 +95,38 @@ function buildRaw(eraId) {
   if (!target) return buildOnMainThread(eraId)
   return new Promise((resolve, reject) => {
     const id = ++requestId
+    let settled = false
+    const settle = (fn) => {
+      if (settled) return
+      settled = true
+      clearTimeout(timer)
+      fn()
+    }
+    const fallback = () => settle(() => buildOnMainThread(eraId).then(resolve, reject))
+    // 背景執行緒遲遲沒有回應（例如被系統終止）：視為失敗，改走主執行緒
+    const timer = setTimeout(() => {
+      if (pending.has(id)) failWorker(new Error(`world worker timeout: ${eraId}`))
+    }, config.workerTimeout)
     pending.set(id, {
-      resolve: (payload) => resolve(unpackWorld(payload)),
+      resolve: (payload) =>
+        settle(() => {
+          try {
+            resolve(unpackWorld(payload))
+          } catch (error) {
+            reject(error)
+          }
+        }),
       reject: (error) => {
-        if (import.meta.env.DEV) console.warn('[大稻埕食光街] 背景產生街景錯誤：', error)
-        buildOnMainThread(eraId).then(resolve, reject)
+        if (DEV) console.warn('[大稻埕食光街] 背景產生街景錯誤，改用主執行緒：', error)
+        fallback()
       },
-      fallback: () => buildOnMainThread(eraId).then(resolve, reject),
+      fallback,
     })
-    target.postMessage({ id, eraId })
+    try {
+      target.postMessage({ id, eraId })
+    } catch (error) {
+      failWorker(error)
+    }
   })
 }
 
@@ -98,6 +137,7 @@ function toVector(point) {
 /** 補上主執行緒才需要的資料：店家（含互動位置與鏡頭構圖） */
 function hydrate(raw) {
   const era = getEra(raw.eraId)
+  if (!era) throw new Error(`未知的年代：${raw.eraId}`)
   const shopModels = []
   for (const id of era.availableStores) {
     const shop = getShop(id)
@@ -116,10 +156,11 @@ function disposeWorld(world) {
   world?.batches.forEach(({ geometry }) => geometry.dispose())
 }
 
+/** 超過快取上限時，釋放最久沒用到、而且沒有顯示或鎖定中的年代 */
 function evict() {
   if (cache.size <= MAX_CACHED) return
   const candidates = [...cache.entries()]
-    .filter(([id, entry]) => id !== displayedEraId && entry.world)
+    .filter(([id, entry]) => id !== displayedEraId && !retained.has(id) && entry.world)
     .sort((a, b) => a[1].lastUsed - b[1].lastUsed)
   while (cache.size > MAX_CACHED && candidates.length) {
     const [id, entry] = candidates.shift()
@@ -128,23 +169,28 @@ function evict() {
   }
 }
 
-/** 取得某年代的街景（已快取則立即回傳） */
+/** 取得某年代的街景（已快取則立即回傳；產生失敗時 Promise 會被拒絕，且不留在快取中） */
 export function loadEraWorld(eraId) {
   let entry = cache.get(eraId)
   if (!entry) {
-    entry = { world: null, lastUsed: performance.now(), promise: null }
+    const created = { world: null, lastUsed: performance.now(), promise: null }
+    entry = created
     const startTime = performance.now()
-    entry.promise = buildRaw(eraId).then((raw) => {
-      entry.world = hydrate(raw)
-      if (import.meta.env.DEV) {
-        const where = raw.buildTime != null ? `背景 ${raw.buildTime.toFixed(0)} ms` : '主執行緒'
-        console.info(`[大稻埕食光街] ${eraId} 街景完成：${(performance.now() - startTime).toFixed(0)} ms（${where}）`)
-      }
-      evict()
-      return entry.world
+    created.promise = Promise.resolve()
+      .then(() => buildRaw(eraId))
+      .then((raw) => {
+        created.world = hydrate(raw)
+        if (DEV) {
+          const where = raw.buildTime != null ? `背景 ${raw.buildTime.toFixed(0)} ms` : '主執行緒'
+          console.info(`[大稻埕食光街] ${eraId} 街景完成：${(performance.now() - startTime).toFixed(0)} ms（${where}）`)
+        }
+        evict()
+        return created.world
+      })
+    created.promise.catch(() => {
+      if (cache.get(eraId) === created) cache.delete(eraId)
     })
-    entry.promise.catch(() => cache.delete(eraId))
-    cache.set(eraId, entry)
+    cache.set(eraId, created)
   }
   entry.lastUsed = performance.now()
   return entry.promise
@@ -160,6 +206,21 @@ export function setDisplayedEra(eraId) {
   displayedEraId = eraId
   const entry = cache.get(eraId)
   if (entry) entry.lastUsed = performance.now()
+  evict()
+}
+
+/** 鎖定某年代的街景（轉場進行中使用），鎖定期間不會被釋放 */
+export function retainEraWorld(eraId) {
+  if (!eraId) return
+  retained.set(eraId, (retained.get(eraId) ?? 0) + 1)
+}
+
+/** 解除鎖定 */
+export function releaseEraWorld(eraId) {
+  if (!eraId || !retained.has(eraId)) return
+  const count = retained.get(eraId) - 1
+  if (count > 0) retained.set(eraId, count)
+  else retained.delete(eraId)
   evict()
 }
 
@@ -181,4 +242,38 @@ export function prefetchEraWorld(eraId, delay = 1800) {
   }
   const timer = setTimeout(run, delay + 600)
   return () => clearTimeout(timer)
+}
+
+/* ───────────── 測試用 ───────────── */
+
+/** 調整設定（測試時縮短 Web Worker 逾時） */
+export function configureWorldManager(options) {
+  Object.assign(config, options)
+}
+
+/** 清空快取與狀態（只供自動化測試使用） */
+export function resetWorldManager() {
+  for (const entry of cache.values()) disposeWorld(entry.world)
+  cache.clear()
+  retained.clear()
+  pending.clear()
+  displayedEraId = null
+  try {
+    worker?.terminate()
+  } catch {
+    // 忽略
+  }
+  worker = null
+  workerBroken = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('worker') === '0'
+}
+
+/** 目前的快取狀態（只供自動化測試使用） */
+export function inspectWorldManager() {
+  return {
+    cached: [...cache.keys()],
+    retained: Object.fromEntries(retained),
+    displayed: displayedEraId,
+    workerBroken,
+    pending: pending.size,
+  }
 }
