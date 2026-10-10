@@ -98,9 +98,9 @@ async function switchEra(page, test, year, { touch }) {
   // 2. 播放轉場：章節標題出現（開發版另外取樣霧氣）
   let mistSeen = null
   const cardTitle = await page
-    .waitForFunction(() => document.querySelector('.chapter-card__title')?.textContent, null, { timeout: 15000 })
-    .then((handle) => handle.jsonValue())
-    .catch(() => null)
+    .waitForFunction((title) => document.querySelector('.chapter-card__title')?.textContent === title, era.title, { timeout: 15000 })
+    .then(() => era.title)
+    .catch(() => page.evaluate(() => document.querySelector('.chapter-card__title')?.textContent ?? null))
   const hasDebug = await page.evaluate(() => Boolean(window.__DDC__))
   if (hasDebug) {
     mistSeen = await page
