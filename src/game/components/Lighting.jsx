@@ -3,7 +3,8 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { Fog, Vector3 } from 'three'
 import { atmosphere } from '../atmosphere.js'
 import { playerState } from '../runtime.js'
-import { getQuality } from '../quality.js'
+import { getQualitySettings } from '../quality.js'
+import { useGameStore } from '../../state/useGameStore.js'
 import { setGlowLevel } from '../rendering/materials.js'
 
 const SHADOW_SIZE = 30
@@ -18,7 +19,9 @@ export function Lighting() {
   const sun = useRef()
   const hemi = useRef()
   const ambient = useRef()
-  const shadowMapSize = useMemo(() => getQuality().shadowMapSize, [])
+  const qualityMode = useGameStore((state) => state.qualityMode)
+  const quality = useMemo(() => getQualitySettings(qualityMode), [qualityMode])
+  const shadowMapSize = quality.shadowMapSize
   const basis = useMemo(() => ({ x: new Vector3(), y: new Vector3(), z: new Vector3(), up: new Vector3(0, 1, 0) }), [])
   const temp = useMemo(() => new Vector3(), [])
 
@@ -29,9 +32,29 @@ export function Lighting() {
     light.parent?.add(light.target)
   }, [])
 
+  // 畫質切換：重新配置陰影貼圖大小與柔和度（下一次渲染時以新尺寸建立）
+  useEffect(() => {
+    const light = sun.current
+    if (!light) return
+    const { shadow } = light
+    shadow.radius = quality.shadowRadius
+    shadow.mapSize.set(shadowMapSize, shadowMapSize)
+    if (shadow.map && shadow.map.width !== shadowMapSize) {
+      shadow.map.dispose()
+      shadow.map = null
+    }
+    document.documentElement.dataset.shadowRadius = String(shadow.radius)
+  }, [quality, shadowMapSize])
+
+  const reportedMap = useRef(0)
   useFrame(() => {
     const light = sun.current
     if (!light) return
+    const allocated = light.shadow.map?.width ?? 0
+    if (allocated && allocated !== reportedMap.current) {
+      reportedMap.current = allocated
+      document.documentElement.dataset.shadowMap = String(allocated)
+    }
     const a = atmosphere.current
     light.color.copy(a.sunColor)
     light.intensity = a.sunIntensity
@@ -64,7 +87,6 @@ export function Lighting() {
         ref={sun}
         intensity={2.5}
         castShadow
-        shadow-mapSize={[shadowMapSize, shadowMapSize]}
         shadow-camera-left={-SHADOW_SIZE}
         shadow-camera-right={SHADOW_SIZE}
         shadow-camera-top={SHADOW_SIZE}

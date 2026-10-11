@@ -1,32 +1,93 @@
 /**
- * 畫質設定：依裝置決定解析度、陰影貼圖、反鋸齒與景深取樣數。
+ * 畫質設定：兩種可隨時切換的模式（右上角齒輪）。
  *
- * - high   桌上型電腦（滑鼠操作）
- * - medium 平板（觸控、高像素密度螢幕，例如 iPad）：解析度上限較低，陰影貼圖減半
- * - low    效能不足時自動降級（或網址加上 ?quality=low）
+ * - smooth 流暢（適合 iPad）：解析度上限 1.25、陰影貼圖 1024、關閉景深／光暈／環境遮蔽、
+ *          減少遠景裝飾與蒸氣粒子；保留基本陰影、漫畫描邊與所有年代建築。
+ * - fine   精緻（適合電腦）：解析度上限 1.75（不超過裝置像素比）、陰影貼圖 2048、柔和陰影、
+ *          適量環境遮蔽、非常輕微的光暈與輕微景深、完整的遠景裝飾。
  *
- * 執行中若畫面更新率過低，AdaptiveResolution 會再逐步降低解析度。
+ * 觸控裝置預設「流暢」、桌面電腦預設「精緻」；使用者的選擇記在 localStorage。
+ * 切換後由 QualityController、Lighting、ToonRenderer 與各場景元件立即套用，不需要重新整理。
+ * 網址參數 ?quality=smooth|fine 可指定模式（測試用；舊的 low／medium 視為 smooth、high 視為 fine）。
  */
-const TIERS = {
-  high: { name: 'high', dpr: [1, 1.5], shadowMapSize: 2048, msaa: 4, dofTaps: 12 },
-  medium: { name: 'medium', dpr: [1, 1.3], shadowMapSize: 1024, msaa: 4, dofTaps: 8 },
-  low: { name: 'low', dpr: [0.85, 1], shadowMapSize: 1024, msaa: 0, dofTaps: 0 },
+export const QUALITY_MODES = {
+  smooth: {
+    id: 'smooth',
+    label: '流暢',
+    hint: '適合 iPad',
+    dprMax: 1.25,
+    dprMin: 0.8,
+    shadowMapSize: 1024,
+    shadowRadius: 1,
+    msaa: 2,
+    dofTaps: 0,
+    ao: 0,
+    bloom: 0,
+    detail: false,
+  },
+  fine: {
+    id: 'fine',
+    label: '精緻',
+    hint: '適合電腦',
+    dprMax: 1.75,
+    dprMin: 1,
+    shadowMapSize: 2048,
+    shadowRadius: 2.6,
+    msaa: 4,
+    dofTaps: 12,
+    ao: 0.4,
+    bloom: 0.16,
+    detail: true,
+  },
 }
 
-let cached = null
+export const QUALITY_STORAGE_KEY = 'ddc.qualityMode'
 
-function detectTier() {
-  if (typeof window === 'undefined') return 'high'
+const LEGACY = { low: 'smooth', medium: 'smooth', high: 'fine' }
+
+function isTouchDevice() {
+  if (typeof window === 'undefined') return false
+  return Boolean(window.matchMedia?.('(pointer: coarse)').matches) || (navigator.maxTouchPoints ?? 0) > 1
+}
+
+/** 依裝置的預設模式：觸控裝置（iPad）流暢、桌面電腦精緻 */
+export function defaultQualityMode() {
+  return isTouchDevice() ? 'smooth' : 'fine'
+}
+
+function readStored() {
+  try {
+    const value = window.localStorage.getItem(QUALITY_STORAGE_KEY)
+    return QUALITY_MODES[value] ? value : null
+  } catch {
+    return null
+  }
+}
+
+/** 開始時的模式：網址參數 > 使用者上次的選擇 > 裝置預設 */
+export function initialQualityMode() {
+  if (typeof window === 'undefined') return 'fine'
   const param = new URLSearchParams(window.location.search).get('quality')
-  if (param && TIERS[param]) return param
-  const coarse = window.matchMedia?.('(pointer: coarse)').matches
-  const touch = navigator.maxTouchPoints > 1
-  const smallMemory = typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 4
-  if (coarse || touch) return smallMemory ? 'low' : 'medium'
-  return 'high'
+  const fromParam = QUALITY_MODES[param] ? param : LEGACY[param]
+  return fromParam ?? readStored() ?? defaultQualityMode()
 }
 
-export function getQuality() {
-  if (!cached) cached = { ...TIERS[detectTier()] }
-  return cached
+export function saveQualityMode(id) {
+  try {
+    window.localStorage.setItem(QUALITY_STORAGE_KEY, id)
+  } catch {
+    // 私密瀏覽等情況下無法儲存，仍可在本次使用中切換
+  }
+}
+
+function devicePixelRatio() {
+  return typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1
+}
+
+/** 某個模式的實際設定（解析度上限依裝置像素比限制） */
+export function getQualitySettings(id) {
+  const mode = QUALITY_MODES[id] ?? QUALITY_MODES.fine
+  const ratio = devicePixelRatio()
+  const dpr = Math.min(mode.dprMax, ratio)
+  return { ...mode, dpr, dprMin: Math.min(mode.dprMin, dpr) }
 }

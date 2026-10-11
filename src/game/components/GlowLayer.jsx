@@ -3,6 +3,8 @@ import { useFrame } from '@react-three/fiber'
 import { AdditiveBlending, BufferAttribute, BufferGeometry, Color, ShaderMaterial } from 'three'
 import { LAYERS } from '../config.js'
 import { atmosphere } from '../atmosphere.js'
+import { QUALITY_MODES } from '../quality.js'
+import { useGameStore } from '../../state/useGameStore.js'
 
 /**
  * 燈火光暈（面向鏡頭的柔光）與地面光暈（燈下的暖色光圈）。
@@ -15,6 +17,7 @@ const GLOW_VERTEX = /* glsl */ `
   attribute vec2 aParams;
   uniform float uTime;
   uniform float uIntensity;
+  uniform float uFar;
   varying vec2 vCorner;
   varying vec3 vColor;
   varying float vAlpha;
@@ -28,7 +31,7 @@ const GLOW_VERTEX = /* glsl */ `
     gl_Position = projectionMatrix * mv;
     vCorner = aCorner;
     vColor = aColor;
-    vAlpha = uIntensity * flicker * (1.0 - smoothstep(70.0, 170.0, -mv.z));
+    vAlpha = uIntensity * flicker * (1.0 - smoothstep(uFar * 0.4, uFar, -mv.z));
   }
 `
 
@@ -49,6 +52,7 @@ const POOL_VERTEX = /* glsl */ `
   attribute vec2 aCorner;
   attribute vec3 aColor;
   uniform float uIntensity;
+  uniform float uFar;
   varying vec2 vCorner;
   varying vec3 vColor;
   varying float vAlpha;
@@ -57,7 +61,7 @@ const POOL_VERTEX = /* glsl */ `
     gl_Position = projectionMatrix * mv;
     vCorner = aCorner;
     vColor = aColor;
-    vAlpha = uIntensity * (1.0 - smoothstep(60.0, 140.0, -mv.z));
+    vAlpha = uIntensity * (1.0 - smoothstep(uFar * 0.4, uFar, -mv.z));
   }
 `
 
@@ -151,6 +155,8 @@ const sharedUniforms = {
   uTime: { value: 0 },
   uGlowIntensity: { value: 0 },
   uPoolIntensity: { value: 0 },
+  uGlowFar: { value: 170 },
+  uPoolFar: { value: 140 },
 }
 
 export function GlowLayer({ glows, pools }) {
@@ -158,8 +164,12 @@ export function GlowLayer({ glows, pools }) {
     const glowMaterial = additiveMaterial(GLOW_VERTEX, GLOW_FRAGMENT, {
       uTime: sharedUniforms.uTime,
       uIntensity: sharedUniforms.uGlowIntensity,
+      uFar: sharedUniforms.uGlowFar,
     })
-    const poolMaterial = additiveMaterial(POOL_VERTEX, POOL_FRAGMENT, { uIntensity: sharedUniforms.uPoolIntensity })
+    const poolMaterial = additiveMaterial(POOL_VERTEX, POOL_FRAGMENT, {
+      uIntensity: sharedUniforms.uPoolIntensity,
+      uFar: sharedUniforms.uPoolFar,
+    })
     poolMaterial.polygonOffset = true
     poolMaterial.polygonOffsetFactor = -2
     poolMaterial.polygonOffsetUnits = -2
@@ -185,6 +195,10 @@ export function GlowLayer({ glows, pools }) {
     const glow = atmosphere.current.glow
     const night = Math.min(1, Math.max(0, (glow - 0.06) / 0.94))
     sharedUniforms.uTime.value = state.clock.elapsedTime
+    // 流暢模式：遠處的光暈提早淡出（減少重疊的半透明繪製）
+    const detail = QUALITY_MODES[useGameStore.getState().qualityMode]?.detail !== false
+    sharedUniforms.uGlowFar.value = detail ? 170 : 85
+    sharedUniforms.uPoolFar.value = detail ? 140 : 70
     sharedUniforms.uGlowIntensity.value = night * 0.95
     sharedUniforms.uPoolIntensity.value = night * night * 0.55
   })

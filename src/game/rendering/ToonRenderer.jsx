@@ -18,7 +18,8 @@ import {
 import { FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass.js'
 import { LAYERS, PALETTE } from '../config.js'
 import { atmosphere } from '../atmosphere.js'
-import { getQuality } from '../quality.js'
+import { getQualitySettings } from '../quality.js'
+import { useGameStore } from '../../state/useGameStore.js'
 import { renderState } from '../runtime.js'
 import { transitionState } from '../transition.js'
 
@@ -60,6 +61,8 @@ const EDGE_FRAGMENT = /* glsl */ `
   uniform vec3 uLineColor;
   uniform float uLineStrength;
   uniform vec2 uFade;
+  uniform float uAO;
+  uniform float uProjScale;
   varying vec2 vUv;
   ${COMMON}
 
@@ -89,6 +92,22 @@ const EDGE_FRAGMENT = /* glsl */ `
     float edge = max(depthEdge, normalEdge);
     edge *= 1.0 - smoothstep(uFade.x, uFade.y, z0);
     vec3 color = texture2D(tColor, vUv).rgb;
+
+    // 環境遮蔽（精緻模式）：與周圍深度比較，牆角、簷下、物件接地處略微變暗；
+    // 深度差太大的（前後物件的輪廓）不計，避免出現光暈
+    if (uAO > 0.001 && z0 < 140.0) {
+      float radius = clamp(0.6 * uProjScale / z0, 2.0, 42.0);
+      float occlusion = 0.0;
+      for (int i = 0; i < 8; i++) {
+        float a = float(i) * 0.78539816 + 0.3;
+        float r = radius * (0.45 + 0.55 * fract(float(i) * 0.618034));
+        float zi = viewDistance(tDepth, vUv + vec2(cos(a), sin(a)) * r * uTexel);
+        float dz = z0 - zi;
+        occlusion += smoothstep(0.004 * z0 + 0.02, 0.03 * z0 + 0.18, dz) * (1.0 - smoothstep(0.08 * z0 + 0.6, 0.16 * z0 + 1.4, dz));
+      }
+      color *= 1.0 - uAO * (occlusion / 8.0);
+    }
+
     color = mix(color, uLineColor, edge * uLineStrength);
     gl_FragColor = vec4(color, 1.0);
   }
@@ -98,6 +117,8 @@ const FINAL_FRAGMENT = /* glsl */ `
   uniform sampler2D tInput;
   uniform sampler2D tDepth;
   uniform sampler2D tSnapshot;
+  uniform sampler2D tBloom;
+  uniform float uBloom;
   uniform vec2 uTexel;
   uniform float uFocus;
   uniform float uFocusRange;
@@ -197,6 +218,9 @@ const FINAL_FRAGMENT = /* glsl */ `
     }
     #endif
 
+    // 非常輕微的光暈（精緻模式）：只來自燈籠、燈火等高亮處
+    if (uBloom > 0.001) color += texture2D(tBloom, vUv).rgb * uBloom;
+
     vec2 q = vUv - 0.5;
     vec2 aspectQ = q * vec2(uAspect, 1.0);
 
@@ -240,8 +264,40 @@ const COPY_FRAGMENT = /* glsl */ `
   }
 `
 
-function createPipeline(gl) {
-  const quality = getQuality()
+/** 光暈：取出高亮部分並縮小（四點平均） */
+const BRIGHT_FRAGMENT = /* glsl */ `
+  uniform sampler2D tInput;
+  uniform vec2 uTexel;
+  varying vec2 vUv;
+  void main() {
+    vec3 c = texture2D(tInput, vUv + uTexel * vec2(-1.0, -1.0)).rgb;
+    c += texture2D(tInput, vUv + uTexel * vec2(1.0, -1.0)).rgb;
+    c += texture2D(tInput, vUv + uTexel * vec2(-1.0, 1.0)).rgb;
+    c += texture2D(tInput, vUv + uTexel * vec2(1.0, 1.0)).rgb;
+    c *= 0.25;
+    float luma = dot(c, vec3(0.2126, 0.7152, 0.0722));
+    float knee = smoothstep(0.85, 1.6, luma);
+    gl_FragColor = vec4(c * knee, 1.0);
+  }
+`
+
+/** 光暈：九點高斯模糊（水平或垂直） */
+const BLUR_FRAGMENT = /* glsl */ `
+  uniform sampler2D tInput;
+  uniform vec2 uDirection;
+  varying vec2 vUv;
+  void main() {
+    vec3 c = texture2D(tInput, vUv).rgb * 0.227027;
+    c += texture2D(tInput, vUv + uDirection * 1.384615).rgb * 0.316216;
+    c += texture2D(tInput, vUv - uDirection * 1.384615).rgb * 0.316216;
+    c += texture2D(tInput, vUv + uDirection * 3.230769).rgb * 0.070270;
+    c += texture2D(tInput, vUv - uDirection * 3.230769).rgb * 0.070270;
+    gl_FragColor = vec4(c, 1.0);
+  }
+`
+
+function createPipeline(gl, initialQuality) {
+  let quality = initialQuality
   const supportsHalfFloat =
     gl.extensions.has('EXT_color_buffer_float') || gl.extensions.has('EXT_color_buffer_half_float')
   const colorType = supportsHalfFloat ? HalfFloatType : UnsignedByteType
@@ -281,6 +337,8 @@ function createPipeline(gl) {
       uLineColor: { value: new Color(PALETTE.ink) },
       uLineStrength: { value: 0.88 },
       uFade: { value: new Vector2(38, 150) },
+      uAO: { value: quality.ao },
+      uProjScale: { value: 500 },
     },
   })
 
@@ -294,6 +352,8 @@ function createPipeline(gl) {
       tInput: { value: compositeTarget.texture },
       tDepth: { value: normalTarget.depthTexture },
       tSnapshot: { value: snapshotTarget.texture },
+      tBloom: { value: compositeTarget.texture },
+      uBloom: { value: 0 },
       uTexel: { value: new Vector2(1, 1) },
       uNear: { value: 0.3 },
       uFar: { value: 1600 },
@@ -325,6 +385,88 @@ function createPipeline(gl) {
   const edgeQuad = new FullScreenQuad(edgeMaterial)
   const finalQuad = new FullScreenQuad(finalMaterial)
   const copyQuad = new FullScreenQuad(copyMaterial)
+
+  // 光暈（只在精緻模式配置）：四分之一解析度的高亮擷取＋兩次模糊
+  const brightMaterial = new ShaderMaterial({
+    vertexShader: VERTEX,
+    fragmentShader: BRIGHT_FRAGMENT,
+    depthTest: false,
+    depthWrite: false,
+    uniforms: { tInput: { value: compositeTarget.texture }, uTexel: { value: new Vector2(1, 1) } },
+  })
+  const blurMaterial = new ShaderMaterial({
+    vertexShader: VERTEX,
+    fragmentShader: BLUR_FRAGMENT,
+    depthTest: false,
+    depthWrite: false,
+    uniforms: { tInput: { value: null }, uDirection: { value: new Vector2() } },
+  })
+  const brightQuad = new FullScreenQuad(brightMaterial)
+  const blurQuad = new FullScreenQuad(blurMaterial)
+  let bloom = null
+
+  function createBloom() {
+    const make = () => {
+      const target = new WebGLRenderTarget(1, 1, { type: colorType, depthBuffer: false })
+      target.texture.minFilter = LinearFilter
+      target.texture.generateMipmaps = false
+      return target
+    }
+    bloom = { a: make(), b: make(), width: 0, height: 0 }
+    finalMaterial.uniforms.tBloom.value = bloom.a.texture
+  }
+
+  function disposeBloom() {
+    if (!bloom) return
+    bloom.a.dispose()
+    bloom.b.dispose()
+    bloom = null
+    finalMaterial.uniforms.tBloom.value = compositeTarget.texture
+  }
+
+  function renderBloom() {
+    const width = Math.max(1, Math.floor(current.x / 4))
+    const height = Math.max(1, Math.floor(current.y / 4))
+    if (bloom.width !== width || bloom.height !== height) {
+      bloom.a.setSize(width, height)
+      bloom.b.setSize(width, height)
+      bloom.width = width
+      bloom.height = height
+    }
+    brightMaterial.uniforms.uTexel.value.set(1 / current.x, 1 / current.y)
+    gl.setRenderTarget(bloom.a)
+    brightQuad.render(gl)
+    blurMaterial.uniforms.tInput.value = bloom.a.texture
+    blurMaterial.uniforms.uDirection.value.set(1 / width, 0)
+    gl.setRenderTarget(bloom.b)
+    blurQuad.render(gl)
+    blurMaterial.uniforms.tInput.value = bloom.b.texture
+    blurMaterial.uniforms.uDirection.value.set(0, 1 / height)
+    gl.setRenderTarget(bloom.a)
+    blurQuad.render(gl)
+  }
+
+  /** 套用畫質設定（可在執行中隨時切換，不需要重新建立渲染器） */
+  function setQuality(next) {
+    quality = next
+    if (colorTarget.samples !== next.msaa) {
+      colorTarget.samples = next.msaa
+      colorTarget.dispose()
+    }
+    if (finalMaterial.defines.DOF_TAPS !== next.dofTaps) {
+      finalMaterial.defines.DOF_TAPS = next.dofTaps
+      finalMaterial.needsUpdate = true
+    }
+    edgeMaterial.uniforms.uAO.value = next.ao
+    finalMaterial.uniforms.uBloom.value = next.bloom
+    if (next.bloom > 0 && !bloom) createBloom()
+    else if (next.bloom <= 0) disposeBloom()
+    const data = typeof document !== 'undefined' ? document.documentElement.dataset : {}
+    data.msaa = String(colorTarget.samples)
+    data.ao = String(next.ao)
+    data.bloom = String(next.bloom)
+  }
+
   const size = new Vector2()
   const current = new Vector2()
   const normalClear = new Color(0.5, 0.5, 1.0)
@@ -353,6 +495,7 @@ function createPipeline(gl) {
     edge.uThickness.value = Math.min(2, Math.max(1, dpr))
     edge.uLineColor.value.copy(a.lineColor)
     edge.uLineStrength.value = a.lineStrength
+    edge.uProjScale.value = current.y / (2 * Math.tan((camera.fov * Math.PI) / 360))
     const u = finalMaterial.uniforms
     u.uFocus.value = renderState.focusDistance
     u.uMaxBlur.value = 3.6 * dpr * renderState.blurStrength
@@ -412,6 +555,8 @@ function createPipeline(gl) {
       transitionState.snapshotReady = true
     }
 
+    if (bloom) renderBloom()
+
     // 4. 輸出到畫面
     gl.setRenderTarget(null)
     finalQuad.render(gl)
@@ -431,19 +576,31 @@ function createPipeline(gl) {
     edgeQuad.dispose()
     finalQuad.dispose()
     copyQuad.dispose()
+    disposeBloom()
+    brightMaterial.dispose()
+    blurMaterial.dispose()
+    brightQuad.dispose()
+    blurQuad.dispose()
   }
 
-  return { render, dispose }
+  setQuality(quality)
+  return { render, dispose, setQuality }
 }
 
 export function ToonRenderer() {
   const gl = useThree((state) => state.gl)
-  const pipeline = useMemo(() => createPipeline(gl), [gl])
+  const qualityMode = useGameStore((state) => state.qualityMode)
+  const pipeline = useMemo(() => createPipeline(gl, getQualitySettings(useGameStore.getState().qualityMode)), [gl])
 
   useEffect(() => {
     gl.shadowMap.autoUpdate = false
     return () => pipeline.dispose()
   }, [gl, pipeline])
+
+  // 畫質切換：反鋸齒、景深、環境遮蔽、光暈立即更新
+  useEffect(() => {
+    pipeline.setQuality(getQualitySettings(qualityMode))
+  }, [pipeline, qualityMode])
 
   // priority 1：接管渲染（其餘 useFrame 皆先於此執行）
   useFrame(({ scene, camera }) => pipeline.render(scene, camera), 1)

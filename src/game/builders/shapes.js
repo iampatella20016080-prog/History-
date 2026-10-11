@@ -105,3 +105,13 @@ export function sailShape(width, height) {
   shape.closePath()
   return shape
 }
+
+/** 三角布旗（尖端朝下），寬 width、高 height，頂邊在 y = 0 */
+export function pennantShape(width, height) {
+  const shape = new Shape()
+  shape.moveTo(0, 0)
+  shape.lineTo(width, 0)
+  shape.lineTo(width / 2, -height)
+  shape.closePath()
+  return shape
+}

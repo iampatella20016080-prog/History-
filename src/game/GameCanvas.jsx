@@ -3,8 +3,8 @@ import { Canvas } from '@react-three/fiber'
 import { CAMERA, PALETTE } from './config.js'
 import { World } from './World.jsx'
 import { setAtmosphere } from './atmosphere.js'
-import { AdaptiveResolution } from './components/AdaptiveResolution.jsx'
-import { getQuality } from './quality.js'
+import { QualityController } from './components/QualityController.jsx'
+import { getQualitySettings } from './quality.js'
 import { loadEraWorld, prefetchEraWorld, setDisplayedEra } from './world/worldManager.js'
 import { ERAS, getEra, getEraIndex } from '../data/eras.js'
 import { useGameStore } from '../state/useGameStore.js'
@@ -40,7 +40,8 @@ class CanvasErrorBoundary extends Component {
 export function GameCanvas() {
   const [world, setWorld] = useState(null)
   const [error, setError] = useState(null)
-  const quality = useMemo(() => getQuality(), [])
+  // 初始解析度依畫質模式；之後切換由 QualityController 即時套用
+  const initialDpr = useMemo(() => getQualitySettings(useGameStore.getState().qualityMode).dpr, [])
   // 店家提示框（Drei <Html>）掛載的固定圖層；
   // 若交給 Drei 自動選擇容器，畫布初始化時容器會改變，提示框內容會被清空。
   const promptLayer = useRef(null)
@@ -85,7 +86,7 @@ export function GameCanvas() {
     <CanvasErrorBoundary>
       <Canvas
         className="game-canvas"
-        dpr={quality.dpr}
+        dpr={initialDpr}
         shadows="percentage"
         flat
         gl={{ antialias: false, alpha: false, stencil: false, powerPreference: 'high-performance' }}
@@ -95,7 +96,7 @@ export function GameCanvas() {
           if (import.meta.env.DEV && window.__DDC__) window.__DDC__.gl = gl
         }}
       >
-        <AdaptiveResolution min={quality.dpr[0]} max={quality.dpr[1]} />
+        <QualityController />
         {world && <World world={world} promptLayer={promptLayer} onSwap={swapWorld} />}
       </Canvas>
       <div ref={promptLayer} className="prompt-layer" />

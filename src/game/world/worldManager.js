@@ -154,6 +154,7 @@ function hydrate(raw) {
 
 function disposeWorld(world) {
   world?.batches.forEach(({ geometry }) => geometry.dispose())
+  world?.detailBatches?.forEach(({ geometry }) => geometry.dispose())
 }
 
 /** 超過快取上限時，釋放最久沒用到、而且沒有顯示或鎖定中的年代 */
