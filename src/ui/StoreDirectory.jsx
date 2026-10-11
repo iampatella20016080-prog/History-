@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react'
+import { shopYearText } from '../data/shops.js'
+import { getSource } from '../data/sources.js'
 import { useGameStore } from '../state/useGameStore.js'
 
 /**
@@ -59,7 +61,7 @@ export function StoreDirectory({ era, shops }) {
                   <div className="menu-shop__info">
                     <span className="menu-shop__name">{shop.name}</span>
                     <span className="menu-shop__meta">
-                      {shop.year ? `${shop.year}年｜` : ''}
+                      {shopYearText(shop) ? `${shopYearText(shop)}｜` : ''}
                       {shop.category}
                     </span>
                     {isOpen ? (
@@ -70,6 +72,7 @@ export function StoreDirectory({ era, shops }) {
                   </div>
                   {shop.reconstruction && <span className="menu-shop__note">歷史情境重建</span>}
                   <p className="menu-shop__summary">{shop.summary}</p>
+                  {(shop.yearNote || shop.sourceIds?.length) && <ShopSources shop={shop} />}
                   <div className="menu-shop__actions">
                     <button type="button" className="button-ghost" onClick={() => travelToShop(shop.id)}>
                       前往店門口
@@ -95,5 +98,28 @@ export function StoreDirectory({ era, shops }) {
         </div>
       )}
     </div>
+  )
+}
+
+/** 年份記載不一的說明與資料來源（可展開） */
+function ShopSources({ shop }) {
+  const sources = (shop.sourceIds ?? []).map(getSource).filter(Boolean)
+  return (
+    <details className="menu-shop__sources">
+      <summary>年份與資料來源</summary>
+      {shop.yearNote && <p>{shop.yearNote}</p>}
+      {shop.note && <p>{shop.note}</p>}
+      {sources.length > 0 && (
+        <ul>
+          {sources.map((source) => (
+            <li key={source.id}>
+              <a href={source.url} target="_blank" rel="noopener noreferrer">
+                {source.citation}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </details>
   )
 }

@@ -19,7 +19,9 @@ import {
   foodStall,
   goodsPile,
   handcart,
+  placard,
   planter,
+  pottedPlant,
   rickshaw,
   ropeCoil,
   streetLamp,
@@ -51,7 +53,7 @@ const PROP_BUILDERS = {
   carryingPole: (b, p, o) => carryingPole(b, p.position, { ...o, content: p.content }),
   goodsPile: (b, p, o) => goodsPile(b, p.position, { ...o, kind: p.kind }),
   ropeCoil: (b, p) => ropeCoil(b, p.position),
-  rickshaw: (b, p, o) => rickshaw(b, p.position, o),
+  rickshaw: (b, p, o) => rickshaw(b, p.position, { ...o, tint: p.tint }),
   vendorCart: (b, p, o) => vendorCart(b, p.position, { ...o, content: p.content }),
   vintageCar: (b, p, o) => vintageCar(b, p.position, o),
   bicycle: (b, p, o) => bicycle(b, p.position, o),
@@ -61,6 +63,8 @@ const PROP_BUILDERS = {
   foodStall: (b, p, o) => foodStall(b, p.position, { ...o, canopy: p.canopy }),
   planter: (b, p, o) => planter(b, p.position, o),
   aBoard: (b, p, o) => aBoard(b, p.position, o),
+  placard: (b, p, o) => placard(b, p.position, { ...o, text: p.text }),
+  pottedPlant: (b, p, o) => pottedPlant(b, p.position, { seed: o.seed, size: p.size ?? 1 }),
 }
 
 /** 遠方廟宇屋頂（清末的天際線；之後由實際的慈聖宮取代） */
@@ -140,7 +144,7 @@ function storeAnchors(b, archetype, result) {
   }
   return {
     prompt: anchor(0, result.groundHeight - 0.2, front),
-    marker: anchor(0, result.topHeight + 3.2, STREET.walkwayDepth - 1.2),
+    marker: anchor(0, result.markerHeight ?? result.topHeight + 3.2, STREET.walkwayDepth - 1.2),
   }
 }
 

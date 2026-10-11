@@ -192,15 +192,15 @@ export function GlowLayer({ glows, pools }) {
   )
 
   useFrame((state) => {
-    const glow = atmosphere.current.glow
+    const { glow, lanternGlow } = atmosphere.current
     const night = Math.min(1, Math.max(0, (glow - 0.06) / 0.94))
     sharedUniforms.uTime.value = state.clock.elapsedTime
     // 流暢模式：遠處的光暈提早淡出（減少重疊的半透明繪製）
     const detail = QUALITY_MODES[useGameStore.getState().qualityMode]?.detail !== false
     sharedUniforms.uGlowFar.value = detail ? 170 : 85
     sharedUniforms.uPoolFar.value = detail ? 140 : 70
-    sharedUniforms.uGlowIntensity.value = night * 0.95
-    sharedUniforms.uPoolIntensity.value = night * night * 0.55
+    sharedUniforms.uGlowIntensity.value = night * 0.95 * lanternGlow
+    sharedUniforms.uPoolIntensity.value = night * night * 0.55 * lanternGlow
   })
 
   const setLayer = (object) => object.layers.set(LAYERS.NO_OUTLINE)

@@ -48,9 +48,9 @@ export function archFrameShape(w, h, frame) {
  * 方窗：木框、直櫺或玻璃格，可選百葉窗扇。
  * style: 'bars'（直櫺）| 'panes'（玻璃格）| 'grille'（鐵窗花）
  */
-export function rectWindow(b, { x, y, width, height, z = 0, lit = false, frameTint = '#6b4f39', barTint = '#c9ad8a', style = 'bars', shutters = false, shutterTint = '#6d8a83', frameMat = 'wood' }) {
+export function rectWindow(b, { x, y, width, height, z = 0, lit = false, frameTint = '#6b4f39', barTint = '#c9ad8a', style = 'bars', shutters = false, shutterTint = '#6d8a83', frameMat = 'wood', glassTint = '#3b3029' }) {
   const f = 0.09
-  b.box(lit ? 'windowLit' : 'dark', [width, height, 0.04], [x, y, z], { tint: lit ? '#6b4b33' : '#3b3029' })
+  b.box(lit ? 'windowLit' : 'dark', [width, height, 0.04], [x, y, z], { tint: lit ? '#6b4b33' : glassTint })
   b.box(frameMat, [width + 2 * f, f, 0.1], [x, y + height / 2 + f / 2, z + 0.03], { tint: frameTint })
   b.box(frameMat, [width + 2 * f + 0.08, f * 1.1, 0.16], [x, y - height / 2 - f * 0.55, z + 0.05], { tint: frameTint })
   b.box(frameMat, [f, height, 0.1], [x - width / 2 - f / 2, y, z + 0.03], { tint: frameTint })
@@ -78,11 +78,11 @@ export function rectWindow(b, { x, y, width, height, z = 0, lit = false, frameTi
 }
 
 /** 拱窗（洋樓立面）：拱形框、拱心石、窗臺與百葉窗扇 */
-export function archWindow(b, { x, y, width, height, z = 0, lit = false, frameTint = '#f6efe0', frameMat = 'stucco', keystone = true, shutters = false, shutterTint = '#6d8a83', mullions = true }) {
+export function archWindow(b, { x, y, width, height, z = 0, lit = false, frameTint = '#f6efe0', frameMat = 'stucco', keystone = true, shutters = false, shutterTint = '#6d8a83', mullions = true, glassTint = '#3b3029' }) {
   const straight = Math.max(0.2, height - width / 2)
   b.extrude(lit ? 'windowLit' : 'dark', archShape(width, straight), 0.04, {
     position: [x, y, z - 0.02],
-    tint: lit ? '#6b4b33' : '#3b3029',
+    tint: lit ? '#6b4b33' : glassTint,
     curveSegments: 8,
   })
   b.extrude(frameMat, archFrameShape(width, straight, 0.12), 0.12, {

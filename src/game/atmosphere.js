@@ -21,6 +21,7 @@ const COLOR_KEYS = [
   ['cloudColor', (l) => l.clouds.color],
   ['cloudEmissive', (l) => l.clouds.emissive],
   ['lineColor', (l) => l.lines.color],
+  ['fillColor', (l) => l.fill?.color ?? '#ffffff'],
 ]
 
 const NUMBER_KEYS = [
@@ -36,6 +37,12 @@ const NUMBER_KEYS = [
   ['vignette', (l) => l.grade.vignette],
   ['lineStrength', (l) => l.lines.strength],
   ['glow', (l) => l.glow],
+  // 燈籠、燈泡與光暈的亮度倍率（預設 1；酒樓年代調暗，避免整條街過曝）
+  ['lanternGlow', (l) => l.lanternGlow ?? 1],
+  // 冷色補光（沒有陰影的平行光）：讓背光的立面仍看得出細節
+  ['fillIntensity', (l) => l.fill?.intensity ?? 0],
+  ['fillAzimuth', (l) => l.fill?.azimuth ?? 90],
+  ['fillElevation', (l) => l.fill?.elevation ?? 30],
   ['riverMist', (l) => l.riverMist],
   ['tintR', (l) => l.grade.tint[0]],
   ['tintG', (l) => l.grade.tint[1]],
@@ -57,6 +64,7 @@ function createCurrent() {
   for (const [key] of NUMBER_KEYS) state[key] = 0
   state.sunDirection = new Vector3(0, 1, 0) // 天空中的太陽方向（含真實高度）
   state.lightDirection = new Vector3(0, 1, 0) // 投射陰影的光線方向（高度有下限，避免陰影過長）
+  state.fillDirection = new Vector3(0, 1, 0) // 冷色補光的方向
   return state
 }
 
@@ -91,6 +99,7 @@ function apply() {
   current.azimuth = from.azimuth + delta * t
   directionFrom(current.azimuth, current.elevation, current.sunDirection)
   directionFrom(current.azimuth, Math.max(current.elevation, 24), current.lightDirection)
+  directionFrom(current.fillAzimuth, current.fillElevation, current.fillDirection)
   atmosphere.version++
 }
 

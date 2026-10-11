@@ -496,6 +496,35 @@ kbd {
   color: var(--ink-soft);
 }
 
+.menu-shop__sources {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+.menu-shop__sources summary {
+  cursor: pointer;
+  color: var(--vermilion);
+  letter-spacing: 0.06em;
+}
+
+.menu-shop__sources p {
+  margin-top: 4px;
+}
+
+.menu-shop__sources ul {
+  margin: 4px 0 0;
+  padding-left: 1.2em;
+}
+
+.menu-shop__sources a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  word-break: break-all;
+}
+
 .menu-shop__actions {
   display: flex;
   gap: 8px;

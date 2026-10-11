@@ -71,17 +71,20 @@ export const ERAS = [
     },
     lighting: {
       timeOfDay: '傍晚入夜',
-      sun: { azimuth: 262, elevation: 6, color: '#ffa878', intensity: 0.75 },
-      hemi: { sky: '#97a0cf', ground: '#7a5c50', intensity: 2.35 },
+      sun: { azimuth: 262, elevation: 6, color: '#ffaa80', intensity: 0.72 },
+      hemi: { sky: '#97a0cf', ground: '#6f5a56', intensity: 2.3 },
       ambient: { color: '#b4b9e2', intensity: 0.42 },
+      // 冷色補光：從北北東方向照亮背光的立面（夕陽的暖光與冷色陰影形成對比）
+      fill: { color: '#93a9de', intensity: 0.6, azimuth: 35, elevation: 30 },
       sky: { top: '#2c3a66', horizon: '#ee9a66', bottom: '#544860', sunGlow: '#ff9a62', stars: 0.85 },
       fog: { color: '#6a5d72', near: 30, far: 270 },
       mountains: '#6e6d8e',
       water: '#6f7f9c',
       clouds: { color: '#c2a6b0', emissive: '#5a4658' },
-      grade: { exposure: 1.12, saturation: 1.02, contrast: 1.05, tint: [1.05, 0.98, 0.95], vignette: 0.26 },
+      grade: { exposure: 1.12, saturation: 1.02, contrast: 1.05, tint: [1.025, 0.985, 0.975], vignette: 0.26 },
       lines: { color: '#1e1620', strength: 0.74 },
       glow: 1.0,
+      lanternGlow: 0.75, // 燈籠、燈泡與光暈的亮度調降約 25%
       riverMist: 0.25,
     },
     buildingStyle: {

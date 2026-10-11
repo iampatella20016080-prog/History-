@@ -421,6 +421,15 @@ export const SHOPS = [
   },
 ]
 
+/**
+ * 介面上顯示的年份：史料記載不一時使用 yearLabel（例如「1917年（一說1921年）」），
+ * 不自行認定單一年份。
+ */
+export function shopYearText(shop) {
+  if (shop?.yearLabel) return shop.yearLabel
+  return shop?.year ? `${shop.year}年` : ''
+}
+
 export function getShop(id) {
   return SHOPS.find((shop) => shop.id === id) ?? null
 }

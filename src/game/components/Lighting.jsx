@@ -19,17 +19,20 @@ export function Lighting() {
   const sun = useRef()
   const hemi = useRef()
   const ambient = useRef()
+  const fill = useRef()
   const qualityMode = useGameStore((state) => state.qualityMode)
   const quality = useMemo(() => getQualitySettings(qualityMode), [qualityMode])
   const shadowMapSize = quality.shadowMapSize
   const basis = useMemo(() => ({ x: new Vector3(), y: new Vector3(), z: new Vector3(), up: new Vector3(0, 1, 0) }), [])
   const temp = useMemo(() => new Vector3(), [])
+  const p0 = useMemo(() => new Vector3(), [])
 
   useEffect(() => {
-    const light = sun.current
-    if (!light) return
-    light.target.position.set(0, 0, 0)
-    light.parent?.add(light.target)
+    for (const light of [sun.current, fill.current]) {
+      if (!light) continue
+      light.target.position.set(0, 0, 0)
+      light.parent?.add(light.target)
+    }
   }, [])
 
   // 畫質切換：重新配置陰影貼圖大小與柔和度（下一次渲染時以新尺寸建立）
@@ -63,7 +66,15 @@ export function Lighting() {
     hemi.current.intensity = a.hemiIntensity
     ambient.current.color.copy(a.ambientColor)
     ambient.current.intensity = a.ambientIntensity
-    setGlowLevel(a.glow)
+    setGlowLevel(a.glow, a.lanternGlow)
+    // 冷色補光：只在有設定的年代開啟（強度 0 時不參與計算）
+    const f = fill.current
+    f.visible = a.fillIntensity > 0.001
+    f.color.copy(a.fillColor)
+    f.intensity = a.fillIntensity
+    f.position.copy(p0.copy(playerState.position).addScaledVector(a.fillDirection, LIGHT_DISTANCE))
+    f.target.position.copy(playerState.position)
+    f.target.updateMatrixWorld()
 
     basis.z.copy(a.lightDirection)
     basis.x.crossVectors(basis.up, basis.z).normalize()
@@ -83,6 +94,7 @@ export function Lighting() {
     <>
       <hemisphereLight ref={hemi} args={['#e3ecea', '#c7b08b', 1.75]} />
       <ambientLight ref={ambient} intensity={0.18} color="#fff6e8" />
+      <directionalLight ref={fill} intensity={0} visible={false} />
       <directionalLight
         ref={sun}
         intensity={2.5}

@@ -5,8 +5,9 @@ import { MATERIAL_TILE } from '../rendering/materials.js'
 import { createRng, pick } from '../utils/random.js'
 import { buildArcadeBuilding } from './arcade.js'
 import { conditionGrime, conditionTint } from './condition.js'
-import { projectingSign, signBoard } from './facade.js'
-import { bench, foodStall, pottedPlant, shade, stool, teaChest } from './props.js'
+import { signBoard } from './facade.js'
+import { buildJiangShanLou } from './jiangShanLou.js'
+import { bench, foodStall, pottedPlant, stool, teaChest } from './props.js'
 import { ridgeShape } from './shapes.js'
 import { buildTree } from './environment.js'
 
@@ -15,61 +16,9 @@ import { buildTree } from './environment.js'
  * 皆為歷史情境的概念重建，並非精確復原。
  */
 
-/* ═══════════ 江山樓：四層紅磚酒樓（歷史情境重建） ═══════════ */
+/* ═══════════ 江山樓：四層紅磚酒樓（歷史情境重建，見 jiangShanLou.js） ═══════════ */
 export function buildGrandRestaurant(b, cfg) {
-  const result = buildArcadeBuilding(b, {
-    ...cfg,
-    archetype: 'baroque',
-    floors: cfg.floors ?? 4,
-    groundHeight: 3.9,
-    upperHeight: 3.3,
-    wallMat: 'brick',
-    wallTint: '#ffffff',
-    trimTint: '#f4ece0',
-    columnMat: 'brick',
-    shutterTint: '#5a3a30',
-    shutters: false,
-    litWindows: 0.95,
-    balconyFloors: [1, 2],
-    balconyLanterns: true,
-    parapet: 'arch',
-    parapetHeight: 2.2,
-    sign: { ...cfg.sign, placement: 'parapet' },
-    storefront: 'open',
-    lanterns: true,
-    pottedPlants: true,
-    hangingSign: null,
-  })
-  const w = cfg.width
-  const topY = result.topHeight
-  const front = STREET.walkwayDepth
-  // 屋頂涼亭
-  b.group([0, topY + 0.2, -3.2], 0, () => {
-    for (const sx of [-1, 1]) {
-      for (const sz of [-1, 1]) b.box('wood', [0.16, 2.0, 0.16], [sx * 1.3, 1.0, sz * 1.0], { tint: '#7a3a2c' })
-    }
-    b.add('roof', createCurvedSlab(3.4, 0.12, 1.5, 0.25, MATERIAL_TILE.roof, 8), { position: [0, 2.35, 0.62], rotation: [0.55, 0, 0], tint: '#efe0d8' })
-    b.add('roof', createCurvedSlab(3.4, 0.12, 1.5, 0.25, MATERIAL_TILE.roof, 8), { position: [0, 2.35, -0.62], rotation: [-0.55, 0, 0], tint: '#e2d4cc' })
-    b.extrude('roof', ridgeShape(3.0, 'swallowtail'), 0.24, { position: [0, 2.68, -0.12], tint: '#d8c4b8' })
-    b.addLantern(0, 1.55, 1.05, { scale: 0.9 })
-  })
-  // 直立招牌「臺灣料理」
-  if (cfg.hangingSign) {
-    projectingSign(b, {
-      text: cfg.hangingSign.text,
-      style: cfg.hangingSign.style ?? 'red',
-      x: w / 2 - 0.55,
-      y: 3.9 + 3.6,
-      z: front,
-      width: 0.62,
-      height: 3.2,
-      boardTint: '#5d2a22',
-    })
-  }
-  // 騎樓下的燈籠列
-  for (let x = -w / 2 + 1.2; x <= w / 2 - 1.1; x += 1.6) b.addLantern(x, 3.1, front - 0.6, { scale: 0.9 })
-  b.addPool(0, front + 1.2, 5.5, '#ffb066')
-  return result
+  return buildJiangShanLou(b, cfg)
 }
 
 /* ═══════════ 新芳春茶行：閩南式結合仿洋式的三層洋樓 ═══════════ */

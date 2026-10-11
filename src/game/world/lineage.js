@@ -157,7 +157,7 @@ export function genericBuildingConfig(lot, era) {
     litWindows: night ? 0.75 : era.lighting.glow > 0.3 ? 0.45 : 0.22,
     modernFront: condition === 'restored' && rng() < (style.modernFront ?? 0),
     tinAwning: condition === 'aged' && state.archetype === 'minnan' && rng() < 0.6,
-    balconyLanterns: era.id === 'banquet' && rng() < 0.35,
+    balconyLanterns: era.id === 'banquet' && rng() < 0.22,
     pottedPlants: era.id === 'banquet' && arcade && rng() < 0.35,
     cafe: (era.id === 'modern' && state.archetype === 'deco' && rng() < 0.5) || (era.id === 'revival' && rng() < 0.3),
     walkway: true,
@@ -170,5 +170,33 @@ export function genericBuildingConfig(lot, era) {
     }
   }
   if (lot.kind === 'end') config.windows = 3
+  if (era.id === 'banquet') Object.assign(config, banquetVariety(lot, state))
   return config
+}
+
+const BRICK_TINTS = ['#ffffff', '#f6e6de', '#fbeee2']
+
+/**
+ * 酒樓年代的街景變化（只影響這個年代，使用獨立的亂數序列，其他年代的建築完全不變）：
+ * - 洋樓分成紅磚與灰泥兩種立面，窗型與山頭也各有不同
+ * - 燈籠大小、高度與數量不一，避免整排一模一樣
+ * - 少數店家在騎樓前掛布幡
+ */
+function banquetVariety(lot, state) {
+  const rng = seeded(lot.seed, 900)
+  const variety = {
+    ornate: true,
+    lanternScale: 0.8 + rng() * 0.32,
+    lanternDrop: rng() * 0.38,
+    lanternCount: rng() < 0.45 ? 1 : 2,
+    banner: rng() < 0.24 ? { text: pick(rng, BANNER_WORDS) } : null,
+  }
+  if (state.archetype === 'baroque') {
+    const brick = rng() < 0.5
+    variety.facade = brick ? 'brick' : 'stucco'
+    variety.brickTint = pick(rng, BRICK_TINTS)
+    variety.windowStyles = brick ? pick(rng, [['rect', 'arch'], ['segment', 'rect'], ['segment', 'segment']]) : pick(rng, [['arch', 'arch'], ['arch', 'rect']])
+    if (brick) variety.parapet = 'balustrade'
+  }
+  return variety
 }
