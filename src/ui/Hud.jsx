@@ -5,6 +5,7 @@ import { useGameStore } from '../state/useGameStore.js'
 import { ChapterCard } from './ChapterCard.jsx'
 import { EraNotice } from './EraNotice.jsx'
 import { EraTimeline } from './EraTimeline.jsx'
+import { MusicNotice } from './MusicSettings.jsx'
 import { QualitySettings } from './QualitySettings.jsx'
 import { StoreDirectory } from './StoreDirectory.jsx'
 import { ExploreButton, Joystick } from './TouchControls.jsx'
@@ -161,6 +162,7 @@ export function Hud() {
         <QualitySettings />
         <StoreDirectory era={era} shops={shops} />
       </div>
+      {started && <MusicNotice />}
       <ControlsHint touch={touch} />
       <ObjectiveHint shops={shops} touch={touch} />
       {touch && <Joystick />}

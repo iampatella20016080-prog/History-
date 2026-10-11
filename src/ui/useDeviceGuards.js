@@ -24,7 +24,8 @@ export function useDeviceGuards() {
         event.preventDefault()
         return
       }
-      if (!event.target.closest?.('[data-scrollable]')) event.preventDefault()
+      // 音量滑桿需要原生的拖曳
+      if (!event.target.closest?.('[data-scrollable], input[type="range"]')) event.preventDefault()
     }
     let lastTouchEnd = 0
     const onTouchEnd = (event) => {
