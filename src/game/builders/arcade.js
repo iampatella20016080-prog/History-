@@ -1,4 +1,4 @@
-import { CylinderGeometry, IcosahedronGeometry, Shape, SphereGeometry } from 'three'
+import { CylinderGeometry, IcosahedronGeometry, Shape, SphereGeometry, TorusGeometry } from 'three'
 import { STREET } from '../config.js'
 import { createCurvedSlab } from './PartBuilder.js'
 import { MATERIAL_TILE } from '../rendering/materials.js'
@@ -19,7 +19,8 @@ import {
   roundWindow,
   signBoard,
 } from './facade.js'
-import { cafeSet, flowerPot, jar, planter, pottedPlant, shade } from './props.js'
+import { bench, cafeSet, flowerPot, jar, planter, pottedPlant, shade } from './props.js'
+import { SHOP_TYPES, displayShopfront } from './shopDisplays.js'
 import { buildGoods } from './shophouse.js'
 
 /**
@@ -88,10 +89,14 @@ export function buildArcadeBuilding(b, cfg) {
   }
 
   /* ── 側牆、後牆 ─────────────────────── */
+  // 弧角（摩登年代街角的 Art Deco 樓）：該側樓上的牆角改成四分之一圓柱
+  const cornerSide = cfg.roundCorner === 'left' ? -1 : cfg.roundCorner === 'right' ? 1 : 0
+  const cornerR = cornerSide ? Math.min(1.0, w * 0.2) : 0
   for (const side of [-1, 1]) {
     const x = side * (w / 2 - sideT / 2)
     b.box(wallMat, [sideT, topY + 0.3, D], [x, (topY + 0.3) / 2, -D / 2], { tint: wallTint, grime: grime(0.14) })
-    b.box(wallMat, [sideT, topY - groundH, walkD - 0.05], [x, (topY + groundH) / 2, (walkD - 0.05) / 2], { tint: wallTint })
+    const cut = side === cornerSide ? cornerR : 0
+    b.box(wallMat, [sideT, topY - groundH, walkD - 0.05 - cut], [x, (topY + groundH) / 2, (walkD - 0.05 - cut) / 2], { tint: wallTint })
   }
   b.box(wallMat, [w - sideT * 2, topY, wallT], [0, topY / 2, -D + wallT / 2], { tint: wallTint })
 
@@ -106,15 +111,16 @@ export function buildArcadeBuilding(b, cfg) {
   buildGroundShop(b, cfg, rng, { style, innerW, openingH, walkH, condition, darkWood, woodTint, trimTint })
 
   /* ── 樓上立面 ───────────────────────── */
-  b.box(wallMat, [w - 0.02, topY - groundH + 0.02, wallT], [0, (groundH + topY) / 2, front - wallT / 2], {
+  b.box(wallMat, [w - 0.02 - cornerR, topY - groundH + 0.02, wallT], [-cornerSide * cornerR / 2, (groundH + topY) / 2, front - wallT / 2], {
     tint: wallTint,
     grime: grime(0.1),
   })
+  if (cornerSide) roundedCorner(b, { side: cornerSide, r: cornerR, w, groundH, topY, front, wallMat, wallTint, trimTint, floors, upperH, parapetH: cfg.parapetHeight ?? 1.5 })
   const signY = groundH + 0.52
   if (style === 'baroque') {
     baroqueFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, shutterTint, litChance, condition })
   } else if (style === 'deco') {
-    decoFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, condition })
+    decoFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, condition, cornerSide, cornerR })
   } else {
     postwarFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, condition })
   }
@@ -144,13 +150,16 @@ export function buildArcadeBuilding(b, cfg) {
       text: cfg.hangingSign.text,
       style: cfg.hangingSign.style ?? 'vertical',
       x: side * (w / 2 - 0.55),
-      y: groundH + Math.min(2.4, (topY - groundH) * 0.55),
+      y: groundH + Math.min(2.4, (topY - groundH) * 0.55) + (cfg.hangingLift ?? 0),
       z: front,
       height: Math.min(2.6, (topY - groundH) * 0.8),
       width: 0.52,
       boardTint: cfg.hangingSign.style === 'vertical' ? '#f5f0e2' : '#5d4231',
     })
   }
+
+  // 街底的視覺焦點：女兒牆上的圓鐘與屋頂旗桿
+  if (cfg.focal) focalClock(b, { topY, front, parapetH: cfg.parapetHeight ?? defaults.parapetH, trimTint })
 
   /* ── 燈籠、燈火 ─────────────────────── */
   if (cfg.lanterns) {
@@ -322,7 +331,11 @@ function balustradeParapet(b, { y, width, z, wallTint, trimTint, count }) {
 }
 
 /* ═══════════ Art Deco 立面 ═══════════ */
-function decoFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance }) {
+function decoFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, cornerSide = 0, cornerR = 0 }) {
+  if (cfg.decoDetail) {
+    decoDetailFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, cornerSide, cornerR })
+    return
+  }
   const accent = trimTint
   const cream = shade(wallTint, 1.0)
   // 水平飾帶
@@ -443,6 +456,17 @@ function waterTank(b, { x, y, z, rng }) {
 /* ── 一樓店面 ───────────────────────────── */
 function buildGroundShop(b, cfg, rng, { style, innerW, openingH, walkH, condition, darkWood, woodTint, trimTint }) {
   const walkD = STREET.walkwayDepth
+  // 摩登年代：依店種陳列的櫥窗店面（西餐廳、喫茶、洋服、藥局、茶行、布行）
+  if (cfg.shopfront === 'display') {
+    displayShopfront(b, cfg, { innerW, openingH, style, darkWood })
+    if (style === 'deco' && cfg.awningTint !== null) {
+      const tint = cfg.awningTint ?? SHOP_TYPES[cfg.shopType]?.awning ?? '#7a2e33'
+      awning(b, { y: openingH + 0.25, z: 0.02, width: innerW + 0.2, depth: 1.0, drop: 0.45, tint })
+    }
+    if (cfg.arcadeBench) bench(b, [innerW / 2 - 0.9, walkH, walkD * 0.7], { rotationY: 0, length: 1.2 })
+    if (cfg.cafe) cafeSet(b, [-innerW * 0.25, walkH, walkD * 0.62], { seed: cfg.seed })
+    return
+  }
   const height = openingH - walkH - 0.05
   const interior = () => {
     const roomD = 2.8
@@ -493,4 +517,161 @@ function buildGroundShop(b, cfg, rng, { style, innerW, openingH, walkH, conditio
     for (const side of [-1, 1]) pottedPlant(b, [side * (innerW / 2 - 0.1), walkH, walkD * 0.62], { seed: (cfg.seed ?? 1) + side })
   }
   if (condition === 'restored') planter(b, [innerW / 2 - 0.2, walkH, walkD - 0.5], { seed: cfg.seed, small: true })
+}
+
+/* ═══════════ 摩登年代：細緻的 Art Deco 立面 ═══════════ */
+
+const STEEL = '#2e2b27'
+
+/** 鋼框窗：細框、一道直櫺、三道水平玻璃條（Art Deco 的特徵），外圍灰泥窗框與階梯狀窗楣 */
+function steelWindow(b, { x, y, width, height, z, lit, surround, curtain, glassTint = '#4a5270' }) {
+  b.box(lit ? 'windowLit' : 'dark', [width, height, 0.04], [x, y, z - 0.03], { tint: lit ? '#6b4b33' : glassTint })
+  const f = 0.045
+  for (const dy of [-1, 1]) b.box('plain', [width + f * 2, f, 0.06], [x, y + dy * (height / 2 + f / 2), z], { tint: STEEL })
+  for (const dx of [-1, 1]) b.box('plain', [f, height, 0.06], [x + dx * (width / 2 + f / 2), y, z], { tint: STEEL })
+  b.box('plain', [0.03, height, 0.05], [x, y, z], { tint: STEEL })
+  for (const t of [-0.25, 0.08, 0.32]) b.box('plain', [width, 0.025, 0.05], [x, y + height * t, z], { tint: STEEL })
+  // 窗內的窗簾（住家）
+  if (curtain) {
+    for (const dx of [-1, 1]) b.box('cloth', [width * 0.22, height * 0.85, 0.02], [x + dx * width * 0.36, y + height * 0.04, z - 0.02], { tint: curtain })
+  }
+  // 灰泥窗框、階梯狀窗楣、窗臺
+  b.box('stucco', [width + 0.3, 0.1, 0.12], [x, y + height / 2 + 0.12, z + 0.04], { tint: surround })
+  b.box('stucco', [width + 0.14, 0.08, 0.1], [x, y + height / 2 + 0.21, z + 0.04], { tint: surround })
+  b.box('stucco', [width + 0.26, 0.07, 0.18], [x, y - height / 2 - 0.07, z + 0.07], { tint: surround })
+}
+
+/** 幾何鐵欄杆：三道橫桿、細直桿與中央的圓環 */
+function decoRailing(b, { x, y, width, z, tint }) {
+  const h = 0.9
+  b.box('stucco', [width, 0.14, 0.62], [x, y, z + 0.31], { tint: shade(tint, 1.4) })
+  b.box('stucco', [width + 0.04, 0.05, 0.66], [x, y - 0.09, z + 0.31], { tint: shade(tint, 1.3) })
+  const rz = z + 0.58
+  for (const t of [0.22, 0.52, 0.86]) b.box('plain', [width, 0.03, 0.03], [x, y + 0.07 + h * t, rz], { tint: STEEL })
+  const n = Math.max(3, Math.round(width / 0.32))
+  for (let i = 0; i <= n; i++) b.box('plain', [0.025, h, 0.025], [x - width / 2 + (i * width) / n, y + 0.07 + h / 2, rz], { tint: STEEL })
+  b.add('plain', new TorusGeometry(0.17, 0.018, 5, 16), { position: [x, y + 0.07 + h * 0.54, rz], tint: STEEL })
+}
+
+function decoDetailFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, cornerSide, cornerR }) {
+  const accent = trimTint
+  const cream = wallTint
+  const surround = shade(cream, 1.04)
+  const style = cfg.decoDetail
+  // 可用寬度（弧角那一側讓出空間）
+  const usable = w - cornerR
+  const x0 = -w / 2 + (cornerSide < 0 ? cornerR : 0)
+  const count = usable >= 6 ? 3 : 2
+  const bay = (usable - 1.0) / count
+  const winW = Math.min(1.25, bay - 0.45)
+  const curtains = ['#e8d9c0', '#d9c7c9', '#cfd8cc', '#e6dcc6']
+
+  for (let f = 1; f < floors; f++) {
+    const fy = groundH + (f - 1) * upperH
+    // 水平飾帶（樓層線）
+    b.box('stucco', [usable, 0.14, 0.1], [x0 + usable / 2, f === 1 ? fy + 0.05 : fy + 0.18, front + 0.05], { tint: accent })
+    for (let i = 0; i < count; i++) {
+      const x = x0 + 0.5 + bay * (i + 0.5)
+      const lit = rng() < litChance
+      steelWindow(b, { x, y: fy + 1.6, width: winW, height: 1.4, z: front, lit, surround, curtain: rng() < 0.6 ? pick(rng, curtains) : null })
+      if (lit) b.addGlow(x, fy + 1.6, front + 0.3, 1.4, '#ffc98a')
+      if (rng() < 0.25) flowerPot(b, [x + winW * 0.3, fy + 0.86, front + 0.12], { seed: Math.floor(rng() * 1000) })
+    }
+    // 流線型：窗間的三道細水平溝槽
+    if (style === 'bands') {
+      for (let i = 0; i <= count; i++) {
+        const x = x0 + 0.5 + bay * i
+        for (let k = 0; k < 3; k++) b.box('stucco', [0.34, 0.035, 0.05], [x, fy + 1.25 + k * 0.32, front + 0.025], { tint: accent })
+      }
+    }
+  }
+  // 垂直線條：鰭片式的直條壁柱貫穿樓上各層
+  if (style === 'fins' || style === 'stepped') {
+    for (let i = 0; i <= count; i++) {
+      const x = x0 + 0.5 + bay * i
+      const center = i === Math.floor(count / 2) || i === Math.ceil(count / 2)
+      const h = topY - groundH + (style === 'fins' && center ? 1.1 : 0.35)
+      b.box('stucco', [0.16, h, 0.2], [x, groundH + h / 2, front + 0.1], { tint: center ? accent : surround })
+      if (style === 'fins') for (const dx of [-0.11, 0.11]) b.box('stucco', [0.04, h - 0.4, 0.12], [x + dx, groundH + (h - 0.4) / 2 + 0.2, front + 0.06], { tint: surround })
+    }
+  }
+  // 二樓中央的幾何鐵欄杆陽臺
+  if (style !== 'fins' && floors >= 3) {
+    const bx = x0 + 0.5 + bay * (Math.floor(count / 2) + (count % 2 ? 0.5 : 0))
+    decoRailing(b, { x: bx, y: groundH + upperH + 0.22, width: Math.min(bay * 1.2, 2.2), z: front, tint: accent })
+  }
+  // 簷下的幾何收邊：一排菱形
+  if (style === 'stepped') {
+    for (let x = x0 + 0.3; x < x0 + usable - 0.2; x += 0.42) {
+      b.box('stucco', [0.16, 0.16, 0.05], [x, topY - 0.32, front + 0.03], { rotation: [0, 0, Math.PI / 4], tint: accent })
+    }
+  }
+  // 速度線
+  for (let k = 0; k < 3; k++) b.box('stucco', [usable * 0.92, 0.05, 0.06], [x0 + usable / 2, topY - 0.55 - k * 0.14, front + 0.03], { tint: accent })
+  const plaqueText = cfg.parapetText ?? (cfg.sign?.placement === 'parapet' ? cfg.sign.text : null)
+  b.group([-cornerSide * cornerR / 2, 0, 0], 0, () => {
+    parapet(b, {
+      y: topY,
+      width: usable - 0.02,
+      height: cfg.parapetHeight ?? 1.5,
+      z: front,
+      style: 'deco',
+      tint: cream,
+      trimTint: shade(cream, 1.02),
+      finials: false,
+      plaque: plaqueText ? { text: plaqueText, style: cfg.sign?.style ?? 'deco' } : null,
+    })
+    b.box('stucco', [usable, 0.08, 0.1], [0, topY + 0.62, front + 0.05], { tint: accent })
+  })
+}
+
+/** 街角的弧形牆角：四分之一圓柱的牆面、每層一道環形飾帶、頂端圓弧女兒牆 */
+function roundedCorner(b, { side, r, w, groundH, topY, front, wallMat, wallTint, trimTint, floors, upperH, parapetH }) {
+  const cx = side * (w / 2 - r)
+  const cz = front - r
+  const thetaStart = side > 0 ? 0 : Math.PI * 1.5
+  const h = topY - groundH
+  b.add(wallMat === 'brick' ? 'brick' : 'stucco', new CylinderGeometry(r, r, h, 14, 1, true, thetaStart, Math.PI / 2), {
+    position: [cx, groundH + h / 2, cz],
+    tint: wallTint,
+  })
+  for (let f = 1; f <= floors; f++) {
+    const y = f === floors ? topY - 0.1 : groundH + (f - 1) * upperH + (f === 1 ? 0.05 : 0.18)
+    b.add('stucco', new TorusGeometry(r + 0.04, 0.06, 4, 10, Math.PI / 2), {
+      position: [cx, y, cz],
+      rotation: [Math.PI / 2, 0, side > 0 ? 0 : Math.PI / 2],
+      tint: trimTint,
+    })
+  }
+  // 弧面上的三道速度線
+  for (let k = 0; k < 3; k++) {
+    b.add('stucco', new TorusGeometry(r + 0.025, 0.025, 3, 10, Math.PI / 2), {
+      position: [cx, topY - 0.55 - k * 0.14, cz],
+      rotation: [Math.PI / 2, 0, side > 0 ? 0 : Math.PI / 2],
+      tint: trimTint,
+    })
+  }
+  b.add('stucco', new CylinderGeometry(r, r, parapetH * 0.4, 14, 1, true, thetaStart, Math.PI / 2), {
+    position: [cx, topY + parapetH * 0.2, cz],
+    tint: wallTint,
+  })
+}
+
+/** 街底建築的圓鐘與旗桿（遠景的視覺焦點） */
+function focalClock(b, { topY, front, parapetH, trimTint }) {
+  const y = topY + parapetH * 0.62
+  const z = front + 0.06
+  b.cylinder('stucco', 0.62, 0.62, 0.12, 24, [0, y, z - 0.02], { rotation: [Math.PI / 2, 0, 0], tint: shade(trimTint, 0.95) })
+  b.cylinder('plain', 0.5, 0.5, 0.04, 24, [0, y, z + 0.05], { rotation: [Math.PI / 2, 0, 0], tint: '#f6f1e4' })
+  for (let i = 0; i < 12; i++) {
+    const a = (i / 12) * Math.PI * 2
+    b.box('plain', [0.03, i % 3 === 0 ? 0.11 : 0.06, 0.02], [Math.sin(a) * 0.41, y + Math.cos(a) * 0.41, z + 0.08], { rotation: [0, 0, -a], tint: '#2b2622' })
+  }
+  b.box('plain', [0.035, 0.3, 0.02], [0.05, y + 0.13, z + 0.09], { rotation: [0, 0, -0.35], tint: '#2b2622' })
+  b.box('plain', [0.03, 0.4, 0.02], [-0.12, y + 0.08, z + 0.1], { rotation: [0, 0, 1.2], tint: '#2b2622' })
+  b.addGlow(0, y, z + 0.2, 1.4, '#fff1d6')
+  // 旗桿與小旗
+  b.cylinder('plain', 0.035, 0.045, 3.2, 8, [0, topY + parapetH + 1.6, front - 0.6], { tint: '#d8d2c4' })
+  b.add('plain', new SphereGeometry(0.07, 8, 6), { position: [0, topY + parapetH + 3.25, front - 0.6], tint: '#c9a24a' })
+  b.box('cloth', [0.9, 0.55, 0.02], [0.47, topY + parapetH + 2.85, front - 0.6], { rotation: [0, 0.25, 0], tint: '#e9e2d0' })
 }

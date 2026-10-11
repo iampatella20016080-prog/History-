@@ -711,3 +711,57 @@ export function placard(b, position, { rotationY = 0, text = '', width = 2.3, he
     b.addSign({ text, style: 'label', width, height, position: [0, 1.24, 0.032] })
   })
 }
+
+/* ── 摩登年代的街道設施 ─────────────────────── */
+
+/** 招牌桿：路邊立著的直式招牌（雙面字） */
+export function signPole(b, position, { rotationY = 0, text = '喫茶', style = 'deco', height = 2.4 } = {}) {
+  b.group(position, rotationY, () => {
+    b.box('stone', [0.36, 0.14, 0.36], [0, 0.07, 0], { tint: '#c9c3b6' })
+    b.cylinder('plain', 0.035, 0.045, height, 8, [0, height / 2, 0], { tint: '#2e2b27' })
+    const boardH = 1.15
+    const y = height - boardH / 2 - 0.12
+    b.box('plain', [0.46, boardH + 0.08, 0.06], [0.27, y, 0], { tint: '#2e2b27' })
+    const sign = { text, style, vertical: true, width: 0.38, height: boardH }
+    b.addSign({ ...sign, position: [0.27, y, 0.032] })
+    b.addSign({ ...sign, position: [0.27, y, -0.032], rotationY: Math.PI })
+    b.add('plain', new SphereGeometry(0.05, 8, 6), { position: [0, height + 0.03, 0], tint: '#b8955a' })
+  })
+}
+
+/** 報紙架：木架上一疊疊折好的報紙 */
+export function newsStand(b, position, { rotationY = 0 } = {}) {
+  b.group(position, rotationY, () => {
+    b.box('wood', [0.9, 0.06, 0.42], [0, 0.62, 0], { tint: '#7a5a3e' })
+    b.box('wood', [0.9, 0.5, 0.04], [0, 1.0, -0.19], { rotation: [-0.25, 0, 0], tint: '#6a4a32' })
+    for (const sx of [-1, 1]) {
+      for (const sz of [-1, 1]) b.box('wood', [0.04, 0.62, 0.04], [sx * 0.42, 0.31, sz * 0.18], { tint: '#5a3e2a' })
+    }
+    for (let i = 0; i < 3; i++) {
+      const x = -0.28 + i * 0.28
+      b.box('plain', [0.24, 0.06, 0.3], [x, 0.68, 0.02], { tint: '#efe8d6' })
+      b.box('plain', [0.24, 0.32, 0.01], [x, 1.0, -0.15], { rotation: [-0.25, 0, 0], tint: '#f2ecdc' })
+      for (let k = 0; k < 4; k++) b.box('plain', [0.18, 0.018, 0.005], [x, 1.1 - k * 0.06, -0.142 + k * 0.015], { rotation: [-0.25, 0, 0], tint: '#5a5248' })
+    }
+  })
+}
+
+/** 海報欄：木框佈告欄上的幾張電影與展覽海報（色塊與幾何圖形，不寫字） */
+export function posterBoard(b, position, { rotationY = 0, seed = 1 } = {}) {
+  const rng = createRng(seed)
+  b.group(position, rotationY, () => {
+    for (const sx of [-1, 1]) b.box('wood', [0.08, 2.1, 0.08], [sx * 0.75, 1.05, 0], { tint: '#4a3628' })
+    b.box('wood', [1.6, 1.15, 0.06], [0, 1.45, 0], { tint: '#6a4a32' })
+    b.box('wood', [1.72, 0.08, 0.2], [0, 2.07, 0.04], { tint: '#4a3628' })
+    const palettes = [['#c9564a', '#f0e2c0', '#2f3f5c'], ['#2f6b5a', '#e8d9b0', '#b98f4f'], ['#e0c36a', '#3f4f63', '#efe6d4'], ['#9a4a5e', '#f2e8d4', '#2b2622']]
+    for (let i = 0; i < 3; i++) {
+      const [bg, fg, ink] = pick(rng, palettes)
+      const x = -0.5 + i * 0.5
+      const tilt = (rng() - 0.5) * 0.05
+      b.box('plain', [0.42, 0.95, 0.01], [x, 1.45, 0.035], { rotation: [0, 0, tilt], tint: bg })
+      b.add('plain', new SphereGeometry(0.12, 10, 6), { position: [x, 1.62, 0.04], scale: [1, 1, 0.08], tint: fg })
+      b.box('plain', [0.3, 0.05, 0.01], [x, 1.22, 0.042], { tint: ink })
+      b.box('plain', [0.22, 0.04, 0.01], [x, 1.13, 0.042], { tint: ink })
+    }
+  })
+}

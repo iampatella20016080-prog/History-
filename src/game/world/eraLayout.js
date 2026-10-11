@@ -45,6 +45,15 @@ const PROPS_BY_ERA = {
   ],
   modern: [
     { type: 'vintageCar', position: [16.5, 0, 1.75], rotationY: Math.PI },
+    // 河岸廣場邊的汽車停靠處、路邊的招牌桿、報紙架與海報欄（不塞滿，留出步行空間）
+    { type: 'vintageCar', position: [-37.4, 0, 6.0], rotationY: -Math.PI / 2 + 0.08, tint: '#4a3a30' },
+    { type: 'signPole', position: [-14.2, 0, -2.55], rotationY: 0.0, text: '喫茶', style: 'deco', height: 2.5 },
+    { type: 'signPole', position: [13.6, 0, 2.55], rotationY: Math.PI, text: '洋服', style: 'lacquer', height: 2.15 },
+    { type: 'signPole', position: [31.7, 0, -2.55], rotationY: 0.0, text: '藥局', style: 'vertical', height: 2.7 },
+    { type: 'newsStand', position: [-34.6, 0, -2.25], rotationY: Math.PI / 2 },
+    { type: 'posterBoard', position: [-41.9, 0, 7.55], rotationY: Math.PI },
+    { type: 'pottedPlant', position: [0.9, 0, -2.55], size: 0.9 },
+    { type: 'pottedPlant', position: [20.0, 0, 2.55] },
     { type: 'bicycle', position: [-17.2, 0, -2.45], rotationY: 0.05 },
     { type: 'bicycle', position: [5.8, 0, 2.45], rotationY: Math.PI - 0.1 },
     { type: 'bicycle', position: [-37.5, 0, -6.5], rotationY: 0.4 },
@@ -92,6 +101,9 @@ const FOOTPRINT = {
   planter: [0.5, 0.25],
   aBoard: [0.32, 0.25],
   placard: [1.25, 0.22],
+  signPole: [0.3, 0.3],
+  newsStand: [0.5, 0.25],
+  posterBoard: [0.85, 0.15],
   pottedPlant: [0.3, 0.3],
 }
 
@@ -205,6 +217,62 @@ function diversifyRows(buildings) {
   }
 }
 
+const MODERN_ORDER = ['restaurant', 'cafe', 'tailor', 'pharmacy', 'tea', 'cloth']
+const MODERN_WORDS = { restaurant: '洋食', cafe: '喫茶', tailor: '洋服', pharmacy: '藥局', tea: '茶行', cloth: '布行' }
+
+/**
+ * 摩登年代的街區節奏：
+ * - 店種平均分配（西餐廳、喫茶、洋服、藥局、茶行、布行），同一側相鄰的店不重複；
+ *   閩南舊店屋只當茶行、布行或藥局，Art Deco 樓較常是西餐廳、喫茶與洋服店
+ * - 每一排兩端若是 Art Deco 樓，朝外的牆角做成弧角
+ */
+const MODERN_ALLOWED = {
+  minnan: ['tea', 'cloth', 'pharmacy'],
+  deco: ['restaurant', 'cafe', 'tailor', 'pharmacy', 'cloth'],
+  baroque: MODERN_ORDER,
+}
+
+function arrangeModernRows(buildings) {
+  const rows = new Map()
+  for (const building of buildings) {
+    const key = building.z.toFixed(1)
+    if (!rows.has(key)) rows.set(key, [])
+    rows.get(key).push(building)
+  }
+  const used = Object.fromEntries(MODERN_ORDER.map((type) => [type, 0]))
+  const ordered = [...rows.entries()].sort((a, b) => Number(a[0]) - Number(b[0]))
+  for (const [, row] of ordered) {
+    row.sort((a, b) => a.x - b.x)
+    let previous = null
+    row.forEach((building, index) => {
+      const config = building.config
+      if (building.storeId || !config.shopType) {
+        previous = null
+        return
+      }
+      const allowed = MODERN_ALLOWED[config.archetype] ?? MODERN_ORDER
+      const options = allowed.filter((type) => type !== previous)
+      // 使用次數最少的店種；同樣少時依原本（亂數）的店種與位置輪替
+      const offset = index + Math.round(building.x)
+      options.sort((p, q) => used[p] - used[q] || (p === config.shopType ? -1 : q === config.shopType ? 1 : 0) || ((MODERN_ORDER.indexOf(p) + offset) % 6) - ((MODERN_ORDER.indexOf(q) + offset) % 6))
+      const type = options[0]
+      used[type]++
+      previous = type
+      config.shopType = type
+      if (config.sign) config.sign = { ...config.sign, text: MODERN_WORDS[type] }
+      if (config.archetype === 'minnan') config.goods = type === 'tea' ? 'tea' : type === 'cloth' ? 'cloth' : 'jars'
+      else config.cafe = type === 'cafe' && config.cafe !== false
+    })
+    if (row.length < 2) continue
+    // 兩端的弧角（本地 +x 方向在世界座標中的朝向依建築旋轉而定）
+    for (const [building, worldSide] of [[row[0], -1], [row[row.length - 1], 1]]) {
+      if (building.storeId || building.config.archetype !== 'deco') continue
+      const localPlusX = Math.cos(building.rotationY)
+      building.config.roundCorner = worldSide * localPlusX > 0 ? 'right' : 'left'
+    }
+  }
+}
+
 export function createEraLayout(era) {
   const plan = getLotPlan()
   const buildings = []
@@ -244,6 +312,7 @@ export function createEraLayout(era) {
   }
 
   if (era.id === 'banquet') diversifyRows(buildings)
+  if (era.id === 'modern') arrangeModernRows(buildings)
 
   const props = PROPS_BY_ERA[era.id] ?? []
   const lamps = streetLamps(era)

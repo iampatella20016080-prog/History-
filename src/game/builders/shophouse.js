@@ -454,6 +454,16 @@ export function buildGoods(b, cfg, rng, { w, innerW, walkH, walkD }) {
     displayTable(b, [0, walkH, z], { width: Math.min(1.6, innerW * 0.6), height: 0.6 })
     basket(b, [-0.35, walkH + 0.6, z], { content: pick(rng, ['beans', 'peanuts', 'tea']), seed: cfg.seed })
     basket(b, [0.35, walkH + 0.6, z], { content: pick(rng, ['rice', 'beans', 'peanuts']), seed: (cfg.seed ?? 1) + 3 })
+  } else if (goods === 'cloth') {
+    // 布行：展示桌上的布捲與立起的布匹
+    displayTable(b, [0, walkH, z], { width: Math.min(1.7, innerW * 0.65), height: 0.62 })
+    const colors = ['#c9564a', '#3f5f8a', '#e0c36a', '#6f8a5c', '#d7b8a8', '#2f3f5c']
+    for (let i = 0; i < 4; i++) {
+      b.cylinder('cloth', 0.08, 0.08, 0.5, 10, [-0.45 + i * 0.3, walkH + 0.7, z], { rotation: [0, 0, Math.PI / 2], tint: pick(rng, colors) })
+    }
+    for (let i = 0; i < 3; i++) {
+      b.cylinder('cloth', 0.08, 0.08, 1.2, 10, [innerW / 2 - 0.3 - i * 0.2, walkH + 0.6, z - 0.25], { rotation: [0.1, 0, 0.08 * (i - 1)], tint: pick(rng, colors) })
+    }
   } else if (goods === 'poles') {
     bambooPoles(b, [w / 2 - 0.9, walkH, -0.05], {})
     crate(b, [-innerW / 2 + 0.4, walkH, z], { rotationY: rng() * 0.4 })
