@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { getQualitySettings } from '../game/quality.js'
 import { useGameStore } from '../state/useGameStore.js'
+import { MusicSettings } from './MusicSettings.jsx'
 
 const MODE_ORDER = ['smooth', 'fine']
 
@@ -22,8 +23,10 @@ function GearIcon() {
 }
 
 /**
- * 右上角的畫質設定（齒輪）：流暢（適合 iPad）／精緻（適合電腦）。
- * 選擇會記在這台裝置上，切換後立即套用到 3D 畫面，不需要重新整理。
+ * 右上角的設定（齒輪）：
+ * - 畫質：流暢（適合 iPad）／精緻（適合電腦），切換後立即套用到 3D 畫面，不需要重新整理
+ * - 背景音樂：開／關與音量
+ * 選擇都會記在這台裝置上。
  */
 export function QualitySettings() {
   const mode = useGameStore((state) => state.qualityMode)
@@ -53,8 +56,8 @@ export function QualitySettings() {
       <button
         type="button"
         className="hud-quality__toggle paper"
-        aria-label="畫質設定"
-        title="畫質設定"
+        aria-label="設定（畫質、背景音樂）"
+        title="設定（畫質、背景音樂）"
         aria-expanded={open}
         aria-controls="quality-panel"
         onClick={() => togglePanel()}
@@ -62,9 +65,9 @@ export function QualitySettings() {
         <GearIcon />
       </button>
       {open && (
-        <div id="quality-panel" className="hud-quality__panel paper" role="dialog" aria-label="畫質設定">
+        <div id="quality-panel" className="hud-quality__panel paper" role="dialog" aria-label="設定" data-scrollable>
           <p className="hud-menu__heading">
-            <span>畫質設定</span>
+            <span>畫質</span>
           </p>
           <div className="quality-options" role="radiogroup" aria-label="畫質模式">
             {MODE_ORDER.map((id) => {
@@ -94,6 +97,7 @@ export function QualitySettings() {
             })}
           </div>
           <p className="hud-menu__note">選擇會記在這台裝置上。兩種模式的店家、歷史資訊與互動完全相同。</p>
+          <MusicSettings />
         </div>
       )}
     </div>

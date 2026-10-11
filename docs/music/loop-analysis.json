@@ -1,0 +1,130 @@
+{
+  "tracks": [
+    {
+      "era": "qing-port",
+      "file": "public/audio/era-qing-port.mp3",
+      "bytes": 341379,
+      "decodedSeconds": 17.0,
+      "loopSeconds": 15.0,
+      "periodicErrorAfterLoop": 0.0116,
+      "periodicErrorBeforeLoop": 0.0049,
+      "seamJump": 0.0062,
+      "typicalJump99_9": 0.06168,
+      "min20msRmsDb": -43.5,
+      "seam20msRmsDb": -19.5,
+      "peakDb": -4.81,
+      "kWeightedRmsDb": -19.62,
+      "above9kHzEnergy": 0.0,
+      "maxTransientRatio": 1.7,
+      "checks": {
+        "循環 15 秒": true,
+        "週期性": true,
+        "接點無爆音": true,
+        "接點無空白": true,
+        "無削波": true,
+        "高頻柔和": true
+      }
+    },
+    {
+      "era": "banquet",
+      "file": "public/audio/era-banquet.mp3",
+      "bytes": 341379,
+      "decodedSeconds": 17.0,
+      "loopSeconds": 15.0,
+      "periodicErrorAfterLoop": 0.0035,
+      "periodicErrorBeforeLoop": 0.0018,
+      "seamJump": 0.0066,
+      "typicalJump99_9": 0.02323,
+      "min20msRmsDb": -30.1,
+      "seam20msRmsDb": -17.5,
+      "peakDb": -9.6,
+      "kWeightedRmsDb": -19.62,
+      "above9kHzEnergy": 0.0,
+      "maxTransientRatio": 1.66,
+      "checks": {
+        "循環 15 秒": true,
+        "週期性": true,
+        "接點無爆音": true,
+        "接點無空白": true,
+        "無削波": true,
+        "高頻柔和": true
+      }
+    },
+    {
+      "era": "modern",
+      "file": "public/audio/era-modern.mp3",
+      "bytes": 341382,
+      "decodedSeconds": 17.0,
+      "loopSeconds": 15.0,
+      "periodicErrorAfterLoop": 0.0046,
+      "periodicErrorBeforeLoop": 0.0055,
+      "seamJump": 0.00048,
+      "typicalJump99_9": 0.02839,
+      "min20msRmsDb": -32.5,
+      "seam20msRmsDb": -19.5,
+      "peakDb": -5.05,
+      "kWeightedRmsDb": -19.62,
+      "above9kHzEnergy": 0.0,
+      "maxTransientRatio": 1.84,
+      "checks": {
+        "循環 15 秒": true,
+        "週期性": true,
+        "接點無爆音": true,
+        "接點無空白": true,
+        "無削波": true,
+        "高頻柔和": true
+      }
+    },
+    {
+      "era": "postwar",
+      "file": "public/audio/era-postwar.mp3",
+      "bytes": 341379,
+      "decodedSeconds": 17.0,
+      "loopSeconds": 15.0,
+      "periodicErrorAfterLoop": 0.012,
+      "periodicErrorBeforeLoop": 0.0116,
+      "seamJump": 0.01545,
+      "typicalJump99_9": 0.07906,
+      "min20msRmsDb": -30.1,
+      "seam20msRmsDb": -18.3,
+      "peakDb": -6.79,
+      "kWeightedRmsDb": -19.62,
+      "above9kHzEnergy": 0.0,
+      "maxTransientRatio": 1.6,
+      "checks": {
+        "循環 15 秒": true,
+        "週期性": true,
+        "接點無爆音": true,
+        "接點無空白": true,
+        "無削波": true,
+        "高頻柔和": true
+      }
+    },
+    {
+      "era": "revival",
+      "file": "public/audio/era-revival.mp3",
+      "bytes": 341379,
+      "decodedSeconds": 17.0,
+      "loopSeconds": 15.0,
+      "periodicErrorAfterLoop": 0.0119,
+      "periodicErrorBeforeLoop": 0.0131,
+      "seamJump": 0.00077,
+      "typicalJump99_9": 0.05435,
+      "min20msRmsDb": -41.8,
+      "seam20msRmsDb": -28.1,
+      "peakDb": -5.52,
+      "kWeightedRmsDb": -19.62,
+      "above9kHzEnergy": 0.0,
+      "maxTransientRatio": 1.44,
+      "checks": {
+        "循環 15 秒": true,
+        "週期性": true,
+        "接點無爆音": true,
+        "接點無空白": true,
+        "無削波": true,
+        "高頻柔和": true
+      }
+    }
+  ],
+  "loudnessSpreadDb": 0.0
+}
