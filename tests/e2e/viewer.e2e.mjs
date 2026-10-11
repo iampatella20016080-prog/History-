@@ -456,7 +456,8 @@ async function runDevice(browser, device) {
       }
     }
     await press(page.locator('[data-exit-viewer]'))
-    await page.waitForTimeout(800)
+    // 人物在下一個影格才會重新顯示（軟體繪圖一個影格可能超過一秒）
+    await waitFor(page, () => window.__DDC__.scene.getObjectByName('player')?.visible === true, null, 30000)
     s = await snapshot(page)
     const stats = await frameStats(page)
     darkest = Math.min(darkest, stats.mean)
@@ -464,7 +465,12 @@ async function runDevice(browser, device) {
       s.viewMode === 'explore' && s.started && s.playerVisible && Math.hypot(s.player.x - before.player.x, s.player.z - before.player.z) < 1e-6 && stats.mean > 0.06 && stats.dark < 0.6
     if (!ok) {
       cycleFailures++
-      record(test, `第 ${i + 1} 次進出`, false, `mode=${s.viewMode} 人物 (${round(s.player.x)}, ${round(s.player.z)}) 亮度 ${stats.mean.toFixed(2)}`)
+      record(
+        test,
+        `第 ${i + 1} 次進出`,
+        false,
+        `mode=${s.viewMode} started=${s.started} 人物${s.playerVisible ? '可見' : '隱藏'} (${round(s.player.x)}, ${round(s.player.z)}) 亮度 ${stats.mean.toFixed(2)}、近黑 ${(stats.dark * 100).toFixed(0)}%`,
+      )
     }
   }
   const gl = await webglStatus(page)
