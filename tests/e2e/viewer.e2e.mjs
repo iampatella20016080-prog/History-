@@ -366,7 +366,16 @@ async function runDevice(browser, device) {
   )
   const reveal = await page.locator('[data-reveal-ui]').boundingBox()
   await tapAt(reveal.x + reveal.width / 2, reveal.y + reveal.height / 2)
-  await page.waitForFunction(() => !document.querySelector('.hud.is-ui-hidden'))
+  // 介面以 0.4 秒淡入：等工具列完全顯示再檢查
+  await waitFor(
+    page,
+    () => {
+      const bar = document.querySelector('.viewer-bar')
+      return !document.querySelector('.hud.is-ui-hidden') && bar && Number(getComputedStyle(bar).opacity) > 0.95
+    },
+    null,
+    30000,
+  )
   h = await hiddenState()
   record(test, '點右上角隱形觸發區恢復介面', !h.hidden && h.bar && !h.reveal)
   await press(page.locator('.hud-quality__toggle'))
