@@ -67,9 +67,9 @@ export function Lighting() {
     ambient.current.color.copy(a.ambientColor)
     ambient.current.intensity = a.ambientIntensity
     setGlowLevel(a.glow, a.lanternGlow)
-    // 冷色補光：只在有設定的年代開啟（強度 0 時不參與計算）
+    // 冷色補光：只有設定的年代有強度（其他年代為 0）。燈光始終存在，
+    // 避免切換年代時燈光數量改變、所有材質重新編譯著色器而卡頓
     const f = fill.current
-    f.visible = a.fillIntensity > 0.001
     f.color.copy(a.fillColor)
     f.intensity = a.fillIntensity
     f.position.copy(p0.copy(playerState.position).addScaledVector(a.fillDirection, LIGHT_DISTANCE))
@@ -94,7 +94,7 @@ export function Lighting() {
     <>
       <hemisphereLight ref={hemi} args={['#e3ecea', '#c7b08b', 1.75]} />
       <ambientLight ref={ambient} intensity={0.18} color="#fff6e8" />
-      <directionalLight ref={fill} intensity={0} visible={false} />
+      <directionalLight ref={fill} intensity={0} />
       <directionalLight
         ref={sun}
         intensity={2.5}
