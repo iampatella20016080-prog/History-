@@ -103,12 +103,18 @@ try {
   await page.waitForFunction(() => document.documentElement.dataset.sceneEra, null, { timeout: 120000 })
   await page.locator('.intro__start').click()
   await page.waitForFunction(() => document.querySelector('.hud.is-started'))
-  // 等開場鏡頭移到角色身後、停穩後再開始（之後才比較切換年代前後的鏡頭位置）
+  // 等開場鏡頭移到角色身後、停穩後再開始（之後才比較切換年代前後的鏡頭位置）。
+  // 軟體繪圖下一個影格可能要好幾秒，所以要比較「不同影格」的鏡頭位置：連續兩個新影格都沒動才算停穩
   let previous = null
-  for (let i = 0; i < 60; i++) {
-    await page.waitForTimeout(1500)
+  let lastFrame = -1
+  let still = 0
+  for (let i = 0; i < 180 && still < 2; i++) {
+    await page.waitForTimeout(1000)
+    const frame = await page.evaluate(() => window.__DDC__.frameCount ?? null)
+    if (frame !== null && frame === lastFrame) continue
+    lastFrame = frame
     const c = (await outfitState(page)).camera
-    if (previous && Math.hypot(c.x - previous.x, c.y - previous.y, c.z - previous.z) < 0.005) break
+    still = previous && Math.hypot(c.x - previous.x, c.y - previous.y, c.z - previous.z) < 0.005 ? still + 1 : 0
     previous = c
   }
 
