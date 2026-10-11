@@ -3,6 +3,7 @@
  *
  * L  五首配樂：以瀏覽器自己的 MP3 解碼器解碼，用 OfflineAudioContext 依設定表的 loopStart／loopEnd
  *    連續循環渲染 45 秒，檢查兩個循環接點有沒有空白（20 毫秒音量）或爆音（樣本跳動量）
+ * T  iPad 尺寸觸控模擬：點開始探索、點開關、以觸控事件拖曳音量滑桿
  * R  五個年代各即時播放 45 秒，以分析節點量測總輸出，循環接點附近沒有空白、同時只有一個音源
  * P  遊戲中（桌面）：
  *    - 按「開始探索」後啟用音訊並播放目前年代，循環參數正確
@@ -14,7 +15,7 @@
  *    - 關閉音樂與音量會記住（重新整理後沿用，靜音時不建立音訊）
  *
  * 用法：npm run dev，然後 node tests/e2e/music.e2e.mjs http://127.0.0.1:5173/
- * 環境變數：PLAYWRIGHT_MODULE、ONLY（L,P,R）、LISTEN_SECONDS（即時播放秒數，預設 45）
+ * 環境變數：PLAYWRIGHT_MODULE、ONLY（L,P,R,T）、LISTEN_SECONDS（即時播放秒數，預設 45）
  *
  * 注意：這些是自動量測，不能取代實際試聽；也沒有在真實 iPad／Safari 上執行。
  */
@@ -318,6 +319,41 @@ async function testListen(browser) {
   await context.close()
 }
 
+/* ───────────── T：iPad 觸控操作背景音樂設定 ───────────── */
+async function testTouch(browser) {
+  const context = await browser.newContext({ viewport: { width: 1180, height: 820 }, hasTouch: true, isMobile: false })
+  const page = await context.newPage()
+  page.setDefaultTimeout(120000)
+  await page.goto(`${BASE_URL}?quality=smooth`, { waitUntil: 'load' })
+  await page.waitForFunction(() => document.documentElement.dataset.sceneEra, null, { timeout: 120000 })
+  await page.locator('.intro__start').tap()
+  const playing = await waitFor(page, () => window.__DDC__.audioManager.inspect().status === 'playing', null, 30000)
+  record('T 觸控', '點「開始探索」後播放', playing, (await audio(page)).status)
+  await page.locator('.hud-quality__toggle').tap()
+  await page.locator('[data-music-toggle]').tap()
+  const off = await waitFor(page, () => window.__DDC__.audioManager.inspect().status === 'off', null, 5000)
+  await page.locator('[data-music-toggle]').tap()
+  const on = await waitFor(page, () => window.__DDC__.audioManager.inspect().status === 'playing', null, 20000)
+  record('T 觸控', '點一下切換「背景音樂：開／關」', off && on)
+  // 以觸控事件拖曳音量滑桿（從左側拖到約 80% 的位置）
+  const box = await page.locator('[data-music-volume]').boundingBox()
+  const cdp = await context.newCDPSession(page)
+  const y = box.y + box.height / 2
+  const from = box.x + box.width * 0.25
+  const to = box.x + box.width * 0.8
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: from, y, id: 1 }] })
+  for (let i = 1; i <= 8; i++) {
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: from + ((to - from) * i) / 8, y, id: 1 }] })
+  }
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+  await page.waitForTimeout(500)
+  const info = await audio(page)
+  const stored = await page.evaluate(() => localStorage.getItem('ddc.music.volume'))
+  record('T 觸控', '以觸控拖曳音量滑桿', info.volume > 0.6 && Number(stored) === info.volume, `音量 ${Math.round(info.volume * 100)}%（儲存值 ${stored}）`)
+  await page.evaluate(() => localStorage.removeItem('ddc.music.volume'))
+  await context.close()
+}
+
 const playwright = await loadPlaywright()
 const browser = await playwright.chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] })
 try {
@@ -325,6 +361,7 @@ try {
   if (run('L')) await testLoops(browser)
   if (run('P')) await testGame(browser)
   if (run('R')) await testListen(browser)
+  if (run('T')) await testTouch(browser)
 } finally {
   await browser.close()
 }
