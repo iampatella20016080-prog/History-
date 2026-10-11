@@ -19,7 +19,7 @@ function addBody(b) {
   // 脖子與頭
   b.add('head', 'skin', tube(0.055, 0.065, 0.1, 8), { p: [0, 0.02, 0] })
   b.add('head', 'skin', new SphereGeometry(0.155, 16, 12), { p: [0, 0.16, 0] })
-  // 頭髮：頭頂、後腦、瀏海與鬢角（五套相同）
+  // 頭髮：頭頂、後腦與瀏海（五套相同）
   b.add('head', 'hair', new SphereGeometry(0.155, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.55), { p: [0, 0.19, -0.025], s: [1.05, 1, 1.05], tag: 'hair' })
   b.add('head', 'hair', new SphereGeometry(0.15, 12, 10), { p: [0, 0.155, -0.05], s: [1.02, 0.9, 0.9] })
   const fringe = [
@@ -30,9 +30,6 @@ function addBody(b) {
   ]
   for (const [x, y, z, rz] of fringe) {
     b.add('head', 'hair', new ConeGeometry(0.04, 0.09, 6), { p: [x, y, z], r: [0.2, 0, rz + Math.PI], s: [1, 1, 0.6], shadow: false })
-  }
-  for (const side of [-1, 1]) {
-    b.add('head', 'hair', new BoxGeometry(0.03, 0.08, 0.05), { p: [side * 0.148, 0.165, 0.05], r: [0, 0, side * 0.08], shadow: false })
   }
   // 眼睛與眉毛
   for (const side of [-1, 1]) {
@@ -208,7 +205,7 @@ function banquet() {
   b.add('head', 'blackLight', tube(0.177, 0.177, 0.03, 16), { p: [0, 0.195, -0.018] })
   b.add('head', 'red', new SphereGeometry(0.022, 8, 6), { p: [0, 0.365, -0.018] })
 
-  return b.build({ legSwing: 0.72, armSwing: { right: 0.85, left: 0.85 }, armSpread: { right: 0.17, left: 0.17 } })
+  return b.build({ legSwing: 0.68, armSwing: { right: 0.85, left: 0.85 }, armSpread: { right: 0.17, left: 0.17 } })
 }
 
 /* ───────────── 1930–1945 摩登大稻埕 ───────────── */

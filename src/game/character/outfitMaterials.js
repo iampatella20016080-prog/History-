@@ -88,10 +88,10 @@ const TEXTURES = {
       g.strokeRect(28, 92, 14, 18)
       // 大稻埕（直書）
       g.fillStyle = 'rgba(70, 55, 45, 0.95)'
-      g.font = 'bold 26px "Noto Serif TC", "Songti TC", serif'
+      g.font = 'bold 22px "Noto Serif TC", "Songti TC", serif'
       g.textAlign = 'center'
       g.textBaseline = 'middle'
-      ;['大', '稻', '埕'].forEach((ch, i) => g.fillText(ch, 92, 30 + i * 32))
+      ;['大', '稻', '埕'].forEach((ch, i) => g.fillText(ch, 94, 46 + i * 26))
     }),
 }
 
