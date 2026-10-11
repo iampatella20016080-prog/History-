@@ -98,12 +98,15 @@ export function getMaterials() {
   return cache
 }
 
-/** 依年代 glow 值（0 白天 – 1 入夜）更新所有發光材質 */
-export function setGlowLevel(glow) {
+/**
+ * 依年代 glow 值（0 白天 – 1 入夜）更新所有發光材質；
+ * lanternGlow 只調整燈籠與燈泡（酒樓年代調暗，避免過曝）。
+ */
+export function setGlowLevel(glow, lanternGlow = 1) {
   const materials = getMaterials()
   materials.windowLit.emissiveIntensity = 0.1 + glow * GLOW_BASE.windowLit
-  materials.lanternLit.emissiveIntensity = 0.15 + glow * GLOW_BASE.lanternLit
-  materials.bulb.emissiveIntensity = 0.25 + glow * GLOW_BASE.bulb
+  materials.lanternLit.emissiveIntensity = 0.15 + glow * GLOW_BASE.lanternLit * lanternGlow
+  materials.bulb.emissiveIntensity = 0.25 + glow * GLOW_BASE.bulb * lanternGlow
   materials.glassWarm.emissiveIntensity = 0.22 + glow * GLOW_BASE.glassWarm
   materials.glass.emissiveIntensity = glow * 0.18
 }

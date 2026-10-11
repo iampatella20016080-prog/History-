@@ -1,5 +1,7 @@
 import { useLayoutEffect } from 'react'
 import { transitionState } from '../transition.js'
+import { QUALITY_MODES } from '../quality.js'
+import { useGameStore } from '../../state/useGameStore.js'
 import { GlowLayer } from './GlowLayer.jsx'
 import { LanternLayer } from './LanternLayer.jsx'
 import { SignLayer } from './SignLayer.jsx'
@@ -12,6 +14,7 @@ import { TextLanterns } from './StoreMarkers.jsx'
  * 靜態網格由 worldManager 快取與釋放；其餘衍生資源隨元件卸載而釋放。
  */
 export function EraScene({ world }) {
+  const detail = useGameStore((state) => QUALITY_MODES[state.qualityMode]?.detail ?? true)
   // 通知轉場狀態機：這個年代的街景已經掛載到場景中
   useLayoutEffect(() => {
     transitionState.mountedWorld = world
@@ -22,6 +25,10 @@ export function EraScene({ world }) {
   return (
     <group name={`era-${world.eraId}`}>
       <StaticBatches batches={world.batches} dispose={false} />
+      {/* 遠景與節慶裝飾：精緻模式才顯示 */}
+      <group visible={detail}>
+        <StaticBatches batches={world.detailBatches ?? []} dispose={false} />
+      </group>
       <SignLayer signs={world.signs} banners={world.banners} />
       <LanternLayer lanterns={world.lanterns} />
       <TextLanterns lanterns={world.textLanterns} />

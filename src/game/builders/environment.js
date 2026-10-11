@@ -193,7 +193,7 @@ function backdropBlock(b, { x, z, width, depth, height, tint, rotationY = 0, tan
  * options.modern：改建成平頂樓房的比例；options.tall：五層以上樓房的比例；
  * options.skyline：遠方的現代大樓（老屋新生）
  */
-export function buildBackdrop(b, exclusions = [], { modern = 0, tall = 0, skyline = false } = {}) {
+export function buildBackdrop(b, exclusions = [], { modern = 0, tall = 0, skyline = false, skylineBuilder = b } = {}) {
   const rng = createRng(91)
   const tints = ['#e9dcc0', '#e2d7bd', '#d9dac3', '#ead6b9']
   const roofTints = ['#ffffff', '#ece0d8', '#ddd5cf']
@@ -265,8 +265,8 @@ export function buildBackdrop(b, exclusions = [], { modern = 0, tall = 0, skylin
     ]
     for (const [x, zz, h] of towers) {
       const w = range(rng, 14, 22)
-      b.box('stucco', [w, h, w * 0.8], [x, h / 2, zz], { tint: pick(rng, ['#d9dcd8', '#d2d6d4', '#e1ddd3']) })
-      b.box('dark', [w * 0.85, h * 0.9, 0.1], [x - w / 2 - 0.06, h * 0.48, zz], { rotation: [0, Math.PI / 2, 0], tint: '#9aa3a6' })
+      skylineBuilder.box('stucco', [w, h, w * 0.8], [x, h / 2, zz], { tint: pick(rng, ['#d9dcd8', '#d2d6d4', '#e1ddd3']) })
+      skylineBuilder.box('dark', [w * 0.85, h * 0.9, 0.1], [x - w / 2 - 0.06, h * 0.48, zz], { rotation: [0, Math.PI / 2, 0], tint: '#9aa3a6' })
     }
   }
 }

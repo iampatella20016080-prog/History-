@@ -3,6 +3,8 @@ import { useFrame } from '@react-three/fiber'
 import { BackSide, Color, IcosahedronGeometry, MeshToonMaterial, ShaderMaterial, Vector3 } from 'three'
 import { LAYERS } from '../config.js'
 import { atmosphere } from '../atmosphere.js'
+import { QUALITY_MODES } from '../quality.js'
+import { useGameStore } from '../../state/useGameStore.js'
 import { PartBuilder } from '../builders/PartBuilder.js'
 import { getMaterials } from '../rendering/materials.js'
 import { createRng, range } from '../utils/random.js'
@@ -114,6 +116,9 @@ export function Sky() {
       }
     }
     const [batch] = b.build()
+    // 流暢模式只畫前一半的雲（每朵雲由連續的幾團組成，以頂點數的一半近似）
+    const vertexCount = batch.geometry.attributes.position.count
+    const halfCount = Math.floor(vertexCount / 2 / 3) * 3
     const material = new MeshToonMaterial({
       vertexColors: true,
       gradientMap: getMaterials().gradientMap,
@@ -121,8 +126,13 @@ export function Sky() {
       emissiveIntensity: 0.55,
       fog: false,
     })
-    return { geometry: batch.geometry, material }
+    return { geometry: batch.geometry, material, vertexCount, halfCount }
   }, [])
+
+  const detail = useGameStore((state) => QUALITY_MODES[state.qualityMode]?.detail !== false)
+  useEffect(() => {
+    cloud.geometry.setDrawRange(0, detail ? cloud.vertexCount : cloud.halfCount)
+  }, [cloud, detail])
 
   useFrame(({ camera, clock }, delta) => {
     dome.current?.position.copy(camera.position)

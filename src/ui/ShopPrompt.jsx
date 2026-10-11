@@ -1,3 +1,4 @@
+import { shopYearText } from '../data/shops.js'
 import { useGameStore } from '../state/useGameStore.js'
 
 /**
@@ -24,7 +25,7 @@ export function ShopPrompt({ shop }) {
       >
         <span className="shop-prompt__name">{shop.name}</span>
         <span className="shop-prompt__meta">
-          {shop.year ? `${shop.year}年｜` : ''}
+          {shopYearText(shop) ? `${shopYearText(shop)}｜` : ''}
           {shop.category}
         </span>
         {shop.reconstruction && <span className="shop-prompt__note">歷史情境重建</span>}

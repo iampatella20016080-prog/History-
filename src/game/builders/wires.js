@@ -44,15 +44,20 @@ export function wire(b, { from, to, sag = 0.5, radius = 0.016, tint = '#2f2a26',
   return points
 }
 
-/** 跨街的燈籠串：沿懸垂線等距掛上小燈籠 */
-export function lanternString(b, { from, to, sag = 0.8, count = 7, scale = 0.55 }) {
+/**
+ * 跨街的燈籠串：沿懸垂線掛上小燈籠。
+ * scales（每盞的大小）、offsets（間距的偏移，以間距為單位）與 drops（吊繩加長）可讓燈籠不那麼整齊。
+ */
+export function lanternString(b, { from, to, sag = 0.8, count = 7, scale = 0.55, scales = null, offsets = null, drops = null }) {
   const points = catenaryPoints(from, to, sag, 24)
   for (let i = 0; i < points.length - 1; i++) segment(b, 'dark', points[i], points[i + 1], 0.012, '#3a2c24')
   for (let k = 1; k <= count; k++) {
-    const t = k / (count + 1)
-    const index = Math.min(points.length - 1, Math.round(t * 24))
+    const t = (k + (offsets?.[k - 1] ?? 0)) / (count + 1)
+    const index = Math.min(points.length - 1, Math.max(0, Math.round(t * 24)))
     const p = points[index]
-    segment(b, 'dark', p, new Vector3(p.x, p.y - 0.18, p.z), 0.008, '#3a2c24')
-    b.addLantern(p.x, p.y - 0.18 - 0.3 * scale, p.z, { scale, glow: true })
+    const size = scales?.[k - 1] ?? scale
+    const cord = 0.18 + (drops?.[k - 1] ?? 0)
+    segment(b, 'dark', p, new Vector3(p.x, p.y - cord, p.z), 0.008, '#3a2c24')
+    b.addLantern(p.x, p.y - cord - 0.3 * size, p.z, { scale: size, glow: true })
   }
 }

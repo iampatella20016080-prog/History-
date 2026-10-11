@@ -285,11 +285,15 @@ export const SHOPS = [
     name: '江山樓',
     status: 'coming-soon',
     year: 1917,
+    // 創立年份記載不一：國立臺灣歷史博物館與維基百科記為1917年，求真百科記為1921年開幕
+    yearLabel: '1917年（一說1921年）',
+    yearNote: '創立年份記載不一：國立臺灣歷史博物館典藏說明與維基百科記為1917年（大正6年），求真百科則記為1921年11月20日開幕。',
+    sourceIds: ['nmth-jiang-shan-lou', 'wiki-jiang-shan-lou', 'factpedia-jiang-shan-lou'],
     category: '酒樓',
     seal: '酒樓',
     reconstruction: true,
-    summary: '日治時期大稻埕著名的臺灣料理酒樓，以經營者吳江山之名命名，也是仕紳社交的重要場所。',
-    note: '江山樓建築今已不存，場景為歷史情境重建，並非精確復原。',
+    summary: '日治時期大稻埕著名的臺灣料理酒樓，以經營者吳江山之名命名，是四層樓的紅磚建築，也是仕紳社交的重要場所。',
+    note: '江山樓建築今已不存（1976年拆除），場景依史料記載的「四層樓紅磚建築」重建，為歷史情境重建，並非精確復原。',
     position: { x: -13.5, z: 4.5 },
     facing: 'north',
     interaction: { radius: 4.2 },
@@ -299,7 +303,6 @@ export const SHOPS = [
       depth: 12,
       floors: 4,
       sign: { text: '江山樓', style: 'gold' },
-      hangingSign: { text: '臺灣料理', style: 'red' },
     },
     buildingByEra: {
       banquet: { condition: 'new' },
@@ -417,6 +420,15 @@ export const SHOPS = [
     },
   },
 ]
+
+/**
+ * 介面上顯示的年份：史料記載不一時使用 yearLabel（例如「1917年（一說1921年）」），
+ * 不自行認定單一年份。
+ */
+export function shopYearText(shop) {
+  if (shop?.yearLabel) return shop.yearLabel
+  return shop?.year ? `${shop.year}年` : ''
+}
 
 export function getShop(id) {
   return SHOPS.find((shop) => shop.id === id) ?? null

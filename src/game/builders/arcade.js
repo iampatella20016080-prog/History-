@@ -1,4 +1,4 @@
-import { CylinderGeometry, IcosahedronGeometry } from 'three'
+import { CylinderGeometry, IcosahedronGeometry, Shape, SphereGeometry } from 'three'
 import { STREET } from '../config.js'
 import { createCurvedSlab } from './PartBuilder.js'
 import { MATERIAL_TILE } from '../rendering/materials.js'
@@ -57,11 +57,13 @@ export function buildArcadeBuilding(b, cfg) {
   const front = walkD // 樓上立面前緣
   const wallT = 0.3
   const sideT = 0.26
-  const wallMat = cfg.wallMat ?? defaults.wallMat
-  const wallTint = tint(cfg.wallTint ?? '#efe3c8')
+  // 紅磚立面（酒樓年代的洋樓變化）：牆與騎樓柱都用紅磚，飾帶仍為灰泥
+  const brickFacade = cfg.facade === 'brick'
+  const wallMat = brickFacade ? 'brick' : cfg.wallMat ?? defaults.wallMat
+  const wallTint = tint(brickFacade ? cfg.brickTint ?? '#ffffff' : cfg.wallTint ?? '#efe3c8')
   const trimTint = tint(cfg.trimTint ?? '#f6efe0')
   const shutterTint = tint(cfg.shutterTint ?? '#6d8a83')
-  const columnMat = cfg.columnMat ?? defaults.columnMat
+  const columnMat = brickFacade ? 'brick' : cfg.columnMat ?? defaults.columnMat
   const columnTint = tint(cfg.columnTint ?? (columnMat === 'brick' ? '#ffffff' : '#ece4d4'))
   const woodTint = tint(cfg.woodTint ?? '#c9ad8a')
   const darkWood = shade(woodTint, 0.6)
@@ -152,11 +154,22 @@ export function buildArcadeBuilding(b, cfg) {
 
   /* ── 燈籠、燈火 ─────────────────────── */
   if (cfg.lanterns) {
-    const xs = innerW > 3.4 ? [-innerW * 0.3, innerW * 0.3] : [0]
-    for (const x of xs) {
-      b.box('dark', [0.016, 0.3, 0.016], [x, groundH - 0.15, walkD - 0.5], { tint: '#3a2f27' })
-      b.addLantern(x, groundH - 0.75, walkD - 0.5)
-    }
+    const scale = cfg.lanternScale ?? 1
+    const drop = cfg.lanternDrop ?? 0
+    const xs = innerW > 3.4 && cfg.lanternCount !== 1 ? [-innerW * 0.3, innerW * 0.3] : [cfg.lanternCount === 1 ? innerW * 0.18 : 0]
+    xs.forEach((x, i) => {
+      // 兩盞時高度略有差異
+      const cord = 0.3 + drop + i * drop * 0.4
+      b.box('dark', [0.016, cord, 0.016], [x, groundH - cord / 2, walkD - 0.5], { tint: '#3a2f27' })
+      b.addLantern(x, groundH - 0.45 - cord, walkD - 0.5, { scale })
+    })
+  }
+  /* ── 布幡：掛在騎樓柱外側，垂直於立面 ── */
+  if (cfg.banner) {
+    const side = cfg.hangingSign?.side === 'right' ? -1 : 1
+    const bx = side * (w / 2 - 0.22)
+    b.cylinder('bamboo', 0.025, 0.025, 0.62, 5, [bx, groundH - 0.12, walkD + 0.24], { rotation: [Math.PI / 2, 0, 0], tint: '#d8c48e' })
+    b.addBanner({ text: cfg.banner.text, style: 'cloth', width: 0.44, height: 1.25, position: [bx, groundH - 0.78, walkD + 0.28], rotationY: Math.PI / 2 })
   }
   if (cfg.storefront !== 'closed') b.addPool(0, walkD * 0.55, Math.min(2.4, w * 0.35), '#ffb468', walkH + 0.02)
 
@@ -187,10 +200,28 @@ function baroqueFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, w
   const winW = Math.min(1.15, (w - 1.4) / count - 0.45)
   const spacing = (w - 0.8) / count
   const hasBalcony = cfg.balcony ?? rng() < 0.55
-  // 壁柱
+  const brick = cfg.facade === 'brick'
+  // 酒樓年代：沒點燈的窗映著暮色（只在這個年代設定 ornate）
+  const glass = cfg.ornate ? { glassTint: '#4a5270' } : {}
+  // 壁柱（紅磚立面改以兩端的灰泥隅石收邊）
   for (let i = 0; i <= count; i++) {
+    if (brick && (i === 0 || i === count)) continue
     const x = -w / 2 + 0.4 + i * spacing
     pilaster(b, { x, y0: groundH + 0.25, y1: topY, z: front, width: 0.28, tint: trimTint })
+    if (cfg.ornate) {
+      for (let f = 1; f < floors; f++) {
+        const ry = groundH + (f - 1) * upperH + upperH * 0.6
+        b.cylinder('stucco', 0.11, 0.11, 0.06, 12, [x, ry, front + 0.12], { rotation: [Math.PI / 2, 0, 0], tint: shade(trimTint, 0.95) })
+      }
+    }
+  }
+  if (brick) {
+    for (const side of [-1, 1]) {
+      for (let y = groundH + 0.3, k = 0; y < topY - 0.3; y += 0.44, k++) {
+        const qw = k % 2 ? 0.3 : 0.5
+        b.box('stucco', [qw, 0.34, 0.07], [side * (w / 2 - qw / 2), y + 0.17, front + 0.035], { tint: trimTint })
+      }
+    }
   }
   for (let f = 1; f < floors; f++) {
     const fy = groundH + (f - 1) * upperH
@@ -199,8 +230,18 @@ function baroqueFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, w
     for (let i = 0; i < count; i++) {
       const x = -w / 2 + 0.4 + spacing * (i + 0.5)
       const lit = rng() < litChance
-      if (windowStyle === 'rect') {
-        rectWindow(b, { x, y: fy + 1.55, width: winW, height: 1.3, z: front, lit, frameTint: '#5b4636', barTint: '#c9ad8a', style: 'bars' })
+      if (windowStyle === 'rect' || windowStyle === 'segment') {
+        rectWindow(b, { x, y: fy + 1.55, width: winW, height: 1.3, z: front, lit, frameTint: '#5b4636', barTint: '#c9ad8a', style: brick ? 'panes' : 'bars', ...glass })
+        if (windowStyle === 'segment') {
+          // 弧形窗楣（紅磚洋樓常見）
+          b.extrude('stucco', segmentHood(winW + 0.32, 0.3), 0.12, { position: [x, fy + 2.3, front], tint: trimTint })
+          b.box('stucco', [0.16, 0.24, 0.16], [x, fy + 2.44, front + 0.06], { tint: shade(trimTint, 0.95) })
+        } else if (cfg.ornate) {
+          b.box('stucco', [winW + 0.36, 0.12, 0.14], [x, fy + 2.36, front + 0.07], { tint: trimTint })
+        }
+        if (cfg.ornate) {
+          for (const side of [-1, 1]) b.box('stucco', [0.09, 0.18, 0.12], [x + side * (winW / 2 + 0.12), fy + 0.72, front + 0.07], { tint: shade(trimTint, 0.93) })
+        }
       } else {
         archWindow(b, {
           x,
@@ -212,6 +253,7 @@ function baroqueFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, w
           frameTint: trimTint,
           shutters: cfg.shutters ?? rng() < 0.6,
           shutterTint,
+          ...glass,
         })
       }
       if (lit) b.addGlow(x, fy + 1.7, front + 0.3, 1.5, '#ffb468')
@@ -230,6 +272,10 @@ function baroqueFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, w
     b.cylinder('stucco', 0.16, 0.16, 0.08, 12, [side * (w / 2 - 0.55), topY + 0.55, front + 0.02], { rotation: [Math.PI / 2, 0, 0], tint: shade(trimTint, 0.95) })
   }
   const plaqueText = cfg.parapetText ?? (cfg.sign?.placement === 'parapet' ? cfg.sign.text : null)
+  if (cfg.parapet === 'balustrade') {
+    balustradeParapet(b, { y: topY + 0.1, width: w - 0.02, z: front, wallTint, trimTint, count })
+    return
+  }
   parapet(b, {
     y: topY + 0.1,
     width: w - 0.02,
@@ -240,6 +286,39 @@ function baroqueFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, w
     trimTint,
     plaque: plaqueText ? { text: plaqueText, style: cfg.sign?.style ?? 'gold' } : null,
   })
+}
+
+/** 弧形窗楣的輪廓（寬 width、拱高 rise） */
+function segmentHood(width, rise) {
+  const shape = new Shape()
+  const half = width / 2
+  shape.moveTo(-half, 0)
+  shape.lineTo(half, 0)
+  shape.quadraticCurveTo(0, rise * 2, -half, 0)
+  shape.closePath()
+  return shape
+}
+
+/** 欄杆式女兒牆：紅磚柱墩、灰泥欄杆與中央略高的牆垛 */
+function balustradeParapet(b, { y, width, z, wallTint, trimTint, count }) {
+  const h = 0.95
+  const posts = [-width / 2 + 0.2, width / 2 - 0.2]
+  if (count >= 2) posts.push(0)
+  for (const x of posts) {
+    const tall = x === 0
+    const ph = h + (tall ? 0.55 : 0.18)
+    b.box('brick', [tall ? 0.9 : 0.4, ph, 0.4], [x, y + ph / 2, z - 0.2], { tint: wallTint })
+    b.box('stucco', [tall ? 1.02 : 0.5, 0.1, 0.5], [x, y + ph + 0.05, z - 0.2], { tint: trimTint })
+    if (!tall) b.add('plain', new SphereGeometry(0.14, 10, 8), { position: [x, y + ph + 0.24, z - 0.2], tint: trimTint })
+  }
+  b.box('stucco', [width, 0.14, 0.3], [0, y + 0.07, z - 0.18], { tint: trimTint })
+  b.box('stucco', [width, 0.09, 0.34], [0, y + h - 0.05, z - 0.18], { tint: trimTint })
+  const n = Math.max(4, Math.round(width / 0.22))
+  for (let i = 0; i < n; i++) {
+    const x = -width / 2 + (i + 0.5) * (width / n)
+    if (posts.some((p) => Math.abs(p - x) < (p === 0 ? 0.5 : 0.24))) continue
+    b.box('stucco', [0.08, h - 0.24, 0.08], [x, y + h / 2, z - 0.18], { tint: trimTint })
+  }
 }
 
 /* ═══════════ Art Deco 立面 ═══════════ */

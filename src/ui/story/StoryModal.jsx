@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { getEra } from '../../data/eras.js'
-import { getShop } from '../../data/shops.js'
+import { getShop, shopYearText } from '../../data/shops.js'
 import { useGameStore } from '../../state/useGameStore.js'
 import { usePresence } from '../usePresence.js'
 import { CHAPTER_VIEWS } from './chapters.jsx'
@@ -108,7 +108,7 @@ export function StoryModal() {
               {shop.name}
             </h2>
             <p className="story__meta">
-              {shop.year ? `${shop.year}年｜` : ''}
+              {shopYearText(shop) ? `${shopYearText(shop)}｜` : ''}
               {shop.category}
               {shop.reconstruction && <span className="story__badge">歷史情境重建</span>}
             </p>

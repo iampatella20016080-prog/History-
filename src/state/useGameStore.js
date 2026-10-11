@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { DEFAULT_ERA_ID, getEra } from '../data/eras.js'
 import { getShop } from '../data/shops.js'
+import { QUALITY_MODES, initialQualityMode, saveQualityMode } from '../game/quality.js'
 
 /** 網址可指定一開始的年代，例如 ?era=modern */
 function initialEra() {
@@ -30,6 +31,9 @@ function detectTouch() {
  *   eraError       最近一次切換失敗的資訊 { id, eraId }（顯示提示用）
  *   titleCard      畫面中央的章節標題 { eraId, nonce }
  *
+ * 畫質
+ *   qualityMode    'smooth'（流暢）或 'fine'（精緻），記在 localStorage，切換後立即套用
+ *
  * 轉場的每一步（換街景、結束、回報錯誤）都必須帶著該次請求的 id，
  * 與目前的 eraTransition.id 相符才會生效，過期的呼叫一律忽略。
  *
@@ -54,6 +58,8 @@ export const useGameStore = create((set, get) => ({
   visited: {},
   travel: null,
   inputMode: detectTouch() ? 'touch' : 'mouse',
+  qualityMode: initialQualityMode(),
+  qualityOpen: false,
 
   start: () => {
     if (get().started) return
@@ -101,7 +107,7 @@ export const useGameStore = create((set, get) => ({
 
   setChapter: (index) => set({ chapterIndex: index }),
 
-  toggleMenu: (open) => set((state) => ({ menuOpen: open ?? !state.menuOpen })),
+  toggleMenu: (open) => set((state) => ({ menuOpen: open ?? !state.menuOpen, qualityOpen: false })),
 
   /** 從選單前往店家：角色移動到店門口 */
   travelToShop: (id) =>
@@ -154,4 +160,14 @@ export const useGameStore = create((set, get) => ({
   },
 
   dismissEraError: () => set({ eraError: null }),
+
+  /** 切換畫質模式（流暢／精緻）並記住選擇 */
+  setQualityMode: (mode) => {
+    if (!QUALITY_MODES[mode]) return false
+    saveQualityMode(mode)
+    if (get().qualityMode !== mode) set({ qualityMode: mode })
+    return true
+  },
+
+  toggleQualityPanel: (open) => set((state) => ({ qualityOpen: open ?? !state.qualityOpen, menuOpen: false })),
 }))

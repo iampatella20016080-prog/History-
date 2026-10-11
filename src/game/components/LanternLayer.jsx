@@ -107,7 +107,7 @@ export function LanternLayer({ lanterns }) {
       instance.setMatrixAt(i, _matrix)
     })
     instance.instanceMatrix.needsUpdate = true
-    material.emissiveIntensity = 0.18 + atmosphere.current.glow * 0.95
+    material.emissiveIntensity = 0.18 + atmosphere.current.glow * 0.95 * atmosphere.current.lanternGlow
   })
 
   if (!lanterns.length) return null

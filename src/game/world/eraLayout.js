@@ -26,9 +26,16 @@ const PROPS_BY_ERA = {
     { type: 'goodsPile', position: [-50.6, 0, -0.95], rotationY: -Math.PI / 2, kind: 'tea' },
   ],
   banquet: [
-    { type: 'rickshaw', position: [-9.5, 0, 1.75], rotationY: Math.PI + 0.1 },
-    { type: 'rickshaw', position: [7.5, 0, -1.8], rotationY: 0.15 },
-    { type: 'rickshaw', position: [-38.5, 0, 3.6], rotationY: 2.2 },
+    // 江山樓前的說明牌（歷史情境重建）
+    { type: 'placard', position: [-10.2, 0, 2.38], rotationY: 2.5, text: '江山樓｜歷史情境重建' },
+    { type: 'rickshaw', position: [-20.6, 0, 1.85], rotationY: Math.PI + 0.1, tint: '#6a3b2e' },
+    { type: 'rickshaw', position: [7.5, 0, -1.8], rotationY: 0.15, tint: '#3e4f48' },
+    { type: 'rickshaw', position: [-38.5, 0, 3.6], rotationY: 2.2, tint: '#5b4436' },
+    { type: 'rickshaw', position: [27.2, 0, 1.9], rotationY: Math.PI - 0.12, tint: '#6a3b2e' },
+    { type: 'pottedPlant', position: [-17.0, 0, -2.55] },
+    { type: 'pottedPlant', position: [2.9, 0, -2.55], size: 0.9 },
+    { type: 'pottedPlant', position: [19.6, 0, 2.55], size: 1.1 },
+    { type: 'pottedPlant', position: [-29.4, 0, 2.55] },
     { type: 'vendorCart', position: [-25.5, 0, 2.0], rotationY: 0.05, content: 'peanuts' },
     { type: 'vendorCart', position: [21.5, 0, -2.0], rotationY: Math.PI - 0.1, content: 'beans' },
     { type: 'goodsPile', position: [-41.5, 0, -6.6], rotationY: 0.1, kind: 'tea' },
@@ -84,6 +91,8 @@ const FOOTPRINT = {
   foodStall: [1.25, 1.1],
   planter: [0.5, 0.25],
   aBoard: [0.32, 0.25],
+  placard: [1.25, 0.22],
+  pottedPlant: [0.3, 0.3],
 }
 
 /** 各年代的路燈位置（街道兩側交錯） */
@@ -116,9 +125,16 @@ function utilityWires(lamps) {
   return wires
 }
 
-/** 酒樓年代的燈籠串（跨街） */
+/**
+ * 酒樓年代的燈籠串（跨街）：三串、每串四到五盞，大小、高度與間距各不相同；
+ * 刻意避開江山樓正前方，讓地標立面保持清楚。
+ */
 function lanternStrings() {
-  return [-21, -7, 9, 23].map((x) => ({ from: [x, 5.6, -2.9], to: [x + 1.5, 5.6, 2.9], sag: 0.9, count: 7 }))
+  return [
+    { from: [-25.6, 5.9, -2.9], to: [-24.4, 5.6, 2.9], sag: 0.75, count: 5, scales: [0.52, 0.64, 0.56, 0.68, 0.5], offsets: [0.1, -0.15, 0.05, 0.12, -0.1], drops: [0, 0.12, 0, 0.2, 0.05] },
+    { from: [6.8, 5.4, -2.9], to: [5.6, 5.7, 2.9], sag: 1.0, count: 4, scales: [0.6, 0.48, 0.62, 0.5], offsets: [-0.12, 0.08, -0.05, 0.15], drops: [0.1, 0, 0.18, 0] },
+    { from: [24.0, 6.1, -2.9], to: [25.6, 5.8, 2.9], sag: 0.85, count: 5, scales: [0.5, 0.6, 0.72, 0.6, 0.48], offsets: [0.08, 0, -0.1, 0.06, 0.14], drops: [0.06, 0.15, 0, 0.1, 0.2] },
+  ]
 }
 
 function propObstacle(prop) {
@@ -152,6 +168,42 @@ const MOORING_POSTS = [
   [-52.6, 1.3],
   [-52.6, -1.3],
 ]
+
+/** 立面組合的特徵（用來避免相鄰兩棟一模一樣） */
+export function facadeSignature(config) {
+  const material = config.archetype === 'minnan' ? (config.floors === 2 ? config.upper : config.ground) : config.facade ?? ''
+  return `${config.archetype}|${config.floors ?? ''}|${material ?? ''}`
+}
+
+/**
+ * 酒樓年代：同一側相鄰的兩棟一般街屋若立面組合相同，換掉後一棟的牆面材料
+ * （洋樓在紅磚／灰泥之間切換，閩南街屋在紅磚／白灰之間切換）。只調整外觀，不改變地段。
+ */
+function diversifyRows(buildings) {
+  const rows = new Map()
+  for (const building of buildings) {
+    const key = building.z.toFixed(1)
+    if (!rows.has(key)) rows.set(key, [])
+    rows.get(key).push(building)
+  }
+  for (const row of rows.values()) {
+    row.sort((a, b) => a.x - b.x)
+    for (let i = 1; i < row.length; i++) {
+      const prev = row[i - 1].config
+      const config = row[i].config
+      if (row[i].storeId || facadeSignature(prev) !== facadeSignature(config)) continue
+      if (config.archetype === 'baroque') {
+        const brick = config.facade !== 'brick'
+        config.facade = brick ? 'brick' : 'stucco'
+        config.windowStyles = brick ? ['segment', 'rect'] : ['arch', 'arch']
+        config.parapet = brick ? 'balustrade' : 'scroll'
+      } else if (config.archetype === 'minnan') {
+        const key = config.floors === 2 ? 'upper' : 'ground'
+        config[key] = config[key] === 'brick' ? 'plaster' : 'brick'
+      }
+    }
+  }
+}
 
 export function createEraLayout(era) {
   const plan = getLotPlan()
@@ -190,6 +242,8 @@ export function createEraLayout(era) {
     }
     buildings.push({ id: lot.id, x: lot.x, z: lot.z, rotationY: lot.rotationY, config: genericBuildingConfig(lot, era) })
   }
+
+  if (era.id === 'banquet') diversifyRows(buildings)
 
   const props = PROPS_BY_ERA[era.id] ?? []
   const lamps = streetLamps(era)

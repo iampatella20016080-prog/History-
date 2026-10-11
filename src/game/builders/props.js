@@ -431,7 +431,7 @@ export function flowerPot(b, position, { seed = 1 } = {}) {
 }
 
 /* ── 人力車（日治時期） ─────────────────────── */
-export function rickshaw(b, position, { rotationY = 0, tint = '#2f2a28' } = {}) {
+export function rickshaw(b, position, { rotationY = 0, tint = '#2f2a28', hood = '#4d433b' } = {}) {
   b.group(position, rotationY, () => {
     for (const side of [-1, 1]) {
       b.add('plain', new TorusGeometry(0.58, 0.035, 5, 22), { position: [0, 0.6, side * 0.48], tint: '#3a332d' })
@@ -442,7 +442,7 @@ export function rickshaw(b, position, { rotationY = 0, tint = '#2f2a28' } = {}) 
     b.box('plain', [0.06, 0.06, 1.0], [0, 0.6, 0], { tint: '#3a332d' })
     b.box('plain', [0.75, 0.12, 0.9], [-0.05, 0.92, 0], { tint })
     b.box('plain', [0.1, 0.62, 0.9], [-0.42, 1.25, 0], { rotation: [0, 0, 0.18], tint })
-    b.box('cloth', [0.5, 0.5, 0.92], [-0.35, 1.45, 0], { rotation: [0, 0, -0.5], tint: '#3f3a36' })
+    b.box('cloth', [0.5, 0.5, 0.92], [-0.35, 1.45, 0], { rotation: [0, 0, -0.5], tint: hood })
     b.box('plain', [0.3, 0.06, 0.86], [0.38, 0.62, 0], { rotation: [0, 0, -0.3], tint })
     for (const side of [-1, 1]) {
       b.box('wood', [2.0, 0.05, 0.05], [1.15, 0.5, side * 0.32], { rotation: [0, 0, -0.27], tint: '#5d4a3a' })
@@ -473,8 +473,8 @@ export function teaTable(b, position, { rotationY = 0, seed = 1 } = {}) {
 /* ── 小販推車 ───────────────────────────────── */
 export function vendorCart(b, position, { rotationY = 0, seed = 1, content = 'peanuts' } = {}) {
   b.group(position, rotationY, () => {
-    b.box('wood', [1.3, 0.5, 0.7], [0, 0.75, 0], { tint: '#a07a56' })
-    b.box('wood', [1.36, 0.05, 0.76], [0, 1.02, 0], { tint: '#7c5c40' })
+    b.box('wood', [1.3, 0.5, 0.7], [0, 0.75, 0], { tint: '#b98f68' })
+    b.box('wood', [1.36, 0.05, 0.76], [0, 1.02, 0], { tint: '#93714f' })
     for (const side of [-1, 1]) {
       b.cylinder('wood', 0.36, 0.36, 0.06, 12, [-0.2, 0.36, side * 0.42], { rotation: [Math.PI / 2, 0, 0], tint: '#6d5440' })
       b.cylinder('wood', 0.025, 0.025, 1.2, 5, [side * 0.6, 1.6, -0.3], { tint: '#6d5440' })
@@ -695,5 +695,19 @@ export function aBoard(b, position, { rotationY = 0 } = {}) {
     for (let i = 0; i < 3; i++) {
       b.box('plain', [0.28 - i * 0.05, 0.02, 0.012], [0, 0.6 - i * 0.12, 0.15], { rotation: [0.16, 0, 0], tint: '#f2eee4' })
     }
+  })
+}
+
+/* ── 說明牌（歷史情境重建的標示） ───────────── */
+export function placard(b, position, { rotationY = 0, text = '', width = 2.3, height = 0.46 } = {}) {
+  b.group(position, rotationY, () => {
+    for (const side of [-1, 1]) {
+      const x = side * (width / 2 - 0.16)
+      b.box('stone', [0.24, 0.12, 0.24], [x, 0.06, 0], { tint: '#bdb4a3' })
+      b.box('wood', [0.07, 1.42, 0.07], [x, 0.76, -0.02], { tint: '#4a362a' })
+    }
+    b.box('wood', [width + 0.14, height + 0.14, 0.06], [0, 1.24, 0], { tint: '#3f2e24' })
+    b.box('wood', [width + 0.24, 0.05, 0.14], [0, 1.24 + height / 2 + 0.09, 0], { tint: '#3f2e24' })
+    b.addSign({ text, style: 'label', width, height, position: [0, 1.24, 0.032] })
   })
 }

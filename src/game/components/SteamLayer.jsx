@@ -3,6 +3,8 @@ import { useFrame } from '@react-three/fiber'
 import { BufferAttribute, BufferGeometry, Color, NormalBlending, ShaderMaterial } from 'three'
 import { LAYERS } from '../config.js'
 import { atmosphere } from '../atmosphere.js'
+import { QUALITY_MODES } from '../quality.js'
+import { useGameStore } from '../../state/useGameStore.js'
 
 /**
  * 蒸氣與香煙：從蒸籠、湯鍋、香爐裊裊上升、逐漸散開的柔和煙團（全部在著色器中運算）。
@@ -13,7 +15,9 @@ const VERTEX = /* glsl */ `
   attribute vec3 aCenter;
   attribute vec2 aCorner;
   attribute vec2 aParams;
+  attribute float aPuff;
   uniform float uTime;
+  uniform float uPuffs;
   varying vec2 vCorner;
   varying float vAlpha;
   void main() {
@@ -24,6 +28,8 @@ const VERTEX = /* glsl */ `
     float size = (0.16 + life * 0.62) * (0.6 + strength * 0.4);
     mv.xy += aCorner * size;
     gl_Position = projectionMatrix * mv;
+    // 流暢模式只畫一半的煙團（隔一個略過，移到畫面外）
+    if (uPuffs < 5.5 && mod(aPuff, 2.0) > 0.5) gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
     vCorner = aCorner;
     vAlpha = sin(life * 3.14159) * 0.3 * min(strength, 1.0) * (1.0 - smoothstep(30.0, 70.0, -mv.z));
   }
@@ -49,7 +55,7 @@ const CORNERS = [
   [-1, 1],
 ]
 
-const uniforms = { uTime: { value: 0 }, uColor: { value: new Color('#f7f2e8') } }
+const uniforms = { uTime: { value: 0 }, uColor: { value: new Color('#f7f2e8') }, uPuffs: { value: PUFFS } }
 const _white = new Color('#fbf7ef')
 
 export function SteamLayer({ steam }) {
@@ -58,6 +64,7 @@ export function SteamLayer({ steam }) {
     const center = new Float32Array(n * 3)
     const corner = new Float32Array(n * 2)
     const params = new Float32Array(n * 2)
+    const puff = new Float32Array(n)
     let v = 0
     steam.forEach((source, i) => {
       for (let p = 0; p < PUFFS; p++) {
@@ -66,6 +73,7 @@ export function SteamLayer({ steam }) {
           center.set(source.position, v * 3)
           corner.set([cx, cy], v * 2)
           params.set([source.strength ?? 1, phase], v * 2)
+          puff[v] = p
           v++
         }
       }
@@ -75,6 +83,7 @@ export function SteamLayer({ steam }) {
     geometry.setAttribute('aCenter', new BufferAttribute(center, 3))
     geometry.setAttribute('aCorner', new BufferAttribute(corner, 2))
     geometry.setAttribute('aParams', new BufferAttribute(params, 2))
+    geometry.setAttribute('aPuff', new BufferAttribute(puff, 1))
     geometry.computeBoundingSphere()
     geometry.boundingSphere.radius += 3
     const material = new ShaderMaterial({
@@ -99,6 +108,7 @@ export function SteamLayer({ steam }) {
 
   useFrame((state) => {
     uniforms.uTime.value = state.clock.elapsedTime
+    uniforms.uPuffs.value = QUALITY_MODES[useGameStore.getState().qualityMode]?.detail === false ? PUFFS / 2 : PUFFS
     // 蒸氣顏色帶一點環境光色調（入夜時偏藍灰）
     uniforms.uColor.value.copy(_white).lerp(atmosphere.current.fogColor, 0.35)
   })

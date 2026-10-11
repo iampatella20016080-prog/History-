@@ -50,7 +50,7 @@ function TextLantern({ lantern, index }) {
       group.current.rotation.x = Math.sin(t * 0.9 + index) * 0.03
     }
     const nearby = lantern.storeId && useGameStore.getState().nearbyShopId === lantern.storeId
-    const base = 0.12 + atmosphere.current.glow * 0.9
+    const base = 0.12 + atmosphere.current.glow * 0.9 * atmosphere.current.lanternGlow
     material.emissiveIntensity = damp(material.emissiveIntensity, nearby ? base + 0.45 : base, 4, delta)
   })
 

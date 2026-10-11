@@ -250,16 +250,20 @@ export function buildShophouse(b, cfg) {
 
   /* ── 燈籠 ─────────────────────────────── */
   if (cfg.lanterns) {
-    const xs = innerW > 3.4 ? [-innerW * 0.34, innerW * 0.34] : [0]
-    for (const x of xs) {
-      const ly = beamY - 0.66
-      b.box('dark', [0.016, 0.26, 0.016], [x, beamY - 0.22, postZ], { tint: '#3a2f27' })
+    const xs = innerW > 3.4 && cfg.lanternCount !== 1 ? [-innerW * 0.34, innerW * 0.34] : [cfg.lanternCount === 1 ? -innerW * 0.2 : 0]
+    const scale = cfg.lanternScale ?? 1
+    const drop = cfg.lanternDrop ?? 0
+    for (const [i, x] of xs.entries()) {
+      // 燈籠大小與吊掛高度依店家而異（只有酒樓年代設定）
+      const cord = 0.26 + drop * (i ? 0.6 : 1)
+      const ly = beamY - 0.4 - cord
+      b.box('dark', [0.016, cord, 0.016], [x, beamY - 0.09 - cord / 2, postZ], { tint: '#3a2f27' })
       if (cfg.lanterns.text) {
         const p = b.transformPoint(x, ly, postZ)
         textLanterns.push({ position: [p.x, p.y, p.z], rotationY: b.worldRotationY(), text: cfg.lanterns.text })
         b.addGlow(x, ly, postZ, 1.5, '#ff9a5c', 1)
       } else {
-        b.addLantern(x, ly, postZ)
+        b.addLantern(x, ly, postZ, { scale })
       }
     }
   }

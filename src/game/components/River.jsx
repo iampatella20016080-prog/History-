@@ -4,6 +4,8 @@ import { CanvasTexture, Color, DoubleSide, MeshBasicMaterial, MeshToonMaterial, 
 import { LAYERS, RIVER } from '../config.js'
 import { getEra } from '../../data/eras.js'
 import { atmosphere } from '../atmosphere.js'
+import { QUALITY_MODES } from '../quality.js'
+import { useGameStore } from '../../state/useGameStore.js'
 import { PartBuilder } from '../builders/PartBuilder.js'
 import { buildFerry, buildJunk, buildSampan } from '../builders/environment.js'
 import { getMaterials } from '../rendering/materials.js'
@@ -63,7 +65,7 @@ function Boat({ boat }) {
 }
 
 /** 河面上的薄霧：幾片朝向街道的柔和霧帶，濃淡依年代的 riverMist 值 */
-function RiverMist() {
+function RiverMist({ detail }) {
   const material = useMemo(() => {
     const canvas = document.createElement('canvas')
     canvas.width = 8
@@ -97,7 +99,7 @@ function RiverMist() {
         [-105, 10, 1.0],
         [-150, 13, 1.0],
       ].map(([x, h, s], i) => (
-        <mesh key={i} position={[x, WL + h / 2 - 0.4, 0]} rotation-y={Math.PI / 2} material={material} renderOrder={5}>
+        <mesh key={i} visible={detail || i === 0} position={[x, WL + h / 2 - 0.4, 0]} rotation-y={Math.PI / 2} material={material} renderOrder={5}>
           <planeGeometry args={[520 * s, h]} />
         </mesh>
       ))}
@@ -124,6 +126,7 @@ export function River({ eraId }) {
     material.color.copy(atmosphere.current.water)
   })
 
+  const detail = useGameStore((state) => QUALITY_MODES[state.qualityMode]?.detail !== false)
   const boats = BOATS[getEra(eraId)?.streetProps.boats] ?? BOATS.junks
   const width = 1100
   return (
@@ -131,10 +134,11 @@ export function River({ eraId }) {
       <mesh position={[RIVER.edgeX - width / 2, RIVER.waterLevel, 0]} rotation-x={-Math.PI / 2} material={material} receiveShadow>
         <planeGeometry args={[width, 1600]} />
       </mesh>
-      {boats.map((boat, i) => (
-        <Boat key={`${eraId}-${i}`} boat={boat} />
-      ))}
-      <RiverMist />
+      {boats.map((boat, i) =>
+        // 流暢模式不畫遠處河面上的船
+        detail || boat.position[0] > -80 ? <Boat key={`${eraId}-${i}`} boat={boat} /> : null,
+      )}
+      <RiverMist detail={detail} />
     </group>
   )
 }

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { MeshBasicMaterial } from 'three'
+import { CanvasTexture, Color, MeshBasicMaterial, SRGBColorSpace } from 'three'
 import { LAYERS, PLAYER } from '../config.js'
 import { resolvePlayerPosition } from '../collision.js'
 import { moveInput } from '../input.js'
@@ -16,13 +16,31 @@ const COLORS = {
   tunicDark: '#3f5666',
   inner: '#e8dcc4',
   sash: '#b98a50',
-  pants: '#5d5a52',
-  shoes: '#2f2a26',
+  pants: '#7a7266',
+  shoes: '#4a3d33',
   hat: '#cfb27a',
   hatRim: '#a88a55',
   bundle: '#a65f45',
   strap: '#7a5a3e',
   eye: '#231b16',
+}
+
+/** 腳下陰影的貼圖：中央較深、往外柔和淡出（不會在地面上留下一塊硬邊的黑圓） */
+function createBlobTexture() {
+  const size = 64
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const g = canvas.getContext('2d')
+  const grad = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
+  grad.addColorStop(0, 'rgba(255,255,255,1)')
+  grad.addColorStop(0.45, 'rgba(255,255,255,0.6)')
+  grad.addColorStop(1, 'rgba(255,255,255,0)')
+  g.fillStyle = grad
+  g.fillRect(0, 0, size, size)
+  const texture = new CanvasTexture(canvas)
+  texture.colorSpace = SRGBColorSpace
+  return texture
 }
 
 /**
@@ -42,8 +60,11 @@ export function Player({ collision, shopModels }) {
 
   const m = useMemo(() => {
     const result = {}
-    for (const [key, color] of Object.entries(COLORS)) result[key] = createToonMaterial(color)
-    result.shadow = new MeshBasicMaterial({ color: '#2b211a', transparent: true, opacity: 0.2, depthWrite: false })
+    // 微弱的自發光：背光（夕陽、夜景）時角色的暗面仍保有顏色，不會變成一團黑
+    for (const [key, color] of Object.entries(COLORS)) {
+      result[key] = createToonMaterial(color, { emissive: new Color(color), emissiveIntensity: 0.16 })
+    }
+    result.shadow = new MeshBasicMaterial({ color: '#2a2230', map: createBlobTexture(), transparent: true, opacity: 0.32, depthWrite: false })
     return result
   }, [])
 
@@ -246,7 +267,7 @@ export function Player({ collision, shopModels }) {
 
       {/* 腳下柔和陰影（不描邊） */}
       <mesh ref={blob} position={[0, 0.035, 0]} rotation-x={-Math.PI / 2} material={m.shadow} renderOrder={5}>
-        <circleGeometry args={[0.42, 20]} />
+        <planeGeometry args={[1.0, 1.0]} />
       </mesh>
     </group>
   )

@@ -24,6 +24,32 @@ export const SOURCES = {
   },
 }
 
+// 江山樓：創立年份各資料記載不一（1917 年或 1921 年），介面同時列出並標示來源
+SOURCES['nmth-jiang-shan-lou'] = {
+  id: 'nmth-jiang-shan-lou',
+  citation: '國立臺灣歷史博物館典藏網，〈江山樓〉（典藏號 2004.055.0002）。',
+  publisher: '國立臺灣歷史博物館',
+  title: '江山樓',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2004.055.0002',
+  context: '老照片藏品說明：江山樓由吳江山於1917年創立，為四層樓高的紅磚建築。',
+}
+SOURCES['wiki-jiang-shan-lou'] = {
+  id: 'wiki-jiang-shan-lou',
+  citation: '維基百科，〈江山樓〉。',
+  publisher: '維基百科',
+  title: '江山樓',
+  url: 'https://zh.wikipedia.org/zh-tw/%E6%B1%9F%E5%B1%B1%E6%A8%93',
+  context: '記為1917年（大正6年）由吳江山獨資設立，四層紅磚建築，1976年拆除。',
+}
+SOURCES['factpedia-jiang-shan-lou'] = {
+  id: 'factpedia-jiang-shan-lou',
+  citation: '求真百科，〈江山樓〉。',
+  publisher: '求真百科',
+  title: '江山樓',
+  url: 'https://factpedia.org/wiki/%E6%B1%9F%E5%B1%B1%E6%A8%93',
+  context: '記為1921年成立，同年11月20日開幕；描述為紅磚造四層樓連棟街屋（同頁詩作註解則記為1917年創立）。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

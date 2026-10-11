@@ -1,3 +1,4 @@
+import { IcosahedronGeometry, SphereGeometry } from 'three'
 import { STREET } from '../config.js'
 import { PartBuilder } from '../builders/PartBuilder.js'
 import { buildArcadeBuilding } from '../builders/arcade.js'
@@ -18,7 +19,9 @@ import {
   foodStall,
   goodsPile,
   handcart,
+  placard,
   planter,
+  pottedPlant,
   rickshaw,
   ropeCoil,
   streetLamp,
@@ -27,7 +30,8 @@ import {
 } from '../builders/props.js'
 import { buildShophouse } from '../builders/shophouse.js'
 import { buildGrandRestaurant, buildTeaMansion, buildTemple } from '../builders/specials.js'
-import { lanternString, wire } from '../builders/wires.js'
+import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
+import { pennantShape } from '../builders/shapes.js'
 import { getEra } from '../../data/eras.js'
 import { createEraLayout } from './eraLayout.js'
 
@@ -49,7 +53,7 @@ const PROP_BUILDERS = {
   carryingPole: (b, p, o) => carryingPole(b, p.position, { ...o, content: p.content }),
   goodsPile: (b, p, o) => goodsPile(b, p.position, { ...o, kind: p.kind }),
   ropeCoil: (b, p) => ropeCoil(b, p.position),
-  rickshaw: (b, p, o) => rickshaw(b, p.position, o),
+  rickshaw: (b, p, o) => rickshaw(b, p.position, { ...o, tint: p.tint }),
   vendorCart: (b, p, o) => vendorCart(b, p.position, { ...o, content: p.content }),
   vintageCar: (b, p, o) => vintageCar(b, p.position, o),
   bicycle: (b, p, o) => bicycle(b, p.position, o),
@@ -59,6 +63,8 @@ const PROP_BUILDERS = {
   foodStall: (b, p, o) => foodStall(b, p.position, { ...o, canopy: p.canopy }),
   planter: (b, p, o) => planter(b, p.position, o),
   aBoard: (b, p, o) => aBoard(b, p.position, o),
+  placard: (b, p, o) => placard(b, p.position, { ...o, text: p.text }),
+  pottedPlant: (b, p, o) => pottedPlant(b, p.position, { seed: o.seed, size: p.size ?? 1 }),
 }
 
 /** 遠方廟宇屋頂（清末的天際線；之後由實際的慈聖宮取代） */
@@ -79,6 +85,47 @@ function placeProp(b, prop) {
   build(b, prop, { rotationY: prop.rotationY ?? 0, seed })
 }
 
+/**
+ * 遠景與節慶裝飾（沒有碰撞，只在精緻模式顯示）：
+ * - bunting   跨街的三角布旗串
+ * - festoon   宴席燈飾（一串小燈泡）
+ * - flowerBox 陽臺或窗臺上的花箱
+ */
+function placeDecoration(b, item) {
+  if (item.type === 'bunting') {
+    const { from, to, sag = 0.5, count = 12, colors = ['#b8463a', '#d9b25c', '#efe3c8', '#5f7f6b'] } = item
+    const points = catenaryPoints(from, to, sag, count * 2)
+    wire(b, { from, to, sag, radius: 0.01, tint: '#4a3a2e', segments: count * 2 })
+    for (let k = 0; k < count; k++) {
+      const p = points[k * 2 + 1]
+      const q = points[k * 2 + 2] ?? p
+      const angle = Math.atan2(q.z - p.z, q.x - p.x)
+      b.group([p.x, p.y, p.z], -angle, () => {
+        b.extrude('cloth', pennantShape(0.34, 0.42), 0.01, { position: [-0.17, 0, 0], tint: colors[k % colors.length] })
+      })
+    }
+  } else if (item.type === 'festoon') {
+    const { from, to, sag = 0.3, count = 9 } = item
+    const points = catenaryPoints(from, to, sag, count + 1)
+    wire(b, { from, to, sag, radius: 0.008, tint: '#2f2620', segments: count + 1 })
+    for (let k = 1; k <= count; k++) {
+      const p = points[k]
+      b.add('bulb', new SphereGeometry(0.06, 8, 6), { position: [p.x, p.y - 0.08, p.z], tint: '#fff2cf' })
+    }
+  } else if (item.type === 'flowerBox') {
+    const [x, y, z] = item.position
+    b.group([x, y, z], item.rotationY ?? 0, () => {
+      b.box('wood', [item.width ?? 1.2, 0.22, 0.28], [0, 0.11, 0], { tint: '#7a5236' })
+      const count = Math.max(2, Math.round((item.width ?? 1.2) / 0.3))
+      for (let i = 0; i < count; i++) {
+        const fx = -((item.width ?? 1.2) / 2) + 0.15 + i * (((item.width ?? 1.2) - 0.3) / Math.max(1, count - 1))
+        b.add('plain', new IcosahedronGeometry(0.15, 0), { position: [fx, 0.32, 0], scale: [1, 0.8, 1], tint: i % 2 ? '#7f9a63' : '#6c8a58' })
+        if (i % 2 === 0) b.add('plain', new IcosahedronGeometry(0.06, 0), { position: [fx + 0.05, 0.44, 0.08], tint: i % 4 ? '#e9c25a' : '#d0574a' })
+      }
+    })
+  }
+}
+
 /** 店家的提示框與屋頂標記錨點（建築本地座標 → 世界座標） */
 function storeAnchors(b, archetype, result) {
   const anchor = (x, y, z) => {
@@ -97,7 +144,7 @@ function storeAnchors(b, archetype, result) {
   }
   return {
     prompt: anchor(0, result.groundHeight - 0.2, front),
-    marker: anchor(0, result.topHeight + 3.2, STREET.walkwayDepth - 1.2),
+    marker: anchor(0, result.markerHeight ?? result.topHeight + 3.2, STREET.walkwayDepth - 1.2),
   }
 }
 
@@ -118,6 +165,7 @@ export function* eraWorldSteps(eraId) {
   if (!era) throw new Error(`未知的年代：${eraId}`)
   const layout = createEraLayout(era)
   const b = new PartBuilder()
+  const detail = new PartBuilder()
   const stores = {}
   const textLanterns = []
   const extraBlockers = []
@@ -154,7 +202,11 @@ export function* eraWorldSteps(eraId) {
   for (const line of layout.wires) wire(b, line)
   for (const line of layout.lanternStrings) lanternString(b, line)
   buildMooringPosts(b, layout.mooringPosts)
-  layout.trees.forEach((tree, i) => buildTree(b, tree.position, { scale: tree.scale, seed: 10 + i, banyan: !!tree.collider }))
+  // 遠景裝飾（街屋後方的樹、遠方天際線、年代的節慶裝飾）另外合併，流暢模式下不顯示
+  layout.trees.forEach((tree, i) =>
+    buildTree(tree.collider ? b : detail, tree.position, { scale: tree.scale, seed: 10 + i, banyan: !!tree.collider }),
+  )
+  for (const item of layout.decorations ?? []) placeDecoration(detail, item)
   yield
 
   const exclusions = layout.trees.map(({ position: [x, , z], scale }) => ({
@@ -164,7 +216,7 @@ export function* eraWorldSteps(eraId) {
     maxZ: z + 3.5 * scale,
   }))
   exclusions.push({ minX: -3, maxX: 13, minZ: 18, maxZ: 36 })
-  buildBackdrop(b, exclusions, BACKDROP_BY_ERA[era.id])
+  buildBackdrop(b, exclusions, { ...BACKDROP_BY_ERA[era.id], skylineBuilder: detail })
   if (!hasTemple) buildTempleRoofs(b, DISTANT_TEMPLE.position, DISTANT_TEMPLE.rotationY)
   yield
 
@@ -175,11 +227,18 @@ export function* eraWorldSteps(eraId) {
     yield
   }
 
+  const detailBatches = []
+  for (const material of [...detail.groups.keys()]) {
+    detailBatches.push(...detail.buildMaterial(material))
+    yield
+  }
+
   const blockers = [...b.blockers, ...extraBlockers, ...layout.trees.map(treeBlocker)]
 
   return {
     eraId: era.id,
     batches,
+    detailBatches,
     signs: b.signs,
     glows: b.glows,
     pools: b.pools,

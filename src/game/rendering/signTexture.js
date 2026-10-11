@@ -14,6 +14,7 @@ import { DISPLAY_FONT, registerFontTexture } from './fonts.js'
  * - vertical  戰後直立招牌：白底紅字、藍色邊框
  * - menu      攤販的手寫菜單牌
  * - modern    今日老屋新生的店招：簡潔、由左至右書寫
+ * - label     說明牌（例如「江山樓｜歷史情境重建」）：米白底、由左至右書寫
  *
  * 橫式招牌依舊日習慣由右至左書寫（modern 除外）；直式招牌由上而下。
  */
@@ -30,6 +31,8 @@ const STYLES = {
   modern: { bg: '#2d2b28', bg2: '#353230', border: null, text: '#efe7d6', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.025)', ltr: true },
   modernLight: { bg: '#d5b98f', bg2: '#c8aa7e', border: null, text: '#2b221b', shadow: 'rgba(255,240,215,0.2)', grain: 'rgba(80,50,25,0.12)', ltr: true },
   letters: { bg: null, text: 'gold', shadow: 'rgba(30,20,10,0.75)', letters: true },
+  // 說明牌：米白底、深色字、由左至右書寫（標示「歷史情境重建」等說明）
+  label: { bg: '#f4eddd', bg2: '#ebe2cf', border: '#8f3a2a', text: '#2b211a', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,95,60,0.05)', ltr: true, sizeH: 0.56, sizeW: 0.9 },
 }
 
 const PAINTED_INKS = ['#a8301f', '#2e4a7a', '#a8301f', '#2a231e']
@@ -141,7 +144,9 @@ function drawSign(g, cw, ch, text, style, vertical) {
     const display = s.ltr ? chars : chars.slice().reverse()
     const pad = s.letters ? m * 0.5 : m * 2
     const inner = cw - pad * 2
-    size = Math.min(ch * (s.letters ? 0.86 : s.ltr ? 0.5 : 0.6), (inner / n) * (s.ltr ? 0.78 : 0.92))
+    const heightFactor = s.sizeH ?? (s.letters ? 0.86 : s.ltr ? 0.5 : 0.6)
+    const widthFactor = s.sizeW ?? (s.ltr ? 0.78 : 0.92)
+    size = Math.min(ch * heightFactor, (inner / n) * widthFactor)
     display.forEach((char, i) => positions.push([char, pad + (inner * (i + 0.5)) / n, ch / 2 + size * 0.03]))
   }
   g.font = `${weight} ${size}px ${DISPLAY_FONT}`
