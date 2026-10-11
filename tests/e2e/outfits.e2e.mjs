@@ -103,7 +103,20 @@ try {
   await page.waitForFunction(() => document.documentElement.dataset.sceneEra, null, { timeout: 120000 })
   await page.locator('.intro__start').click()
   await page.waitForFunction(() => document.querySelector('.hud.is-started'))
-  await page.waitForTimeout(3000)
+  // 等開場鏡頭移到角色身後、停穩後再開始（之後才比較切換年代前後的鏡頭位置）。
+  // 軟體繪圖下一個影格可能要好幾秒，所以要比較「不同影格」的鏡頭位置：連續兩個新影格都沒動才算停穩
+  let previous = null
+  let lastFrame = -1
+  let still = 0
+  for (let i = 0; i < 180 && still < 2; i++) {
+    await page.waitForTimeout(1000)
+    const frame = await page.evaluate(() => window.__DDC__.frameCount ?? null)
+    if (frame !== null && frame === lastFrame) continue
+    lastFrame = frame
+    const c = (await outfitState(page)).camera
+    still = previous && Math.hypot(c.x - previous.x, c.y - previous.y, c.z - previous.z) < 0.005 ? still + 1 : 0
+    previous = c
+  }
 
   let s = await outfitState(page)
   record('起點：港口商街服裝', s.outfit === 'qing-port' && s.ids.join() === 'qing-port' && s.meshes === s.expected, `${s.meshes}/${s.expected} 個網格`)
@@ -150,25 +163,29 @@ try {
     // 按住 W 往前走，期間取樣鞋底高度
     await page.keyboard.down('KeyW')
     // highest：每次取樣中「較低那隻腳」離地高度的最大值（兩腳同時懸空時會變大）；deepest：最深的鞋底
+    // 軟體繪圖下一個影格可能要好幾秒：按住直到走了 1 公尺（最多 90 秒），期間每 1.5 秒取樣
     let highest = -Infinity
     let deepest = Infinity
     let samples = 0
-    const deadline = Date.now() + 25000
-    while (Date.now() < deadline && samples < 6) {
+    const deadline = Date.now() + 90000
+    while (Date.now() < deadline) {
       await page.waitForTimeout(1500)
+      const now = await outfitState(page)
       const speed = await page.evaluate(() => window.__DDC__.playerState.speed)
-      if (speed < 0.5) continue
-      const soles = await soleHeights(page)
-      highest = Math.max(highest, Math.min(soles.right, soles.left))
-      deepest = Math.min(deepest, soles.right, soles.left)
-      samples++
+      if (speed > 0.5) {
+        const soles = await soleHeights(page)
+        highest = Math.max(highest, Math.min(soles.right, soles.left))
+        deepest = Math.min(deepest, soles.right, soles.left)
+        samples++
+      }
+      if (Math.hypot(now.player.x - start.player.x, now.player.z - start.player.z) > 1 && samples >= 4) break
     }
     await page.keyboard.up('KeyW')
     const walked = await outfitState(page)
     const distance = Math.hypot(walked.player.x - start.player.x, walked.player.z - start.player.z)
     record(
       `${eraId}：走路時鞋底貼地、不沉入地面`,
-      samples >= 3 && deepest > -0.02 && highest < 0.03 && distance > 0.3,
+      samples >= 3 && deepest > -0.02 && highest < 0.03 && distance > 0.5,
       `取樣 ${samples} 次、較低的鞋底最高離地 ${round(highest)} m、最深 ${round(deepest)} m、走了 ${round(distance)} m`,
     )
     // 原地轉身：左右各按一下

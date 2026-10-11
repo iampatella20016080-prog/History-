@@ -202,8 +202,8 @@ export function Player({ collision, shopModels }) {
       footRight.current.rotation.x = -leg
       footLeft.current.rotation.x = leg
       // 長衫下襬：前片跟著往前的腳、後片跟著往後的腳
-      skirtFront.current.rotation.x = Math.min(leg, -leg, 0) * 0.92
-      skirtBack.current.rotation.x = Math.max(leg, -leg, 0) * 0.92
+      skirtFront.current.rotation.x = Math.min(leg, -leg, 0) * 0.86
+      skirtBack.current.rotation.x = Math.max(leg, -leg, 0) * 0.86
       // 手上的東西（公事包）保持下垂
       handRight.current.rotation.x = -armRight.current.rotation.x - lean
       handRight.current.rotation.z = -armRight.current.rotation.z

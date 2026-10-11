@@ -463,7 +463,10 @@ export function CameraRig({ blockers, buildings, shopModels }) {
     camera.position.copy(rig.position)
     camera.lookAt(rig.look)
     renderState.focusDistance = camera.position.distanceTo(rig.focus)
-    if (import.meta.env.DEV && window.__DDC__) window.__DDC__.viewer = v
+    if (import.meta.env.DEV && window.__DDC__) {
+      window.__DDC__.viewer = v
+      window.__DDC__.frameCount = (window.__DDC__.frameCount ?? 0) + 1
+    }
   }, -1)
 
   return null
