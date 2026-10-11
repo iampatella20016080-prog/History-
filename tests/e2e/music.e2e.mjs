@@ -3,18 +3,18 @@
  *
  * L  五首配樂：以瀏覽器自己的 MP3 解碼器解碼，用 OfflineAudioContext 依設定表的 loopStart／loopEnd
  *    連續循環渲染 45 秒，檢查兩個循環接點有沒有空白（20 毫秒音量）或爆音（樣本跳動量）
+ * R  五個年代各即時播放 45 秒，以分析節點量測總輸出，循環接點附近沒有空白、同時只有一個音源
  * P  遊戲中（桌面）：
  *    - 按「開始探索」後啟用音訊並播放目前年代，循環參數正確
  *    - 畫質來回切換、開關店家名錄、移動角色時不重播、不新增音源
  *    - 開啟店家故事時音量降到 40%，關閉後恢復
  *    - 連續切換年代 10 次，每次音樂都換成目前年代，交叉淡化後只剩一個音源
- *    - 五個年代各即時播放 45 秒，以分析節點量測輸出，循環接點附近沒有空白
  *    - 音檔載入失敗時顯示提示、年代照常切換，按「重試」後恢復
  *    - 頁面進入背景時暫停、返回後恢復（模擬 visibilitychange）
  *    - 關閉音樂與音量會記住（重新整理後沿用，靜音時不建立音訊）
  *
  * 用法：npm run dev，然後 node tests/e2e/music.e2e.mjs http://127.0.0.1:5173/
- * 環境變數：PLAYWRIGHT_MODULE、ONLY（L,P）、LISTEN_SECONDS（即時播放秒數，預設 45）
+ * 環境變數：PLAYWRIGHT_MODULE、ONLY（L,P,R）、LISTEN_SECONDS（即時播放秒數，預設 45）
  *
  * 注意：這些是自動量測，不能取代實際試聽；也沒有在真實 iPad／Safari 上執行。
  */
@@ -152,6 +152,8 @@ async function listen(page, seconds) {
     const data = new Float32Array(analyser.fftSize)
     const samples = []
     const info0 = m.inspect()
+    // 分析節點剛接上時緩衝區還是 0，先等 300 毫秒再開始取樣
+    await new Promise((resolve) => setTimeout(resolve, 300))
     const end = performance.now() + seconds * 1000
     while (performance.now() < end) {
       analyser.getFloatTimeDomainData(data)
@@ -239,16 +241,6 @@ async function testGame(browser) {
   }
   record('P 年代切換', '連續切換 10 次', switches === 10, `${switches}/10`)
 
-  // 五個年代各即時播放 45 秒
-  for (const era of ERAS) {
-    const current = await page.evaluate(() => document.documentElement.dataset.era)
-    if (current !== era.id) await switchEra(page, era)
-    await waitFor(page, (id) => window.__DDC__.audioManager.inspect().currentEra === id && window.__DDC__.audioManager.inspect().liveSources === 1, era.id, 20000)
-    const r = judgeListen(await listen(page, LISTEN_SECONDS))
-    const ok = r.playedSeconds > LISTEN_SECONDS - 2 && r.longestSilenceMs <= 100 && r.seamSamples >= 2 && r.seamMin > r.overallMin - 3 && r.maxSources === 1
-    record('P 即時播放', `${era.year} ${LISTEN_SECONDS} 秒`, ok, `播放 ${r.playedSeconds.toFixed(1)} 秒；最長靜音 ${r.longestSilenceMs} ms；接點附近最低 ${r.seamMin?.toFixed(1)} dB（全程最低 ${r.overallMin.toFixed(1)} dB，取樣 ${r.seamSamples} 次）；同時音源最多 ${r.maxSources}`)
-  }
-
   // 載入失敗：攔截 1930 的音檔，重新整理（清空快取）後切換到 1930
   await page.route('**/audio/era-modern.mp3', (route) => route.abort())
   await page.reload({ waitUntil: 'load' })
@@ -305,12 +297,34 @@ async function testGame(browser) {
   await context.close()
 }
 
+/* ───────────── R：五個年代各即時播放 45 秒 ───────────── */
+async function testListen(browser) {
+  const context = await browser.newContext({ viewport: { width: 1100, height: 700 } })
+  const page = await context.newPage()
+  page.setDefaultTimeout(120000)
+  await page.goto(`${BASE_URL}?quality=smooth`, { waitUntil: 'load' })
+  await startGame(page)
+  await waitFor(page, () => window.__DDC__.audioManager.inspect().status === 'playing', null, 30000)
+  // 五個年代各即時播放 45 秒
+  for (const era of ERAS) {
+    const current = await page.evaluate(() => document.documentElement.dataset.era)
+    if (current !== era.id) await switchEra(page, era)
+    await waitFor(page, (id) => window.__DDC__.audioManager.inspect().currentEra === id && window.__DDC__.audioManager.inspect().liveSources === 1, era.id, 20000)
+    const r = judgeListen(await listen(page, LISTEN_SECONDS))
+    const ok = r.playedSeconds > LISTEN_SECONDS - 2 && r.longestSilenceMs <= 100 && r.seamSamples >= 2 && r.seamMin > r.overallMin - 3 && r.maxSources === 1
+    record('R 即時播放', `${era.year} ${LISTEN_SECONDS} 秒`, ok, `播放 ${r.playedSeconds.toFixed(1)} 秒；最長靜音 ${r.longestSilenceMs} ms；接點附近最低 ${r.seamMin?.toFixed(1)} dB（全程最低 ${r.overallMin.toFixed(1)} dB，取樣 ${r.seamSamples} 次）；同時音源最多 ${r.maxSources}`)
+  }
+
+  await context.close()
+}
+
 const playwright = await loadPlaywright()
 const browser = await playwright.chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] })
 try {
   const run = (name) => !ONLY || ONLY.includes(name)
   if (run('L')) await testLoops(browser)
   if (run('P')) await testGame(browser)
+  if (run('R')) await testListen(browser)
 } finally {
   await browser.close()
 }
