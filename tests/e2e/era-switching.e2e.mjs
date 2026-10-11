@@ -37,6 +37,7 @@ const BASE_URL = process.argv[2] ?? 'http://127.0.0.1:4173/'
 const BROWSER = process.env.BROWSER ?? 'chromium'
 const ONLY = process.env.ONLY ? process.env.ONLY.split(',') : null
 const TRANSITION_TIMEOUT = Number(process.env.TRANSITION_TIMEOUT ?? 180000)
+const HOLD_TIMEOUT = Number(process.env.HOLD_TIMEOUT ?? 30000)
 
 const ERAS = {
   1853: { id: 'qing-port', index: 0, title: '港口商街' },
@@ -207,17 +208,27 @@ async function testMovementAndCamera(page, test, { touch, cdp }) {
       return { x: d.playerState.position.x, z: d.playerState.position.z, yaw: d.cameraState.targetYaw, mode: d.useGameStore.getState().mode }
     })
   const before = await state()
+  // 按住直到角色移動（軟體繪圖下一個影格可能要數秒；最多等 HOLD_TIMEOUT 毫秒）
+  const holdUntilMoved = async () => {
+    const deadline = Date.now() + HOLD_TIMEOUT
+    await page.waitForTimeout(2500)
+    while (Date.now() < deadline) {
+      const now = await state()
+      if (Math.hypot(now.x - before.x, now.z - before.z) > 0.05) return
+      await page.waitForTimeout(1000)
+    }
+  }
   if (touch && cdp) {
     const base = await page.locator('.joystick__base').boundingBox()
     const cx = base.x + base.width / 2
     const cy = base.y + base.height / 2
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: cx, y: cy, id: 1 }] })
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: cx + 30, y: cy - 40, id: 1 }] })
-    await page.waitForTimeout(2500)
+    await holdUntilMoved()
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
   } else {
     await page.keyboard.down('KeyD')
-    await page.waitForTimeout(2500)
+    await holdUntilMoved()
     await page.keyboard.up('KeyD')
   }
   await page.waitForTimeout(500)
