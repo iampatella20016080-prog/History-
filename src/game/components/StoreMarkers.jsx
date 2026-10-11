@@ -11,11 +11,11 @@ import { ShopPrompt } from '../../ui/ShopPrompt.jsx'
 
 const projected = new Vector3()
 
-/** 提示框位置：投影到螢幕後限制在畫面內（避開上方的標題與年代時間軸） */
+/** 提示框位置：投影到螢幕後限制在畫面內（避開右上角的設定與店家名錄） */
 function promptPosition(el, camera, size) {
   projected.setFromMatrixPosition(el.matrixWorld).project(camera)
   const marginX = Math.min(130, size.width * 0.2)
-  const top = size.width < 760 ? 150 : 190
+  const top = 96
   const x = clamp((projected.x * 0.5 + 0.5) * size.width, marginX, size.width - marginX)
   const y = clamp((-projected.y * 0.5 + 0.5) * size.height, top, size.height - 40)
   return [x, y]
@@ -103,12 +103,13 @@ function StoreMarker({ position, shopId, open }) {
 
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime
-    const { nearbyShopId, mode, transitioning } = useGameStore.getState()
+    const { nearbyShopId, mode, transitioning, viewMode } = useGameStore.getState()
     const active = nearbyShopId === shopId
     if (!group.current) return
     group.current.position.y = position.y + Math.sin(t * 1.8 + position.x) * 0.18 * base
     group.current.rotation.y += delta * (active ? 2.4 : open ? 0.9 : 0.5)
-    const visible = mode === 'explore' && !transitioning
+    // 建築觀賞模式只留建築本身，不顯示屋頂標記
+    const visible = mode === 'explore' && !transitioning && viewMode === 'explore'
     const target = visible ? (active ? base * 1.25 : base) : 0.001
     group.current.scale.setScalar(damp(group.current.scale.x, target, 6, delta))
     if (open) materials.gem.emissiveIntensity = damp(materials.gem.emissiveIntensity, active ? 0.75 : 0.3, 4, delta)
@@ -126,20 +127,22 @@ function StoreMarker({ position, shopId, open }) {
   )
 }
 
-/** 這個年代所有店家的屋頂標記與互動提示 */
+/** 這個年代所有店家的屋頂標記；已開放的店家另有靠近時的店名提示（未開放的店家不顯示提示） */
 export function StoreMarkers({ shopModels, promptLayer }) {
   return shopModels.map(({ shop, anchors }) => (
     <group key={shop.id} name={`store-${shop.id}`}>
       <StoreMarker position={anchors.marker} shopId={shop.id} open={shop.status === 'open'} />
-      <Html
-        position={[anchors.prompt.x, anchors.prompt.y, anchors.prompt.z]}
-        portal={promptLayer}
-        calculatePosition={promptPosition}
-        zIndexRange={[12, 0]}
-        pointerEvents="none"
-      >
-        <ShopPrompt shop={shop} />
-      </Html>
+      {shop.status === 'open' && (
+        <Html
+          position={[anchors.prompt.x, anchors.prompt.y, anchors.prompt.z]}
+          portal={promptLayer}
+          calculatePosition={promptPosition}
+          zIndexRange={[12, 0]}
+          pointerEvents="none"
+        >
+          <ShopPrompt shop={shop} />
+        </Html>
+      )}
     </group>
   ))
 }

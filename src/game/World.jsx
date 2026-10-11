@@ -28,7 +28,7 @@ export function World({ world, promptLayer, onSwap }) {
       <EraScene key={world.eraId} world={world} />
       <StoreMarkers shopModels={world.shopModels} promptLayer={promptLayer} />
       <Player collision={world.collision} shopModels={world.shopModels} />
-      <CameraRig blockers={world.blockers} shopModels={world.shopModels} />
+      <CameraRig blockers={world.blockers} buildings={world.buildings} shopModels={world.shopModels} />
       <InteractionSystem shopModels={world.shopModels} />
     </>
   )

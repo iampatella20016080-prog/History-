@@ -241,7 +241,7 @@ export const SHOPS = [
     },
     buildingByEra: {
       banquet: { condition: 'new' },
-      modern: { condition: 'mature' },
+      modern: { condition: 'mature', shopfront: 'display', shopType: 'tea' },
       postwar: { condition: 'aged', sign: { text: '王有記茶行', style: 'painted' } },
       revival: { condition: 'restored', sign: { text: '有記名茶', style: 'modern' } },
     },
@@ -357,7 +357,7 @@ export const SHOPS = [
       cafe: true,
     },
     buildingByEra: {
-      modern: { condition: 'new' },
+      modern: { condition: 'new', shopfront: 'display', shopType: 'restaurant', decoDetail: 'fins' },
       postwar: { condition: 'aged' },
       revival: { condition: 'restored' },
     },

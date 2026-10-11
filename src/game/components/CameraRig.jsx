@@ -1,25 +1,43 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { MathUtils, Vector3 } from 'three'
+import { MathUtils, Raycaster, Vector2, Vector3 } from 'three'
 import { CAMERA, LAYERS } from '../config.js'
 import { raycastBoxes } from '../collision.js'
+import { moveInput } from '../input.js'
 import { cameraState, playerState, renderState } from '../runtime.js'
 import { clamp, damp, dampAngle, dampVector } from '../utils/math.js'
+import { VIEWER, allowedDistance, clampViewerTarget, facadeOf, orbitDirection, pickBuilding, planBuildingFocus } from '../viewerCamera.js'
 import { useGameStore } from '../../state/useGameStore.js'
 
 const INTRO_LOOK = new Vector3(-22, 2.4, -0.4)
 const UP = new Vector3(0, 1, 0)
+/** 點一下（而不是拖曳）的判定：移動不超過幾個像素、按住不超過多久 */
+const TAP_SLOP = 9
+const TAP_TIME = 450
+/** 觀賞模式：鍵盤 WASD 平移注視點的速度（公尺／秒） */
+const VIEWER_KEY_SPEED = 7
 
 /**
- * 第三人稱鏡頭
+ * 鏡頭
+ *
+ * 探索（第三人稱）
  * - 平滑跟隨角色；滑鼠拖曳旋轉視角、滾輪縮放；觸控單指旋轉、雙指縮放
  * - 會被建築遮擋時自動拉近，避免穿牆
  * - 探索店家時平滑移到店面前，並把店面留在介紹視窗左側
+ * - 靠近已開放的店家時，點一下店面即可開啟介紹
+ *
+ * 建築觀賞（自由環繞）
+ * - 電腦：左鍵拖曳旋轉、右鍵拖曳平移、滾輪縮放、WASD 移動；觸控：單指旋轉、雙指平移與捏合縮放
+ * - 點一下建築：平滑聚焦整個立面（依建築大小決定距離）
+ * - 鏡頭不穿牆、不低於地面、不離開街區；返回探索時平滑回到角色身後
  */
-export function CameraRig({ blockers, shopModels }) {
+export function CameraRig({ blockers, buildings, shopModels }) {
   const camera = useThree((state) => state.camera)
   const gl = useThree((state) => state.gl)
   const size = useThree((state) => state.size)
+  // 事件處理只註冊一次，從 ref 讀取目前年代的建築資料
+  const sceneRef = useRef({ blockers, buildings })
+  sceneRef.current = { blockers, buildings }
 
   const rig = useMemo(
     () => ({
@@ -34,6 +52,22 @@ export function CameraRig({ blockers, shopModels }) {
       collisionDistance: CAMERA.distance,
       followLambda: 2,
       initialized: false,
+      viewer: {
+        /** off：第三人稱；active：觀賞中；returning：返回探索，鏡頭正移回角色身後 */
+        phase: 'off',
+        target: new Vector3(),
+        goalTarget: new Vector3(),
+        yaw: 0,
+        pitch: 0,
+        distance: VIEWER.start.distance,
+        goalYaw: 0,
+        goalPitch: 0,
+        goalDistance: VIEWER.start.distance,
+        collision: VIEWER.start.distance,
+        lambda: 3,
+        returnTime: 0,
+        focusNonce: 0,
+      },
     }),
     [],
   )
@@ -42,26 +76,131 @@ export function CameraRig({ blockers, shopModels }) {
     camera.layers.enable(LAYERS.NO_OUTLINE)
   }, [camera])
 
-  // 滑鼠拖曳與滾輪；觸控：單指拖曳旋轉、雙指捏合縮放（雙指左右移動也可旋轉）
+  // 開發模式：測試用的鏡頭與建築資料（正式版不包含）
+  useEffect(() => {
+    if (!import.meta.env.DEV || !window.__DDC__) return undefined
+    const debug = window.__DDC__
+    debug.camera = camera
+    debug.cameraScene = sceneRef
+    /** 建築立面（中央、離地 height 公尺）在畫面上的位置；key 可以是店家 id 或建築 id */
+    debug.facadeScreenPoint = (key, height = 2) => {
+      const building = sceneRef.current.buildings?.find((item) => item.storeId === key || item.id === key)
+      if (!building) return null
+      const { center, forward } = facadeOf(building)
+      const point = new Vector3(center.x + forward.x * 0.3, height, center.z + forward.z * 0.3).project(camera)
+      const rect = gl.domElement.getBoundingClientRect()
+      return {
+        id: building.id,
+        storeId: building.storeId,
+        x: rect.left + ((point.x + 1) / 2) * rect.width,
+        y: rect.top + ((1 - point.y) / 2) * rect.height,
+        inView: Math.abs(point.x) < 0.9 && Math.abs(point.y) < 0.9 && point.z < 1,
+      }
+    }
+    debug.storefrontScreenPoint = (storeId) => debug.facadeScreenPoint(storeId, 2)
+    return () => {
+      delete debug.facadeScreenPoint
+      delete debug.storefrontScreenPoint
+    }
+  }, [camera, gl])
+
   useEffect(() => {
     const element = gl.domElement
+    const v = rig.viewer
     const touches = new Map()
+    const raycaster = new Raycaster()
+    const ndc = new Vector2()
+    const dir = new Vector3()
     let pinch = null
     let mouseId = null
+    let mouseButton = 0
     let lastX = 0
     let lastY = 0
-    const canControl = () => {
-      const { started, mode } = useGameStore.getState()
-      return started && mode === 'explore'
+    let tap = null
+
+    const store = () => useGameStore.getState()
+    const inViewer = () => store().started && store().viewMode === 'viewer'
+    const canExplore = () => {
+      const { started, mode, viewMode } = store()
+      return started && mode === 'explore' && viewMode === 'explore'
     }
+    const canControl = () => inViewer() || canExplore()
+
     const rotate = (dx, dy, k) => {
+      if (inViewer()) {
+        v.goalYaw -= dx * 0.005 * k
+        v.goalPitch = clamp(v.goalPitch + dy * 0.004 * k, VIEWER.minPitch, VIEWER.maxPitch)
+        v.lambda = 9
+        return
+      }
       cameraState.targetYaw -= dx * 0.0055 * k
       cameraState.targetPitch = clamp(cameraState.targetPitch + dy * 0.0038 * k, CAMERA.minPitch, CAMERA.maxPitch)
+    }
+    // 觀賞模式平移：沿著畫面的左右與上下移動注視點（拖曳多少，街景就跟著手指移動多少）
+    const pan = (dx, dy) => {
+      const height = Math.max(1, element.clientHeight)
+      const scale = (2 * Math.min(v.distance, v.collision) * Math.tan(MathUtils.degToRad(camera.fov / 2))) / height
+      const sinYaw = Math.sin(v.yaw)
+      const cosYaw = Math.cos(v.yaw)
+      const sinPitch = Math.sin(v.pitch)
+      const cosPitch = Math.cos(v.pitch)
+      v.goalTarget.x += (-cosYaw * dx - sinYaw * sinPitch * dy) * scale
+      v.goalTarget.y += cosPitch * dy * scale
+      v.goalTarget.z += (sinYaw * dx - cosYaw * sinPitch * dy) * scale
+      clampViewerTarget(v.goalTarget, sceneRef.current.blockers)
+      v.lambda = 9
+    }
+    // 縮放：factor > 1 拉遠、< 1 拉近；已經拉到最近時，改成往前推進（方便沿街移動）
+    const zoom = (factor) => {
+      if (inViewer()) {
+        const next = v.goalDistance * factor
+        if (factor < 1 && v.goalDistance <= VIEWER.minDistance + 0.01) {
+          orbitDirection(v.yaw, v.pitch, dir)
+          v.goalTarget.addScaledVector(dir, -(1 - factor) * 9)
+          clampViewerTarget(v.goalTarget, sceneRef.current.blockers)
+        } else if (factor > 1 && next > v.collision + 1.5) {
+          v.goalDistance = Math.max(v.goalDistance, Math.min(next, v.collision + 1.5))
+        } else {
+          v.goalDistance = clamp(next, VIEWER.minDistance, VIEWER.maxDistance)
+        }
+        v.lambda = 9
+        return
+      }
+      cameraState.targetDistance = clamp(cameraState.targetDistance * factor, CAMERA.minDistance, CAMERA.maxDistance)
     }
     const pinchState = () => {
       const [a, b] = [...touches.values()]
       return { distance: Math.hypot(a.x - b.x, a.y - b.y), midX: (a.x + b.x) / 2, midY: (a.y + b.y) / 2 }
     }
+
+    // 點一下：觀賞模式聚焦建築；探索模式點已開放店家的店面（需在店家附近）開啟介紹
+    const onTap = (clientX, clientY) => {
+      const rect = element.getBoundingClientRect()
+      ndc.set(((clientX - rect.left) / rect.width) * 2 - 1, -((clientY - rect.top) / rect.height) * 2 + 1)
+      raycaster.setFromCamera(ndc, camera)
+      const building = pickBuilding(raycaster.ray.origin, raycaster.ray.direction, sceneRef.current.buildings ?? [])
+      if (!building) return
+      if (inViewer()) {
+        focusOn(building)
+      } else if (canExplore() && building.storeId && building.storeId === store().nearbyShopId) {
+        store().interact()
+      }
+    }
+    const focusOn = (building) => {
+      const plan = planBuildingFocus(building, sceneRef.current.blockers, {
+        yaw: v.yaw,
+        aspect: element.clientWidth / Math.max(1, element.clientHeight),
+        fov: camera.fov,
+      })
+      v.goalTarget.set(plan.target.x, plan.target.y, plan.target.z)
+      // 旋轉走最短的方向
+      v.goalYaw = v.yaw + Math.atan2(Math.sin(plan.yaw - v.yaw), Math.cos(plan.yaw - v.yaw))
+      v.goalPitch = plan.pitch
+      v.goalDistance = plan.distance
+      v.lambda = 3.2
+    }
+    rig.focusOn = focusOn
+
     const onDown = (event) => {
       if (!canControl()) return
       if (event.pointerType === 'touch') {
@@ -69,17 +208,22 @@ export function CameraRig({ blockers, shopModels }) {
         touches.set(event.pointerId, { x: event.clientX, y: event.clientY })
         element.setPointerCapture?.(event.pointerId)
         pinch = touches.size >= 2 ? pinchState() : null
+        tap = touches.size === 1 ? { id: event.pointerId, x: event.clientX, y: event.clientY, time: performance.now() } : null
         element.classList.add('is-dragging')
         return
       }
-      if (event.button !== 0 && event.button !== 2) return
+      if (event.button !== 0 && event.button !== 1 && event.button !== 2) return
+      if (event.button === 1) event.preventDefault()
       mouseId = event.pointerId
+      mouseButton = event.button
       lastX = event.clientX
       lastY = event.clientY
+      tap = event.button === 0 ? { id: event.pointerId, x: event.clientX, y: event.clientY, time: performance.now() } : null
       element.setPointerCapture?.(event.pointerId)
       element.classList.add('is-dragging')
     }
     const onMove = (event) => {
+      if (tap && tap.id === event.pointerId && Math.hypot(event.clientX - tap.x, event.clientY - tap.y) > TAP_SLOP) tap = null
       if (event.pointerType === 'touch') {
         const touch = touches.get(event.pointerId)
         if (!touch) return
@@ -93,9 +237,10 @@ export function CameraRig({ blockers, shopModels }) {
         } else if (touches.size >= 2) {
           const next = pinchState()
           if (pinch && next.distance > 1) {
-            const ratio = pinch.distance / next.distance
-            cameraState.targetDistance = clamp(cameraState.targetDistance * ratio, CAMERA.minDistance, CAMERA.maxDistance)
-            rotate(next.midX - pinch.midX, (next.midY - pinch.midY) * 0.6, 0.9)
+            zoom(pinch.distance / next.distance)
+            // 雙指一起移動：觀賞模式平移，探索模式旋轉
+            if (inViewer()) pan(next.midX - pinch.midX, next.midY - pinch.midY)
+            else rotate(next.midX - pinch.midX, (next.midY - pinch.midY) * 0.6, 0.9)
           }
           pinch = next
         }
@@ -106,26 +251,30 @@ export function CameraRig({ blockers, shopModels }) {
       const dy = event.clientY - lastY
       lastX = event.clientX
       lastY = event.clientY
-      rotate(dx, dy, 1)
+      if (!canControl()) return
+      if (inViewer() && mouseButton !== 0) pan(dx, dy)
+      else rotate(dx, dy, 1)
     }
     const onUp = (event) => {
+      const tapped = tap && tap.id === event.pointerId && event.type === 'pointerup' && performance.now() - tap.time < TAP_TIME
+      if (tap?.id === event.pointerId) tap = null
       if (event.pointerType === 'touch') {
         if (!touches.delete(event.pointerId)) return
         element.releasePointerCapture?.(event.pointerId)
         pinch = touches.size >= 2 ? pinchState() : null
         if (touches.size === 0) element.classList.remove('is-dragging')
-        return
+      } else {
+        if (event.pointerId !== mouseId) return
+        mouseId = null
+        element.releasePointerCapture?.(event.pointerId)
+        element.classList.remove('is-dragging')
       }
-      if (event.pointerId !== mouseId) return
-      mouseId = null
-      element.releasePointerCapture?.(event.pointerId)
-      element.classList.remove('is-dragging')
+      if (tapped && canControl()) onTap(event.clientX, event.clientY)
     }
     const onWheel = (event) => {
       if (!canControl()) return
       event.preventDefault()
-      const step = clamp(event.deltaY, -120, 120) * 0.0011
-      cameraState.targetDistance = clamp(cameraState.targetDistance * (1 + step), CAMERA.minDistance, CAMERA.maxDistance)
+      zoom(1 + clamp(event.deltaY, -120, 120) * (inViewer() ? 0.0013 : 0.0011))
     }
     const onContextMenu = (event) => event.preventDefault()
     // Safari：避免雙指手勢縮放整個網頁
@@ -139,6 +288,7 @@ export function CameraRig({ blockers, shopModels }) {
     element.addEventListener('gesturestart', onGesture)
     element.addEventListener('gesturechange', onGesture)
     return () => {
+      rig.focusOn = null
       element.removeEventListener('pointerdown', onDown)
       element.removeEventListener('pointermove', onMove)
       element.removeEventListener('pointerup', onUp)
@@ -148,15 +298,51 @@ export function CameraRig({ blockers, shopModels }) {
       element.removeEventListener('gesturestart', onGesture)
       element.removeEventListener('gesturechange', onGesture)
     }
-  }, [gl])
+  }, [gl, camera, rig])
 
   useFrame((frame, rawDelta) => {
     const dt = Math.min(rawDelta, 0.05)
-    const { started, mode, activeShopId } = useGameStore.getState()
+    const { started, mode, activeShopId, viewMode, viewerFocus } = useGameStore.getState()
+    const v = rig.viewer
+    const p = playerState.position
 
     cameraState.yaw = dampAngle(cameraState.yaw, cameraState.targetYaw, 10, dt)
     cameraState.pitch = damp(cameraState.pitch, cameraState.targetPitch, 10, dt)
     cameraState.distance = damp(cameraState.distance, cameraState.targetDistance, 8, dt)
+
+    // 進入觀賞模式：從目前的鏡頭位置出發，平滑移到角色附近、略高於街道的位置
+    if (started && viewMode === 'viewer' && v.phase !== 'active') {
+      if (v.phase === 'off') {
+        v.target.copy(rig.look)
+        rig.desiredPosition.subVectors(rig.position, rig.look)
+        v.distance = Math.max(0.5, rig.desiredPosition.length())
+        v.yaw = Math.atan2(rig.desiredPosition.x, rig.desiredPosition.z)
+        v.pitch = Math.asin(clamp(rig.desiredPosition.y / v.distance, -1, 1))
+        v.collision = v.distance
+      }
+      v.phase = 'active'
+      v.goalTarget.set(p.x, VIEWER.start.height, p.z)
+      clampViewerTarget(v.goalTarget, blockers)
+      v.goalYaw = v.yaw + Math.atan2(Math.sin(cameraState.yaw - v.yaw), Math.cos(cameraState.yaw - v.yaw))
+      v.goalPitch = VIEWER.start.pitch
+      v.goalDistance = VIEWER.start.distance
+      v.lambda = 3
+      v.focusNonce = viewerFocus?.nonce ?? v.focusNonce
+    } else if (viewMode !== 'viewer' && v.phase === 'active') {
+      v.phase = 'returning'
+      v.returnTime = 0
+      v.lambda = 3.4
+    } else if (v.phase === 'returning' && cameraState.snap) {
+      // 返回途中角色被傳送（例如從店家名錄前往店門口）：直接交還第三人稱鏡頭
+      v.phase = 'off'
+    }
+
+    // 店家名錄的「聚焦建築」
+    if (v.phase === 'active' && viewerFocus && viewerFocus.nonce !== v.focusNonce) {
+      v.focusNonce = viewerFocus.nonce
+      const building = buildings?.find((item) => item.storeId === viewerFocus.storeId)
+      if (building) rig.focusOn?.(building)
+    }
 
     let lambda
     const model = activeShopId ? shopModels.find((item) => item.shop.id === activeShopId) : null
@@ -171,6 +357,7 @@ export function CameraRig({ blockers, shopModels }) {
       lambda = 1.5
     } else if (mode !== 'explore' && model) {
       // 探索店家：鏡頭靠近店面
+      v.phase = 'off'
       const { camera: shot, origin } = model.placement
       rig.desiredPosition.copy(shot.position)
       rig.desiredLook.copy(shot.target)
@@ -185,9 +372,57 @@ export function CameraRig({ blockers, shopModels }) {
       rig.focus.set(origin.x, 3, origin.z)
       rig.followLambda = 2.2
       lambda = 3.2
+    } else if (v.phase !== 'off') {
+      // 建築觀賞：繞著注視點環繞；返回探索時，目標改成第三人稱鏡頭的位置
+      if (v.phase === 'returning') {
+        v.goalTarget.set(p.x, CAMERA.targetHeight, p.z)
+        v.goalYaw = v.yaw + Math.atan2(Math.sin(cameraState.yaw - v.yaw), Math.cos(cameraState.yaw - v.yaw))
+        v.goalPitch = cameraState.pitch
+        v.goalDistance = cameraState.distance
+        v.returnTime += dt
+      } else {
+        // 鍵盤 WASD：沿著視線的水平方向與左右移動注視點
+        const forward = (moveInput.forward ? 1 : 0) - (moveInput.back ? 1 : 0)
+        const right = (moveInput.right ? 1 : 0) - (moveInput.left ? 1 : 0)
+        if (forward || right) {
+          const step = VIEWER_KEY_SPEED * (moveInput.run ? 1.8 : 1) * dt
+          v.goalTarget.x += (-Math.sin(v.yaw) * forward + Math.cos(v.yaw) * right) * step
+          v.goalTarget.z += (-Math.cos(v.yaw) * forward - Math.sin(v.yaw) * right) * step
+          clampViewerTarget(v.goalTarget, blockers)
+          v.lambda = 9
+        }
+      }
+      v.target.x = damp(v.target.x, v.goalTarget.x, v.lambda, dt)
+      v.target.y = damp(v.target.y, v.goalTarget.y, v.lambda, dt)
+      v.target.z = damp(v.target.z, v.goalTarget.z, v.lambda, dt)
+      v.yaw = damp(v.yaw, v.goalYaw, v.lambda * 1.1, dt)
+      v.pitch = damp(v.pitch, v.goalPitch, v.lambda * 1.1, dt)
+      v.distance = damp(v.distance, v.goalDistance, v.lambda, dt)
+
+      orbitDirection(v.yaw, v.pitch, rig.direction)
+      const allowed = allowedDistance(v.target, rig.direction, v.distance, blockers)
+      v.collision = allowed < v.collision ? allowed : damp(v.collision, allowed, 3, dt)
+      const distance = Math.min(v.distance, v.collision)
+      rig.desiredPosition.copy(v.target).addScaledVector(rig.direction, distance)
+      rig.desiredLook.copy(v.target)
+      rig.focus.copy(v.target)
+      lambda = 24
+
+      if (v.phase === 'returning') {
+        const settled =
+          v.target.distanceTo(v.goalTarget) < 0.08 &&
+          Math.abs(v.yaw - v.goalYaw) < 0.03 &&
+          Math.abs(v.pitch - v.goalPitch) < 0.02 &&
+          Math.abs(v.distance - v.goalDistance) < 0.12
+        if (settled || v.returnTime > 2.2) {
+          // 交還給第三人稱鏡頭（注視點的高度差由跟隨的平滑處理）
+          v.phase = 'off'
+          rig.collisionDistance = v.collision
+          rig.followLambda = 5
+        }
+      }
     } else {
       // 第三人稱跟隨
-      const p = playerState.position
       rig.target.set(p.x, CAMERA.targetHeight, p.z)
       const cosPitch = Math.cos(cameraState.pitch)
       rig.direction.set(Math.sin(cameraState.yaw) * cosPitch, Math.sin(cameraState.pitch), Math.cos(cameraState.yaw) * cosPitch)
@@ -228,6 +463,7 @@ export function CameraRig({ blockers, shopModels }) {
     camera.position.copy(rig.position)
     camera.lookAt(rig.look)
     renderState.focusDistance = camera.position.distanceTo(rig.focus)
+    if (import.meta.env.DEV && window.__DDC__) window.__DDC__.viewer = v
   }, -1)
 
   return null

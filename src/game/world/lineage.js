@@ -171,7 +171,45 @@ export function genericBuildingConfig(lot, era) {
   }
   if (lot.kind === 'end') config.windows = 3
   if (era.id === 'banquet') Object.assign(config, banquetVariety(lot, state))
+  if (era.id === 'modern') Object.assign(config, modernVariety(lot, state, config))
   return config
+}
+
+/** 摩登年代的店種（招牌字與櫥窗內容）：西餐廳、喫茶、洋服、藥局、茶行、布行 */
+export const MODERN_SHOPS = { restaurant: '洋食', cafe: '喫茶', tailor: '洋服', pharmacy: '藥局', tea: '茶行', cloth: '布行' }
+const MODERN_SHOPS_BY_ARCHETYPE = {
+  deco: ['restaurant', 'cafe', 'tailor', 'pharmacy', 'cloth'],
+  baroque: ['tailor', 'pharmacy', 'tea', 'cloth', 'cafe', 'restaurant'],
+  minnan: ['tea', 'cloth', 'pharmacy', 'tea'],
+}
+const MODERN_HANGING = ['喫茶', '洋食', '洋服', '藥局', '茶行', '布行', '時計', '寫真館']
+
+/**
+ * 摩登大稻埕的街景變化（只影響這個年代，獨立的亂數序列）：
+ * - 每家店都有店種，招牌與櫥窗陳設依店種而不同
+ * - Art Deco 樓分成直線鰭片、流線飾帶、階梯收邊三種立面
+ * - 直立招牌高低錯落；少數騎樓放長椅
+ */
+function modernVariety(lot, state, config) {
+  const rng = seeded(lot.seed, 1930)
+  const shopType = pick(rng, MODERN_SHOPS_BY_ARCHETYPE[state.archetype] ?? MODERN_SHOPS_BY_ARCHETYPE.minnan)
+  const arcade = state.archetype !== 'minnan'
+  const variety = {
+    shopType,
+    sign: config.sign ? { ...config.sign, text: MODERN_SHOPS[shopType] } : arcade ? { text: MODERN_SHOPS[shopType], style: pick(rng, ['letters', 'deco', 'lacquer']) } : null,
+    hangingLift: rng() * 1.1 - 0.6,
+  }
+  if (config.hangingSign) variety.hangingSign = { ...config.hangingSign, text: pick(rng, MODERN_HANGING) }
+  if (arcade) {
+    variety.shopfront = config.storefront === 'closed' ? undefined : 'display'
+    variety.cafe = shopType === 'cafe' && rng() < 0.7
+    variety.arcadeBench = shopType !== 'cafe' && rng() < 0.25
+  } else {
+    variety.goods = shopType === 'tea' ? 'tea' : shopType === 'cloth' ? 'cloth' : 'jars'
+  }
+  if (state.archetype === 'deco') variety.decoDetail = pick(rng, ['fins', 'bands', 'stepped'])
+  if (lot.kind === 'end') variety.focal = true
+  return variety
 }
 
 const BRICK_TINTS = ['#ffffff', '#f6e6de', '#fbeee2']

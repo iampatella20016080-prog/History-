@@ -19,8 +19,11 @@ import {
   foodStall,
   goodsPile,
   handcart,
+  newsStand,
   placard,
   planter,
+  posterBoard,
+  signPole,
   pottedPlant,
   rickshaw,
   ropeCoil,
@@ -55,7 +58,7 @@ const PROP_BUILDERS = {
   ropeCoil: (b, p) => ropeCoil(b, p.position),
   rickshaw: (b, p, o) => rickshaw(b, p.position, { ...o, tint: p.tint }),
   vendorCart: (b, p, o) => vendorCart(b, p.position, { ...o, content: p.content }),
-  vintageCar: (b, p, o) => vintageCar(b, p.position, o),
+  vintageCar: (b, p, o) => vintageCar(b, p.position, { ...o, tint: p.tint }),
   bicycle: (b, p, o) => bicycle(b, p.position, o),
   flowerPot: (b, p, o) => flowerPot(b, p.position, o),
   bench: (b, p, o) => bench(b, p.position, { ...o, modern: p.modern }),
@@ -64,6 +67,9 @@ const PROP_BUILDERS = {
   planter: (b, p, o) => planter(b, p.position, o),
   aBoard: (b, p, o) => aBoard(b, p.position, o),
   placard: (b, p, o) => placard(b, p.position, { ...o, text: p.text }),
+  signPole: (b, p, o) => signPole(b, p.position, { ...o, text: p.text, style: p.style, height: p.height }),
+  newsStand: (b, p, o) => newsStand(b, p.position, o),
+  posterBoard: (b, p, o) => posterBoard(b, p.position, o),
   pottedPlant: (b, p, o) => pottedPlant(b, p.position, { seed: o.seed, size: p.size ?? 1 }),
 }
 
@@ -153,12 +159,27 @@ function treeBlocker({ position: [x, , z], scale, collider }) {
   return { minX: x - r, maxX: x + r, minY: 2.4 * scale, maxY: 7 * scale, minZ: z - r, maxZ: z + r }
 }
 
+/** 一棟建築所有遮擋方塊的外框（建築觀賞模式點選與聚焦建築用） */
+function unionBoxes(boxes) {
+  if (!boxes.length) return null
+  const box = { ...boxes[0] }
+  for (const item of boxes) {
+    box.minX = Math.min(box.minX, item.minX)
+    box.maxX = Math.max(box.maxX, item.maxX)
+    box.minY = Math.min(box.minY, item.minY)
+    box.maxY = Math.max(box.maxY, item.maxY)
+    box.minZ = Math.min(box.minZ, item.minZ)
+    box.maxZ = Math.max(box.maxZ, item.maxZ)
+  }
+  return box
+}
+
 /**
  * 產生某個年代的整條街（產生器函式：每完成一部分就 yield 一次，
  * 讓主執行緒可以分段執行；在 Web Worker 中則一次跑完）。
  *
  * 回傳值包含依材質合併的網格、招牌、燈火、燈籠、蒸氣、布幡、店家錨點、
- * 鏡頭遮擋範圍與碰撞資料，全部為可序列化的資料。
+ * 鏡頭遮擋範圍、每棟建築的外框與碰撞資料，全部為可序列化的資料。
  */
 export function* eraWorldSteps(eraId) {
   const era = getEra(eraId)
@@ -169,6 +190,7 @@ export function* eraWorldSteps(eraId) {
   const stores = {}
   const textLanterns = []
   const extraBlockers = []
+  const buildings = []
   let hasTemple = false
 
   buildGround(b, era.streetProps.ground)
@@ -179,7 +201,10 @@ export function* eraWorldSteps(eraId) {
     const archetype = config.archetype ?? 'minnan'
     const builder = BUILDING_BUILDERS[archetype] ?? buildShophouse
     b.push([building.x, 0, building.z], building.rotationY)
+    const firstBlocker = b.blockers.length
     const result = builder(b, config) ?? {}
+    const box = unionBoxes(b.blockers.slice(firstBlocker))
+    if (box) buildings.push({ id: building.id, storeId: building.storeId ?? null, rotationY: building.rotationY ?? 0, box })
     if (archetype === 'temple') {
       hasTemple = true
       for (const side of [-1, 1]) {
@@ -248,6 +273,7 @@ export function* eraWorldSteps(eraId) {
     textLanterns,
     stores,
     blockers,
+    buildings,
     collision: { walkable: layout.walkable, obstacles: layout.obstacles },
   }
 }

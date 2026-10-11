@@ -83,6 +83,16 @@ export function raycastBoxes(origin, direction, maxDistance, boxes) {
   return nearest
 }
 
+/** 同上，但回傳最近被射中的方塊 { index, distance }；都沒射中時回傳 null */
+export function raycastBoxIndex(origin, direction, maxDistance, boxes) {
+  let nearest = null
+  for (let i = 0; i < boxes.length; i++) {
+    const t = rayBox(origin, direction, boxes[i])
+    if (t !== null && t < maxDistance && (!nearest || t < nearest.distance)) nearest = { index: i, distance: t }
+  }
+  return nearest
+}
+
 function rayBox(o, d, b) {
   let tMin = 0
   let tMax = Infinity
