@@ -44,9 +44,9 @@ const PROPS_BY_ERA = {
     { type: 'ropeCoil', position: [-47.5, 0, 1.0] },
   ],
   modern: [
-    { type: 'vintageCar', position: [16.5, 0, 1.75], rotationY: Math.PI },
+    { type: 'vintageCar', position: [16.5, 0, 1.75], rotationY: Math.PI, tint: '#6f8a7e' },
     // 河岸廣場邊的汽車停靠處、路邊的招牌桿、報紙架與海報欄（不塞滿，留出步行空間）
-    { type: 'vintageCar', position: [-37.4, 0, 6.0], rotationY: -Math.PI / 2 + 0.08, tint: '#4a3a30' },
+    { type: 'vintageCar', position: [-37.4, 0, 6.0], rotationY: -Math.PI / 2 + 0.08, tint: '#9a6a52' },
     { type: 'signPole', position: [-14.2, 0, -2.55], rotationY: 0.0, text: '喫茶', style: 'deco', height: 2.5 },
     { type: 'signPole', position: [13.6, 0, 2.55], rotationY: Math.PI, text: '洋服', style: 'lacquer', height: 2.15 },
     { type: 'signPole', position: [31.7, 0, -2.55], rotationY: 0.0, text: '藥局', style: 'vertical', height: 2.7 },
