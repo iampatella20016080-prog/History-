@@ -27,7 +27,7 @@
  * 需要 Playwright：npm i -D playwright && npx playwright install chromium，
  * 或以環境變數 PLAYWRIGHT_MODULE 指定已安裝的 playwright 模組路徑。
  * 其他環境變數：BROWSER（chromium｜webkit｜firefox）、ONLY（A,B,C,D,F,Q）、D_COUNT（測試 D 的切換次數，預設 12）、
- * Q_TOGGLES（測試 Q 的切換次數，預設 12）、HEADED=1
+ * Q_TOGGLES（測試 Q 的切換次數，預設 12）、Q_DEVICES（測試 Q 的裝置：desktop,touch）、HEADED=1
  */
 import { createRequire } from 'node:module'
 import { pathToFileURL } from 'node:url'
@@ -435,8 +435,9 @@ try {
     await context.close()
   }
   if (run('Q')) {
-    await testQuality(browser, 'Q 桌面', { touch: false })
-    await testQuality(browser, 'Q iPad 觸控', { touch: true })
+    const devices = (process.env.Q_DEVICES ?? 'desktop,touch').split(',')
+    if (devices.includes('desktop')) await testQuality(browser, 'Q 桌面', { touch: false })
+    if (devices.includes('touch')) await testQuality(browser, 'Q iPad 觸控', { touch: true })
   }
 } finally {
   await browser.close()
