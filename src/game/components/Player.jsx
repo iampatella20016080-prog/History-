@@ -93,7 +93,8 @@ export function Player({ collision, shopModels }) {
       }
     }
 
-    const canMove = st.started && st.mode === 'explore'
+    // 建築觀賞模式：角色停在原地並隱藏（座標保留，返回探索時從同一個位置繼續）
+    const canMove = st.started && st.mode === 'explore' && st.viewMode === 'explore'
     let forwardInput = 0
     let rightInput = 0
     let stick = 0
@@ -150,6 +151,7 @@ export function Player({ collision, shopModels }) {
     if (root.current) {
       root.current.position.set(pos.x, 0.02, pos.z)
       root.current.rotation.y = playerState.heading
+      root.current.visible = st.viewMode !== 'viewer'
     }
 
     // 行走動畫

@@ -20,7 +20,7 @@ function detectTouch() {
  *
  * mode
  *   explore ── 自由探索街道
- *   focus   ── 按下 E（或點「探索店家」）後，鏡頭正移向店面（角色暫停）
+ *   focus   ── 按下 E（或點店面）後，鏡頭正移向店面（角色暫停）
  *   reading ── 店家介紹視窗開啟中
  *
  * 年代
@@ -33,6 +33,11 @@ function detectTouch() {
  *
  * 畫質
  *   qualityMode    'smooth'（流暢）或 'fine'（精緻），記在 localStorage，切換後立即套用
+ *
+ * 觀看方式（與 mode 分開：mode 管店家介紹，viewMode 管鏡頭與角色）
+ *   viewMode       'explore'（第三人稱探索）或 'viewer'（建築觀賞：角色暫停並隱藏，鏡頭自由環繞）
+ *   uiHidden       觀賞模式的「隱藏介面」：只留 3D 街景（離開觀賞模式時自動恢復）
+ *   viewerFocus    觀賞模式中要求鏡頭聚焦某家店的建築 { storeId, nonce }（店家名錄使用）
  *
  * 轉場的每一步（換街景、結束、回報錯誤）都必須帶著該次請求的 id，
  * 與目前的 eraTransition.id 相符才會生效，過期的呼叫一律忽略。
@@ -60,6 +65,9 @@ export const useGameStore = create((set, get) => ({
   inputMode: detectTouch() ? 'touch' : 'mouse',
   qualityMode: initialQualityMode(),
   qualityOpen: false,
+  viewMode: 'explore',
+  uiHidden: false,
+  viewerFocus: null,
 
   start: () => {
     if (get().started) return
@@ -80,21 +88,26 @@ export const useGameStore = create((set, get) => ({
     if (get().nearbyShopId !== id) set({ nearbyShopId: id })
   },
 
-  /** 玩家在店家附近按下 E 或點「探索店家」 */
+  /** 玩家在已開放的店家附近按下 E 或點店面 */
   interact: () => {
-    const { started, mode, nearbyShopId, transitioning } = get()
-    if (!started || mode !== 'explore' || !nearbyShopId || transitioning) return
+    const { started, mode, nearbyShopId, transitioning, viewMode } = get()
+    if (!started || mode !== 'explore' || viewMode !== 'explore' || !nearbyShopId || transitioning) return
     if (getShop(nearbyShopId)?.status === 'open') get().openShop(nearbyShopId)
   },
 
-  openShop: (id) =>
+  /** 開啟店家介紹（建築觀賞模式中不開啟故事） */
+  openShop: (id) => {
+    if (get().viewMode !== 'explore') return false
     set((state) => ({
       mode: 'focus',
       activeShopId: id,
       chapterIndex: 0,
       menuOpen: false,
+      qualityOpen: false,
       visited: { ...state.visited, [id]: true },
-    })),
+    }))
+    return true
+  },
 
   /** 鏡頭抵達店面後顯示介紹視窗 */
   revealStory: () => {
@@ -117,7 +130,7 @@ export const useGameStore = create((set, get) => ({
     })),
 
   /**
-   * 切換年代（時間軸、數字鍵）。轉場進行中、閱讀介紹時或選到目前的年代時不接受。
+   * 切換年代（設定選單、數字鍵）。轉場進行中、閱讀介紹時或選到目前的年代時不接受。
    * 接受時回傳這次請求的 id（流水號），否則回傳 false。
    */
   requestEra: (id) => {
@@ -170,4 +183,36 @@ export const useGameStore = create((set, get) => ({
   },
 
   toggleQualityPanel: (open) => set((state) => ({ qualityOpen: open ?? !state.qualityOpen, menuOpen: false })),
+
+  /**
+   * 切換探索／建築觀賞模式。只有在開始探索、而且沒有開啟店家介紹時才能進入觀賞模式。
+   * 切換時不會重新載入街景，也不會改動年代、畫質或音樂設定。
+   */
+  setViewMode: (viewMode) => {
+    const state = get()
+    if (viewMode === state.viewMode) return false
+    if (viewMode === 'viewer') {
+      if (!state.started || state.mode !== 'explore') return false
+      set({ viewMode: 'viewer', uiHidden: false, nearbyShopId: null, menuOpen: false, viewerFocus: null })
+      return true
+    }
+    if (viewMode === 'explore') {
+      set({ viewMode: 'explore', uiHidden: false, viewerFocus: null })
+      return true
+    }
+    return false
+  },
+
+  /** 觀賞模式的「隱藏介面」（只在觀賞模式有效） */
+  setUiHidden: (hidden) => {
+    const next = !!hidden && get().viewMode === 'viewer'
+    if (get().uiHidden !== next) set({ uiHidden: next, qualityOpen: false, menuOpen: false })
+  },
+
+  /** 觀賞模式中，從店家名錄要求鏡頭聚焦某家店的建築 */
+  focusBuilding: (storeId) => {
+    if (get().viewMode !== 'viewer') return false
+    set((state) => ({ viewerFocus: { storeId, nonce: (state.viewerFocus?.nonce ?? 0) + 1 }, menuOpen: false }))
+    return true
+  },
 }))

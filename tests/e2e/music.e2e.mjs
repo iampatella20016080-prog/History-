@@ -131,7 +131,10 @@ async function startGame(page) {
 
 async function switchEra(page, era) {
   const before = Number(await page.evaluate(() => document.documentElement.dataset.eraRequest))
-  await page.locator('.era-node__button').nth(era.index).click()
+  // 年代切換在右上角的設定（齒輪）裡；切換後收起面板，不影響後面的操作
+  if (!(await page.locator('#quality-panel').count())) await page.locator('.hud-quality__toggle').click()
+  await page.locator(`[data-era-option="${era.id}"]`).click()
+  await page.keyboard.press('Escape')
   const accepted = await waitFor(page, (n) => Number(document.documentElement.dataset.eraRequest) === n, before + 1, 15000)
   const done = await waitFor(
     page,

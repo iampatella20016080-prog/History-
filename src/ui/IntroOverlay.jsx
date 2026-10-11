@@ -27,7 +27,7 @@ export function IntroOverlay() {
         <p className="intro__text">
           你是一位走訪大稻埕的旅人。1853年後，移居此地的人們沿著淡水河岸開設商號，南北貨與茶葉在街上往來；
           之後的一百七十年間，這條街經歷了酒樓繁華、摩登年代、庶民生活與老屋新生。
-          沿著街道漫步，走近商號讀一讀店家與食物背後的故事，也可以用上方的時間軸，看看同一條街在不同年代的模樣。
+          沿著街道漫步，走近商號讀一讀店家與食物背後的故事，也可以用右上角齒輪裡的年代切換，看看同一條街在不同年代的模樣；想專心看建築時，可以切換成「建築觀賞」模式。
         </p>
         <ol className="intro__eras" aria-label="五個年代">
           {ERAS.map((era) => (
@@ -46,10 +46,10 @@ export function IntroOverlay() {
               <kbd>單指拖曳</kbd> 旋轉視角・<kbd>雙指</kbd> 縮放
             </li>
             <li>
-              <kbd>探索店家</kbd> 靠近店家後點一下
+              <kbd>點店面</kbd> 靠近已開放的店家後點一下
             </li>
             <li>
-              <kbd>時間軸</kbd> 點上方年代切換時空
+              <kbd>齒輪</kbd> 右上角切換年代與建築觀賞模式
             </li>
           </ul>
         ) : (
@@ -67,7 +67,7 @@ export function IntroOverlay() {
               <kbd>E</kbd> 探索店家・<kbd>Esc</kbd> 返回
             </li>
             <li>
-              <kbd>1</kbd>–<kbd>5</kbd> 或點上方時間軸　切換年代
+              <kbd>1</kbd>–<kbd>5</kbd> 或右上角齒輪　切換年代、建築觀賞模式
             </li>
           </ul>
         )}

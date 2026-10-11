@@ -91,9 +91,9 @@ export function GameCanvas() {
         flat
         gl={{ antialias: false, alpha: false, stencil: false, powerPreference: 'high-performance' }}
         camera={{ fov: CAMERA.fov, near: CAMERA.near, far: CAMERA.far, position: [30, 12.5, 1.2] }}
-        onCreated={({ gl }) => {
+        onCreated={({ gl, scene }) => {
           gl.setClearColor(PALETTE.skyHorizon)
-          if (import.meta.env.DEV && window.__DDC__) window.__DDC__.gl = gl
+          if (import.meta.env.DEV && window.__DDC__) Object.assign(window.__DDC__, { gl, scene })
         }}
       >
         <QualityController />

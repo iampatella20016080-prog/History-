@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import { getShop } from '../data/shops.js'
 import { setStick } from '../game/input.js'
 import { useGameStore } from '../state/useGameStore.js'
 
@@ -86,45 +85,6 @@ export function Joystick() {
       <div ref={knob} className="joystick__knob">
         <span>行</span>
       </div>
-    </div>
-  )
-}
-
-/**
- * 右下角的「探索店家」按鈕：走近可探索的店家時出現，點一下即可探索（與按 E 相同）。
- * 走近即將開放的店家時，改為顯示店名與「即將開放」。
- */
-export function ExploreButton() {
-  const nearbyId = useGameStore((state) => state.nearbyShopId)
-  const visible = useGameStore((state) => state.started && state.mode === 'explore' && !state.transitioning)
-  const interact = useGameStore((state) => state.interact)
-  const shop = nearbyId ? getShop(nearbyId) : null
-  const show = visible && shop
-
-  return (
-    <div className={`explore-dock${show ? ' is-visible' : ''}`} aria-live="polite">
-      {show && shop.status === 'open' && (
-        <button
-          type="button"
-          className="explore-button"
-          onPointerDown={(event) => event.stopPropagation()}
-          onClick={() => interact()}
-        >
-          <span className="explore-button__seal" aria-hidden="true">
-            探
-          </span>
-          <span className="explore-button__text">
-            <strong>探索店家</strong>
-            <small>{shop.name}</small>
-          </span>
-        </button>
-      )}
-      {show && shop.status !== 'open' && (
-        <div className="explore-chip paper">
-          <strong>{shop.name}</strong>
-          <small>即將開放</small>
-        </div>
-      )}
     </div>
   )
 }

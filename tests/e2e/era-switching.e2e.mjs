@@ -1,15 +1,16 @@
 /**
  * 年代切換端對端測試（真實瀏覽器，透過 Playwright 操作網頁）
  *
- * 以時間軸實際點擊（桌面）或觸控點擊（iPad 尺寸、觸控模擬）連續切換年代，
+ * 以右上角設定（齒輪）裡的年代選項實際點擊（桌面）或觸控點擊（iPad 尺寸、觸控模擬）連續切換年代，
  * 每次切換都檢查：
  *   1. 請求被接受（data-era-request 加一）
  *   2. 播放轉場（中央出現該年代的章節標題；開發版另外確認霧氣有出現）
  *   3. 載入目標年代的街景（data-scene-era）
- *   4. 介面年代更新（時間軸目前節點、data-era）
- *   5. 轉場結束（data-era-transition = idle、時間軸按鈕全部可按）
+ *   4. 介面年代更新（設定裡目前的年代選項、data-era）
+ *   5. 轉場結束（data-era-transition = idle、年代選項全部可按）
  *   6. 可以再次切換（下一次請求同樣被接受）
- * 最後檢查（測試 F）：店家互動（店家名錄 → 前往店門口 → 探索店家 → 介紹視窗 → 關閉）；
+ * 最後檢查（測試 F）：店家互動（店家名錄 → 前往店門口 → 桌面按 E／觸控點店面 → 介紹視窗 → 關閉），
+ * 並確認畫面上沒有左上標誌、頂部時間軸與右下角的店家提示；
  * 開發版（有 window.__DDC__）另外檢查角色移動與鏡頭操作。
  *
  * 測試 Q（畫質設定，桌面與 iPad 觸控各一次）：
@@ -99,12 +100,28 @@ async function startGame(page, { touch }) {
   })
 }
 
-/** 點時間軸切換年代，並逐項檢查完成條件 */
+/** 打開右上角的設定面板（已開啟時不動作） */
+async function openSettings(page, { touch }) {
+  if (await page.locator('#quality-panel').count()) return
+  const toggle = page.locator('.hud-quality__toggle')
+  if (touch) await toggle.tap()
+  else await toggle.click()
+  await page.waitForSelector('#quality-panel')
+}
+
+async function closeSettings(page) {
+  if (!(await page.locator('#quality-panel').count())) return
+  await page.keyboard.press('Escape')
+  await page.waitForSelector('#quality-panel', { state: 'detached', timeout: 30000 }).catch(() => {})
+}
+
+/** 從設定面板切換年代，並逐項檢查完成條件 */
 async function switchEra(page, test, year, { touch }) {
   const era = ERAS[year]
   const before = await rootData(page)
   const requestBefore = Number(before.eraRequest)
-  const button = page.locator('.era-node__button').nth(era.index)
+  await openSettings(page, { touch })
+  const button = page.locator(`[data-era-option="${era.id}"]`)
   const started = Date.now()
   if (touch) await button.tap()
   else await button.click()
@@ -149,14 +166,14 @@ async function switchEra(page, test, year, { touch }) {
     return false
   }
   const ui = await page.evaluate(() => ({
-    active: document.querySelector('.era-node.is-active .era-node__title')?.textContent,
-    enabled: document.querySelectorAll('.era-node__button:not([disabled])').length,
-    transitioningClass: document.querySelector('.era-timeline')?.classList.contains('is-transitioning'),
+    active: document.querySelector('.era-option.is-active .era-option__title')?.textContent,
+    enabled: document.querySelectorAll('[data-era-option]:not([disabled])').length,
+    transitioningClass: Boolean(document.querySelector('.settings-section.is-transitioning')),
   }))
   const seconds = ((Date.now() - started) / 1000).toFixed(1)
   record(test, `${year}：載入目標街景`, true, `data-scene-era=${era.id}`)
-  record(test, `${year}：介面年代更新`, ui.active === era.title, `時間軸目前節點「${ui.active}」`)
-  record(test, `${year}：轉場正常結束`, ui.enabled === 5 && !ui.transitioningClass, `時間軸按鈕可按 ${ui.enabled}/5，耗時 ${seconds} 秒`)
+  record(test, `${year}：介面年代更新`, ui.active === era.title, `設定裡目前的年代「${ui.active}」`)
+  record(test, `${year}：轉場正常結束`, ui.enabled === 5 && !ui.transitioningClass, `年代選項可按 ${ui.enabled}/5，耗時 ${seconds} 秒`)
   return ui.active === era.title && ui.enabled === 5
 }
 
@@ -172,22 +189,44 @@ async function runSequence(browser, test, startYear, years, { touch = false } = 
     const ok = await switchEra(page, test, year, { touch })
     if (!ok) break
   }
+  await closeSettings(page)
   record(test, '沒有頁面錯誤', errors.length === 0, errors.slice(0, 3).join(' | '))
   return { context, page, errors }
 }
 
+/** 簡化後的介面：沒有左上標誌、頂部時間軸，也沒有右下角的「探索店家」按鈕或「即將開放」卡片 */
+async function testSimplifiedHud(page, test) {
+  const found = await page.evaluate(() =>
+    ['.hud-title', '.era-timeline', '.explore-dock', '.explore-button', '.explore-chip'].filter((selector) => document.querySelector(selector)),
+  )
+  record(test, '介面已簡化（無左上標誌、頂部時間軸、右下店家提示）', found.length === 0, found.join('、'))
+}
+
 async function testShopInteraction(page, test, { touch }) {
   const press = (locator) => (touch ? locator.tap() : locator.click())
+  await closeSettings(page)
   await press(page.locator('.hud-menu__toggle'))
   const shop = page.locator('.menu-shop', { hasText: '林復振' })
   await press(shop.locator('.button-ghost'))
   try {
-    await page.waitForSelector('.explore-button', { timeout: 60000 })
-    await press(page.locator('.explore-button'))
+    // 已開放的店家：店面上方浮現店名提示；桌面按 E，觸控直接點店面
+    await page.waitForSelector('.shop-prompt.is-visible', { timeout: 60000 })
+    await testSimplifiedHud(page, test)
+    const hasDebug = await page.evaluate(() => Boolean(window.__DDC__?.storefrontScreenPoint))
+    if (!touch) {
+      await page.keyboard.press('KeyE')
+    } else if (hasDebug) {
+      // 等鏡頭轉到店面後，點店面（開發版才能算出店面在畫面上的位置）
+      await page.waitForTimeout(2500)
+      const point = await page.evaluate(() => window.__DDC__.storefrontScreenPoint('lin-fu-zhen'))
+      await page.touchscreen.tap(point.x, point.y)
+    } else {
+      await press(page.locator('.shop-prompt.is-visible .shop-prompt__card'))
+    }
     await page.waitForSelector('.story-layer[data-state="open"] .story__title', { timeout: 60000 })
     const title = await page.locator('.story__title').textContent()
     const note = await page.locator('.era-note__label').textContent().catch(() => '')
-    record(test, '店家互動：開啟林復振介紹', title === '林復振', note)
+    record(test, `店家互動：${touch ? (hasDebug ? '點店面' : '點店名提示') : '按 E'}開啟林復振介紹`, title === '林復振', note)
     await press(page.locator('.story__close'))
     await page.waitForSelector('.story-layer', { state: 'detached', timeout: 30000 })
     record(test, '店家互動：關閉後回到街道', true)
@@ -351,8 +390,7 @@ async function testQuality(browser, test, { touch }) {
   record(test, `${QUALITY[current]?.label}：設定已套用`, first.ok, describeQuality(first.data))
 
   const toggles = Number(process.env.Q_TOGGLES ?? 12)
-  await press(page.locator('.hud-quality__toggle'))
-  await page.waitForSelector('#quality-panel')
+  await openSettings(page, { touch })
   let failures = 0
   const minimum = { mean: 1, dark: 0 }
   for (let i = 0; i < toggles; i++) {

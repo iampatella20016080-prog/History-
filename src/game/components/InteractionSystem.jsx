@@ -12,7 +12,7 @@ export function InteractionSystem({ shopModels }) {
   useFrame(() => {
     const store = useGameStore.getState()
     if (!store.started || store.mode !== 'explore') return
-    if (store.transitioning) {
+    if (store.transitioning || store.viewMode !== 'explore') {
       store.setNearbyShop(null)
       return
     }

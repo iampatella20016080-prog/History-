@@ -6,12 +6,15 @@ import { useGameStore } from '../state/useGameStore.js'
 /**
  * 右上角的「店家名錄」：列出目前年代街上的店家。
  * 可探索的店家能直接閱讀故事；即將開放的店家可以先前往店門口看看建築。
+ * 建築觀賞模式中改為「聚焦建築」：鏡頭移到該店的立面前（不開啟故事）。
  */
 export function StoreDirectory({ era, shops }) {
   const open = useGameStore((state) => state.menuOpen)
   const toggleMenu = useGameStore((state) => state.toggleMenu)
   const travelToShop = useGameStore((state) => state.travelToShop)
   const openShop = useGameStore((state) => state.openShop)
+  const focusBuilding = useGameStore((state) => state.focusBuilding)
+  const viewer = useGameStore((state) => state.viewMode === 'viewer')
   const visited = useGameStore((state) => state.visited)
   const mode = useGameStore((state) => state.mode)
   const transitioning = useGameStore((state) => state.transitioning)
@@ -74,10 +77,16 @@ export function StoreDirectory({ era, shops }) {
                   <p className="menu-shop__summary">{shop.summary}</p>
                   {(shop.yearNote || shop.sourceIds?.length) && <ShopSources shop={shop} />}
                   <div className="menu-shop__actions">
-                    <button type="button" className="button-ghost" onClick={() => travelToShop(shop.id)}>
-                      前往店門口
-                    </button>
-                    {isOpen && (
+                    {viewer ? (
+                      <button type="button" className="button-ghost" data-focus-shop={shop.id} onClick={() => focusBuilding(shop.id)}>
+                        聚焦建築
+                      </button>
+                    ) : (
+                      <button type="button" className="button-ghost" onClick={() => travelToShop(shop.id)}>
+                        前往店門口
+                      </button>
+                    )}
+                    {isOpen && !viewer && (
                       <button
                         type="button"
                         className="button-solid"
