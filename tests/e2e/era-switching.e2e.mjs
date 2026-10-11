@@ -82,6 +82,8 @@ async function openGame(context, query, { touch, quality = 'low' }) {
   const url = new URL(BASE_URL)
   if (quality) url.searchParams.set('quality', quality)
   for (const [key, value] of Object.entries(query)) url.searchParams.set(key, value)
+  // 軟體繪圖（SwiftShader）下一個影格可能要一秒以上，點擊前的「元素穩定」檢查需要較長的等待
+  page.setDefaultTimeout(Number(process.env.ACTION_TIMEOUT ?? 120000))
   await page.goto(url.href, { waitUntil: 'load' })
   await startGame(page, { touch })
   return { page, errors }
