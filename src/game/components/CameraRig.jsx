@@ -208,7 +208,7 @@ export function CameraRig({ blockers, buildings, shopModels }) {
         touches.set(event.pointerId, { x: event.clientX, y: event.clientY })
         element.setPointerCapture?.(event.pointerId)
         pinch = touches.size >= 2 ? pinchState() : null
-        tap = touches.size === 1 ? { id: event.pointerId, x: event.clientX, y: event.clientY, time: performance.now() } : null
+        tap = touches.size === 1 ? { id: event.pointerId, x: event.clientX, y: event.clientY, time: event.timeStamp } : null
         element.classList.add('is-dragging')
         return
       }
@@ -218,7 +218,7 @@ export function CameraRig({ blockers, buildings, shopModels }) {
       mouseButton = event.button
       lastX = event.clientX
       lastY = event.clientY
-      tap = event.button === 0 ? { id: event.pointerId, x: event.clientX, y: event.clientY, time: performance.now() } : null
+      tap = event.button === 0 ? { id: event.pointerId, x: event.clientX, y: event.clientY, time: event.timeStamp } : null
       element.setPointerCapture?.(event.pointerId)
       element.classList.add('is-dragging')
     }
@@ -256,7 +256,7 @@ export function CameraRig({ blockers, buildings, shopModels }) {
       else rotate(dx, dy, 1)
     }
     const onUp = (event) => {
-      const tapped = tap && tap.id === event.pointerId && event.type === 'pointerup' && performance.now() - tap.time < TAP_TIME
+      const tapped = tap && tap.id === event.pointerId && event.type === 'pointerup' && event.timeStamp - tap.time < TAP_TIME
       if (tap?.id === event.pointerId) tap = null
       if (event.pointerType === 'touch') {
         if (!touches.delete(event.pointerId)) return

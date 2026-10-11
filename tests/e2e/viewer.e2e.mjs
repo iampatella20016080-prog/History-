@@ -297,6 +297,19 @@ async function runDevice(browser, device) {
   b = await snapshot(page)
   record(test, `縮放（${touch ? '雙指捏合' : '滾輪'}）`, b.viewer.goalDistance < a.viewer.goalDistance - 0.5, `距離 ${round(a.viewer.goalDistance)} → ${round(b.viewer.goalDistance)}`)
   await waitSettled(page)
+  // 再拉遠，讓畫面上看得到整棟建築
+  a = await snapshot(page)
+  if (touch) {
+    await fingers.drag([
+      { from: [cx - 170, cy], to: [cx - 40, cy] },
+      { from: [cx + 170, cy], to: [cx + 40, cy] },
+    ])
+  } else {
+    for (let i = 0; i < 3; i++) await page.mouse.wheel(0, 120)
+  }
+  b = await snapshot(page)
+  record(test, `拉遠（${touch ? '雙指收合' : '滾輪'}）`, b.viewer.goalDistance > a.viewer.goalDistance + 0.5, `距離 ${round(a.viewer.goalDistance)} → ${round(b.viewer.goalDistance)}`)
+  await waitSettled(page)
   let clear = await cameraClearance(page)
   record(test, '操作後鏡頭不在建築內、不穿牆、不低於地面', !clear.inside && !clear.crossed && clear.height > 0.4, `鏡頭高 ${round(clear.height)} m`)
 
@@ -327,13 +340,20 @@ async function runDevice(browser, device) {
 
   // 點店家建築：只聚焦，不開啟故事
   await page.evaluate(() => window.__DDC__.useGameStore.getState().focusBuilding('lin-fu-zhen'))
-  await waitSettled(page)
-  const shopPoint = await page.evaluate(() => window.__DDC__.storefrontScreenPoint('lin-fu-zhen'))
+  const focusSettled = await waitSettled(page)
+  // 點店面（看不到一樓時改點立面中段）
+  let shopPoint = await page.evaluate(() => window.__DDC__.storefrontScreenPoint('lin-fu-zhen'))
+  if (!shopPoint?.inView) shopPoint = await page.evaluate(() => window.__DDC__.facadeScreenPoint('lin-fu-zhen', 4))
   if (shopPoint?.inView) await tapAt(shopPoint.x, shopPoint.y)
   await page.waitForTimeout(3000)
   s = await snapshot(page)
   const story = await page.locator('.story-layer').count()
-  record(test, '觀賞模式點店家建築不開啟故事', s.mode === 'explore' && story === 0 && shopPoint?.inView, `mode=${s.mode}`)
+  record(
+    test,
+    '觀賞模式點店家建築不開啟故事',
+    s.mode === 'explore' && story === 0 && shopPoint?.inView,
+    `mode=${s.mode}、聚焦${focusSettled ? '完成' : '未在時限內完成'}、店面在畫面上 (${round(shopPoint?.x ?? NaN)}, ${round(shopPoint?.y ?? NaN)}) ${shopPoint?.inView}；鏡頭距離 ${round(s.viewer.distance)}、yaw ${round(s.viewer.yaw)}、pitch ${round(s.viewer.pitch)}`,
+  )
   clear = await cameraClearance(page)
   record(test, '店家名錄「聚焦建築」後鏡頭不穿牆', !clear.inside && !clear.crossed)
 
