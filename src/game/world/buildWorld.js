@@ -159,7 +159,7 @@ function treeBlocker({ position: [x, , z], scale, collider }) {
   return { minX: x - r, maxX: x + r, minY: 2.4 * scale, maxY: 7 * scale, minZ: z - r, maxZ: z + r }
 }
 
-/** 一棟建築所有遮擋方塊的外框（建築觀賞模式點選與聚焦建築用） */
+/** 一棟建築所有遮擋方塊的外框（建築觀賞模式聚焦建築時決定立面位置與大小） */
 function unionBoxes(boxes) {
   if (!boxes.length) return null
   const box = { ...boxes[0] }
@@ -203,8 +203,9 @@ export function* eraWorldSteps(eraId) {
     b.push([building.x, 0, building.z], building.rotationY)
     const firstBlocker = b.blockers.length
     const result = builder(b, config) ?? {}
-    const box = unionBoxes(b.blockers.slice(firstBlocker))
-    if (box) buildings.push({ id: building.id, storeId: building.storeId ?? null, rotationY: building.rotationY ?? 0, box })
+    const parts = b.blockers.slice(firstBlocker)
+    const box = unionBoxes(parts)
+    if (box) buildings.push({ id: building.id, storeId: building.storeId ?? null, rotationY: building.rotationY ?? 0, box, parts })
     if (archetype === 'temple') {
       hasTemple = true
       for (const side of [-1, 1]) {

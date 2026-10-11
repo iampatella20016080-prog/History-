@@ -189,6 +189,15 @@ describe('點選與聚焦建築', () => {
     assert.equal(pickBuilding({ x: 0, y: 2, z: 0 }, { x: 0, y: 1, z: 0 }, world.buildings), null)
   })
 
+  test('鏡頭在對街騎樓上方（建築外框內、但不在建築裡）時，點店面仍選到那家店', () => {
+    // 實際情況：從店家名錄前往林復振後，第三人稱鏡頭在對街騎樓屋簷的上方
+    const world = worlds['qing-port']
+    const origin = { x: 1.1, y: 4.04, z: 4.13 }
+    const direction = { x: -0.404, y: -0.265, z: -0.876 }
+    assert.ok(world.buildings.some((building) => inside(origin, building.box)), '這個位置在對街建築的外框內')
+    assert.equal(pickBuilding(origin, direction, world.buildings)?.storeId, 'lin-fu-zhen')
+  })
+
   test('聚焦：鏡頭停在建築前方、看得到整個立面的距離，而且不穿牆', () => {
     const direction = { x: 0, y: 0, z: 0 }
     for (const [eraId, world] of Object.entries(worlds)) {

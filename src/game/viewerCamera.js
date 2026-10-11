@@ -106,15 +106,23 @@ export function clampViewerTarget(target, blockers = []) {
   return target
 }
 
-/** 點選：從鏡頭射出的射線最先碰到的建築（沒有則回傳 null） */
+function containsPoint(box, p) {
+  return p.x >= box.minX && p.x <= box.maxX && p.y >= box.minY && p.y <= box.maxY && p.z >= box.minZ && p.z <= box.maxZ
+}
+
+/**
+ * 點選：從鏡頭射出的射線最先碰到的建築（沒有則回傳 null）。
+ * 用每棟建築各自的遮擋方塊判斷（外框會包住騎樓上方的空間，鏡頭常常就在那裡），
+ * 並略過鏡頭本身所在的方塊。
+ */
 export function pickBuilding(origin, direction, buildings, maxDistance = 400) {
-  const hit = raycastBoxIndex(
-    origin,
-    direction,
-    maxDistance,
-    buildings.map((building) => building.box),
-  )
-  return hit ? buildings[hit.index] : null
+  let best = null
+  for (const building of buildings) {
+    const parts = (building.parts ?? [building.box]).filter((part) => !containsPoint(part, origin))
+    const hit = raycastBoxIndex(origin, direction, maxDistance, parts)
+    if (hit && (!best || hit.distance < best.distance)) best = { building, distance: hit.distance }
+  }
+  return best?.building ?? null
 }
 
 /** 建築立面：朝向、立面中心（地面高度）、寬度與高度 */
