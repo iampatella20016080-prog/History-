@@ -12,13 +12,22 @@
  * 最後檢查（測試 F）：店家互動（店家名錄 → 前往店門口 → 探索店家 → 介紹視窗 → 關閉）；
  * 開發版（有 window.__DDC__）另外檢查角色移動與鏡頭操作。
  *
+ * 測試 Q（畫質設定，桌面與 iPad 觸控各一次）：
+ *   - 預設模式（桌面「精緻」、觸控「流暢」）
+ *   - 以右上角齒輪來回切換流暢／精緻至少 10 次，每次都檢查實際套用的設定
+ *     （data-dpr、data-shadow-map、data-msaa、data-ao、data-bloom、data-dof、data-detail），
+ *     畫面不是黑的（截圖取樣亮度）、WebGL 沒有錯誤也沒有遺失
+ *   - 重新整理後沿用最後的選擇（localStorage）
+ *   - 切換後年代切換、角色移動、鏡頭與店家互動仍正常（測試 F）
+ *
  * 用法：
  *   npm run build && npx vite preview --port 4173      # 或 npm run dev
  *   node tests/e2e/era-switching.e2e.mjs http://127.0.0.1:4173/
  *
  * 需要 Playwright：npm i -D playwright && npx playwright install chromium，
  * 或以環境變數 PLAYWRIGHT_MODULE 指定已安裝的 playwright 模組路徑。
- * 其他環境變數：BROWSER（chromium｜webkit｜firefox）、ONLY（A,B,C,D,F）、D_COUNT（測試 D 的切換次數，預設 12）、HEADED=1
+ * 其他環境變數：BROWSER（chromium｜webkit｜firefox）、ONLY（A,B,C,D,F,Q）、D_COUNT（測試 D 的切換次數，預設 12）、
+ * Q_TOGGLES（測試 Q 的切換次數，預設 12）、HEADED=1
  */
 import { createRequire } from 'node:module'
 import { pathToFileURL } from 'node:url'
@@ -59,21 +68,34 @@ function record(test, step, ok, detail = '') {
 
 const rootData = (page) => page.evaluate(() => ({ ...document.documentElement.dataset }))
 
-async function openGame(context, query, { touch }) {
+const WEBGL_WARNING = /WebGL|GL_INVALID|GL ERROR|CONTEXT_LOST/i
+
+async function openGame(context, query, { touch, quality = 'low' }) {
   const page = await context.newPage()
   const errors = []
   page.on('pageerror', (error) => errors.push(error.message))
-  page.on('console', (message) => message.type() === 'error' && errors.push(message.text()))
+  page.on('console', (message) => {
+    if (message.type() === 'error' || (message.type() === 'warning' && WEBGL_WARNING.test(message.text()))) errors.push(message.text())
+  })
   const url = new URL(BASE_URL)
-  url.searchParams.set('quality', 'low')
+  if (quality) url.searchParams.set('quality', quality)
   for (const [key, value] of Object.entries(query)) url.searchParams.set(key, value)
   await page.goto(url.href, { waitUntil: 'load' })
+  await startGame(page, { touch })
+  return { page, errors }
+}
+
+async function startGame(page, { touch }) {
   await page.waitForFunction(() => document.documentElement.dataset.sceneEra, null, { timeout: 120000 })
   const start = page.locator('.intro__start')
   if (touch) await start.tap()
   else await start.click()
   await page.waitForFunction(() => document.querySelector('.hud.is-started'), null, { timeout: 30000 })
-  return { page, errors }
+  // 記錄 WebGL 遺失
+  await page.evaluate(() => {
+    window.__contextLost = 0
+    document.querySelector('canvas')?.addEventListener('webglcontextlost', () => window.__contextLost++)
+  })
 }
 
 /** 點時間軸切換年代，並逐項檢查完成條件 */
@@ -223,6 +245,148 @@ async function testMovementAndCamera(page, test, { touch, cdp }) {
   record(test, `鏡頭可操作（${touch ? '單指拖曳' : '滑鼠拖曳'}）`, Math.abs(turned.yaw - moved.yaw) > 0.05, `yaw ${moved.yaw.toFixed(2)} → ${turned.yaw.toFixed(2)}`)
 }
 
+/* ───────────── 測試 Q：畫質設定 ───────────── */
+
+const QUALITY_TIMEOUT = Number(process.env.QUALITY_TIMEOUT ?? 240000)
+const QUALITY = {
+  smooth: { label: '流暢', dprMax: 1.25, shadowMap: '1024', msaa: '2', ao: '0', bloom: '0', dof: '0', detail: 'reduced' },
+  fine: { label: '精緻', dprMax: 1.75, shadowMap: '2048', msaa: '4', ao: '0.4', bloom: '0.16', dof: '12', detail: 'full' },
+}
+
+/** 等待畫質設定實際套用到渲染器（陰影貼圖在下一次渲染時才重新配置） */
+async function waitForQuality(page, mode, ratio) {
+  const want = { ...QUALITY[mode], dprMax: Math.min(QUALITY[mode].dprMax, ratio) }
+  try {
+    await page.waitForFunction(
+      ({ mode, want }) => {
+        const d = document.documentElement.dataset
+        return (
+          d.quality === mode &&
+          Math.abs(Number(d.dprMax) - want.dprMax) < 0.001 &&
+          Math.abs(Number(d.dpr) - want.dprMax) < 0.011 &&
+          d.shadowMap === want.shadowMap &&
+          d.msaa === want.msaa &&
+          d.ao === want.ao &&
+          d.bloom === want.bloom &&
+          d.dof === want.dof &&
+          d.detail === want.detail
+        )
+      },
+      { mode, want },
+      { timeout: QUALITY_TIMEOUT },
+    )
+    return { ok: true, data: await rootData(page) }
+  } catch {
+    return { ok: false, data: await rootData(page) }
+  }
+}
+
+const describeQuality = (d) => `DPR ${d.dpr}（上限 ${d.dprMax}）、陰影 ${d.shadowMap}、MSAA ${d.msaa}、AO ${d.ao}、光暈 ${d.bloom}、景深 ${d.dof}、裝飾 ${d.detail}`
+
+/** 截取畫面中央（避開介面）並計算平均亮度與接近全黑的比例 */
+async function frameStats(page) {
+  const size = page.viewportSize()
+  const clip = { x: size.width * 0.25, y: size.height * 0.28, width: size.width * 0.5, height: size.height * 0.4 }
+  const buffer = await page.screenshot({ type: 'jpeg', quality: 70, clip, scale: 'css', timeout: QUALITY_TIMEOUT })
+  return page.evaluate(async (b64) => {
+    const image = new Image()
+    image.src = `data:image/jpeg;base64,${b64}`
+    await image.decode()
+    const canvas = document.createElement('canvas')
+    canvas.width = 64
+    canvas.height = 40
+    const g = canvas.getContext('2d')
+    g.drawImage(image, 0, 0, 64, 40)
+    const pixels = g.getImageData(0, 0, 64, 40).data
+    let sum = 0
+    let dark = 0
+    for (let i = 0; i < pixels.length; i += 4) {
+      const l = (0.2126 * pixels[i] + 0.7152 * pixels[i + 1] + 0.0722 * pixels[i + 2]) / 255
+      sum += l
+      if (l < 0.04) dark++
+    }
+    const n = pixels.length / 4
+    return { mean: sum / n, dark: dark / n }
+  }, buffer.toString('base64'))
+}
+
+async function webglStatus(page) {
+  return page.evaluate(() => {
+    const canvas = document.querySelector('canvas')
+    const gl = canvas?.getContext('webgl2') ?? canvas?.getContext('webgl')
+    if (!gl) return { error: '找不到 WebGL', lost: window.__contextLost ?? 0 }
+    if (gl.isContextLost()) return { error: 'WebGL 遺失', lost: window.__contextLost ?? 0 }
+    const code = gl.getError()
+    return { error: code === 0 ? null : `gl.getError() = 0x${code.toString(16)}`, lost: window.__contextLost ?? 0 }
+  })
+}
+
+async function testQuality(browser, test, { touch }) {
+  const ratio = 2
+  const context = await browser.newContext(
+    touch
+      ? { viewport: { width: 1024, height: 700 }, deviceScaleFactor: ratio, hasTouch: true, isMobile: false }
+      : { viewport: { width: 900, height: 600 }, deviceScaleFactor: ratio },
+  )
+  const press = (locator) => (touch ? locator.tap() : locator.click())
+  // 不指定畫質，檢查依裝置的預設；關閉自動調整解析度，才能核對實際的 DPR
+  const { page, errors } = await openGame(context, { era: 'banquet', adaptive: '0' }, { touch, quality: null })
+  // 軟體繪圖（SwiftShader）每個影格要數秒，切換模式時還要重新編譯著色器：放寬操作的等待時間
+  page.setDefaultTimeout(QUALITY_TIMEOUT)
+  const expectedDefault = touch ? 'smooth' : 'fine'
+  let current = (await rootData(page)).quality
+  record(test, `預設畫質（${touch ? 'iPad 觸控' : '桌面'}）`, current === expectedDefault, `${QUALITY[current]?.label ?? current}`)
+  const first = await waitForQuality(page, current, ratio)
+  record(test, `${QUALITY[current]?.label}：設定已套用`, first.ok, describeQuality(first.data))
+
+  const toggles = Number(process.env.Q_TOGGLES ?? 12)
+  await press(page.locator('.hud-quality__toggle'))
+  await page.waitForSelector('#quality-panel')
+  let failures = 0
+  const minimum = { mean: 1, dark: 0 }
+  for (let i = 0; i < toggles; i++) {
+    const target = current === 'fine' ? 'smooth' : 'fine'
+    await press(page.locator(`[data-quality-option="${target}"]`))
+    const applied = await waitForQuality(page, target, ratio)
+    await page.waitForTimeout(400)
+    const stats = await frameStats(page)
+    const gl = await webglStatus(page)
+    const notBlack = stats.mean > 0.06 && stats.dark < 0.6
+    const ok = applied.ok && notBlack && !gl.error && gl.lost === 0
+    if (!ok) failures++
+    minimum.mean = Math.min(minimum.mean, stats.mean)
+    minimum.dark = Math.max(minimum.dark, stats.dark)
+    record(
+      test,
+      `第 ${i + 1} 次切換 → ${QUALITY[target].label}`,
+      ok,
+      `${describeQuality(applied.data)}；畫面平均亮度 ${stats.mean.toFixed(2)}、近黑 ${(stats.dark * 100).toFixed(0)}%${gl.error ? `；${gl.error}` : ''}${gl.lost ? `；WebGL 遺失 ${gl.lost} 次` : ''}`,
+    )
+    current = target
+  }
+  record(test, `來回切換 ${toggles} 次`, failures === 0, `最低平均亮度 ${minimum.mean.toFixed(2)}、最高近黑比例 ${(minimum.dark * 100).toFixed(0)}%`)
+  await page.keyboard.press('Escape')
+  await page.waitForSelector('#quality-panel', { state: 'detached', timeout: 10000 }).catch(() => {})
+
+  // 重新整理後沿用最後的選擇
+  const stored = await page.evaluate(() => localStorage.getItem('ddc.qualityMode'))
+  await page.reload({ waitUntil: 'load' })
+  await startGame(page, { touch })
+  const reloaded = await waitForQuality(page, current, ratio)
+  record(test, '重新整理後沿用選擇（localStorage）', stored === current && reloaded.ok, `儲存值 ${stored}；${describeQuality(reloaded.data)}`)
+
+  // 切換後：年代切換、角色移動、鏡頭與店家互動
+  for (const year of [1930, 1895]) {
+    if (!(await switchEra(page, test, year, { touch }))) break
+  }
+  const cdp = touch && BROWSER === 'chromium' ? await context.newCDPSession(page) : null
+  await testMovementAndCamera(page, test, { touch, cdp })
+  await testShopInteraction(page, test, { touch })
+  const gl = await webglStatus(page)
+  record(test, '沒有頁面錯誤或 WebGL 錯誤', errors.length === 0 && !gl.error && gl.lost === 0, [...errors.slice(0, 3), gl.error].filter(Boolean).join(' | '))
+  await context.close()
+}
+
 const playwright = await loadPlaywright()
 const browserType = playwright[BROWSER]
 const browser = await browserType.launch({
@@ -258,6 +422,10 @@ try {
       await testShopInteraction(page, 'F 觸控', { touch: true })
     }
     await context.close()
+  }
+  if (run('Q')) {
+    await testQuality(browser, 'Q 桌面', { touch: false })
+    await testQuality(browser, 'Q iPad 觸控', { touch: true })
   }
 } finally {
   await browser.close()
