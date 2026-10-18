@@ -131,11 +131,169 @@ function DriedGoods() {
   )
 }
 
+/* ── 滋養豆餡舖：和菓子與糕餅 ─────────────── */
+
+function Plate({ cx = 100, cy = 106, rx = 74, ry = 20, fill = '#f2ece0' }) {
+  return (
+    <>
+      <ellipse cx={cx} cy={cy + 3} rx={rx} ry={ry} fill="#d9cdb6" stroke={INK} strokeWidth="2" />
+      <ellipse cx={cx} cy={cy} rx={rx - 4} ry={ry - 4} fill={fill} stroke={INK} strokeWidth="1.4" />
+    </>
+  )
+}
+
+function StrawberryDaifuku() {
+  // 切開的紅豆大福：露出的紅豆餡上放半粒草莓
+  const seeds = [
+    [-8, -6], [0, -9], [8, -5], [-10, 3], [-2, 0], [7, 4], [-4, 9], [4, 11],
+  ]
+  return (
+    <>
+      <Shadow />
+      <Plate />
+      {/* 後方一整顆大福 */}
+      <path d="M38 96 Q36 66 62 62 Q88 60 90 92 Q78 102 60 102 Q44 102 38 96 Z" fill="#f8f4ec" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M48 76 Q55 67 66 67" stroke="#ffffff" strokeWidth="5" fill="none" strokeLinecap="round" opacity="0.9" />
+      {/* 切開的大福 */}
+      <path d="M92 104 Q90 74 122 70 Q156 68 160 100 Q146 112 124 112 Q100 112 92 104 Z" fill="#f8f4ec" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+      <path d="M100 100 Q102 82 124 80 Q148 80 152 98 Q140 106 124 106 Q106 106 100 100 Z" fill="#6b2d29" stroke={INK} strokeWidth="1.6" />
+      {[[112, 92], [124, 88], [137, 93], [118, 99], [131, 100], [144, 96]].map(([x, y], i) => (
+        <ellipse key={i} cx={x} cy={y} rx="3" ry="2" fill="#8d4339" opacity="0.8" />
+      ))}
+      {/* 半粒草莓 */}
+      <g transform="translate(126 70)">
+        <path d="M-16 4 Q-18 -18 0 -24 Q18 -18 16 4 Q8 10 0 10 Q-8 10 -16 4 Z" fill="#d93a3f" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+        <path d="M-9 -2 Q-6 -15 2 -18 Q8 -12 6 2 Q0 6 -9 -2 Z" fill="#f4a3a3" opacity="0.85" />
+        {seeds.map(([x, y], i) => (
+          <ellipse key={i} cx={x} cy={y} rx="1.2" ry="1.8" fill="#f6dc8a" />
+        ))}
+        <path d="M-12 -20 Q-4 -30 0 -24 Q4 -32 12 -20 Q4 -22 0 -19 Q-4 -22 -12 -20 Z" fill="#6f9a4f" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+      </g>
+      {/* 手粉 */}
+      {[[54, 84], [70, 76], [104, 96], [150, 92], [66, 94]].map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r="1.3" fill="#ffffff" opacity="0.9" />
+      ))}
+    </>
+  )
+}
+
+/** 花形米菓烤皮的輪廓（六瓣） */
+function flowerPath(r = 34, petals = 6) {
+  const parts = []
+  for (let i = 0; i < petals; i++) {
+    const a = (i * Math.PI * 2) / petals
+    const mid = a + Math.PI / petals
+    const next = a + (Math.PI * 2) / petals
+    if (i === 0) parts.push(`M${(Math.cos(a) * r).toFixed(1)} ${(Math.sin(a) * r).toFixed(1)}`)
+    parts.push(
+      `Q${(Math.cos(mid) * r * 1.32).toFixed(1)} ${(Math.sin(mid) * r * 1.32).toFixed(1)} ${(Math.cos(next) * r).toFixed(1)} ${(Math.sin(next) * r).toFixed(1)}`,
+    )
+  }
+  return `${parts.join(' ')} Z`
+}
+
+const FLOWER = flowerPath()
+const FLOWER_RAYS = Array.from({ length: 6 }, (_, i) => {
+  const a = (i * Math.PI) / 3
+  return `M${(Math.cos(a) * 15).toFixed(1)} ${(Math.sin(a) * 15).toFixed(1)} L${(Math.cos(a) * 28).toFixed(1)} ${(Math.sin(a) * 28).toFixed(1)}`
+}).join(' ')
+
+function MonakaShell({ x, y }) {
+  // 花形的米菓烤皮（壓出花紋），略為壓扁表現俯角
+  return (
+    <g transform={`translate(${x} ${y}) scale(1 0.55)`}>
+      <path d={FLOWER} fill="#ecd29a" stroke={INK} strokeWidth="2.6" strokeLinejoin="round" />
+      <circle r="13" fill="none" stroke="#c9a462" strokeWidth="2.4" />
+      <path d={FLOWER_RAYS} stroke="#c9a462" strokeWidth="2.2" />
+    </g>
+  )
+}
+
+function Monaka() {
+  return (
+    <>
+      <Shadow />
+      {/* 側面：兩片烤皮夾著紅豆餡 */}
+      <g transform="translate(62 92)">
+        <path d="M-30 -6 Q0 -16 30 -6 L30 2 Q0 -8 -30 2 Z" fill="#ecd29a" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+        <path d="M-30 2 Q0 -8 30 2 L28 10 Q0 2 -28 10 Z" fill="#5c2a26" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+        <path d="M-28 10 Q0 2 28 10 L30 18 Q0 10 -30 18 Z" fill="#e4c588" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      </g>
+      <MonakaShell x={132} y={84} />
+      <path d="M100 112 Q132 120 166 108" stroke={INK} strokeWidth="1.6" fill="none" opacity="0.35" />
+    </>
+  )
+}
+
+function Dorayaki() {
+  return (
+    <>
+      <Shadow />
+      <Plate fill="#efe8da" />
+      {/* 下層餅皮、紅豆餡、上層餅皮 */}
+      <ellipse cx="100" cy="98" rx="50" ry="15" fill="#e7b46b" stroke={INK} strokeWidth="2" />
+      <path d="M52 92 Q100 108 148 92 L146 86 Q100 100 54 86 Z" fill="#5f2b27" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M54 86 Q50 60 100 56 Q150 60 146 86 Q100 100 54 86 Z" fill="#b5703a" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+      <path d="M64 80 Q68 64 100 62 Q132 64 136 80" fill="none" stroke="#8f5426" strokeWidth="2" opacity="0.5" />
+      <path d="M70 70 Q84 63 100 63" stroke="#d99a55" strokeWidth="5" fill="none" strokeLinecap="round" opacity="0.6" />
+      <path d="M55 86 Q100 98 145 86" fill="none" stroke="#e8b46a" strokeWidth="3" opacity="0.8" />
+    </>
+  )
+}
+
+function Yokan() {
+  return (
+    <>
+      <Shadow />
+      {/* 木盤 */}
+      <path d="M26 108 L150 108 L176 94 L52 94 Z" fill="#c69a68" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M26 108 L26 114 L150 114 L176 100 L176 94 L150 108 Z" fill="#a77c4f" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      {/* 長條羊羹 */}
+      <path d="M44 98 L44 74 L62 64 L136 64 L136 88 L118 98 Z" fill="#4a2321" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+      <path d="M44 74 L62 64 L136 64 L118 74 Z" fill="#6a3330" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M118 74 L118 98" stroke={INK} strokeWidth="1.6" />
+      <path d="M58 70 L100 70" stroke="#a45f55" strokeWidth="3" strokeLinecap="round" opacity="0.7" />
+      {/* 切下的一片與竹籤 */}
+      <path d="M140 100 L140 84 L150 78 L158 78 L158 94 L148 100 Z" fill="#4a2321" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M140 84 L150 78 L158 78 L148 84 Z" fill="#6a3330" stroke={INK} strokeWidth="1.4" strokeLinejoin="round" />
+      <path d="M150 74 L176 50" stroke="#e2c79a" strokeWidth="3.2" strokeLinecap="round" />
+      <path d="M150 74 L176 50" stroke={INK} strokeWidth="0.9" strokeLinecap="round" opacity="0.5" />
+    </>
+  )
+}
+
+function PineappleCake() {
+  // 鳳梨夾心餅：兩片長方形酥餅夾著鳳梨餡（中間一層白巧克力）
+  return (
+    <>
+      <Shadow />
+      <g transform="translate(96 88)">
+        <path d="M-54 6 L-54 20 L34 20 L58 8 L58 -6 L-30 -6 Z" fill="#e2b874" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+        <path d="M-54 6 L-30 -6 L58 -6 L34 6 Z" fill="#edcb8c" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+        <path d="M-54 0 L-54 6 L34 6 L58 -6 L58 -12 L34 0 Z" fill="#f6eedd" stroke={INK} strokeWidth="1.4" strokeLinejoin="round" />
+        <path d="M-54 -10 L-54 0 L34 0 L58 -12 L58 -22 L34 -10 Z" fill="#e1a12f" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+        <path d="M-50 -6 L28 -6" stroke="#f5c95e" strokeWidth="2.4" strokeLinecap="round" opacity="0.8" />
+        <path d="M-54 -14 L-54 -10 L34 -10 L58 -22 L58 -26 L34 -14 Z" fill="#f6eedd" stroke={INK} strokeWidth="1.2" strokeLinejoin="round" />
+        <path d="M-54 -14 L-54 -26 L34 -26 L58 -38 L58 -26 L34 -14 Z" fill="#e2b874" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+        <path d="M-54 -26 L-30 -38 L58 -38 L34 -26 Z" fill="#efcf94" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+        {[[-30, -32], [-8, -32], [14, -32], [36, -32]].map(([x, y], i) => (
+          <path key={i} d={`M${x} ${y} l6 -3 M${x + 2} ${y + 3} l6 -3`} stroke="#c8954e" strokeWidth="1.4" />
+        ))}
+      </g>
+    </>
+  )
+}
+
 const ILLUSTRATIONS = {
   shiitake: Shiitake,
   'dried-shrimp': DriedShrimp,
   'mullet-roe': MulletRoe,
   'dried-goods': DriedGoods,
+  'strawberry-daifuku': StrawberryDaifuku,
+  monaka: Monaka,
+  dorayaki: Dorayaki,
+  yokan: Yokan,
+  'pineapple-cake': PineappleCake,
 }
 
 export function FoodIllustration({ id, label }) {

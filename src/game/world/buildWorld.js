@@ -32,6 +32,7 @@ import {
   vintageCar,
 } from '../builders/props.js'
 import { buildShophouse } from '../builders/shophouse.js'
+import { buildZiYang } from '../builders/ziyang.js'
 import { buildGrandRestaurant, buildTeaMansion, buildTemple } from '../builders/specials.js'
 import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
@@ -49,6 +50,7 @@ export const BUILDING_BUILDERS = {
   'grand-restaurant': buildGrandRestaurant,
   'tea-mansion': buildTeaMansion,
   temple: buildTemple,
+  ziyang: buildZiYang,
 }
 
 const PROP_BUILDERS = {
@@ -134,6 +136,8 @@ function placeDecoration(b, item) {
 
 /** 店家的提示框與屋頂標記錨點（建築本地座標 → 世界座標） */
 function storeAnchors(b, archetype, result) {
+  // 形狀特殊的建築（例如斜切的轉角）由產生器直接給世界座標的錨點
+  if (result.anchors) return result.anchors
   const anchor = (x, y, z) => {
     const p = b.transformPoint(x, y, z)
     return [p.x, p.y, p.z]
@@ -205,7 +209,12 @@ export function* eraWorldSteps(eraId) {
     const result = builder(b, config) ?? {}
     const parts = b.blockers.slice(firstBlocker)
     const box = unionBoxes(parts)
-    if (box) buildings.push({ id: building.id, storeId: building.storeId ?? null, rotationY: building.rotationY ?? 0, box, parts })
+    if (box) {
+      const record = { id: building.id, storeId: building.storeId ?? null, rotationY: building.rotationY ?? 0, box, parts }
+      // 立面不朝向本地 +z 的建築（斜切的轉角）另外指定觀賞模式聚焦的立面
+      if (result.focus) record.focus = result.focus
+      buildings.push(record)
+    }
     if (archetype === 'temple') {
       hasTemple = true
       for (const side of [-1, 1]) {

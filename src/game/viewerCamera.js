@@ -103,6 +103,27 @@ export function clampViewerTarget(target, blockers = []) {
       target[push.axis] = push.value
     }
   }
+  // 凹角（例如斜切的轉角由幾個方塊拼成）可能在兩個方塊之間來回推：
+  // 改從所有推出位置中，找最近、在街區內而且不在任何方塊裡的一個
+  if (blockers.some((b) => insideBox(target, b, TARGET_CLEARANCE))) {
+    let best = null
+    for (const b of blockers) {
+      if (!insideBox(target, b, TARGET_CLEARANCE)) continue
+      for (const [axis, value] of [
+        ['x', b.minX - TARGET_CLEARANCE],
+        ['x', b.maxX + TARGET_CLEARANCE],
+        ['z', b.minZ - TARGET_CLEARANCE],
+        ['z', b.maxZ + TARGET_CLEARANCE],
+      ]) {
+        const candidate = { ...target, [axis]: value }
+        if (!inTargetRegion(candidate.x, candidate.z)) continue
+        if (blockers.some((other) => insideBox(candidate, other, TARGET_CLEARANCE))) continue
+        const cost = Math.abs(value - target[axis])
+        if (!best || cost < best.cost) best = { axis, value, cost }
+      }
+    }
+    if (best) target[best.axis] = best.value
+  }
   return target
 }
 
@@ -127,6 +148,7 @@ export function pickBuilding(origin, direction, buildings, maxDistance = 400) {
 
 /** 建築立面：朝向、立面中心（地面高度）、寬度與高度 */
 export function facadeOf(building) {
+  if (building.focus) return building.focus
   const { box, rotationY } = building
   const fx = Math.sin(rotationY)
   const fz = Math.cos(rotationY)
