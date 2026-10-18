@@ -1024,8 +1024,8 @@ export function buildZiYang(b) {
   return {
     groundHeight: H.ground,
     topHeight: H.friezeTop,
-    // 店名提示在轉角騎樓開口的上緣；屋頂標記在中央山牆的大圓球上方
-    anchors: { prompt: at(0, H.ground - 0.2, 0.4), marker: at(0, H.friezeTop + 4.5, -0.2) },
+    // 店名提示在轉角店面的門楣前（提示卡在錨點上方，不遮住「滋養豆餡舖」橫帶）；屋頂標記在大圓球上方
+    anchors: { prompt: at(0, 2.45, 0.9), marker: at(0, H.friezeTop + 4.5, -0.2) },
     // 觀賞模式聚焦的立面：斜切的轉角立面
     focus: {
       center: { x: at(0, 0, 0)[0], z: at(0, 0, 0)[2] },

@@ -162,10 +162,10 @@ describe('滋養豆餡舖：碰撞、互動與鏡頭', () => {
     assert.ok(Math.hypot(p.x - -34.8, p.z - -4.6) < radius, '河岸廣場')
   })
 
-  test('店名提示與屋頂標記的錨點在建築外面（提示在騎樓開口上緣）', () => {
+  test('店名提示與屋頂標記的錨點在建築外面（提示在店面門楣前，不遮住店名橫帶）', () => {
     const [px, py, pz] = revival.stores[SHOP_ID].anchors.prompt
     const prompt = { x: px, y: py, z: pz }
-    assert.ok(py > 3 && py < 4.5)
+    assert.ok(py > 2 && py < 3.2)
     assert.ok(!revival.blockers.some((box) => insideBox(prompt, box)))
     const marker = revival.stores[SHOP_ID].anchors.marker
     assert.ok(marker[1] > 13)
