@@ -10,9 +10,10 @@ const NO_OUTLINE = new Set(['glassClear'])
 /**
  * 依材質合併後的靜態網格（整條街只需二十多次繪製呼叫）。
  * dispose = false 時幾何由外部管理（年代街景快取），卸載時不釋放。
+ * materials 可以換成另一組同名材質（例如室內用、略為自發光的材質）。
  */
-export function StaticBatches({ batches, castShadow = true, receiveShadow = true, dispose = true }) {
-  const materials = getMaterials()
+export function StaticBatches({ batches, materials: materialSet, castShadow = true, receiveShadow = true, dispose = true }) {
+  const materials = materialSet ?? getMaterials()
 
   useEffect(() => {
     if (!dispose) return undefined

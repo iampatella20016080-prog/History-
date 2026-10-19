@@ -284,6 +284,136 @@ function PineappleCake() {
   )
 }
 
+/** 方形的葉片（墊在粿下面），中央一條葉脈 */
+function Leaf({ points, vein }) {
+  return (
+    <>
+      <path d={`M${points} Z`} fill="#77a04a" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      <path d={vein} stroke="#557a32" strokeWidth="1.3" fill="none" />
+    </>
+  )
+}
+
+function CaoGuo() {
+  // 草仔粿：墨綠色的扁圓粿墊著葉片；切開的一顆露出菜脯（鹹口味）的內餡
+  const filling = [
+    [126, 92], [134, 88], [143, 91], [150, 95], [131, 97], [140, 98], [148, 100], [123, 99],
+  ]
+  return (
+    <>
+      <Shadow />
+      <Leaf points="20 104 L60 88 L104 101 L64 118" vein="M38 104 L86 101" />
+      <Leaf points="96 106 L136 90 L180 103 L140 120" vein="M114 106 L162 103" />
+      {/* 完整的一顆 */}
+      <path d="M34 101 Q32 72 62 69 Q92 68 94 99 Q80 109 63 109 Q45 109 34 101 Z" fill="#3f5f2a" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+      <path d="M45 85 Q51 75 64 74" stroke="#6d8f4c" strokeWidth="4.5" fill="none" strokeLinecap="round" opacity="0.8" />
+      {/* 切開的一顆：外皮與內餡 */}
+      <path d="M108 105 Q106 76 137 72 Q168 72 170 103 Q155 113 138 113 Q120 113 108 105 Z" fill="#3f5f2a" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+      <path d="M116 101 Q118 84 138 82 Q160 82 162 100 Q151 107 138 107 Q125 107 116 101 Z" fill="#a8743f" stroke={INK} strokeWidth="1.5" />
+      {filling.map(([x, y], i) => (
+        <rect key={i} x={x} y={y} width="4" height="2.6" rx="0.8" fill={i % 3 === 0 ? '#6b4423' : '#e3c27a'} transform={`rotate(${i * 37} ${x + 2} ${y + 1.3})`} />
+      ))}
+    </>
+  )
+}
+
+/** 六角形（紅龜粿的龜殼紋） */
+function hexagon(cx, cy, r) {
+  const points = Array.from({ length: 6 }, (_, i) => {
+    const a = (Math.PI / 3) * i
+    return `${(cx + Math.cos(a) * r).toFixed(1)} ${(cy + Math.sin(a) * r).toFixed(1)}`
+  })
+  return `M${points.join(' L')} Z`
+}
+
+const SHELL = [hexagon(0, 0, 11), ...Array.from({ length: 6 }, (_, i) => hexagon(Math.cos((Math.PI / 3) * i + Math.PI / 6) * 19.5, Math.sin((Math.PI / 3) * i + Math.PI / 6) * 19.5, 9))]
+
+function HongGui() {
+  // 紅龜粿：用粿模印出龜殼紋的紅色粿，墊著葉片；後方是綠色的艾草龜粿
+  return (
+    <>
+      <Shadow />
+      {/* 後方的艾草龜粿 */}
+      <g transform="translate(140 74)">
+        <ellipse rx="38" ry="18" fill="#5f8f3e" stroke={INK} strokeWidth="2" />
+        <g transform="scale(0.9 0.42)" fill="none" stroke="#45702a" strokeWidth="2.4">
+          {SHELL.map((d, i) => (
+            <path key={i} d={d} />
+          ))}
+        </g>
+      </g>
+      <Leaf points="24 110 L76 90 L136 105 L84 125" vein="M48 110 L110 105" />
+      {/* 紅龜粿：頭、四肢與龜殼 */}
+      <g transform="translate(80 100)">
+        <ellipse cx="-50" cy="-2" rx="9" ry="6" fill="#cf3840" stroke={INK} strokeWidth="1.8" />
+        {[[-30, -16], [30, -16], [-30, 14], [30, 14]].map(([x, y], i) => (
+          <ellipse key={i} cx={x} cy={y} rx="7" ry="4.5" fill="#c3313a" stroke={INK} strokeWidth="1.6" />
+        ))}
+        <ellipse rx="46" ry="21" fill="#d6404a" stroke={INK} strokeWidth="2.2" />
+        <g transform="scale(1.05 0.46)" fill="none" stroke="#a8262f" strokeWidth="2.6">
+          {SHELL.map((d, i) => (
+            <path key={i} d={d} />
+          ))}
+        </g>
+        <path d="M-30 -10 Q-12 -18 8 -17" stroke="#f08a8f" strokeWidth="3.5" fill="none" strokeLinecap="round" opacity="0.7" />
+      </g>
+    </>
+  )
+}
+
+function LuoboGao() {
+  // 蘿蔔糕（菜頭粿）：米白色的長方塊，切面看得到蘿蔔絲與蝦米；前面兩片煎得金黃
+  const shreds = [
+    [50, 76, 8], [62, 82, -6], [74, 74, 4], [86, 84, 10], [56, 88, 2], [92, 76, -8], [68, 90, 6], [80, 80, -3],
+  ]
+  return (
+    <>
+      <Shadow />
+      <Plate />
+      {/* 整塊 */}
+      <path d="M38 94 L38 66 L58 56 L124 56 L124 84 L104 94 Z" fill="#efe5cf" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+      <path d="M38 66 L58 56 L124 56 L104 66 Z" fill="#f8f1e0" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M104 66 L104 94" stroke={INK} strokeWidth="1.6" />
+      {shreds.map(([x, y, a], i) => (
+        <path key={i} d={`M${x} ${y} l9 ${a / 3}`} stroke="#d6c59b" strokeWidth="1.8" strokeLinecap="round" />
+      ))}
+      {[[60, 72], [90, 88], [72, 86]].map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r="2.2" fill="#e08a6a" stroke={INK} strokeWidth="0.6" />
+      ))}
+      {/* 煎好的兩片 */}
+      <path d="M112 112 L112 104 L128 96 L168 96 L168 104 L152 112 Z" fill="#c98f3f" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M112 104 L128 96 L168 96 L152 104 Z" fill="#e2b061" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M118 100 L120 99 M130 98 L134 97 M142 101 L146 100 M154 98 L158 97" stroke="#b8792f" strokeWidth="2" strokeLinecap="round" />
+      <path d="M120 98 L120 90 L136 82 L172 82 L172 90 L156 98 Z" fill="#cf9645" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M120 90 L136 82 L172 82 L156 90 Z" fill="#ebbd6c" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M134 87 Q148 84 160 85" stroke="#f6d896" strokeWidth="2.6" fill="none" strokeLinecap="round" opacity="0.8" />
+    </>
+  )
+}
+
+function YuGuoQiao() {
+  // 芋粿巧（芋粿曲）：灰紫色、彎成弧形的長條，帶著芋頭丁、紅蔥頭與蝦米
+  const dice = [
+    [60, 82], [74, 70], [92, 63], [112, 63], [130, 70], [146, 82], [70, 100], [86, 89], [104, 85], [122, 89], [138, 100],
+  ]
+  return (
+    <>
+      <Shadow />
+      <Plate fill="#efe8da" />
+      {/* 後面一條、前面一條 */}
+      <path d="M42 96 Q54 52 104 50 Q154 52 166 96 L150 100 Q142 66 104 64 Q66 66 58 100 Z" fill="#a597b0" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+      <path d="M54 112 Q64 74 104 72 Q144 74 154 112 L138 114 Q132 88 104 86 Q76 88 70 114 Z" fill="#9585a3" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+      <path d="M62 86 Q74 60 100 56" stroke="#c4b8cf" strokeWidth="3.5" fill="none" strokeLinecap="round" opacity="0.8" />
+      {dice.map(([x, y], i) => (
+        <rect key={i} x={x - 2.5} y={y - 2.5} width="5" height="5" rx="1" fill={i % 2 ? '#d9cfe2' : '#6f5f80'} stroke={INK} strokeWidth="0.5" transform={`rotate(${i * 23} ${x} ${y})`} />
+      ))}
+      {[[82, 66], [126, 66], [96, 92], [116, 94]].map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r="1.9" fill="#e08a6a" stroke={INK} strokeWidth="0.5" />
+      ))}
+    </>
+  )
+}
+
 const ILLUSTRATIONS = {
   shiitake: Shiitake,
   'dried-shrimp': DriedShrimp,
@@ -294,6 +424,10 @@ const ILLUSTRATIONS = {
   dorayaki: Dorayaki,
   yokan: Yokan,
   'pineapple-cake': PineappleCake,
+  'cao-guo': CaoGuo,
+  'hong-gui': HongGui,
+  'luobo-gao': LuoboGao,
+  'yu-guo-qiao': YuGuoQiao,
 }
 
 export function FoodIllustration({ id, label }) {

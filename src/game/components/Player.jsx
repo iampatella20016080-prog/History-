@@ -70,7 +70,7 @@ export function Player({ collision, shopModels }) {
   const handLeft = useRef()
   const skirtFront = useRef()
   const skirtBack = useRef()
-  const anim = useRef({ phase: 0, amount: 0, travelNonce: 0 })
+  const anim = useRef({ phase: 0, amount: 0, travelNonce: 0, collision: null })
 
   const eraId = useGameStore((state) => state.eraId)
   const outfit = useMemo(() => getOutfit(eraId), [eraId])
@@ -107,7 +107,20 @@ export function Player({ collision, shopModels }) {
         pos.set(interactionPoint.x + forward.x * 0.5, 0, interactionPoint.z + forward.z * 0.5)
         vel.set(0, 0, 0)
         playerState.heading = Math.atan2(-forward.x, -forward.z)
-        cameraState.targetYaw = cameraState.yaw = playerState.heading + Math.PI + 0.5
+        cameraState.targetYaw = cameraState.yaw = playerState.heading + Math.PI + (model.shop.travelYawOffset ?? 0.5)
+        cameraState.snap = true
+      }
+    }
+
+    // 換了年代的街景：原本站的地方（例如永樂市場裡）在新的年代不能走時，角色移到最近的街道上，鏡頭直接跟過去
+    if (anim.current.collision !== collision) {
+      const first = !anim.current.collision
+      anim.current.collision = collision
+      const beforeX = pos.x
+      const beforeZ = pos.z
+      resolvePlayerPosition(pos, PLAYER.radius, collision)
+      if (!first && Math.hypot(pos.x - beforeX, pos.z - beforeZ) > 1.5) {
+        vel.set(0, 0, 0)
         cameraState.snap = true
       }
     }

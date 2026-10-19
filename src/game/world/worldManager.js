@@ -1,9 +1,9 @@
 import { Vector3 } from 'three'
 import { getEra } from '../../data/eras.js'
 import { getShop } from '../../data/shops.js'
-import { eraWorldSteps } from './buildWorld.js'
+import { eraInteriorSteps, eraWorldSteps } from './buildWorld.js'
 import { getShopPlacement } from './placement.js'
-import { unpackWorld } from './worldPacking.js'
+import { unpackInterior, unpackWorld } from './worldPacking.js'
 
 /**
  * 年代街景管理：
@@ -76,9 +76,9 @@ const nextFrame = () =>
     else setTimeout(resolve, 16)
   })
 
-/** 主執行緒分段產生（每段約 7 毫秒，之後讓出給畫面更新） */
-async function buildOnMainThread(eraId) {
-  const steps = eraWorldSteps(eraId)
+/** 主執行緒分段產生（每段約 7 毫秒，之後讓出給畫面更新）；kind：world 街景、interior 室內細部 */
+async function buildOnMainThread(eraId, kind = 'world') {
+  const steps = kind === 'interior' ? eraInteriorSteps(eraId) : eraWorldSteps(eraId)
   let sliceStart = performance.now()
   for (;;) {
     const step = steps.next()
@@ -90,9 +90,10 @@ async function buildOnMainThread(eraId) {
   }
 }
 
-function buildRaw(eraId) {
+function buildRaw(eraId, kind = 'world') {
   const target = getWorker()
-  if (!target) return buildOnMainThread(eraId)
+  if (!target) return buildOnMainThread(eraId, kind)
+  const unpack = kind === 'interior' ? unpackInterior : unpackWorld
   return new Promise((resolve, reject) => {
     const id = ++requestId
     let settled = false
@@ -102,7 +103,7 @@ function buildRaw(eraId) {
       clearTimeout(timer)
       fn()
     }
-    const fallback = () => settle(() => buildOnMainThread(eraId).then(resolve, reject))
+    const fallback = () => settle(() => buildOnMainThread(eraId, kind).then(resolve, reject))
     // 背景執行緒遲遲沒有回應（例如被系統終止）：視為失敗，改走主執行緒
     const timer = setTimeout(() => {
       if (pending.has(id)) failWorker(new Error(`world worker timeout: ${eraId}`))
@@ -111,7 +112,7 @@ function buildRaw(eraId) {
       resolve: (payload) =>
         settle(() => {
           try {
-            resolve(unpackWorld(payload))
+            resolve(unpack(payload))
           } catch (error) {
             reject(error)
           }
@@ -123,7 +124,7 @@ function buildRaw(eraId) {
       fallback,
     })
     try {
-      target.postMessage({ id, eraId })
+      target.postMessage({ id, eraId, kind })
     } catch (error) {
       failWorker(error)
     }
@@ -146,7 +147,11 @@ function hydrate(raw) {
     shopModels.push({
       shop,
       placement: getShopPlacement(shop),
-      anchors: { prompt: toVector(store.anchors.prompt), marker: toVector(store.anchors.marker) },
+      anchors: {
+        prompt: toVector(store.anchors.prompt),
+        marker: toVector(store.anchors.marker),
+        markerScale: store.anchors.markerScale ?? 1,
+      },
     })
   }
   return { ...raw, era, shopModels }
@@ -155,6 +160,38 @@ function hydrate(raw) {
 function disposeWorld(world) {
   world?.batches.forEach(({ geometry }) => geometry.dispose())
   world?.detailBatches?.forEach(({ geometry }) => geometry.dispose())
+  if (world?.interior) {
+    world.interior.disposed = true
+    world.interior.batches?.forEach(({ geometry }) => geometry.dispose())
+    world.interior = null
+  }
+}
+
+/**
+ * 室內細部（按需載入）：角色或鏡頭接近可以走進去的建築時才產生（背景執行緒，不行時改走主執行緒），
+ * 產生後跟著這個年代的街景一起快取與釋放。沒有室內的年代回傳 null。
+ */
+export function loadEraInterior(world) {
+  if (!world?.interiors?.length) return Promise.resolve(null)
+  if (world.interior?.promise) return world.interior.promise
+  const state = { promise: null, batches: null, disposed: false }
+  world.interior = state
+  const startTime = performance.now()
+  state.promise = Promise.resolve()
+    .then(() => buildRaw(world.eraId, 'interior'))
+    .then((raw) => {
+      if (state.disposed) {
+        raw.batches.forEach(({ geometry }) => geometry.dispose())
+        return null
+      }
+      state.batches = raw.batches
+      if (DEV) console.info(`[大稻埕食光街] ${world.eraId} 室內完成：${(performance.now() - startTime).toFixed(0)} ms`)
+      return raw.batches
+    })
+  state.promise.catch(() => {
+    if (world.interior === state) world.interior = null
+  })
+  return state.promise
 }
 
 /** 超過快取上限時，釋放最久沒用到、而且沒有顯示或鎖定中的年代 */

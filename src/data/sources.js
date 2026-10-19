@@ -76,6 +76,114 @@ SOURCES['supertaste-ziyang'] = {
   context: '描述滋養豆餡舖的街屋外觀（洋樓古典風格、紅磚牆、高高的牌樓）與現點現做的最中；原頁面未標示刊登日期。',
 }
 
+// 永樂市場
+SOURCES['tcma-yongle-market'] = {
+  id: 'tcma-yongle-market',
+  citation: '臺北市市場處，〈臺北市公有永樂市場〉（資料更新：民國113年8月7日）。',
+  publisher: '臺北市市場處',
+  title: '臺北市公有永樂市場',
+  url: 'https://www.tcma.gov.taipei/News_Content.aspx?n=1A4C7120ABFD0F9F&sms=26C5BF03E7963F4E&s=C58B40D5621B5A00',
+  context: '沿革：「民國前4年成立，稱為「公設永樂町食料品小賣市場」，民國71年原市場拆除，改建綜合大樓安置原攤商，74年開業。」地址為迪化街一段21號。',
+}
+SOURCES['taipei-market-info-yongle'] = {
+  id: 'taipei-market-info-yongle',
+  citation: '臺北市政府全球資訊網，市集資訊〈臺北市公有永樂市場〉（資料更新：民國108年2月18日）。',
+  publisher: '臺北市政府',
+  title: '臺北市公有永樂市場',
+  url: 'https://www.gov.taipei/News_Content.aspx?n=9F394A83D9DF4A19&s=500622DD41A6B6A3',
+  context: '介紹：「1樓生鮮蔬果日用品，2.3樓布匹窗簾飾布買賣縫製，是全台布業零售、批發中心。」',
+}
+SOURCES['ncl-yongle-market'] = {
+  id: 'ncl-yongle-market',
+  citation: '國家圖書館「臺灣記憶」，〈永樂町市場攤販〉（臺北市文獻委員會提供；說明引自《臺北市志：卷六經濟志商業篇》，1988）。',
+  publisher: '國家圖書館',
+  title: '永樂町市場攤販',
+  url: 'https://tm.ncl.edu.tw/article?u=005_001_0000358637',
+  context: '說明：1897年六館街的大稻埕市場落成，1908年（明治41年）改設於大稻埕蘆竹腳街，1933年（昭和8年）改名為永樂町市場。',
+}
+SOURCES['udn-1995-yongle-market'] = {
+  id: 'udn-1995-yongle-market',
+  citation: '景小佩，〈平民的永樂市場布出名〉，《聯合報》1995年4月4日第30版（聯合報系「報時光」2024年7月1日轉載）。',
+  publisher: '聯合報系 報時光',
+  title: '迪化街永樂市場 從日治時期到現代的百年布料集散地',
+  url: 'https://time.udn.com/udntime/story/122835/6045015',
+  context: '記載市場成立於1908年12月14日；民國71年3月拆除舊建築改建，74年9月完工、10月8日重新開業；新大樓地上九樓、地下兩層。',
+}
+
+// 好粿緣與粿食文化
+SOURCES['moe-guo'] = {
+  id: 'moe-guo',
+  citation: '教育部《臺灣台語常用詞辭典》，「粿」。',
+  publisher: '教育部',
+  title: '粿',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/10694/',
+  context: '釋義：「糕的總稱，指用糯米或粳米等做成的食品。因所加的原料不同而有不同的稱法。」',
+}
+SOURCES['moe-cao-guo'] = {
+  id: 'moe-cao-guo',
+  citation: '教育部《臺灣台語常用詞辭典》，「草仔粿」。',
+  publisher: '教育部',
+  title: '草仔粿',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/13709/',
+  context: '釋義：外皮以「粿粞」加入艾草或鼠麴草揉成，外墊黃槿葉或月桃葉等，以蒸籠蒸熟；常做為農曆七月普渡或清明掃墓時的供品。',
+}
+SOURCES['moe-hong-gui'] = {
+  id: 'moe-hong-gui',
+  citation: '教育部《臺灣台語常用詞辭典》，「紅龜粿」。',
+  publisher: '教育部',
+  title: '紅龜粿',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/5433/',
+  context: '釋義：由糯米製成，粿皮染紅、以模具印上龜型圖樣後蒸製；常用來祭拜神明、酬神，或在添丁時分送親友。',
+}
+SOURCES['moe-cai-tau-guo'] = {
+  id: 'moe-cai-tau-guo',
+  citation: '教育部《臺灣台語常用詞辭典》，「菜頭粿」。',
+  publisher: '教育部',
+  title: '菜頭粿',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/8972/',
+  context: '釋義：「蘿蔔糕。在來米漿拌入炒過的蘿蔔絲、蝦米等配料，蒸製而成的食品。」',
+}
+SOURCES['moe-yu-guo-qiao'] = {
+  id: 'moe-yu-guo-qiao',
+  citation: '教育部《臺灣台語常用詞辭典》，「芋粿曲」。',
+  publisher: '教育部',
+  title: '芋粿曲',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/3489/',
+  context: '釋義：「用芋頭、在來米、紅蔥頭、蝦米等，蒸製而成的一種食品。形狀如弧形而得名。」',
+}
+SOURCES['nmth-hong-gui-mold'] = {
+  id: 'nmth-hong-gui-mold',
+  citation: '國立臺灣歷史博物館典藏網，〈紅龜粿印模轉印紙張〉（登錄號 2010.003.0248）。',
+  publisher: '國立臺灣歷史博物館',
+  title: '紅龜粿印模轉印紙張',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2010.003.0248',
+  context: '說明：粿模為早期農業社會居家常見之模具；紅龜粿與紅桃粿在神明誕辰、年節慶典祭祀、祖先祭拜與長輩做壽都可見到。',
+}
+SOURCES['moa-guo-rice'] = {
+  id: 'moa-guo-rice',
+  citation: '李誠紘、吳以健、王柏蓉、鄭佳綺，〈「粿」然如此製粿稻米品種介紹〉，《臺中區農情月刊》第285期，2023年5月29日（農業知識入口網）。',
+  publisher: '農業部 農業知識入口網',
+  title: '「粿」然如此製粿稻米品種介紹',
+  url: 'https://kmweb.moa.gov.tw/knowledgebase.php?type=13259&id=420096',
+  context: '說明蘿蔔糕、碗粿等以在來米製成；圓糯米磨粉後製成草仔粿、紅龜粿、菜包等。',
+}
+SOURCES['moa-cao-guo'] = {
+  id: 'moa-cao-guo',
+  citation: '農業部食農教育資訊整合平臺，〈美味與傳統完美結合的草仔粿〉（資料來源：臺南區農業改良場，2023年4月4日）。',
+  publisher: '農業部',
+  title: '美味與傳統完美結合的草仔粿',
+  url: 'https://fae.moa.gov.tw/theme_data.php?theme=news&sub_theme=hot_news&id=1294',
+  context: '說明草仔粿「是閩南人與客家人在清明節掃墓祭祖時的經典糕點」。',
+}
+SOURCES['moa-niangao'] = {
+  id: 'moa-niangao',
+  citation: '林書帆，〈年糕＆蘿蔔糕〉，《鄉間小路》（農業知識入口網，2019年3月8日）。',
+  publisher: '農業部 農業知識入口網',
+  title: '年糕＆蘿蔔糕',
+  url: 'https://kmweb.moa.gov.tw/theme_data.php?theme=news&sub_theme=agri_life&id=55163',
+  context: '提到「菜頭」與「彩頭」諧音，蘿蔔糕成為過年必備菜色；臺語俗諺「食甜粿，予你趁家伙」；過年前在家做菜頭粿、甜粿、發糕等糕點。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

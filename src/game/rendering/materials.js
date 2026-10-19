@@ -25,6 +25,10 @@ export const MATERIAL_TILE = {
   roof: 2.0,
   stone: 3.2,
   granite: 1.3,
+  marketTile: 1.2,
+  whiteTile: 1.2,
+  steel: 0.8,
+  perforated: 0.5,
   earth: 4.0,
   asphalt: 4.0,
   pavers: 2.2,
@@ -81,6 +85,11 @@ export function getMaterials() {
     stone: toon({ map: textures.stone }),
     // 洗石子（灰色石粒牆面，例如滋養豆餡舖的立面）
     granite: toon({ map: textures.granite }),
+    // 永樂市場：灰色地磚、白色磁磚、不鏽鋼、電纜線槽
+    marketTile: toon({ map: textures.marketTile }),
+    whiteTile: toon({ map: textures.whiteTile }),
+    steel: toon({ map: textures.steel }),
+    perforated: toon({ map: textures.perforated }),
     earth: toon({ map: textures.earth }),
     asphalt: toon({ map: textures.asphalt }),
     pavers: toon({ map: textures.pavers }),
@@ -108,6 +117,31 @@ export function getMaterials() {
     bulb: toon({ emissive: new Color('#fff0c8'), emissiveIntensity: 0.4 }),
   }
   return cache
+}
+
+let interiorCache = null
+
+/**
+ * 室內用的材質（永樂市場一樓）：與街景共用貼圖與卡通著色，另外加上一點自發光，
+ * 讓沒有陽光直射的室內看起來像被日光燈均勻照亮。發光材質與透明材質維持原樣。
+ */
+export function getInteriorMaterials() {
+  if (interiorCache) return interiorCache
+  const base = getMaterials()
+  interiorCache = { gradientMap: base.gradientMap }
+  for (const [name, material] of Object.entries(base)) {
+    if (name === 'gradientMap') continue
+    if (name in GLOW_BASE || name === 'glassClear' || name === 'interior' || name === 'woodLight' || !material.isMaterial) {
+      interiorCache[name] = material
+      continue
+    }
+    const copy = material.clone()
+    copy.emissive = new Color('#ffffff')
+    copy.emissiveMap = material.map ?? null
+    copy.emissiveIntensity = material.map ? 0.2 : 0.14
+    interiorCache[name] = copy
+  }
+  return interiorCache
 }
 
 /**

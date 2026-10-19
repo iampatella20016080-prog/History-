@@ -95,11 +95,12 @@ function getMarkerMaterials() {
  * 屋頂上的店家標記：
  * - 可探索的店家：旋轉的紅色寶珠與金環（遠處就看得到）
  * - 即將開放的店家：較小、米白色的標記
+ * - 室內的攤位（例如永樂市場裡的好粿緣）：縮小掛在攤位招牌上方（scale）
  */
-function StoreMarker({ position, shopId, open }) {
+function StoreMarker({ position, shopId, open, scale = 1 }) {
   const group = useRef()
   const materials = getMarkerMaterials()
-  const base = open ? 1 : 0.62
+  const base = (open ? 1 : 0.62) * scale
 
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime
@@ -131,7 +132,7 @@ function StoreMarker({ position, shopId, open }) {
 export function StoreMarkers({ shopModels, promptLayer }) {
   return shopModels.map(({ shop, anchors }) => (
     <group key={shop.id} name={`store-${shop.id}`}>
-      <StoreMarker position={anchors.marker} shopId={shop.id} open={shop.status === 'open'} />
+      <StoreMarker position={anchors.marker} shopId={shop.id} open={shop.status === 'open'} scale={anchors.markerScale} />
       {shop.status === 'open' && (
         <Html
           position={[anchors.prompt.x, anchors.prompt.y, anchors.prompt.z]}
