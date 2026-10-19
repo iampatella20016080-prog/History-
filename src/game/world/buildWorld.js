@@ -33,6 +33,8 @@ import {
 } from '../builders/props.js'
 import { buildShophouse } from '../builders/shophouse.js'
 import { buildZiYang } from '../builders/ziyang.js'
+import { buildYongleMarket } from '../builders/yongleMarket.js'
+import { buildYongleInterior } from '../builders/yongleInterior.js'
 import { buildGrandRestaurant, buildTeaMansion, buildTemple } from '../builders/specials.js'
 import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
@@ -51,6 +53,15 @@ export const BUILDING_BUILDERS = {
   'tea-mansion': buildTeaMansion,
   temple: buildTemple,
   ziyang: buildZiYang,
+  'yongle-market': buildYongleMarket,
+}
+
+/**
+ * 可以走進去的建築的室內細部（按需載入：角色或鏡頭接近時才在背景產生，見 worldManager.loadEraInterior）。
+ * 室內的招牌、遮擋方塊與碰撞屬於街景資料，由上面的建築產生器產生。
+ */
+export const BUILDING_INTERIORS = {
+  'yongle-market': buildYongleInterior,
 }
 
 const PROP_BUILDERS = {
@@ -195,6 +206,9 @@ export function* eraWorldSteps(eraId) {
   const textLanterns = []
   const extraBlockers = []
   const buildings = []
+  const interiors = []
+  const viewerRegions = []
+  let viewerBounds = null
   let hasTemple = false
 
   buildGround(b, era.streetProps.ground)
@@ -207,7 +221,17 @@ export function* eraWorldSteps(eraId) {
     b.push([building.x, 0, building.z], building.rotationY)
     const firstBlocker = b.blockers.length
     const result = builder(b, config) ?? {}
-    const parts = b.blockers.slice(firstBlocker)
+    // 建築裡另外可以點選的店家（例如市場裡的攤位）：它們的遮擋方塊另外成為一棟「建築」
+    const subStores = result.subStores ?? []
+    const subParts = new Set()
+    for (const sub of subStores) {
+      const own = b.blockers.slice(sub.range.start, sub.range.end)
+      own.forEach((part) => subParts.add(part))
+      const subBox = unionBoxes(own)
+      if (subBox) buildings.push({ id: sub.id, storeId: sub.storeId, rotationY: building.rotationY ?? 0, box: subBox, parts: own, focus: sub.focus })
+      stores[sub.storeId] = { anchors: sub.anchors }
+    }
+    const parts = b.blockers.slice(firstBlocker).filter((part) => !subParts.has(part))
     const box = unionBoxes(parts)
     if (box) {
       const record = { id: building.id, storeId: building.storeId ?? null, rotationY: building.rotationY ?? 0, box, parts }
@@ -215,6 +239,9 @@ export function* eraWorldSteps(eraId) {
       if (result.focus) record.focus = result.focus
       buildings.push(record)
     }
+    if (result.interiors) interiors.push(...result.interiors)
+    if (result.viewerRegions) viewerRegions.push(...result.viewerRegions)
+    if (result.viewerBounds) viewerBounds = { ...(viewerBounds ?? {}), ...result.viewerBounds }
     if (archetype === 'temple') {
       hasTemple = true
       for (const side of [-1, 1]) {
@@ -251,6 +278,8 @@ export function* eraWorldSteps(eraId) {
     maxZ: z + 3.5 * scale,
   }))
   exclusions.push({ minX: -3, maxX: 13, minZ: 18, maxZ: 36 })
+  // 佔地較大的店家建築（例如街底的永樂市場）範圍內不產生遠景房屋
+  exclusions.push(...(layout.backdropExclusions ?? []))
   buildBackdrop(b, exclusions, { ...BACKDROP_BY_ERA[era.id], skylineBuilder: detail })
   if (!hasTemple) buildTempleRoofs(b, DISTANT_TEMPLE.position, DISTANT_TEMPLE.rotationY)
   yield
@@ -285,7 +314,43 @@ export function* eraWorldSteps(eraId) {
     blockers,
     buildings,
     collision: { walkable: layout.walkable, obstacles: layout.obstacles },
+    // 可以走進去的室內（鏡頭在室內拉近壓低、室內細部按需載入）與觀賞模式額外的範圍
+    interiors,
+    viewerRegions,
+    viewerBounds,
   }
+}
+
+/**
+ * 某個年代的室內細部（按需載入）：只產生幾何，依材質合併。
+ * 位置與街景相同（同一份年代配置），所以室內的招牌、遮擋方塊與碰撞都對得上。
+ */
+export function* eraInteriorSteps(eraId) {
+  const era = getEra(eraId)
+  if (!era) throw new Error(`未知的年代：${eraId}`)
+  const layout = createEraLayout(era)
+  const b = new PartBuilder()
+  for (const building of layout.buildings) {
+    const builder = BUILDING_INTERIORS[building.config.archetype]
+    if (!builder) continue
+    b.push([building.x, 0, building.z], building.rotationY)
+    builder(b, building.config)
+    b.pop()
+    yield
+  }
+  const batches = []
+  for (const material of [...b.groups.keys()]) {
+    batches.push(...b.buildMaterial(material))
+    yield
+  }
+  return { eraId: era.id, batches }
+}
+
+export function buildEraInteriorSync(eraId) {
+  const steps = eraInteriorSteps(eraId)
+  let step = steps.next()
+  while (!step.done) step = steps.next()
+  return step.value
 }
 
 /** 一次產生整條街（Web Worker 或測試使用） */

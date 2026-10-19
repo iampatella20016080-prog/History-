@@ -1,4 +1,4 @@
-import { STREET } from './config.js'
+import { CAMERA, STREET } from './config.js'
 import { raycastBoxes, raycastBoxIndex } from './collision.js'
 import { clamp } from './utils/math.js'
 
@@ -34,6 +34,58 @@ export const VIEWER = {
 
 const TARGET_CLEARANCE = 0.35
 
+const DEFAULT_SPACE = { regions: VIEWER.targetRegions, bounds: VIEWER.bounds }
+
+/**
+ * 某個年代的觀賞範圍：基本的街道、廣場與碼頭，加上年代額外的範圍
+ * （例如可以走進去的永樂市場：騎樓、大門與一樓走道，各有不超過天花板的高度上限 maxY）。
+ */
+export function viewerSpaceOf(world) {
+  if (!world?.viewerRegions?.length && !world?.viewerBounds) return DEFAULT_SPACE
+  return {
+    regions: [...VIEWER.targetRegions, ...(world.viewerRegions ?? [])],
+    bounds: { ...VIEWER.bounds, ...(world.viewerBounds ?? {}) },
+  }
+}
+
+/** 走向室內的大門：離大門 ENTRY_HOLD 公尺內完全切換成室內鏡頭，往外 ENTRY_RAMP 公尺內逐漸過渡 */
+const ENTRY_HOLD = 1.2
+const ENTRY_RAMP = 6
+/** 第三人稱鏡頭在街道上被建築擋住時，最近只拉到這個距離 */
+const FOLLOW_MIN_DISTANCE = 1.3
+
+function insideRect(r, p) {
+  return p.x >= r.minX && p.x <= r.maxX && p.z >= r.minZ && p.z <= r.maxZ
+}
+
+/**
+ * 角色在室內（例如永樂市場一樓）時為 1；在通往大門的入口範圍內，越靠近大門越接近 1；其他地方為 0。
+ * 回傳 { zone, amount }，不在任何室內或入口範圍時回傳 null。
+ */
+export function interiorAmount(p, interiors = []) {
+  for (const zone of interiors) if (insideRect(zone, p)) return { zone, amount: 1 }
+  for (const zone of interiors) {
+    if (!zone.entry || !insideRect(zone.entry, p)) continue
+    const d = Math.hypot(p.x - zone.door.x, p.z - zone.door.z)
+    return { zone, amount: 1 - clamp((d - ENTRY_HOLD) / ENTRY_RAMP, 0, 1) }
+  }
+  return null
+}
+
+/**
+ * 第三人稱鏡頭的仰角與距離，依室內混合程度 k（0–1）往室內的鏡頭設定 shot 過渡：
+ * 距離縮短、上下拖曳的角度對應到室內較低的範圍（鏡頭不會貼著天花板往下看），被擋住時可以拉得更近。
+ */
+export function indoorFollow(pitch, distance, k, shot) {
+  if (!shot || k <= 0.001) return { pitch, distance, minDistance: FOLLOW_MIN_DISTANCE }
+  const t = clamp((pitch - CAMERA.minPitch) / (CAMERA.maxPitch - CAMERA.minPitch), 0, 1)
+  return {
+    pitch: pitch + (shot.minPitch + t * (shot.maxPitch - shot.minPitch) - pitch) * k,
+    distance: distance + (Math.min(distance, shot.distance) - distance) * k,
+    minDistance: FOLLOW_MIN_DISTANCE + (shot.minDistance - FOLLOW_MIN_DISTANCE) * k,
+  }
+}
+
 /** 由 yaw／pitch 算出「注視點 → 鏡頭」的單位方向 */
 export function orbitDirection(yaw, pitch, out = { x: 0, y: 0, z: 0 }) {
   const cosPitch = Math.cos(pitch)
@@ -58,9 +110,9 @@ function exitDistance(o, d, b) {
 }
 
 /** 沿方向最多可以退多遠而不撞到建築、地面或街區邊界（已扣掉安全距離） */
-export function allowedDistance(target, direction, wanted, blockers) {
+export function allowedDistance(target, direction, wanted, blockers, space = DEFAULT_SPACE) {
   const hit = raycastBoxes(target, direction, wanted + VIEWER.margin, blockers)
-  const exit = exitDistance(target, direction, VIEWER.bounds)
+  const exit = exitDistance(target, direction, space.bounds)
   return Math.max(0.3, Math.min(hit, exit) - VIEWER.margin)
 }
 
@@ -68,16 +120,18 @@ function insideBox(p, b, pad) {
   return p.x > b.minX - pad && p.x < b.maxX + pad && p.z > b.minZ - pad && p.z < b.maxZ + pad && p.y > b.minY - pad && p.y < b.maxY + pad
 }
 
-function inTargetRegion(x, z) {
-  return VIEWER.targetRegions.some((r) => x >= r.minX - 1e-6 && x <= r.maxX + 1e-6 && z >= r.minZ - 1e-6 && z <= r.maxZ + 1e-6)
+function inRegion(r, x, z) {
+  return x >= r.minX - 1e-6 && x <= r.maxX + 1e-6 && z >= r.minZ - 1e-6 && z <= r.maxZ + 1e-6
 }
 
-/** 把注視點限制在街道／廣場／碼頭上方，並推出建築與樹的範圍（會直接修改 target） */
-export function clampViewerTarget(target, blockers = []) {
+/** 把注視點限制在街道／廣場／碼頭（與年代額外的範圍）上方，並推出建築與樹的範圍（會直接修改 target） */
+export function clampViewerTarget(target, blockers = [], space = DEFAULT_SPACE) {
+  const regions = space.regions
+  const inTargetRegion = (x, z) => regions.some((r) => inRegion(r, x, z))
   target.y = clamp(target.y, VIEWER.minTargetY, VIEWER.maxTargetY)
   if (!inTargetRegion(target.x, target.z)) {
     let best = null
-    for (const r of VIEWER.targetRegions) {
+    for (const r of regions) {
       const x = clamp(target.x, r.minX, r.maxX)
       const z = clamp(target.z, r.minZ, r.maxZ)
       const d = (x - target.x) ** 2 + (z - target.z) ** 2
@@ -124,6 +178,10 @@ export function clampViewerTarget(target, blockers = []) {
     }
     if (best) target[best.axis] = best.value
   }
+  // 範圍的高度上限（室內不超過天花板）：取所在範圍中最寬鬆的上限
+  let maxY = -Infinity
+  for (const r of regions) if (inRegion(r, target.x, target.z)) maxY = Math.max(maxY, r.maxY ?? Infinity)
+  if (Number.isFinite(maxY)) target.y = Math.min(target.y, maxY)
   return target
 }
 
@@ -209,7 +267,7 @@ function hiddenFacadePoints(camera, facade, blockers) {
  *
  * @returns {{ target: {x,y,z}, yaw: number, pitch: number, distance: number }}
  */
-export function planBuildingFocus(building, blockers, { yaw: currentYaw = 0, aspect = 16 / 9, fov = 42 } = {}) {
+export function planBuildingFocus(building, blockers, { yaw: currentYaw = 0, aspect = 16 / 9, fov = 42, space = DEFAULT_SPACE } = {}) {
   const facade = facadeOf(building)
   const halfV = Math.tan(((fov / 2) * Math.PI) / 180)
   const halfH = halfV * aspect
@@ -225,12 +283,12 @@ export function planBuildingFocus(building, blockers, { yaw: currentYaw = 0, asp
       y: height,
       z: facade.center.z + facade.forward.z * TARGET_CLEARANCE,
     }
-    clampViewerTarget(target, blockers)
+    clampViewerTarget(target, blockers, space)
     for (const offset of YAW_OFFSETS) {
       for (const pitch of PITCHES) {
         const yaw = baseYaw + offset
         orbitDirection(yaw, pitch, direction)
-        const available = allowedDistance(target, direction, needed, blockers)
+        const available = allowedDistance(target, direction, needed, blockers, space)
         const distance = Math.min(needed, available)
         const camera = {
           x: target.x + direction.x * distance,

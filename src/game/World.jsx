@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { CameraRig } from './components/CameraRig.jsx'
 import { EraDirector } from './components/EraDirector.jsx'
 import { EraScene } from './components/EraScene.jsx'
@@ -9,6 +10,7 @@ import { River } from './components/River.jsx'
 import { Sky } from './components/Sky.jsx'
 import { StoreMarkers } from './components/StoreMarkers.jsx'
 import { ToonRenderer } from './rendering/ToonRenderer.jsx'
+import { viewerSpaceOf } from './viewerCamera.js'
 
 /**
  * 3D 場景組合。
@@ -16,6 +18,7 @@ import { ToonRenderer } from './rendering/ToonRenderer.jsx'
  * 切換年代時由 EraDirector 在霧氣中換成新的街景。
  */
 export function World({ world, promptLayer, onSwap }) {
+  const viewerSpace = useMemo(() => viewerSpaceOf(world), [world])
   return (
     <>
       <SceneFog />
@@ -28,7 +31,13 @@ export function World({ world, promptLayer, onSwap }) {
       <EraScene key={world.eraId} world={world} />
       <StoreMarkers shopModels={world.shopModels} promptLayer={promptLayer} />
       <Player collision={world.collision} shopModels={world.shopModels} />
-      <CameraRig blockers={world.blockers} buildings={world.buildings} shopModels={world.shopModels} />
+      <CameraRig
+        blockers={world.blockers}
+        buildings={world.buildings}
+        shopModels={world.shopModels}
+        interiors={world.interiors}
+        viewerSpace={viewerSpace}
+      />
       <InteractionSystem shopModels={world.shopModels} />
     </>
   )

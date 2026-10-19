@@ -44,3 +44,13 @@ function unpackBatches(list) {
 export function unpackWorld(payload) {
   return { ...payload, batches: unpackBatches(payload.batches), detailBatches: unpackBatches(payload.detailBatches ?? []) }
 }
+
+/** 室內細部（按需載入）只有依材質合併的網格 */
+export function packInterior(interior) {
+  const transfer = []
+  return { payload: { ...interior, batches: packBatches(interior.batches, transfer) }, transfer }
+}
+
+export function unpackInterior(payload) {
+  return { ...payload, batches: unpackBatches(payload.batches) }
+}

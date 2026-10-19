@@ -6,7 +6,17 @@ import { raycastBoxes } from '../collision.js'
 import { moveInput } from '../input.js'
 import { cameraState, playerState, renderState } from '../runtime.js'
 import { clamp, damp, dampAngle, dampVector } from '../utils/math.js'
-import { VIEWER, allowedDistance, clampViewerTarget, facadeOf, orbitDirection, pickBuilding, planBuildingFocus } from '../viewerCamera.js'
+import {
+  VIEWER,
+  allowedDistance,
+  clampViewerTarget,
+  facadeOf,
+  indoorFollow,
+  interiorAmount,
+  orbitDirection,
+  pickBuilding,
+  planBuildingFocus,
+} from '../viewerCamera.js'
 import { useGameStore } from '../../state/useGameStore.js'
 
 const INTRO_LOOK = new Vector3(-22, 2.4, -0.4)
@@ -23,6 +33,7 @@ const VIEWER_KEY_SPEED = 7
  * 探索（第三人稱）
  * - 平滑跟隨角色；滑鼠拖曳旋轉視角、滾輪縮放；觸控單指旋轉、雙指縮放
  * - 會被建築遮擋時自動拉近，避免穿牆
+ * - 走進室內（永樂市場）時平滑拉近、壓低，鏡頭留在天花板與吊牌下方
  * - 探索店家時平滑移到店面前，並把店面留在介紹視窗左側
  * - 靠近已開放的店家時，點一下店面即可開啟介紹
  *
@@ -30,14 +41,15 @@ const VIEWER_KEY_SPEED = 7
  * - 電腦：左鍵拖曳旋轉、右鍵拖曳平移、滾輪縮放、WASD 移動；觸控：單指旋轉、雙指平移與捏合縮放
  * - 點一下建築：平滑聚焦整個立面（依建築大小決定距離）
  * - 鏡頭不穿牆、不低於地面、不離開街區；返回探索時平滑回到角色身後
+ * - 可以走進去的建築（viewerSpace 的額外範圍）：注視點可以移進騎樓與一樓室內，高度不超過天花板
  */
-export function CameraRig({ blockers, buildings, shopModels }) {
+export function CameraRig({ blockers, buildings, shopModels, interiors = [], viewerSpace }) {
   const camera = useThree((state) => state.camera)
   const gl = useThree((state) => state.gl)
   const size = useThree((state) => state.size)
   // 事件處理只註冊一次，從 ref 讀取目前年代的建築資料
-  const sceneRef = useRef({ blockers, buildings, shopModels })
-  sceneRef.current = { blockers, buildings, shopModels }
+  const sceneRef = useRef({ blockers, buildings, shopModels, space: viewerSpace })
+  sceneRef.current = { blockers, buildings, shopModels, space: viewerSpace }
 
   const rig = useMemo(
     () => ({
@@ -51,6 +63,9 @@ export function CameraRig({ blockers, buildings, shopModels }) {
       focus: new Vector3(),
       collisionDistance: CAMERA.distance,
       followLambda: 2,
+      /** 室內鏡頭的混合程度（0 街道 – 1 室內）與目前的室內範圍 */
+      indoor: 0,
+      indoorZone: null,
       initialized: false,
       viewer: {
         /** off：第三人稱；active：觀賞中；returning：返回探索，鏡頭正移回角色身後 */
@@ -147,7 +162,7 @@ export function CameraRig({ blockers, buildings, shopModels }) {
       v.goalTarget.x += (-cosYaw * dx - sinYaw * sinPitch * dy) * scale
       v.goalTarget.y += cosPitch * dy * scale
       v.goalTarget.z += (sinYaw * dx - cosYaw * sinPitch * dy) * scale
-      clampViewerTarget(v.goalTarget, sceneRef.current.blockers)
+      clampViewerTarget(v.goalTarget, sceneRef.current.blockers, sceneRef.current.space)
       v.lambda = 9
     }
     // 縮放：factor > 1 拉遠、< 1 拉近；已經拉到最近時，改成往前推進（方便沿街移動）
@@ -157,7 +172,7 @@ export function CameraRig({ blockers, buildings, shopModels }) {
         if (factor < 1 && v.goalDistance <= VIEWER.minDistance + 0.01) {
           orbitDirection(v.yaw, v.pitch, dir)
           v.goalTarget.addScaledVector(dir, -(1 - factor) * 9)
-          clampViewerTarget(v.goalTarget, sceneRef.current.blockers)
+          clampViewerTarget(v.goalTarget, sceneRef.current.blockers, sceneRef.current.space)
         } else if (factor > 1 && next > v.collision + 1.5) {
           v.goalDistance = Math.max(v.goalDistance, Math.min(next, v.collision + 1.5))
         } else {
@@ -191,6 +206,7 @@ export function CameraRig({ blockers, buildings, shopModels }) {
         yaw: v.yaw,
         aspect: element.clientWidth / Math.max(1, element.clientHeight),
         fov: camera.fov,
+        space: sceneRef.current.space,
       })
       v.goalTarget.set(plan.target.x, plan.target.y, plan.target.z)
       // 旋轉走最短的方向
@@ -322,7 +338,7 @@ export function CameraRig({ blockers, buildings, shopModels }) {
       }
       v.phase = 'active'
       v.goalTarget.set(p.x, VIEWER.start.height, p.z)
-      clampViewerTarget(v.goalTarget, blockers)
+      clampViewerTarget(v.goalTarget, blockers, viewerSpace)
       v.goalYaw = v.yaw + Math.atan2(Math.sin(cameraState.yaw - v.yaw), Math.cos(cameraState.yaw - v.yaw))
       v.goalPitch = VIEWER.start.pitch
       v.goalDistance = VIEWER.start.distance
@@ -373,12 +389,14 @@ export function CameraRig({ blockers, buildings, shopModels }) {
       rig.followLambda = 2.2
       lambda = 3.2
     } else if (v.phase !== 'off') {
-      // 建築觀賞：繞著注視點環繞；返回探索時，目標改成第三人稱鏡頭的位置
+      // 建築觀賞：繞著注視點環繞；返回探索時，目標改成第三人稱鏡頭的位置（在室內就是室內的鏡頭）
       if (v.phase === 'returning') {
+        const indoor = interiorAmount(p, interiors)
+        const follow = indoorFollow(cameraState.pitch, cameraState.distance, indoor?.amount ?? 0, indoor?.zone.camera)
         v.goalTarget.set(p.x, CAMERA.targetHeight, p.z)
         v.goalYaw = v.yaw + Math.atan2(Math.sin(cameraState.yaw - v.yaw), Math.cos(cameraState.yaw - v.yaw))
-        v.goalPitch = cameraState.pitch
-        v.goalDistance = cameraState.distance
+        v.goalPitch = follow.pitch
+        v.goalDistance = follow.distance
         v.returnTime += dt
       } else {
         // 鍵盤 WASD：沿著視線的水平方向與左右移動注視點
@@ -388,7 +406,7 @@ export function CameraRig({ blockers, buildings, shopModels }) {
           const step = VIEWER_KEY_SPEED * (moveInput.run ? 1.8 : 1) * dt
           v.goalTarget.x += (-Math.sin(v.yaw) * forward + Math.cos(v.yaw) * right) * step
           v.goalTarget.z += (-Math.cos(v.yaw) * forward - Math.sin(v.yaw) * right) * step
-          clampViewerTarget(v.goalTarget, blockers)
+          clampViewerTarget(v.goalTarget, blockers, viewerSpace)
           v.lambda = 9
         }
       }
@@ -400,7 +418,7 @@ export function CameraRig({ blockers, buildings, shopModels }) {
       v.distance = damp(v.distance, v.goalDistance, v.lambda, dt)
 
       orbitDirection(v.yaw, v.pitch, rig.direction)
-      const allowed = allowedDistance(v.target, rig.direction, v.distance, blockers)
+      const allowed = allowedDistance(v.target, rig.direction, v.distance, blockers, viewerSpace)
       v.collision = allowed < v.collision ? allowed : damp(v.collision, allowed, 3, dt)
       const distance = Math.min(v.distance, v.collision)
       rig.desiredPosition.copy(v.target).addScaledVector(rig.direction, distance)
@@ -419,23 +437,40 @@ export function CameraRig({ blockers, buildings, shopModels }) {
           v.phase = 'off'
           rig.collisionDistance = v.collision
           rig.followLambda = 5
+          const indoor = interiorAmount(p, interiors)
+          rig.indoor = indoor?.amount ?? 0
+          if (indoor) rig.indoorZone = indoor.zone
         }
       }
     } else {
       // 第三人稱跟隨
       rig.target.set(p.x, CAMERA.targetHeight, p.z)
-      const cosPitch = Math.cos(cameraState.pitch)
-      rig.direction.set(Math.sin(cameraState.yaw) * cosPitch, Math.sin(cameraState.pitch), Math.cos(cameraState.yaw) * cosPitch)
-      const wanted = cameraState.distance
+      // 室內：從街道走向大門時逐漸拉近、壓低（混合程度平滑變化；傳送時直接到位）
+      const indoor = interiorAmount(p, interiors)
+      if (indoor) rig.indoorZone = indoor.zone
+      const indoorGoal = indoor?.amount ?? 0
+      rig.indoor = cameraState.snap ? indoorGoal : damp(rig.indoor, indoorGoal, 2.4, dt)
+      const k = rig.indoorZone ? rig.indoor : 0
+      const shot = rig.indoorZone?.camera
+      const { pitch, distance: wanted, minDistance } = indoorFollow(cameraState.pitch, cameraState.distance, k, shot)
+      const cosPitch = Math.cos(pitch)
+      rig.direction.set(Math.sin(cameraState.yaw) * cosPitch, Math.sin(pitch), Math.cos(cameraState.yaw) * cosPitch)
       if (cameraState.snap) rig.collisionDistance = wanted
       const hit = raycastBoxes(rig.target, rig.direction, wanted + 0.45, blockers)
-      const allowed = Math.max(1.3, hit - 0.45)
+      let allowed = Math.max(minDistance, hit - 0.45)
+      if (k > 0.001 && rig.direction.y > 0.01) {
+        // 室內的鏡頭高度上限（在吊牌與燈具下方）；越接近街道上限越高
+        const maxHeight = shot.maxHeight + (1 - k) * 6
+        allowed = Math.min(allowed, Math.max(minDistance, (maxHeight - rig.target.y) / rig.direction.y))
+      }
       rig.collisionDistance = allowed < rig.collisionDistance ? allowed : damp(rig.collisionDistance, allowed, 3, dt)
       const distance = Math.min(wanted, rig.collisionDistance)
       rig.desiredPosition.copy(rig.target).addScaledVector(rig.direction, distance)
-      // 鏡頭被拉近時，注視點逐漸降回角色胸口，避免仰角過大
+      // 鏡頭被拉近時，注視點逐漸降回角色胸口，避免仰角過大；室內注視點略高於胸口
       const lookBlend = clamp(distance / CAMERA.distance, 0, 1)
-      rig.desiredLook.set(p.x, CAMERA.targetHeight + (CAMERA.lookHeight - CAMERA.targetHeight) * lookBlend, p.z)
+      let lookHeight = CAMERA.targetHeight + (CAMERA.lookHeight - CAMERA.targetHeight) * lookBlend
+      if (k > 0.001) lookHeight += (shot.lookHeight - lookHeight) * k
+      rig.desiredLook.set(p.x, lookHeight, p.z)
       rig.focus.copy(rig.target)
       rig.followLambda = damp(rig.followLambda, 10, 1.6, dt)
       lambda = rig.followLambda
@@ -465,6 +500,7 @@ export function CameraRig({ blockers, buildings, shopModels }) {
     renderState.focusDistance = camera.position.distanceTo(rig.focus)
     if (import.meta.env.DEV && window.__DDC__) {
       window.__DDC__.viewer = v
+      window.__DDC__.indoor = { amount: rig.indoor, zone: rig.indoorZone?.id ?? null }
       window.__DDC__.frameCount = (window.__DDC__.frameCount ?? 0) + 1
     }
   }, -1)

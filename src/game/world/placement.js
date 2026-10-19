@@ -26,7 +26,8 @@ export function getShopPlacement(shop) {
   const forward = new Vector3(Math.sin(rotationY), 0, Math.cos(rotationY))
   const right = new Vector3(Math.cos(rotationY), 0, -Math.sin(rotationY))
   const origin = new Vector3(shop.position.x, 0, shop.position.z)
-  const interactionPoint = origin.clone().addScaledVector(forward, STREET.walkwayDepth + 0.75)
+  // 一般店家：店門前的街道上；室內的攤位可以指定較近的距離（interaction.distance，走道比街道窄）
+  const interactionPoint = origin.clone().addScaledVector(forward, shop.interaction?.distance ?? STREET.walkwayDepth + 0.75)
   const cam = shop.camera ?? {}
   const camera = {
     position: origin
@@ -44,8 +45,9 @@ export function getShopPlacement(shop) {
   return placement
 }
 
-/** 店家所在的街道側（用於自動預留街屋位置） */
+/** 店家所在的街道側（用於自動預留街屋位置）；自訂位置（site）與建築裡的店家（inside）不預留 */
 export function getStreetSide(shop) {
+  if (shop.site || shop.inside) return null
   if (shop.facing === 'south' && shop.position.z < 0) return 'north'
   if (shop.facing === 'north' && shop.position.z > 0) return 'south'
   return null

@@ -16,6 +16,8 @@ import { DISPLAY_FONT, registerFontTexture } from './fonts.js'
  * - modern    今日老屋新生的店招：簡潔、由左至右書寫
  * - label     說明牌（例如「江山樓｜歷史情境重建」）：米白底、由左至右書寫
  * - engraved  嵌在牆面上的黑色立體字（無底板）；awningBlack 黑色布篷垂邊；whiteCloth 白色布旗、暖簾；road 綠色路名牌
+ * - 永樂市場：greenBoard 好粿緣的綠色招牌、redPlate 紅色攤位牌、redLetters「永樂布業商場」紅字、
+ *   redOnDark 門楣、marketWhite 指示吊牌、marketBoard 指示牌、exitGreen 出口、tag 木製品名牌、stall* 攤位招牌
  *
  * 橫式招牌依舊日習慣由右至左書寫（modern 除外）；直式招牌由上而下。
  */
@@ -42,6 +44,45 @@ const STYLES = {
   whiteCloth: { bg: '#f7f5ef', bg2: '#ece8df', border: null, text: '#1f1b18', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,110,95,0.07)' },
   // 綠底白字的路名牌
   road: { bg: '#1d6a50', bg2: '#1a6149', border: '#f2f4f0', text: '#ffffff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.02)', ltr: true, sizeH: 0.6, sizeW: 0.82 },
+  // 永樂市場：好粿緣的鮮綠色大招牌（四角白色回紋）、紅色攤位牌、紅色立體字、指示吊牌、出口標示、木製品名牌
+  greenBoard: { bg: '#45b23f', bg2: '#3ea539', border: null, text: '#ffffff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.025)', ltr: true, sizeH: 0.74, sizeW: 0.8, frets: '#ffffff' },
+  redPlate: { bg: '#c8282e', bg2: '#b92228', border: '#f6e7c8', text: '#ffffff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', ltr: true, sizeH: 0.6, sizeW: 0.86 },
+  redLetters: { bg: null, text: '#c3242b', shadow: '#6f1418', ltr: true, sizeH: 0.8, sizeW: 0.9 },
+  redOnDark: { bg: '#232526', bg2: '#2b2d2f', border: null, text: '#d8433c', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.02)', ltr: true, sizeH: 0.64 },
+  marketWhite: { bg: '#f6f6f2', bg2: '#efefea', border: null, text: '#262626', shadow: 'rgba(0,0,0,0)', grain: 'rgba(0,0,0,0.02)', ltr: true, sizeH: 0.72, sizeW: 0.86 },
+  marketBoard: { bg: '#f6f4ef', bg2: '#eeebe4', border: '#c8282e', text: '#c8282e', shadow: 'rgba(0,0,0,0)', grain: 'rgba(0,0,0,0.03)' },
+  exitGreen: { bg: '#1f8a4c', bg2: '#1b7a43', border: null, text: '#ffffff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.02)', ltr: true, sizeH: 0.66 },
+  tag: { bg: '#d8b78a', bg2: '#caa776', border: null, text: '#2b1d12', shadow: 'rgba(0,0,0,0)', grain: 'rgba(80,50,25,0.12)', ltr: true, sizeH: 0.7, sizeW: 0.86 },
+  stallRed: { bg: '#c0392b', bg2: '#b03224', border: '#f2d9a6', text: '#fff4e0', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', ltr: true, sizeH: 0.62 },
+  stallYellow: { bg: '#efc22b', bg2: '#e6b722', border: '#b3261d', text: '#b3261d', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,80,0,0.05)', ltr: true, sizeH: 0.62 },
+  stallWhite: { bg: '#f4f2ec', bg2: '#ebe8e0', border: '#2e4a7a', text: '#b3261d', shadow: 'rgba(0,0,0,0)', grain: 'rgba(0,0,0,0.03)', ltr: true, sizeH: 0.62 },
+  stallBlue: { bg: '#2f5f9e', bg2: '#295490', border: '#f4f2ec', text: '#ffffff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', ltr: true, sizeH: 0.62 },
+}
+
+/** 四角的回紋（L 形折線），用於好粿緣的綠色招牌 */
+function drawFrets(g, cw, ch, m, color) {
+  g.strokeStyle = color
+  g.lineWidth = Math.max(2, m * 0.16)
+  const a = m * 1.1
+  const b = m * 2.2
+  const c = m * 3.3
+  for (const [x, y, sx, sy] of [
+    [m, m, 1, 1],
+    [cw - m, m, -1, 1],
+    [m, ch - m, 1, -1],
+    [cw - m, ch - m, -1, -1],
+  ]) {
+    g.beginPath()
+    g.moveTo(x + sx * c, y)
+    g.lineTo(x, y)
+    g.lineTo(x, y + sy * c)
+    g.moveTo(x + sx * a, y + sy * b)
+    g.lineTo(x + sx * a, y + sy * a)
+    g.lineTo(x + sx * b, y + sy * a)
+    g.moveTo(x + sx * b, y + sy * b)
+    g.lineTo(x + sx * b * 0.9, y + sy * b * 0.9)
+    g.stroke()
+  }
 }
 
 const PAINTED_INKS = ['#a8301f', '#2e4a7a', '#a8301f', '#2a231e']
@@ -122,6 +163,7 @@ function drawSign(g, cw, ch, text, style, vertical) {
       }
       if (s.deco) drawDecoOrnaments(g, cw, ch, m * 1.6, s.border)
     }
+    if (s.frets) drawFrets(g, cw, ch, m * 1.1, s.frets)
     // 戰後招牌的日曬褪色
     if (s.faded) {
       for (let i = 0; i < 18; i++) {

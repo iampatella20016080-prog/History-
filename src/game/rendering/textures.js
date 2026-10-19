@@ -868,6 +868,96 @@ function graniteTexture() {
   return toTexture(canvas)
 }
 
+/* ───────────────────────── 市場地磚（灰色方磚） ───────────────────────── */
+function marketTileTexture() {
+  const S = 512
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  const rng = createRng(3101)
+  g.fillStyle = '#7d817f'
+  g.fillRect(0, 0, S, S)
+  const n = 4
+  const t = S / n
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      const v = 168 + Math.floor(hash2(r, c, 77) * 22)
+      g.fillStyle = `rgb(${v},${v + 2},${v + 1})`
+      g.fillRect(c * t + 3, r * t + 3, t - 6, t - 6)
+      g.fillStyle = 'rgba(255,255,255,0.12)'
+      g.fillRect(c * t + 5, r * t + 5, t - 12, 3)
+    }
+  }
+  speckle(g, S, rng, 3600, '70,74,72', 0.15, 0.4, 1.6)
+  speckle(g, S, rng, 1200, '235,236,232', 0.2, 0.45, 1.4)
+  for (let i = 0; i < 24; i++) {
+    const x = rng() * S
+    const y = rng() * S
+    const r = 20 + rng() * 60
+    wrapped(S, x, y, r, (px, py) => softBlot(g, px, py, r, '60,62,60', 0.05))
+  }
+  return toTexture(canvas)
+}
+
+/* ───────────────────────── 白色牆面磁磚 ───────────────────────── */
+function whiteTileTexture() {
+  const S = 256
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  g.fillStyle = '#c9ccca'
+  g.fillRect(0, 0, S, S)
+  const n = 8
+  const t = S / n
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      const v = 238 + Math.floor(hash2(r, c, 91) * 14)
+      g.fillStyle = `rgb(${v},${v},${v - 3})`
+      g.fillRect(c * t + 1.5, r * t + 1.5, t - 3, t - 3)
+      g.fillStyle = 'rgba(255,255,255,0.5)'
+      g.fillRect(c * t + 3, r * t + 3, t - 10, 2)
+    }
+  }
+  return toTexture(canvas)
+}
+
+/* ───────────────────────── 不鏽鋼（髮絲紋） ───────────────────────── */
+function steelTexture() {
+  const S = 256
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  const rng = createRng(3301)
+  g.fillStyle = '#d4d8d9'
+  g.fillRect(0, 0, S, S)
+  for (let i = 0; i < 140; i++) {
+    const y = rng() * S
+    const a = 0.04 + rng() * 0.1
+    g.fillStyle = rng() < 0.5 ? `rgba(120,128,132,${a})` : `rgba(255,255,255,${a + 0.05})`
+    g.fillRect(0, y, S, 0.6 + rng() * 1.6)
+  }
+  const grad = g.createLinearGradient(0, 0, S, S)
+  grad.addColorStop(0, 'rgba(255,255,255,0.12)')
+  grad.addColorStop(0.5, 'rgba(255,255,255,0)')
+  grad.addColorStop(1, 'rgba(80,90,95,0.1)')
+  g.fillStyle = grad
+  g.fillRect(0, 0, S, S)
+  return toTexture(canvas)
+}
+
+/* ───────────────────────── 有孔的金屬板（電纜線槽） ───────────────────────── */
+function perforatedTexture() {
+  const S = 128
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  g.fillStyle = '#d9dcdc'
+  g.fillRect(0, 0, S, S)
+  g.fillStyle = 'rgba(40,44,46,0.75)'
+  for (let y = 4; y < S; y += 8) {
+    for (let x = (y / 8) % 2 ? 8 : 4; x < S; x += 8) {
+      g.fillRect(x - 1.5, y - 1, 3, 2)
+    }
+  }
+  return toTexture(canvas)
+}
+
 function toonGradient() {
   // dot(N, L) 由 -1 → 1 對應 8 格：背光、過渡、受光三段
   const values = [82, 82, 82, 82, 170, 255, 255, 255]
@@ -906,6 +996,10 @@ export function getTextures() {
     interior: interiorTexture(),
     glass: glassTexture(),
     granite: graniteTexture(),
+    marketTile: marketTileTexture(),
+    whiteTile: whiteTileTexture(),
+    steel: steelTexture(),
+    perforated: perforatedTexture(),
     toonGradient: toonGradient(),
   }
   return cache

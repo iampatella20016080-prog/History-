@@ -4,6 +4,7 @@ import { genericBuildingConfig } from './lineage.js'
 import { getLotPlan } from './lots.js'
 import { templeCollision } from '../builders/specials.js'
 import { ziYangCollision } from '../builders/ziyang.js'
+import { yongleCollision, yongleFootprint } from '../builders/yongleMarket.js'
 
 /**
  * 某個年代的街區配置：建築（依地段演變）、街道道具、路燈、電線、燈籠串、碰撞與可行走範圍。
@@ -276,7 +277,9 @@ function arrangeModernRows(buildings) {
 }
 
 /** 形狀特殊的店家建築（以 shop.site 指定位置）額外的可行走範圍與障礙物 */
-const SITE_COLLISION = { ziyang: ziYangCollision }
+const SITE_COLLISION = { ziyang: ziYangCollision, 'yongle-market': yongleCollision }
+/** 佔地較大的店家建築：範圍內不產生遠景房屋 */
+const SITE_FOOTPRINT = { 'yongle-market': yongleFootprint }
 
 function siteTransform({ x, z, rotationY = 0 }) {
   const cos = Math.cos(rotationY)
@@ -300,6 +303,7 @@ export function createEraLayout(era) {
   const buildings = []
   const extraWalkable = []
   const extraObstacles = []
+  const backdropExclusions = []
   const sites = siteShops(era)
   const replaced = new Set(sites.flatMap(({ shop }) => shop.site.replaces ?? []))
 
@@ -351,6 +355,8 @@ export function createEraLayout(era) {
       extraWalkable.push(...collision.walkable)
       extraObstacles.push(...collision.obstacles)
     }
+    const footprint = SITE_FOOTPRINT[config.archetype]?.(siteTransform(site))
+    if (footprint) backdropExclusions.push(footprint)
   }
 
   if (era.id === 'banquet') diversifyRows(buildings)
@@ -394,5 +400,6 @@ export function createEraLayout(era) {
     obstacles,
     trees: BASE_TREES,
     mooringPosts: MOORING_POSTS,
+    backdropExclusions,
   }
 }
