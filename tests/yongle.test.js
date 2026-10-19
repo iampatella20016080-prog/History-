@@ -271,7 +271,7 @@ describe('永樂市場：建築觀賞模式可以進到室內', () => {
 describe('永樂市場：室內細部按需載入', () => {
   test('街景不含室內細部；室內另外產生（地磚、展示櫃、商品）', () => {
     const worldMaterials = new Set(revival.batches.map((batch) => batch.material))
-    const interior = buildEraInteriorSync('revival')
+    const interior = buildEraInteriorSync('revival', zone.building)
     const interiorMaterials = new Set(interior.batches.map((batch) => batch.material))
     assert.ok(!worldMaterials.has('marketTile'), '街景的網格裡沒有室內地磚')
     for (const material of ['marketTile', 'whiteTile', 'steel', 'perforated', 'glassClear', 'wood']) {

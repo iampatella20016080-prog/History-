@@ -4,7 +4,7 @@ import { transitionState } from '../transition.js'
 import { QUALITY_MODES } from '../quality.js'
 import { playerState } from '../runtime.js'
 import { getInteriorMaterials } from '../rendering/materials.js'
-import { loadEraInterior } from '../world/worldManager.js'
+import { getLoadedInterior, loadEraInterior } from '../world/worldManager.js'
 import { useGameStore } from '../../state/useGameStore.js'
 import { GlowLayer } from './GlowLayer.jsx'
 import { LanternLayer } from './LanternLayer.jsx'
@@ -22,14 +22,14 @@ function distanceToRect(r, x, z) {
 }
 
 /**
- * 可以走進去的建築的室內細部（永樂市場一樓的攤位、天花板設備與吊牌）：
- * 角色接近時才產生（建築觀賞模式也看鏡頭的位置；從店家名錄前往裡面的攤位時也會產生），離開一段距離後不再繪製。
- * 開始探索之前（開場的鳥瞰鏡頭）不產生。
+ * 一棟可以走進去的建築的室內細部（例如永樂市場一樓的攤位、天花板設備與吊牌）：
+ * 角色接近這棟建築時才產生（建築觀賞模式也看鏡頭的位置；從店家名錄前往裡面的店家時也會產生），離開一段距離後不再繪製。
+ * 開始探索之前（開場的鳥瞰鏡頭）不產生。每棟建築各自產生與顯示，接近一棟不會連帶產生另一棟。
  * 跟著這個年代的街景快取與釋放；其他年代沒有室內，也就不會產生或繪製。
- * 不投射也不接收陰影，改用略為自發光的材質，看起來像被日光燈均勻照亮。
+ * 不投射也不接收陰影，改用略為自發光的材質，看起來像被室內的燈均勻照亮。
  */
-function InteriorLayer({ world }) {
-  const [batches, setBatches] = useState(() => world.interior?.batches ?? null)
+function InteriorZone({ world, zone }) {
+  const [batches, setBatches] = useState(() => getLoadedInterior(world, zone))
   const group = useRef()
   const status = useRef({ requested: false, retryAt: 0, visible: false, mounted: true })
 
@@ -46,42 +46,33 @@ function InteriorLayer({ world }) {
     const p = playerState.position
     const { started, viewMode, travel } = useGameStore.getState()
     // 探索時鏡頭就在角色附近，看角色的位置；觀賞模式的鏡頭可以自由移動，也看鏡頭的位置
-    const useCamera = viewMode === 'viewer'
-    let nearest = Infinity
-    let loadRadius = 0
-    let showRadius = 0
-    for (const zone of world.interiors) {
-      let d = distanceToRect(zone, p.x, p.z)
-      if (useCamera) d = Math.min(d, distanceToRect(zone, camera.position.x, camera.position.z))
-      if (d < nearest) {
-        nearest = d
-        loadRadius = zone.loadRadius
-        showRadius = zone.showRadius
-      }
-    }
-    const travelInside = travel && world.shopModels.some((model) => model.shop.id === travel.shopId && model.shop.inside)
-    if (started && !state.requested && (nearest < loadRadius || travelInside) && clock.elapsedTime >= state.retryAt) {
+    let nearest = distanceToRect(zone, p.x, p.z)
+    if (viewMode === 'viewer') nearest = Math.min(nearest, distanceToRect(zone, camera.position.x, camera.position.z))
+    const travelInside =
+      travel && world.shopModels.some((model) => model.shop.id === travel.shopId && (model.shop.inside === zone.id || model.shop.id === zone.id))
+    if (started && !state.requested && (nearest < zone.loadRadius || travelInside) && clock.elapsedTime >= state.retryAt) {
       state.requested = true
-      loadEraInterior(world)
+      loadEraInterior(world, zone)
         .then((loaded) => {
           if (state.mounted && loaded) setBatches(loaded)
         })
         .catch((error) => {
-          console.warn('[大稻埕食光街] 室內產生失敗，稍後再試：', error)
+          console.warn(`[大稻埕食光街] ${zone.id} 室內產生失敗，稍後再試：`, error)
           state.requested = false
           state.retryAt = clock.elapsedTime + INTERIOR_RETRY
         })
     }
-    state.visible = nearest < showRadius
+    state.visible = nearest < zone.showRadius
     if (group.current) group.current.visible = state.visible
     if (import.meta.env.DEV && window.__DDC__) {
-      window.__DDC__.interior = { requested: state.requested, loaded: Boolean(group.current), visible: Boolean(group.current?.visible) }
+      window.__DDC__.interiors ??= {}
+      window.__DDC__.interiors[zone.id] = { requested: state.requested, loaded: Boolean(group.current), visible: Boolean(group.current?.visible) }
     }
   })
 
   if (!batches) return null
   return (
-    <group ref={group} name="interior">
+    <group ref={group} name={`interior-${zone.id}`}>
       <StaticBatches batches={batches} materials={getInteriorMaterials()} castShadow={false} receiveShadow={false} dispose={false} />
     </group>
   )
@@ -107,7 +98,9 @@ export function EraScene({ world }) {
       <group visible={detail}>
         <StaticBatches batches={world.detailBatches ?? []} dispose={false} />
       </group>
-      {world.interiors?.length > 0 && <InteriorLayer world={world} />}
+      {(world.interiors ?? []).map((zone) => (
+        <InteriorZone key={zone.id} world={world} zone={zone} />
+      ))}
       <SignLayer signs={world.signs} banners={world.banners} />
       <LanternLayer lanterns={world.lanterns} />
       <TextLanterns lanterns={world.textLanterns} />

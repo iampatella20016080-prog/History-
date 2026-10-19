@@ -77,7 +77,7 @@ function state(page) {
       cam: { x: c.x, y: c.y, z: c.z },
       camInside: blockers.some((b) => inBox(c, b)),
       indoor: d.indoor?.amount ?? 0,
-      interior: d.interior ?? null,
+      interior: d.interiors?.['yong-le-market'] ?? null,
       nearby: s.nearbyShopId,
       era: s.eraId,
       mode: s.mode,

@@ -60,6 +60,7 @@ function insideRect(r, p) {
 
 /**
  * 角色在室內（例如永樂市場一樓）時為 1；在通往大門的入口範圍內，越靠近大門越接近 1；其他地方為 0。
+ * 室內範圍可以另外指定過渡的距離（entryHold、entryRamp，例如巷子裡的小店較短）。
  * 回傳 { zone, amount }，不在任何室內或入口範圍時回傳 null。
  */
 export function interiorAmount(p, interiors = []) {
@@ -67,7 +68,9 @@ export function interiorAmount(p, interiors = []) {
   for (const zone of interiors) {
     if (!zone.entry || !insideRect(zone.entry, p)) continue
     const d = Math.hypot(p.x - zone.door.x, p.z - zone.door.z)
-    return { zone, amount: 1 - clamp((d - ENTRY_HOLD) / ENTRY_RAMP, 0, 1) }
+    const hold = zone.entryHold ?? ENTRY_HOLD
+    const ramp = zone.entryRamp ?? ENTRY_RAMP
+    return { zone, amount: 1 - clamp((d - hold) / ramp, 0, 1) }
   }
   return null
 }

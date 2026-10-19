@@ -76,9 +76,9 @@ const nextFrame = () =>
     else setTimeout(resolve, 16)
   })
 
-/** 主執行緒分段產生（每段約 7 毫秒，之後讓出給畫面更新）；kind：world 街景、interior 室內細部 */
-async function buildOnMainThread(eraId, kind = 'world') {
-  const steps = kind === 'interior' ? eraInteriorSteps(eraId) : eraWorldSteps(eraId)
+/** 主執行緒分段產生（每段約 7 毫秒，之後讓出給畫面更新）；kind：world 街景、interior 室內細部（building 那棟建築） */
+async function buildOnMainThread(eraId, kind = 'world', building = null) {
+  const steps = kind === 'interior' ? eraInteriorSteps(eraId, building) : eraWorldSteps(eraId)
   let sliceStart = performance.now()
   for (;;) {
     const step = steps.next()
@@ -90,9 +90,9 @@ async function buildOnMainThread(eraId, kind = 'world') {
   }
 }
 
-function buildRaw(eraId, kind = 'world') {
+function buildRaw(eraId, kind = 'world', building = null) {
   const target = getWorker()
-  if (!target) return buildOnMainThread(eraId, kind)
+  if (!target) return buildOnMainThread(eraId, kind, building)
   const unpack = kind === 'interior' ? unpackInterior : unpackWorld
   return new Promise((resolve, reject) => {
     const id = ++requestId
@@ -103,7 +103,7 @@ function buildRaw(eraId, kind = 'world') {
       clearTimeout(timer)
       fn()
     }
-    const fallback = () => settle(() => buildOnMainThread(eraId, kind).then(resolve, reject))
+    const fallback = () => settle(() => buildOnMainThread(eraId, kind, building).then(resolve, reject))
     // 背景執行緒遲遲沒有回應（例如被系統終止）：視為失敗，改走主執行緒
     const timer = setTimeout(() => {
       if (pending.has(id)) failWorker(new Error(`world worker timeout: ${eraId}`))
@@ -124,7 +124,7 @@ function buildRaw(eraId, kind = 'world') {
       fallback,
     })
     try {
-      target.postMessage({ id, eraId, kind })
+      target.postMessage({ id, eraId, kind, building })
     } catch (error) {
       failWorker(error)
     }
@@ -160,38 +160,45 @@ function hydrate(raw) {
 function disposeWorld(world) {
   world?.batches.forEach(({ geometry }) => geometry.dispose())
   world?.detailBatches?.forEach(({ geometry }) => geometry.dispose())
-  if (world?.interior) {
-    world.interior.disposed = true
-    world.interior.batches?.forEach(({ geometry }) => geometry.dispose())
-    world.interior = null
+  for (const state of Object.values(world?.interior ?? {})) {
+    state.disposed = true
+    state.batches?.forEach(({ geometry }) => geometry.dispose())
   }
+  if (world) world.interior = null
 }
 
 /**
- * 室內細部（按需載入）：角色或鏡頭接近可以走進去的建築時才產生（背景執行緒，不行時改走主執行緒），
- * 產生後跟著這個年代的街景一起快取與釋放。沒有室內的年代回傳 null。
+ * 室內細部（按需載入）：角色接近某棟可以走進去的建築時，才產生這棟建築的室內（背景執行緒，不行時改走主執行緒），
+ * 產生後跟著這個年代的街景一起快取與釋放。zone 為 world.interiors 裡的室內範圍；沒有室內時回傳 null。
  */
-export function loadEraInterior(world) {
-  if (!world?.interiors?.length) return Promise.resolve(null)
-  if (world.interior?.promise) return world.interior.promise
+export function loadEraInterior(world, zone = world?.interiors?.[0]) {
+  if (!zone) return Promise.resolve(null)
+  const key = zone.building ?? zone.id
+  world.interior ??= {}
+  if (world.interior[key]?.promise) return world.interior[key].promise
   const state = { promise: null, batches: null, disposed: false }
-  world.interior = state
+  world.interior[key] = state
   const startTime = performance.now()
   state.promise = Promise.resolve()
-    .then(() => buildRaw(world.eraId, 'interior'))
+    .then(() => buildRaw(world.eraId, 'interior', zone.building ?? null))
     .then((raw) => {
       if (state.disposed) {
         raw.batches.forEach(({ geometry }) => geometry.dispose())
         return null
       }
       state.batches = raw.batches
-      if (DEV) console.info(`[大稻埕食光街] ${world.eraId} 室內完成：${(performance.now() - startTime).toFixed(0)} ms`)
+      if (DEV) console.info(`[大稻埕食光街] ${world.eraId}／${zone.id} 室內完成：${(performance.now() - startTime).toFixed(0)} ms`)
       return raw.batches
     })
   state.promise.catch(() => {
-    if (world.interior === state) world.interior = null
+    if (world.interior?.[key] === state) delete world.interior[key]
   })
   return state.promise
+}
+
+/** 已經產生完成的某棟建築的室內（沒有則回傳 null） */
+export function getLoadedInterior(world, zone) {
+  return world?.interior?.[zone.building ?? zone.id]?.batches ?? null
 }
 
 /** 超過快取上限時，釋放最久沒用到、而且沒有顯示或鎖定中的年代 */

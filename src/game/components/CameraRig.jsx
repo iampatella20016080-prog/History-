@@ -377,7 +377,8 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
     // 店家名錄的「聚焦建築」
     if (v.phase === 'active' && viewerFocus && viewerFocus.nonce !== v.focusNonce) {
       v.focusNonce = viewerFocus.nonce
-      const building = buildings?.find((item) => item.storeId === viewerFocus.storeId)
+      // 聚焦店家的建築本身（不是店裡的細部，例如豆花櫃台）
+      const building = buildings?.find((item) => item.storeId === viewerFocus.storeId && !item.detail)
       if (building) rig.focusOn?.(building)
     }
 
