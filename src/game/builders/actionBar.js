@@ -375,7 +375,7 @@ function brickNeighbour(b) {
     b.box('brick', [w, 0.5, 0.36], [0, 7.25, -0.1], { tint: '#a9573e' })
     for (const s of [-1, 1]) b.box('plaster', [0.2, 7.5, d - 0.3], [s * (w / 2 - 0.1), 3.75, -d / 2 - 0.15], { tint: '#c9b8a6' })
     b.box('plaster', [w, 7.5, 0.2], [0, 3.75, -d + 0.1], { tint: '#c9b8a6' })
-    b.box('plaster', [w - 0.4, 0.2, d - 0.5], [0, 7.38, -d / 2 - 0.05], { tint: '#b9a896' })
+    b.box('plaster', [w - 0.4, 0.2, d - 0.4], [0, 7.38, -d / 2], { tint: '#b9a896' })
     // 一樓牆邊的綠色植物
     pottedPlant(b, [-1.6, 0, -0.9], { seed: 31, size: 1.05, potTint: '#7d5a44' })
     pottedPlant(b, [1.5, 0, -1.0], { seed: 32, size: 0.85, potTint: '#7d5a44' })
