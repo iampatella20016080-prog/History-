@@ -300,6 +300,8 @@ async function runDevice(browser, device) {
   const street = await state(page)
   await startSampler(page)
   const first = await walkIn()
+  // 店只有約 4 公尺深：走到櫃台時鏡頭可能還在平滑過渡，等它完成（取樣持續記錄）
+  await waitFor(page, () => (window.__DDC__.indoor?.amount ?? 0) > 0.99, null, 60000)
   await frames(3)
   const inside = await state(page)
   const walkStats = await samplerStats(page)

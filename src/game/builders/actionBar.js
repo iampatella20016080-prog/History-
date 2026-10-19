@@ -796,6 +796,8 @@ export function buildActionBar(b) {
         door: { x: doorPoint[0], z: doorPoint[2] },
         // 小小的店：鏡頭更近、更低，注視點在胸口附近
         camera: { distance: 3.0, maxHeight: 2.45, minPitch: 0.04, maxPitch: 0.6, lookHeight: 1.45, minDistance: 0.7 },
+        // 在店裡進入建築觀賞模式：鏡頭離注視點近一點（店只有約 4 公尺深）
+        viewerStart: { distance: 2.6 },
         loadRadius: 18,
         showRadius: 24,
       },

@@ -349,8 +349,9 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
         v.collision = v.distance
       }
       v.phase = 'active'
-      const indoor = (interiorAmount(p, interiors)?.amount ?? 0) > 0.5
-      const start = indoor ? VIEWER_INDOOR_START : VIEWER.start
+      const found = interiorAmount(p, interiors)
+      // 室內範圍可以另外指定起始距離（例如巷子裡的小店，鏡頭才不會退到門外）
+      const start = (found?.amount ?? 0) > 0.5 ? { ...VIEWER_INDOOR_START, ...found.zone.viewerStart } : VIEWER.start
       v.goalTarget.set(p.x, start.height, p.z)
       clampViewerTarget(v.goalTarget, blockers, viewerSpace)
       v.goalYaw = v.yaw + Math.atan2(Math.sin(cameraState.yaw - v.yaw), Math.cos(cameraState.yaw - v.yaw))

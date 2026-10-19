@@ -217,7 +217,11 @@ describe('導演的豆花店：互動、介紹鏡頭與店家名錄', () => {
     assert.ok(!revival.blockers.some((box) => insideBox(cam, box)), JSON.stringify(cam))
     assert.ok(cam.x > zone.minX && cam.x < zone.maxX && cam.z > zone.minZ && cam.z < zone.maxZ)
     assert.ok(cam.y < SHOP.ceiling - 0.5)
-    assert.ok(!segmentBlocked(cam, { x: shop.position.x - 0.1, y: 1.3, z: shop.position.z }, revival.blockers))
+    // 從櫃台後方看：櫃台上的豆花與站在櫃台前的人物都不被擋住
+    assert.ok(cam.x > shop.position.x, '鏡頭在櫃台後方')
+    assert.ok(!segmentBlocked(cam, { x: shop.position.x - 0.1, y: 1.45, z: shop.position.z }, revival.blockers))
+    const point = placement.interactionPoint
+    assert.ok(!segmentBlocked(cam, { x: point.x, y: 1.5, z: point.z }, revival.blockers))
   })
 
   test('店家名錄的「聚焦建築」聚焦店面立面；豆花櫃台是店裡的細部目標', () => {
@@ -294,6 +298,17 @@ describe('導演的豆花店：建築觀賞模式（外觀與店內）', () => {
     }
     assert.ok(target.x > zone.minX + 1, `注視點到 x=${target.x.toFixed(2)}`)
     assert.ok(target.y <= SHOP.ceiling - 1, `y=${target.y.toFixed(2)}`)
+  })
+
+  test('在櫃台前進入觀賞模式：起始鏡頭在店裡，不會退到門外', () => {
+    const point = getShopPlacement(shop).interactionPoint
+    const target = { x: point.x, y: 1.7, z: point.z }
+    for (let i = 0; i < 8; i++) {
+      const direction = orbitDirection((i / 8) * Math.PI * 2, 0.16)
+      const d = Math.min(zone.viewerStart.distance, allowedDistance(target, direction, zone.viewerStart.distance, revival.blockers, space))
+      const cam = { x: target.x + direction.x * d, y: target.y + direction.y * d, z: target.z + direction.z * d }
+      assert.ok(cam.x > zone.minX && cam.x < zone.maxX && cam.z > zone.minZ && cam.z < zone.maxZ, `方向 ${i}：${JSON.stringify(cam)}`)
+    }
   })
 
   test('店裡旋轉鏡頭：鏡頭停在天花板下方，不會鑽進牆或天花板', () => {
