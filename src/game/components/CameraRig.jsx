@@ -11,6 +11,7 @@ import {
   allowedDistance,
   clampViewerTarget,
   facadeOf,
+  followAllowed,
   indoorFollow,
   interiorAmount,
   orbitDirection,
@@ -29,6 +30,15 @@ const TAP_TIME = 450
 const VIEWER_KEY_SPEED = 7
 /** 在室內進入觀賞模式：注視點較低、鏡頭較平也較近，才不會一開始就頂到天花板或退到門外 */
 const VIEWER_INDOOR_START = { height: 1.7, pitch: 0.16, distance: 4.5 }
+
+/** 點 p 到線段 ab 的水平距離（只看 x、z） */
+function horizontalDistanceToSegment(p, a, b) {
+  const abx = b.x - a.x
+  const abz = b.z - a.z
+  const lengthSq = abx * abx + abz * abz
+  const t = lengthSq > 1e-9 ? clamp(((p.x - a.x) * abx + (p.z - a.z) * abz) / lengthSq, 0, 1) : 0
+  return Math.hypot(a.x + abx * t - p.x, a.z + abz * t - p.z)
+}
 
 /**
  * 鏡頭
@@ -64,6 +74,8 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       screenRight: new Vector3(),
       target: new Vector3(),
       focus: new Vector3(),
+      /** 目前介紹視窗的店家（剛開啟時判斷鏡頭要平滑移過去還是直接切過去） */
+      storyShop: null,
       collisionDistance: CAMERA.distance,
       followLambda: 2,
       /** 室內鏡頭的混合程度（0 街道 – 1 室內）與目前的室內範圍 */
@@ -384,7 +396,9 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
     }
 
     let lambda
+    let cut = false
     const model = activeShopId ? shopModels.find((item) => item.shop.id === activeShopId) : null
+    if (mode === 'explore' || !model) rig.storyShop = null
 
     if (!started) {
       // 開場：緩慢漂移的街景鳥瞰
@@ -400,6 +414,11 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       const { camera: shot, origin } = model.placement
       rig.desiredPosition.copy(shot.position)
       rig.desiredLook.copy(shot.target)
+      if (rig.storyShop !== model.shop.id) {
+        rig.storyShop = model.shop.id
+        // 介紹的鏡頭在人物的另一側（例如從豆花櫃台後方看）：直接切過去，不從人物身上或頭頂擦過
+        if (horizontalDistanceToSegment(p, rig.position, shot.position) < 1) cut = true
+      }
       const aspect = size.width / Math.max(1, size.height)
       if (aspect > 1.15) {
         // 把注視點往畫面右側推，讓店面落在介紹視窗左邊的可見區域
@@ -480,7 +499,7 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       rig.direction.set(Math.sin(cameraState.yaw) * cosPitch, Math.sin(pitch), Math.cos(cameraState.yaw) * cosPitch)
       if (cameraState.snap) rig.collisionDistance = wanted
       const hit = raycastBoxes(rig.target, rig.direction, wanted + 0.45, blockers)
-      let allowed = Math.max(minDistance, hit - 0.45)
+      let allowed = followAllowed(hit, minDistance)
       if (k > 0.001 && rig.direction.y > 0.01) {
         // 室內的鏡頭高度上限（在吊牌與燈具下方）；越接近街道上限越高
         const maxHeight = shot.maxHeight + (1 - k) * 6
@@ -497,6 +516,8 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       rig.focus.copy(rig.target)
       rig.followLambda = damp(rig.followLambda, 10, 1.6, dt)
       lambda = rig.followLambda
+      // 目標位置在牆、柱或車的另一側（例如鏡頭被拉到障礙物前面）：直接切過去，不從障礙物裡平滑穿過
+      if (segmentBlocked(rig.position, rig.desiredPosition, blockers)) cut = true
     }
 
     // 開發模式：除錯用的自由鏡頭（截圖檢查建築用，正式版不包含）
@@ -508,7 +529,7 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       cameraState.snap = true
     }
 
-    if (cameraState.snap || !rig.initialized) {
+    if (cameraState.snap || cut || !rig.initialized) {
       rig.position.copy(rig.desiredPosition)
       rig.look.copy(rig.desiredLook)
       cameraState.snap = false

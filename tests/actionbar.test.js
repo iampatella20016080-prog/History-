@@ -10,6 +10,7 @@ import { CAMERA, PLAYER } from '../src/game/config.js'
 import {
   allowedDistance,
   clampViewerTarget,
+  followAllowed,
   indoorFollow,
   interiorAmount,
   orbitDirection,
@@ -85,7 +86,7 @@ function followCamera(world, p, yaw, pitch = CAMERA.pitch, distance = CAMERA.dis
   const target = { x: p.x, y: CAMERA.targetHeight, z: p.z }
   const direction = orbitDirection(yaw, follow.pitch)
   const hit = raycastBoxes(target, direction, follow.distance + 0.45, world.blockers)
-  let allowed = Math.max(follow.minDistance, hit - 0.45)
+  let allowed = followAllowed(hit, follow.minDistance)
   if (k > 0.001 && direction.y > 0.01) allowed = Math.min(allowed, Math.max(follow.minDistance, (shot.maxHeight + (1 - k) * 6 - target.y) / direction.y))
   const d = Math.min(follow.distance, allowed)
   return { x: target.x + direction.x * d, y: target.y + direction.y * d, z: target.z + direction.z * d, k, distance: d }
@@ -276,6 +277,40 @@ describe('導演的豆花店：鏡頭', () => {
         const cam = followCamera(revival, p, (i / 12) * Math.PI * 2)
         const where = `(${p.x.toFixed(2)}, ${p.z.toFixed(2)}) 方向 ${i}`
         assert.ok(!revival.blockers.some((box) => insideBox(cam, box)), where)
+      }
+    }
+  })
+})
+
+describe('跟隨鏡頭貼著障礙物時不會進到障礙物裡', () => {
+  test('遮擋物比最近距離還近時，鏡頭停在遮擋物前面', () => {
+    assert.equal(followAllowed(10, 1.3), 9.55)
+    assert.equal(followAllowed(1.5, 1.3), 1.3)
+    assert.ok(Math.abs(followAllowed(0.9, 1.3) - 0.78) < 1e-9)
+    assert.equal(followAllowed(0.1, 1.3), 0.15)
+  })
+
+  test('站在豆花車旁、巷子的牆邊與店裡的牆邊，鏡頭朝向障礙物時都不在方塊裡', () => {
+    const truck = revival.buildings.find((item) => item.id === 'action-bar-truck').box
+    const cases = [
+      // 豆花車東側（鏡頭朝西，也就是車的方向）
+      { p: { x: truck.maxX + PLAYER.radius + 0.02, z: (truck.minZ + truck.maxZ) / 2 }, yaws: [Math.PI / 2 + Math.PI, -Math.PI / 2, -Math.PI / 2 + 0.3, -Math.PI / 2 - 0.3] },
+      // 巷子東側的鄰棟牆邊（鏡頭朝東）
+      { p: { x: MOUTH.x + LANE.half - PLAYER.radius - 0.01, z: MOUTH.z + 9 }, yaws: [Math.PI / 2, Math.PI / 2 + 0.4, Math.PI / 2 - 0.4] },
+      // 巷子西側的磁磚大樓牆邊（鏡頭朝西）
+      { p: { x: MOUTH.x - LANE.half + PLAYER.radius + 0.01, z: MOUTH.z + 12 }, yaws: [-Math.PI / 2, -Math.PI / 2 + 0.4] },
+      // 店裡貼著左牆、右邊的長椅與櫃台
+      { p: fromShop(-SHOP.half + SHOP.wallT + PLAYER.radius + 0.03, -5.0), yaws: [Math.PI, Math.PI - 0.5, Math.PI + 0.5] },
+      { p: fromShop(0, SHOP.counterZ + PLAYER.radius + 0.06), yaws: [Math.PI / 2, Math.PI / 2 + 0.5] },
+    ]
+    for (const { p, yaws } of cases) {
+      assert.ok(walkableAt(revival, p.x, p.z), `(${p.x.toFixed(2)}, ${p.z.toFixed(2)}) 可以站`)
+      for (const yaw of yaws) {
+        for (const pitch of [CAMERA.pitch, 0.15, 0.7]) {
+          const cam = followCamera(revival, p, yaw, pitch)
+          const where = `(${p.x.toFixed(2)}, ${p.z.toFixed(2)}) yaw ${yaw.toFixed(2)} pitch ${pitch}：鏡頭 (${cam.x.toFixed(2)}, ${cam.y.toFixed(2)}, ${cam.z.toFixed(2)})`
+          assert.ok(!revival.blockers.some((box) => insideBox(cam, box)), where)
+        }
       }
     }
   })

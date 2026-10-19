@@ -10,6 +10,7 @@ import { CAMERA, PLAYER } from '../src/game/config.js'
 import {
   allowedDistance,
   clampViewerTarget,
+  followAllowed,
   indoorFollow,
   interiorAmount,
   orbitDirection,
@@ -60,7 +61,7 @@ function followCamera(world, p, yaw, pitch = CAMERA.pitch, distance = CAMERA.dis
   const target = { x: p.x, y: CAMERA.targetHeight, z: p.z }
   const direction = orbitDirection(yaw, follow.pitch)
   const hit = raycastBoxes(target, direction, follow.distance + 0.45, world.blockers)
-  let allowed = Math.max(follow.minDistance, hit - 0.45)
+  let allowed = followAllowed(hit, follow.minDistance)
   if (k > 0.001 && direction.y > 0.01) allowed = Math.min(allowed, Math.max(follow.minDistance, (shot.maxHeight + (1 - k) * 6 - target.y) / direction.y))
   const d = Math.min(follow.distance, allowed)
   return { x: target.x + direction.x * d, y: target.y + direction.y * d, z: target.z + direction.z * d, k, distance: d }

@@ -53,6 +53,17 @@ const ENTRY_HOLD = 1.2
 const ENTRY_RAMP = 6
 /** 第三人稱鏡頭在街道上被建築擋住時，最近只拉到這個距離 */
 const FOLLOW_MIN_DISTANCE = 1.3
+/** 鏡頭與遮擋物之間至少留的距離；遮擋物比最近距離還近時，鏡頭也不會比這更靠近角色 */
+const FOLLOW_WALL_GAP = 0.12
+const FOLLOW_NEAREST = 0.15
+
+/**
+ * 第三人稱鏡頭可以退到的距離：射線在 hit 公尺碰到遮擋物時，退到遮擋物前 0.45 公尺，但至少保持 minDistance；
+ * 遮擋物比 minDistance 還近時（例如角色貼著巷子的牆或停著的豆花車），鏡頭停在遮擋物前面，不會進到遮擋物裡。
+ */
+export function followAllowed(hit, minDistance) {
+  return Math.min(Math.max(minDistance, hit - 0.45), Math.max(FOLLOW_NEAREST, hit - FOLLOW_WALL_GAP))
+}
 
 function insideRect(r, p) {
   return p.x >= r.minX && p.x <= r.maxX && p.z >= r.minZ && p.z <= r.maxZ
