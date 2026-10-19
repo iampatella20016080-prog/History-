@@ -150,6 +150,13 @@ function inRegion(r, x, z) {
   return x >= r.minX - 1e-6 && x <= r.maxX + 1e-6 && z >= r.minZ - 1e-6 && z <= r.maxZ + 1e-6
 }
 
+/** 範圍的高度上限（室內不超過天花板）：取所在範圍中最寬鬆的上限 */
+function clampRegionHeight(target, regions) {
+  let maxY = -Infinity
+  for (const r of regions) if (inRegion(r, target.x, target.z)) maxY = Math.max(maxY, r.maxY ?? Infinity)
+  if (Number.isFinite(maxY)) target.y = Math.min(target.y, maxY)
+}
+
 /** 把注視點限制在街道／廣場／碼頭（與年代額外的範圍）上方，並推出建築與樹的範圍（會直接修改 target） */
 export function clampViewerTarget(target, blockers = [], space = DEFAULT_SPACE) {
   const regions = space.regions
@@ -166,6 +173,8 @@ export function clampViewerTarget(target, blockers = [], space = DEFAULT_SPACE) 
     target.x = best.x
     target.z = best.z
   }
+  // 先壓到範圍的高度上限：從高處移進市場的注視點會降到天花板下，而不是被樓上的量體推回廣場
+  clampRegionHeight(target, regions)
   for (let pass = 0; pass < 2; pass++) {
     for (const b of blockers) {
       if (!insideBox(target, b, TARGET_CLEARANCE)) continue
@@ -204,10 +213,8 @@ export function clampViewerTarget(target, blockers = [], space = DEFAULT_SPACE) 
     }
     if (best) target[best.axis] = best.value
   }
-  // 範圍的高度上限（室內不超過天花板）：取所在範圍中最寬鬆的上限
-  let maxY = -Infinity
-  for (const r of regions) if (inRegion(r, target.x, target.z)) maxY = Math.max(maxY, r.maxY ?? Infinity)
-  if (Number.isFinite(maxY)) target.y = Math.min(target.y, maxY)
+  // 推出方塊後可能換了範圍，再檢查一次高度上限
+  clampRegionHeight(target, regions)
   return target
 }
 
