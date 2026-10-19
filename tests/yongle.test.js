@@ -10,6 +10,7 @@ import { CAMERA, PLAYER } from '../src/game/config.js'
 import {
   allowedDistance,
   clampViewerTarget,
+  followAllowed,
   indoorFollow,
   interiorAmount,
   orbitDirection,
@@ -60,7 +61,7 @@ function followCamera(world, p, yaw, pitch = CAMERA.pitch, distance = CAMERA.dis
   const target = { x: p.x, y: CAMERA.targetHeight, z: p.z }
   const direction = orbitDirection(yaw, follow.pitch)
   const hit = raycastBoxes(target, direction, follow.distance + 0.45, world.blockers)
-  let allowed = Math.max(follow.minDistance, hit - 0.45)
+  let allowed = followAllowed(hit, follow.minDistance)
   if (k > 0.001 && direction.y > 0.01) allowed = Math.min(allowed, Math.max(follow.minDistance, (shot.maxHeight + (1 - k) * 6 - target.y) / direction.y))
   const d = Math.min(follow.distance, allowed)
   return { x: target.x + direction.x * d, y: target.y + direction.y * d, z: target.z + direction.z * d, k, distance: d }
@@ -271,7 +272,7 @@ describe('永樂市場：建築觀賞模式可以進到室內', () => {
 describe('永樂市場：室內細部按需載入', () => {
   test('街景不含室內細部；室內另外產生（地磚、展示櫃、商品）', () => {
     const worldMaterials = new Set(revival.batches.map((batch) => batch.material))
-    const interior = buildEraInteriorSync('revival')
+    const interior = buildEraInteriorSync('revival', zone.building)
     const interiorMaterials = new Set(interior.batches.map((batch) => batch.material))
     assert.ok(!worldMaterials.has('marketTile'), '街景的網格裡沒有室內地磚')
     for (const material of ['marketTile', 'whiteTile', 'steel', 'perforated', 'glassClear', 'wood']) {

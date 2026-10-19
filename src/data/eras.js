@@ -248,6 +248,7 @@ export const ERAS = [
       'zi-yang',
       'yong-le-market',
       'hao-guo-yuan',
+      'action-bar',
       'dao-she',
       'ci-sheng-gong',
       'you-ji',

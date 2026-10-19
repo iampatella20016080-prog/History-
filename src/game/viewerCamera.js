@@ -53,6 +53,17 @@ const ENTRY_HOLD = 1.2
 const ENTRY_RAMP = 6
 /** 第三人稱鏡頭在街道上被建築擋住時，最近只拉到這個距離 */
 const FOLLOW_MIN_DISTANCE = 1.3
+/** 鏡頭與遮擋物之間至少留的距離；遮擋物比最近距離還近時，鏡頭也不會比這更靠近角色 */
+const FOLLOW_WALL_GAP = 0.12
+const FOLLOW_NEAREST = 0.15
+
+/**
+ * 第三人稱鏡頭可以退到的距離：射線在 hit 公尺碰到遮擋物時，退到遮擋物前 0.45 公尺，但至少保持 minDistance；
+ * 遮擋物比 minDistance 還近時（例如角色貼著巷子的牆或停著的豆花車），鏡頭停在遮擋物前面，不會進到遮擋物裡。
+ */
+export function followAllowed(hit, minDistance) {
+  return Math.min(Math.max(minDistance, hit - 0.45), Math.max(FOLLOW_NEAREST, hit - FOLLOW_WALL_GAP))
+}
 
 function insideRect(r, p) {
   return p.x >= r.minX && p.x <= r.maxX && p.z >= r.minZ && p.z <= r.maxZ
@@ -60,6 +71,7 @@ function insideRect(r, p) {
 
 /**
  * 角色在室內（例如永樂市場一樓）時為 1；在通往大門的入口範圍內，越靠近大門越接近 1；其他地方為 0。
+ * 室內範圍可以另外指定過渡的距離（entryHold、entryRamp，例如巷子裡的小店較短）。
  * 回傳 { zone, amount }，不在任何室內或入口範圍時回傳 null。
  */
 export function interiorAmount(p, interiors = []) {
@@ -67,7 +79,9 @@ export function interiorAmount(p, interiors = []) {
   for (const zone of interiors) {
     if (!zone.entry || !insideRect(zone.entry, p)) continue
     const d = Math.hypot(p.x - zone.door.x, p.z - zone.door.z)
-    return { zone, amount: 1 - clamp((d - ENTRY_HOLD) / ENTRY_RAMP, 0, 1) }
+    const hold = zone.entryHold ?? ENTRY_HOLD
+    const ramp = zone.entryRamp ?? ENTRY_RAMP
+    return { zone, amount: 1 - clamp((d - hold) / ramp, 0, 1) }
   }
   return null
 }

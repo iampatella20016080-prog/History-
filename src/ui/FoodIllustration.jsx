@@ -414,6 +414,154 @@ function YuGuoQiao() {
   )
 }
 
+/* ── 豆花與配料（導演的豆花店） ─────────── */
+
+/** 側面看的碗：碗身與碗口（碗口裡的內容由 children 畫在碗口的橢圓裡） */
+function Bowl({ cx = 100, rimY = 70, rx = 62, depth = 44, fill = '#f7f5ee', pattern = null, children }) {
+  const bottom = rimY + depth
+  const foot = rx * 0.42
+  return (
+    <>
+      <path
+        d={`M${cx - rx} ${rimY} Q${cx - rx + 6} ${bottom - 6} ${cx - foot} ${bottom} L${cx + foot} ${bottom} Q${cx + rx - 6} ${bottom - 6} ${cx + rx} ${rimY} Z`}
+        fill={fill}
+        stroke={INK}
+        strokeWidth="2.2"
+        strokeLinejoin="round"
+      />
+      {pattern}
+      <rect x={cx - foot + 4} y={bottom} width={(foot - 4) * 2} height="5" rx="2" fill="#e4e0d4" stroke={INK} strokeWidth="1.6" />
+      <ellipse cx={cx} cy={rimY} rx={rx} ry={rx * 0.26} fill="#e9e5da" stroke={INK} strokeWidth="2.2" />
+      {children}
+    </>
+  )
+}
+
+/** 藍白花紋（碗身與碟子的青花） */
+function BlueRim({ cx, y, rx, count = 9 }) {
+  return Array.from({ length: count }, (_, i) => {
+    const x = cx - rx + 10 + (i * (rx * 2 - 20)) / (count - 1)
+    return <circle key={i} cx={x} cy={y} r="3.2" fill="none" stroke="#2c5d9c" strokeWidth="1.6" />
+  })
+}
+
+function Douhua() {
+  // 傳統豆花：白碗裡琥珀色的麥芽糖水，上面是用大湯杓舀起的一大片白豆花
+  return (
+    <>
+      <Shadow cy={126} rx={66} />
+      <Bowl rimY={66} depth={50}>
+        <ellipse cx="100" cy="68" rx="56" ry="13" fill="#d2913a" stroke={INK} strokeWidth="1.4" />
+        <path d="M58 70 Q60 50 92 46 Q126 44 138 62 Q120 74 96 75 Q72 76 58 70 Z" fill="#fbfaf4" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+        <path d="M100 62 Q112 48 134 52 Q148 58 146 68 Q130 74 112 72 Q102 70 100 62 Z" fill="#f4f0e4" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+        <path d="M70 58 Q80 51 94 50" stroke="#ffffff" strokeWidth="3.5" fill="none" strokeLinecap="round" />
+      </Bowl>
+      {/* 木湯匙 */}
+      <path d="M150 40 L180 18" stroke="#b48a58" strokeWidth="5" strokeLinecap="round" />
+      <ellipse cx="146" cy="44" rx="9" ry="5" transform="rotate(-36 146 44)" fill="#c99d68" stroke={INK} strokeWidth="1.6" />
+    </>
+  )
+}
+
+function MaltoseSyrup() {
+  // 麥芽糖水：玻璃罐裡金黃有黏性的麥芽糖，用竹籤挑起；旁邊一小碗煮好的糖水
+  return (
+    <>
+      <Shadow cy={126} rx={72} />
+      {/* 玻璃罐 */}
+      <path d="M36 52 L36 116 Q36 122 44 122 L92 122 Q100 122 100 116 L100 52 Z" fill="#eaf1f2" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+      <path d="M40 76 L40 114 Q40 118 46 118 L90 118 Q96 118 96 114 L96 76 Q68 82 40 76 Z" fill="#e3a43c" stroke={INK} strokeWidth="1.4" />
+      <path d="M46 84 L46 110" stroke="#f6d27c" strokeWidth="4" strokeLinecap="round" />
+      <rect x="32" y="44" width="72" height="10" rx="3" fill="#a8763f" stroke={INK} strokeWidth="1.8" />
+      {/* 竹籤挑起的麥芽糖 */}
+      <path d="M70 80 Q72 40 82 18" stroke="#c9a46a" strokeWidth="4" strokeLinecap="round" />
+      <path d="M73 52 Q66 42 74 30 Q82 36 76 52 Z" fill="#e8a935" stroke={INK} strokeWidth="1.4" opacity="0.95" />
+      <path d="M72 54 Q70 66 72 78" stroke="#e8a935" strokeWidth="3" fill="none" />
+      {/* 一小碗糖水 */}
+      <Bowl cx={146} rimY={86} rx={38} depth={30}>
+        <ellipse cx="146" cy="87" rx="33" ry="7.5" fill="#b8692a" stroke={INK} strokeWidth="1.2" />
+        <path d="M128 86 Q140 83 152 84" stroke="#e7a65a" strokeWidth="2.4" fill="none" strokeLinecap="round" />
+      </Bowl>
+    </>
+  )
+}
+
+function SweetPotatoBalls() {
+  // 地瓜粉圓：藍白花碗裡，一顆顆橘色（紅地瓜）與紫色（紫地瓜）的小圓粒
+  const balls = []
+  for (let row = 0; row < 4; row++) {
+    const n = 9 - row
+    for (let i = 0; i < n; i++) {
+      const x = 100 - (n - 1) * 6.4 + i * 12.8 + (row % 2) * 3
+      const y = 70 - row * 6.5
+      balls.push([x, y, (i + row * 2) % 3 === 0])
+    }
+  }
+  return (
+    <>
+      <Shadow cy={126} rx={66} />
+      <Bowl rimY={72} depth={42} pattern={<BlueRim cx={100} y={88} rx={56} />}>
+        <ellipse cx="100" cy="73" rx="56" ry="12" fill="#c98a3c" stroke={INK} strokeWidth="1.2" />
+        {balls.map(([x, y, purple], i) => (
+          <g key={i}>
+            <circle cx={x} cy={y} r="6.2" fill={purple ? '#6f4a97' : '#ec8a2e'} stroke={INK} strokeWidth="1.3" />
+            <circle cx={x - 1.8} cy={y - 2} r="1.6" fill="#ffffff" opacity="0.6" />
+          </g>
+        ))}
+      </Bowl>
+    </>
+  )
+}
+
+function FenGuo() {
+  // 粉粿：青花碟子上，山梔子的橘黃色與黑糖色的半透明方塊交錯疊放
+  const cubes = []
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 3; c++) cubes.push([62 + c * 26 + r * 6, 54 + r * 14, (r + c) % 2 === 1])
+  }
+  return (
+    <>
+      <Shadow cy={124} rx={78} />
+      <ellipse cx="100" cy="98" rx="80" ry="24" fill="#f2f4f6" stroke={INK} strokeWidth="2.2" />
+      <ellipse cx="100" cy="96" rx="66" ry="17" fill="none" stroke="#2c5d9c" strokeWidth="2" strokeDasharray="5 4" />
+      <BlueRim cx={100} y={114} rx={68} count={11} />
+      {cubes.map(([x, y, dark], i) => (
+        <g key={i} transform={`translate(${x} ${y})`}>
+          <path d="M0 10 L10 4 L32 4 L22 10 Z" fill={dark ? '#7a4026' : '#f4b54a'} stroke={INK} strokeWidth="1.4" strokeLinejoin="round" />
+          <path d="M0 10 L22 10 L22 30 L0 30 Z" fill={dark ? '#5b2f1e' : '#e99a2c'} stroke={INK} strokeWidth="1.6" strokeLinejoin="round" opacity="0.95" />
+          <path d="M22 10 L32 4 L32 24 L22 30 Z" fill={dark ? '#4a2416' : '#cf7f22'} stroke={INK} strokeWidth="1.4" strokeLinejoin="round" />
+          <path d="M4 14 L4 24" stroke={dark ? '#8a5638' : '#ffd88a'} strokeWidth="2" strokeLinecap="round" />
+        </g>
+      ))}
+    </>
+  )
+}
+
+function RedGreenBeans() {
+  // 紅豆與綠豆：兩小碗煮到鬆軟的豆子（紅豆粒大、綠豆粒小）
+  const pile = (cx, cy, rx, size, tints, seed) =>
+    Array.from({ length: 26 }, (_, i) => {
+      const a = (i * 2.4 + seed) % (Math.PI * 2)
+      const r = ((i * 7) % 13) / 13
+      const x = cx + Math.cos(a) * r * rx
+      const y = cy + Math.sin(a) * r * rx * 0.3 - (1 - r) * 6
+      return <ellipse key={i} cx={x} cy={y} rx={size * 1.35} ry={size} transform={`rotate(${(i * 41) % 180} ${x} ${y})`} fill={tints[i % 2]} stroke={INK} strokeWidth="0.9" />
+    })
+  return (
+    <>
+      <Shadow cy={126} rx={84} />
+      <Bowl cx={58} rimY={80} rx={42} depth={34}>
+        <ellipse cx="58" cy="81" rx="37" ry="9" fill="#5a1d22" stroke={INK} strokeWidth="1.2" />
+        {pile(58, 78, 30, 4.2, ['#7d262c', '#943538'], 0.3)}
+      </Bowl>
+      <Bowl cx={142} rimY={80} rx={42} depth={34}>
+        <ellipse cx="142" cy="81" rx="37" ry="9" fill="#6e6a33" stroke={INK} strokeWidth="1.2" />
+        {pile(142, 78, 30, 3.2, ['#8a8740', '#a19d52'], 1.1)}
+      </Bowl>
+    </>
+  )
+}
+
 const ILLUSTRATIONS = {
   shiitake: Shiitake,
   'dried-shrimp': DriedShrimp,
@@ -428,6 +576,11 @@ const ILLUSTRATIONS = {
   'hong-gui': HongGui,
   'luobo-gao': LuoboGao,
   'yu-guo-qiao': YuGuoQiao,
+  douhua: Douhua,
+  'maltose-syrup': MaltoseSyrup,
+  'sweet-potato-balls': SweetPotatoBalls,
+  'fen-guo': FenGuo,
+  'red-green-beans': RedGreenBeans,
 }
 
 export function FoodIllustration({ id, label }) {

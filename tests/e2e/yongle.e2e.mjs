@@ -77,7 +77,7 @@ function state(page) {
       cam: { x: c.x, y: c.y, z: c.z },
       camInside: blockers.some((b) => inBox(c, b)),
       indoor: d.indoor?.amount ?? 0,
-      interior: d.interior ?? null,
+      interior: d.interiors?.['yong-le-market'] ?? null,
       nearby: s.nearbyShopId,
       era: s.eraId,
       mode: s.mode,
@@ -211,6 +211,29 @@ async function runDevice(browser, device) {
     const start = await page.evaluate(() => window.__DDC__.frameCount ?? 0)
     await waitFor(page, (goal) => (window.__DDC__.frameCount ?? 0) >= goal, start + n, 60000)
   }
+  /** 等人物停下來（放開按鍵或搖桿後還會減速滑行一小段）：連續兩個影格的位置幾乎不變 */
+  const playerSettled = () =>
+    waitFor(
+      page,
+      () => {
+        const d = window.__DDC__
+        const p = d.playerState.position
+        const now = { x: p.x, z: p.z, frame: d.frameCount }
+        const prev = window.__settle
+        if (!prev || prev.frame === now.frame) {
+          window.__settle = prev ?? now
+          return false
+        }
+        window.__settle = now
+        return Math.hypot(now.x - prev.x, now.z - prev.z) < 0.002
+      },
+      null,
+      60000,
+    ).then(() => {
+      return page.evaluate(() => {
+        window.__settle = null
+      })
+    })
   const viewerSettled = () =>
     frames(3).then(() =>
       waitFor(
@@ -277,6 +300,7 @@ async function runDevice(browser, device) {
     return d.playerState.position.x > 48.6 && d.useGameStore.getState().nearbyShopId === 'hao-guo-yuan'
   })
   await frames(3)
+  await playerSettled()
   const inside = await state(page)
   const walkStats = await samplerStats(page)
   record(test, touch ? '用搖桿從街道走進市場，走到好粿緣前' : '用鍵盤從街道走進市場，走到好粿緣前', walkedIn, `人物 (${round(inside.x)}, ${round(inside.z)})、附近 ${inside.nearby}`)

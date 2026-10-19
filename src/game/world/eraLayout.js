@@ -5,6 +5,7 @@ import { getLotPlan } from './lots.js'
 import { templeCollision } from '../builders/specials.js'
 import { ziYangCollision } from '../builders/ziyang.js'
 import { yongleCollision, yongleFootprint } from '../builders/yongleMarket.js'
+import { actionBarCollision, actionBarFootprint } from '../builders/actionBar.js'
 
 /**
  * 某個年代的街區配置：建築（依地段演變）、街道道具、路燈、電線、燈籠串、碰撞與可行走範圍。
@@ -277,9 +278,9 @@ function arrangeModernRows(buildings) {
 }
 
 /** 形狀特殊的店家建築（以 shop.site 指定位置）額外的可行走範圍與障礙物 */
-const SITE_COLLISION = { ziyang: ziYangCollision, 'yongle-market': yongleCollision }
-/** 佔地較大的店家建築：範圍內不產生遠景房屋 */
-const SITE_FOOTPRINT = { 'yongle-market': yongleFootprint }
+const SITE_COLLISION = { ziyang: ziYangCollision, 'yongle-market': yongleCollision, 'action-bar': actionBarCollision }
+/** 佔地較大的店家建築（含巷子）：範圍內不產生遠景房屋與遠景的樹 */
+const SITE_FOOTPRINT = { 'yongle-market': yongleFootprint, 'action-bar': actionBarFootprint }
 
 function siteTransform({ x, z, rotationY = 0 }) {
   const cos = Math.cos(rotationY)
@@ -381,7 +382,9 @@ export function createEraLayout(era) {
     const [x, , z] = lamp.position
     obstacles.push({ minX: x - 0.22, maxX: x + 0.22, minZ: z - 0.22, maxZ: z + 0.22 })
   }
-  for (const tree of BASE_TREES) {
+  // 遠景的樹不能長在店家建築與巷子裡（只影響有這些店家的年代）
+  const trees = BASE_TREES.filter(({ position: [x, , z] }) => !backdropExclusions.some((r) => x > r.minX && x < r.maxX && z > r.minZ && z < r.maxZ))
+  for (const tree of trees) {
     if (!tree.collider) continue
     const [x, , z] = tree.position
     obstacles.push({ minX: x - 0.55, maxX: x + 0.55, minZ: z - 0.55, maxZ: z + 0.55 })
@@ -398,7 +401,7 @@ export function createEraLayout(era) {
     lanternStrings: strings,
     walkable,
     obstacles,
-    trees: BASE_TREES,
+    trees,
     mooringPosts: MOORING_POSTS,
     backdropExclusions,
   }

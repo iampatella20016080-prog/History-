@@ -18,6 +18,8 @@ import { DISPLAY_FONT, registerFontTexture } from './fonts.js'
  * - engraved  嵌在牆面上的黑色立體字（無底板）；awningBlack 黑色布篷垂邊；whiteCloth 白色布旗、暖簾；road 綠色路名牌
  * - 永樂市場：greenBoard 好粿緣的綠色招牌、redPlate 紅色攤位牌、redLetters「永樂布業商場」紅字、
  *   redOnDark 門楣、marketWhite 指示吊牌、marketBoard 指示牌、exitGreen 出口、tag 木製品名牌、stall* 攤位招牌
+ * - 導演的豆花店：actionBlue／actionNavy 立面上白邊的藍色與深藍色立體字、filmBlue 電影膠卷邊的藍色突出招牌、
+ *   boardWhite 店內的展示看板、chalk 黑板菜單、truckBlue 豆花車車身上的藍字
  *
  * 橫式招牌依舊日習慣由右至左書寫（modern 除外）；直式招牌由上而下。
  */
@@ -57,6 +59,35 @@ const STYLES = {
   stallYellow: { bg: '#efc22b', bg2: '#e6b722', border: '#b3261d', text: '#b3261d', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,80,0,0.05)', ltr: true, sizeH: 0.62 },
   stallWhite: { bg: '#f4f2ec', bg2: '#ebe8e0', border: '#2e4a7a', text: '#b3261d', shadow: 'rgba(0,0,0,0)', grain: 'rgba(0,0,0,0.03)', ltr: true, sizeH: 0.62 },
   stallBlue: { bg: '#2f5f9e', bg2: '#295490', border: '#f4f2ec', text: '#ffffff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', ltr: true, sizeH: 0.62 },
+  // 導演的豆花店
+  actionBlue: { bg: null, text: '#2b93d9', fill: '#2b93d9', outline: '#ffffff', outlineWidth: 0.16, shadow: 'rgba(30,60,90,0.3)', letters: true, ltr: true, sizeH: 0.8, sizeW: 0.92 },
+  actionNavy: { bg: null, text: '#1f2b45', fill: '#1f2b45', outline: '#ffffff', outlineWidth: 0.14, shadow: 'rgba(30,40,60,0.25)', letters: true, ltr: true, sizeH: 0.82, sizeW: 0.78 },
+  filmBlue: { bg: '#2190dc', bg2: '#1c83cc', border: null, text: '#f4f9ff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', ltr: true, film: '#e9f4fd' },
+  // 店內白色看板上的藍色標題（字直接印在看板上，沒有底色）
+  boardInk: { bg: null, text: '#2a659e', fill: '#2a659e', outline: '#f4f7f9', outlineWidth: 0.05, letters: true, ltr: true, sizeH: 0.8, sizeW: 0.9 },
+  boardWhite: { bg: '#f1f4f6', bg2: '#e7ecef', border: null, text: '#245a8c', shadow: 'rgba(0,0,0,0)', grain: 'rgba(0,0,0,0.02)', ltr: true, sizeH: 0.62, sizeW: 0.86 },
+  chalk: { bg: '#2c3431', bg2: '#262d2a', border: '#8a6a45', text: '#f1eee4', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.05)', ltr: true, sizeH: 0.5, sizeW: 0.8 },
+  truckBlue: { bg: null, text: '#1f5fa8', fill: '#1f5fa8', outline: '#ffffff', outlineWidth: 0.06, shadow: 'rgba(0,0,0,0)', letters: true, ltr: true, sizeH: 0.8, sizeW: 0.9 },
+}
+
+/** 電影膠卷的齒孔：沿著招牌的上下（橫式）或左右（直式）兩邊排一列圓角方孔 */
+function drawFilmStrip(g, cw, ch, m, color, vertical) {
+  g.fillStyle = color
+  const along = vertical ? ch : cw
+  const across = vertical ? cw : ch
+  const hole = Math.min(across * 0.07, along * 0.05)
+  const count = Math.max(4, Math.floor(along / (hole * 2.2)))
+  const step = along / count
+  for (let i = 0; i < count; i++) {
+    const t = step * (i + 0.5) - hole / 2
+    for (const edge of [m * 0.9, across - m * 0.9 - hole]) {
+      const [x, y] = vertical ? [edge, t] : [t, edge]
+      g.beginPath()
+      g.roundRect?.(x, y, hole, hole, hole * 0.25)
+      if (!g.roundRect) g.rect(x, y, hole, hole)
+      g.fill()
+    }
+  }
 }
 
 /** 四角的回紋（L 形折線），用於好粿緣的綠色招牌 */
@@ -164,6 +195,7 @@ function drawSign(g, cw, ch, text, style, vertical) {
       if (s.deco) drawDecoOrnaments(g, cw, ch, m * 1.6, s.border)
     }
     if (s.frets) drawFrets(g, cw, ch, m * 1.1, s.frets)
+    if (s.film) drawFilmStrip(g, cw, ch, m, s.film, vertical)
     // 戰後招牌的日曬褪色
     if (s.faded) {
       for (let i = 0; i < 18; i++) {
@@ -203,13 +235,14 @@ function drawSign(g, cw, ch, text, style, vertical) {
   g.font = `${weight} ${size}px ${DISPLAY_FONT}`
   for (const [char, x, y] of positions) {
     if (s.letters) {
-      // 立體字：深色側邊＋金屬面
+      // 立體字：深色側邊＋金屬面（或指定顏色的字面與外框，例如導演的豆花店白邊藍字）
       g.fillStyle = s.shadow
       g.fillText(char, x + size * 0.04, y + size * 0.05)
-      g.lineWidth = Math.max(2, size * 0.05)
-      g.strokeStyle = '#4a3720'
+      g.lineWidth = Math.max(2, size * (s.outlineWidth ?? 0.05))
+      g.lineJoin = 'round'
+      g.strokeStyle = s.outline ?? '#4a3720'
       g.strokeText(char, x, y)
-      g.fillStyle = goldFill(g, y - size / 2, y + size / 2)
+      g.fillStyle = s.fill ?? goldFill(g, y - size / 2, y + size / 2)
       g.fillText(char, x, y)
       continue
     }

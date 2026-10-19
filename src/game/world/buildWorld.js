@@ -35,6 +35,8 @@ import { buildShophouse } from '../builders/shophouse.js'
 import { buildZiYang } from '../builders/ziyang.js'
 import { buildYongleMarket } from '../builders/yongleMarket.js'
 import { buildYongleInterior } from '../builders/yongleInterior.js'
+import { buildActionBar } from '../builders/actionBar.js'
+import { buildActionBarInterior } from '../builders/actionBarInterior.js'
 import { buildGrandRestaurant, buildTeaMansion, buildTemple } from '../builders/specials.js'
 import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
@@ -54,6 +56,7 @@ export const BUILDING_BUILDERS = {
   temple: buildTemple,
   ziyang: buildZiYang,
   'yongle-market': buildYongleMarket,
+  'action-bar': buildActionBar,
 }
 
 /**
@@ -62,6 +65,7 @@ export const BUILDING_BUILDERS = {
  */
 export const BUILDING_INTERIORS = {
   'yongle-market': buildYongleInterior,
+  'action-bar': buildActionBarInterior,
 }
 
 const PROP_BUILDERS = {
@@ -221,15 +225,20 @@ export function* eraWorldSteps(eraId) {
     b.push([building.x, 0, building.z], building.rotationY)
     const firstBlocker = b.blockers.length
     const result = builder(b, config) ?? {}
-    // 建築裡另外可以點選的店家（例如市場裡的攤位）：它們的遮擋方塊另外成為一棟「建築」
+    // 建築裡另外可以點選的店家（例如市場裡的攤位）或店裡的細部（detail，例如豆花櫃台）：
+    // 它們的遮擋方塊另外成為一棟「建築」，可以點選與聚焦
     const subStores = result.subStores ?? []
     const subParts = new Set()
     for (const sub of subStores) {
       const own = b.blockers.slice(sub.range.start, sub.range.end)
       own.forEach((part) => subParts.add(part))
       const subBox = unionBoxes(own)
-      if (subBox) buildings.push({ id: sub.id, storeId: sub.storeId, rotationY: building.rotationY ?? 0, box: subBox, parts: own, focus: sub.focus })
-      stores[sub.storeId] = { anchors: sub.anchors }
+      if (subBox) {
+        const record = { id: sub.id, storeId: sub.storeId, rotationY: building.rotationY ?? 0, box: subBox, parts: own, focus: sub.focus }
+        if (sub.detail) record.detail = true
+        buildings.push(record)
+      }
+      if (sub.anchors) stores[sub.storeId] = { anchors: sub.anchors }
     }
     const parts = b.blockers.slice(firstBlocker).filter((part) => !subParts.has(part))
     const box = unionBoxes(parts)
@@ -239,7 +248,8 @@ export function* eraWorldSteps(eraId) {
       if (result.focus) record.focus = result.focus
       buildings.push(record)
     }
-    if (result.interiors) interiors.push(...result.interiors)
+    // 室內範圍記下所屬的建築，按需載入時只產生這棟建築的室內
+    if (result.interiors) interiors.push(...result.interiors.map((zone) => ({ ...zone, building: building.id })))
     if (result.viewerRegions) viewerRegions.push(...result.viewerRegions)
     if (result.viewerBounds) viewerBounds = { ...(viewerBounds ?? {}), ...result.viewerBounds }
     if (archetype === 'temple') {
@@ -324,15 +334,16 @@ export function* eraWorldSteps(eraId) {
 /**
  * 某個年代的室內細部（按需載入）：只產生幾何，依材質合併。
  * 位置與街景相同（同一份年代配置），所以室內的招牌、遮擋方塊與碰撞都對得上。
+ * buildingId：只產生這棟建築的室內（室內範圍的 building）；省略時產生這個年代所有的室內。
  */
-export function* eraInteriorSteps(eraId) {
+export function* eraInteriorSteps(eraId, buildingId = null) {
   const era = getEra(eraId)
   if (!era) throw new Error(`未知的年代：${eraId}`)
   const layout = createEraLayout(era)
   const b = new PartBuilder()
   for (const building of layout.buildings) {
     const builder = BUILDING_INTERIORS[building.config.archetype]
-    if (!builder) continue
+    if (!builder || (buildingId && building.id !== buildingId)) continue
     b.push([building.x, 0, building.z], building.rotationY)
     builder(b, building.config)
     b.pop()
@@ -346,8 +357,8 @@ export function* eraInteriorSteps(eraId) {
   return { eraId: era.id, batches }
 }
 
-export function buildEraInteriorSync(eraId) {
-  const steps = eraInteriorSteps(eraId)
+export function buildEraInteriorSync(eraId, buildingId = null) {
+  const steps = eraInteriorSteps(eraId, buildingId)
   let step = steps.next()
   while (!step.done) step = steps.next()
   return step.value

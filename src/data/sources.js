@@ -184,6 +184,98 @@ SOURCES['moa-niangao'] = {
   context: '提到「菜頭」與「彩頭」諧音，蘿蔔糕成為過年必備菜色；臺語俗諺「食甜粿，予你趁家伙」；過年前在家做菜頭粿、甜粿、發糕等糕點。',
 }
 
+// 導演的豆花店 Action! Bar 與豆花文化
+SOURCES['tcooc-action-bar'] = {
+  id: 'tcooc-action-bar',
+  citation: '臺北市商業處，〈探索再造店家（依類型）－茶飲冰品〉：導演的豆花店Action! Bar（資料更新：民國115年1月30日）。',
+  publisher: '臺北市政府商業處',
+  title: '探索再造店家（依類型）－茶飲冰品',
+  url: 'https://www.tcooc.gov.taipei/cp.aspx?n=8D0974959002A45D&s=D9B4B5182196CDA3',
+  context:
+    '品牌故事：「2021年，豆花車延伸為豆花店，在迪化街小巷裡，與夢想一同落腳」；改造重點：原名「夢想基地-導演的豆花店」，透過輕改造更名為「導演的豆花店Action! Bar」，品牌定位「稻埕夢想會客廳」；店家地址：臺北市大同區迪化街1段224巷24號。',
+}
+SOURCES['gcis-action-bar'] = {
+  id: 'gcis-action-bar',
+  citation: '經濟部商工登記公示資料，「導演的豆花店」（商業登記，登記機關：臺北市商業處）。',
+  publisher: '經濟部 商工登記公示資料（政府資料開放平臺 API）',
+  title: '導演的豆花店：商業登記基本資料',
+  url: 'https://data.gcis.nat.gov.tw/od/data/api/426D5542-5F05-43EB-83F9-F1300F14E1F1?$format=json&$filter=President_No%20eq%2088138249&$skip=0&$top=10',
+  context: '核准設立日期：民國110年3月12日；地址：臺北市大同區迪化街1段224巷24號1樓；營業項目：飲料店業。',
+}
+SOURCES['udn-500-action-bar'] = {
+  id: 'udn-500-action-bar',
+  citation: '于國華，〈文化觀察者于國華／導演的豆花：認識自己、看見家園〉，聯合報系《500輯》，2024年1月22日。',
+  publisher: '聯合報系 500輯',
+  title: '導演的豆花：認識自己、看見家園',
+  url: 'https://500times.udn.com/wtimes/story/120840/7724585',
+  context:
+    '記載何明瑞與齊柏林相約「你在天上飛、我在地上跑」；2019年7月導演的豆花車登場；在迪化街區創辦「夢想基地」，一樓就是豆花店；向大溪豆乾老店學來鹽滷製作豆花，用地瓜和芋頭製作粉圓、山梔子製作粉粿。',
+}
+SOURCES['kinmen-2019-douhua-truck'] = {
+  id: 'kinmen-2019-douhua-truck',
+  citation: '李金鎗，〈導演的豆花車巡迴古寧國小〉，金門縣政府全球資訊網（轉載金門日報），2019年12月5日。',
+  publisher: '金門縣政府',
+  title: '導演的豆花車巡迴古寧國小',
+  url: 'https://www.kinmen.gov.tw/News_Content2.aspx?n=98E3CA7358C89100&sms=BF7D6D478B935644&s=18D4878A9202442E&Create=1',
+  context: '介紹何明瑞是紀錄片導演、瑞齊傳播有限公司負責人與製作人，2019年入圍電視金鐘獎非戲劇類節目攝影獎；以「導演的豆花車」巡迴古寧國小，進行兒童影像記錄工作坊。',
+}
+SOURCES['matsu-2025-action-bar-camp'] = {
+  id: 'matsu-2025-action-bar-camp',
+  citation: '〈「導演的豆花店」暑期兒童影像紀錄學習營7月到馬祖　21日起報名〉，《馬祖日報》，2025年3月19日。',
+  publisher: '馬祖日報',
+  title: '「導演的豆花店」暑期兒童影像紀錄學習營7月到馬祖',
+  url: 'https://www.matsu-news.gov.tw/news/article/230291',
+  context: '學習營為公益性質、完全免費，每年暑期巡迴不同的偏鄉與離島；招收國小四至六年級學童，學習用影像捕捉生活、表達自我。',
+}
+SOURCES['moe-douhua'] = {
+  id: 'moe-douhua',
+  citation: '教育部《臺灣台語常用詞辭典》，「豆花」。',
+  publisher: '教育部',
+  title: '豆花',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/3437/',
+  context: '釋義：「在豆漿中加入少量的鹽滷或石膏，使能凝結成比豆腐還嫩的食品。通常加糖水和花生，當作甜食。」',
+}
+SOURCES['moe-maltose'] = {
+  id: 'moe-maltose',
+  citation: '教育部《臺灣台語常用詞辭典》，「麥芽膏」。',
+  publisher: '教育部',
+  title: '麥芽膏',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/8112/',
+  context: '釋義：「麥芽糖。由含澱粉酶的麥芽使澱粉水解而成，是一種金黃色，有黏性的糖品。」',
+}
+SOURCES['moe-fun-inn'] = {
+  id: 'moe-fun-inn',
+  citation: '教育部《臺灣台語常用詞辭典》，「粉圓」。',
+  publisher: '教育部',
+  title: '粉圓',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/6456/',
+  context: '釋義：「一種用番薯粉和紅糖做成的食品。外表為圓形，煮熟後變透明狀。夏天可以涼食，冬天可以熱食。」',
+}
+SOURCES['moe-fun-kue'] = {
+  id: 'moe-fun-kue',
+  citation: '教育部《臺灣台語常用詞辭典》，「粉粿」。',
+  publisher: '教育部',
+  title: '粉粿',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/6465/',
+  context: '釋義：「涼粉。用番薯粉做成的粿類食品。」',
+}
+SOURCES['moa-douhua-gel'] = {
+  id: 'moa-douhua-gel',
+  citation: '任珮君、何昱圻，〈豆花凝膠機制的介紹〉，《桃園區農情月刊》第285期（農業部食農教育資訊整合平臺，2023年4月15日）。',
+  publisher: '農業部',
+  title: '豆花凝膠機制的介紹',
+  url: 'https://fae.moa.gov.tw/theme_data.php?theme=topics&sub_theme=knowledge&id=3484',
+  context: '說明豆漿中的大豆蛋白和凝固劑作用形成凝膠結構；以鹽滷作為凝固劑凝結的豆花口感偏硬脆。',
+}
+SOURCES['moa-ice-toppings'] = {
+  id: 'moa-ice-toppings',
+  citation: '農業部食農教育資訊整合平臺，〈美食剉冰，你要加什麼料！〉，2023年8月2日。',
+  publisher: '農業部',
+  title: '美食剉冰，你要加什麼料！',
+  url: 'https://fae.moa.gov.tw/theme_data.php?theme=topics&sub_theme=knowledge&id=4285',
+  context: '說明粉粿是粉漿加上山梔子煮過的水攪拌後蒸熟；粉粿黃黃的顏色來自天然色素「山梔子」，又名黃梔。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }
