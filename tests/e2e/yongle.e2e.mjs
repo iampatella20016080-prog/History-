@@ -251,8 +251,9 @@ async function runDevice(browser, device) {
   const listed = (await marketEntry.count()) === 1 && (await stallEntry.count()) === 1
   const open = listed && (await stallEntry.locator('.menu-shop__badge.is-open').count()) === 1
   record(test, '店家名錄有永樂市場與好粿緣（可以探索）', listed && open)
-  await page.keyboard.press('Escape').catch(() => {})
-  await press(page.locator('.hud-menu__toggle'))
+  // 關閉店家名錄
+  if (await page.locator('#shop-menu-panel').isVisible()) await press(page.locator('.hud-menu__toggle'))
+  await page.waitForSelector('#shop-menu-panel', { state: 'detached', timeout: 10000 }).catch(() => {})
   const start = await state(page)
   record(
     test,
