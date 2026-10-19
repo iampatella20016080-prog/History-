@@ -405,7 +405,7 @@ function whiteShed(b) {
 /** 巷子西側的大樓（淡褐色磁磚牆面、花崗石橫帶與白框窗，豆花車就停在它前面） */
 function tanBuilding(b) {
   const w = 14
-  const d = 7.4
+  const d = 5.4
   const floors = [0, 3.6, 7.0, 10.4]
   b.group([-LANE.half, 0, 18], Math.PI / 2, () => {
     b.box('tile', [w, 10.4, d], [0, 5.2, -d / 2], { tint: '#c9a27c', grime: 0.12 })
@@ -451,6 +451,30 @@ function tanBuilding(b) {
     }
     for (const x of [-w / 2 + 1.2, 1.2]) acUnit(b, x, 10.75, -d + 4.2, Math.PI)
   })
+}
+
+/**
+ * 巷子後方的平頂老屋（從觀賞模式的高處才看得到）：補滿店與巷子佔地裡其餘的空地，
+ * 不讓遠景房屋與地面的空隙露出來。巷子座標：[minX, maxX, minZ, maxZ, 高度, 色調]
+ */
+const FILLERS = [
+  [12.5, 14, 12.5, 33, 6.6, '#d2c8b8'],
+  [5, 12.5, 25, 33, 7.4, '#cfc6b6'],
+  [10.5, 12.5, 21.8, 25, 5.2, '#d8cfc0'],
+  [-11.5, -5, 25, 33, 8.2, '#c9bfae'],
+  [-11.5, -8.9, 12.8, 25, 9.6, '#cdc3b2'],
+]
+
+function fillerBlocks(b) {
+  for (const [x0, x1, z0, z1, h, tint] of FILLERS) {
+    const cx = (x0 + x1) / 2
+    const cz = (z0 + z1) / 2
+    b.box('plaster', [x1 - x0, h, z1 - z0], [cx, h / 2, cz], { tint, grime: 0.25 })
+    // 女兒牆與屋頂上的水塔
+    b.box('plaster', [x1 - x0 + 0.1, 0.45, 0.2], [cx, h + 0.2, z0 + 0.1], { tint: '#bfb5a4' })
+    b.box('plaster', [x1 - x0 + 0.1, 0.45, 0.2], [cx, h + 0.2, z1 - 0.1], { tint: '#bfb5a4' })
+    if (x1 - x0 > 4) b.cylinder('plain', 0.5, 0.5, 1.1, 12, [cx + 0.8, h + 0.55, cz], { tint: '#e6e2d8' })
+  }
 }
 
 /** 巷底的二層老屋（鐵捲門與盆栽，收束巷子的街景） */
@@ -506,7 +530,7 @@ function beanFlowerTruck(b) {
       // 圓形標誌裡的白色碗與熱氣（原創的簡化圖樣）
       b.box('plain', [0.024, 0.07, 0.2], [s * (W / 2 + 0.014), 1.03, cabZ - 0.1], { tint: '#f4f4f1' })
       b.box('plain', [0.024, 0.03, 0.12], [s * (W / 2 + 0.014), 0.985, cabZ - 0.1], { tint: '#f4f4f1' })
-      for (const dz of [-0.05, 0.05]) b.box('plain', [0.024, 0.08, 0.025], [s * (W / 2 + 0.014), 1.15, cabZ - 0.1 + dz], { tint: '#f4f4f1' })
+      b.box('plain', [0.024, 0.018, 0.2], [s * (W / 2 + 0.014), 1.13, cabZ - 0.07], { rotation: [0.5, 0, 0], tint: '#f4f4f1' })
     }
     b.box('dark', [W - 0.1, 0.18, 0.08], [0, 0.72, L / 2 + 0.02], { tint: '#2b2c2d' })
     for (const s of [-1, 1]) b.box('glassWarm', [0.26, 0.14, 0.04], [s * 0.55, 0.98, L / 2 + 0.01], { tint: '#fff2d0' })
@@ -598,8 +622,11 @@ function registerBlockers(b) {
   }
   add('action-bar-lane-brick', [lh, lh + 9, 0, 7.6, 11, 15.8], laneFacade(b, lh, 13.4, -1, 0, 4.8, 7.6))
   add('action-bar-lane-shed', [lh, lh + 7, 0, 3.8, 21.8, length], laneFacade(b, lh, 23.4, -1, 0, 3.2, 3.8))
-  add('action-bar-lane-tan', [-lh - 7.4, -lh, 0, 11, 11, length], laneFacade(b, -lh, 18, 1, 0, 14, 11))
+  add('action-bar-lane-tan', [-lh - 5.4, -lh, 0, 11, 11, length], laneFacade(b, -lh, 18, 1, 0, 14, 11))
   add('action-bar-lane-end', [-5, 5, 0, 6.8, length, length + 7], laneFacade(b, 0, length, 0, -1, 7, 6.8))
+  FILLERS.forEach(([x0, x1, z0, z1, h], i) => {
+    add(`action-bar-lane-filler-${i}`, [x0, x1, 0, h + 0.45, z0, z1], laneFacade(b, (x0 + x1) / 2, z0, 0, -1, x1 - x0, h))
+  })
   add(
     'action-bar-truck',
     [TRUCK.x - TRUCK.width / 2 - 0.1, TRUCK.x + TRUCK.width / 2 + 0.1, 0, 2.85, TRUCK.z - 0.4, TRUCK.z + TRUCK.length + 0.1],
@@ -683,6 +710,7 @@ export function buildActionBar(b) {
   whiteShed(b)
   tanBuilding(b)
   laneEnd(b)
+  fillerBlocks(b)
   beanFlowerTruck(b)
   // 巷邊停放的機車
   scooter(b, LANE.half - 0.45, 12.45, Math.PI, '#d6d9d9')
@@ -775,8 +803,9 @@ export function buildActionBar(b) {
     // 觀賞模式：注視點可以進到巷子、騎樓與店內（店內不超過天花板）
     viewerRegions: [
       { ...laneZone(-LANE.half + 0.4, LANE.half - 0.2, -2.4, LANE.length - 0.6), maxY: 7 },
-      { ...zone(-S.half + 0.6, S.half - 0.6, -S.arcade + 0.1, 1.2), maxY: 2.6, cameraMaxY: 3.3 },
-      { ...zone(S.door[0] + 0.2, S.door[1] - 0.2, -S.arcade - 0.6, -S.arcade + 0.2), maxY: 2.2, cameraMaxY: 2.9 },
+      // 騎樓與大門的注視點壓在門楣下方（門楣 2.55 公尺，再留注視點的間距），才穿得過大門
+      { ...zone(-S.half + 0.6, S.half - 0.6, -S.arcade + 0.1, 1.2), maxY: 2.05, cameraMaxY: 3.3 },
+      { ...zone(S.door[0] + 0.2, S.door[1] - 0.2, -S.arcade - 0.6, -S.arcade + 0.2), maxY: 2.0, cameraMaxY: 2.9 },
       { ...zone(-S.half + S.wallT + 0.4, S.half - S.wallT - 0.4, S.counterZ + 0.3, -S.arcade - S.wallT - 0.3), maxY: 2.1, cameraMaxY: 2.75 },
     ],
     viewerBounds: { maxZ: toWorld(0, LANE.length + 3).z },
@@ -792,9 +821,9 @@ function interiorSigns(b) {
     const R = SHOP.half - SHOP.wallT - 0.08
     const B = SHOP.backZ + 0.08
     // 左牆：公益豆花看板（懸掛的留言本）與兒童影像紀錄學習營看板（看板上的標題依實地照片）
-    b.addSign({ text: '導演的公益豆花', style: 'boardWhite', width: 1.3, height: 0.24, position: [L, 2.62, -5.05], rotationY: Math.PI / 2 })
-    b.addSign({ text: '《逗。留。台灣》', style: 'boardWhite', width: 1.3, height: 0.22, position: [L, 2.6, -3.15], rotationY: Math.PI / 2 })
-    b.addSign({ text: '免費兒童影像紀錄學習營', style: 'boardWhite', width: 1.3, height: 0.15, position: [L, 2.4, -3.15], rotationY: Math.PI / 2 })
+    b.addSign({ text: '導演的公益豆花', style: 'boardInk', width: 1.3, height: 0.24, position: [L, 2.62, -5.05], rotationY: Math.PI / 2 })
+    b.addSign({ text: '《逗。留。台灣》', style: 'boardInk', width: 1.3, height: 0.22, position: [L, 2.6, -3.15], rotationY: Math.PI / 2 })
+    b.addSign({ text: '免費兒童影像紀錄學習營', style: 'boardInk', width: 1.3, height: 0.14, position: [L, 2.41, -3.15], rotationY: Math.PI / 2 })
     // 後牆：菜單與「豆花」黑板
     b.addSign({ text: '豆花', style: 'chalk', width: 0.7, height: 0.3, position: [-1.2, 2.45, B] })
     b.addSign({ text: '傳統豆花・麥芽糖水・地瓜粉圓・粉粿', style: 'boardWhite', width: 2.2, height: 0.16, position: [0.6, 2.62, B] })

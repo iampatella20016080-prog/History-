@@ -53,33 +53,33 @@ function douhuaBowl(b, x, y, z, toppings, seed = 1, scale = 1) {
   const k = scale
   bowl(b, x, y, z, '#f6f5f0', k)
   // 麥芽糖水（半透明的琥珀色，下面一層深一點的糖色）
-  b.cylinder('glassClear', 0.08 * k, 0.074 * k, 0.012 * k, 18, [x, y + 0.047 * k, z], { tint: '#c98a3c' })
+  b.cylinder('glassClear', 0.08 * k, 0.074 * k, 0.012 * k, 18, [x, y + 0.047 * k, z], { tint: '#d28a2c' })
   b.cylinder('plain', 0.075 * k, 0.07 * k, 0.004 * k, 18, [x, y + 0.042 * k, z], { tint: '#a8642a' })
   // 白色的豆花：用大湯匙舀起的一大片（扁扁的弧面）
   const plain = toppings.length === 0
-  const tofuR = plain ? 0.058 : 0.046
-  const tofuAt = plain ? [x, z] : [x - 0.026 * k, z - 0.01 * k]
+  const tofuR = plain ? 0.058 : 0.04
+  const tofuAt = plain ? [x, z] : [x - 0.032 * k, z - 0.008 * k]
   dot(b, 'plain', tofuR * k, [tofuAt[0], y + 0.056 * k, tofuAt[1]], '#fbfaf4', [1.15, 0.42, 0.95], 1)
   dot(b, 'plain', tofuR * 0.62 * k, [tofuAt[0] + 0.02 * k, y + 0.068 * k, tofuAt[1] + 0.012 * k], '#f6f3ea', [1.1, 0.34, 0.9], 1)
   // 每一種配料佔一塊扇形（從豆花的另一側開始排）
   const n = toppings.length
   toppings.forEach((kind, i) => {
-    const mid = -0.9 + ((i + 0.5) / n) * 2.4 // 扇形的中心角（避開豆花所在的 -x 側）
+    const mid = -1.15 + ((i + 0.5) / n) * 2.9 // 扇形的中心角（避開豆花所在的 -x 側）
     const at = () => {
-      const a = mid + (rng() - 0.5) * (2.2 / n)
-      const r = (0.022 + rng() * 0.036) * k
+      const a = mid + (rng() - 0.5) * (2.7 / n)
+      const r = (0.016 + rng() * 0.05) * k
       return [x + Math.cos(a) * r, z + Math.sin(a) * r]
     }
     const top = y + 0.06 * k
     if (kind === 'balls') {
       // 地瓜粉圓：橘色（紅地瓜）與紫色（紫地瓜）的小圓粒，堆成小小一堆
-      for (let j = 0; j < 12; j++) {
+      for (let j = 0; j < 14; j++) {
         const [px, pz] = at()
         dot(b, 'plain', 0.0085 * k, [px, top + (j % 3) * 0.004 * k, pz], j % 3 === 0 ? '#6f4a97' : '#ec8a2e', [1, 0.95, 1], 0)
       }
     } else if (kind === 'jelly') {
       // 粉粿：黃色（山梔子）與黑糖色的小方塊
-      for (let j = 0; j < 6; j++) {
+      for (let j = 0; j < 7; j++) {
         const [px, pz] = at()
         b.box('plain', [0.02 * k, 0.017 * k, 0.02 * k], [px, top + 0.002 * k, pz], { rotation: [0, rng() * 1.5, 0.1], tint: j % 2 ? '#5b2f1e' : '#eba43a' })
       }
@@ -87,7 +87,7 @@ function douhuaBowl(b, x, y, z, toppings, seed = 1, scale = 1) {
       // 紅豆、綠豆：一小堆橢圓的豆子（綠豆比紅豆小一點）
       const tint = kind === 'red' ? ['#6b2025', '#80302f'] : ['#7d7b3d', '#93904d']
       const size = kind === 'red' ? 0.0062 : 0.0048
-      for (let j = 0; j < 16; j++) {
+      for (let j = 0; j < 20; j++) {
         const [px, pz] = at()
         b.add('plain', new OctahedronGeometry(size * k), { position: [px, top + (j % 2) * 0.003 * k, pz], rotation: [0, rng() * 3, 0], scale: [1.4, 0.85, 1], tint: tint[j % 2] })
       }
@@ -317,7 +317,7 @@ function leftWall(b) {
     const paddles = ['#7fb7e0', '#9fd06b', '#f2d36b', '#6fa3d6', '#8fc7d8', '#e0b36b']
     paddles.forEach((tint, i) => {
       const px = ec - 0.62 + (i % 2) * 0.28
-      const py = 2.38 - Math.floor(i / 2) * 0.3
+      const py = 2.16 - Math.floor(i / 2) * 0.28
       b.box('plain', [0.24, 0.17, 0.012], [px, py, 0.035], { tint })
       for (let k = 0; k < 3; k++) b.box('plain', [0.16, 0.012, 0.004], [px, py + 0.04 - k * 0.04, 0.043], { tint: '#2d3b52' })
       b.box('wood', [0.025, 0.12, 0.01], [px, py - 0.13, 0.035], { tint: '#c9a46a' })
@@ -325,7 +325,7 @@ function leftWall(b) {
     // 黑白方塊（示意的報名條碼，不是真的條碼）
     for (let i = 0; i < 16; i++) {
       if ((i * 7 + 3) % 3 === 0) continue
-      b.box('plain', [0.025, 0.025, 0.004], [ec + 0.55 + (i % 4) * 0.027, 2.36 - Math.floor(i / 4) * 0.027, 0.04], { tint: '#1f1f1f' })
+      b.box('plain', [0.025, 0.025, 0.004], [ec + 0.6 + (i % 4) * 0.027, 1.45 - Math.floor(i / 4) * 0.027, 0.04], { tint: '#1f1f1f' })
     }
     // 上方三個裝框的獎狀（原創的星形圖樣，不使用影展的標誌）
     ;[
@@ -385,9 +385,13 @@ function leftWall(b) {
   b.cylinder('dark', 0.065, 0.075, 0.18, 14, [cx, 1.58, cz + 0.29], { rotation: [Math.PI / 2, 0, 0], tint: '#18191a' })
   b.cylinder('glassClear', 0.05, 0.05, 0.01, 14, [cx, 1.58, cz + 0.385], { rotation: [Math.PI / 2, 0, 0], tint: '#6f8fb0' })
   b.box('plain', [0.04, 0.03, 0.08], [cx, 1.68, cz - 0.02], { tint: '#c43a2f' })
-  // 角落的膠卷盤
-  b.add('plain', new TorusGeometry(0.16, 0.035, 6, 18), { position: [-IN + 0.06, 2.0, -6.0], rotation: [0, Math.PI / 2, 0], tint: '#3a3a3a' })
-  b.cylinder('steel', 0.13, 0.13, 0.03, 18, [-IN + 0.06, 2.0, -6.0], { rotation: [0, 0, Math.PI / 2], tint: '#a9adae' })
+  // 後牆左上角的膠卷盤
+  b.add('plain', new TorusGeometry(0.16, 0.035, 6, 18), { position: [-IN + 0.5, 2.7, BACK + 0.06], tint: '#3a3a3a' })
+  b.cylinder('steel', 0.13, 0.13, 0.03, 18, [-IN + 0.5, 2.7, BACK + 0.06], { rotation: [Math.PI / 2, 0, 0], tint: '#a9adae' })
+  for (let k = 0; k < 3; k++) {
+    const a = (k / 3) * Math.PI * 2
+    b.cylinder('dark', 0.03, 0.03, 0.035, 8, [-IN + 0.5 + Math.cos(a) * 0.07, 2.7 + Math.sin(a) * 0.07, BACK + 0.07], { rotation: [Math.PI / 2, 0, 0], tint: '#2a2a2a' })
+  }
 }
 
 /* ── 右牆：小朋友的畫作展示牆、長椅與小桌 ─────────── */

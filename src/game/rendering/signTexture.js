@@ -63,6 +63,8 @@ const STYLES = {
   actionBlue: { bg: null, text: '#2b93d9', fill: '#2b93d9', outline: '#ffffff', outlineWidth: 0.16, shadow: 'rgba(30,60,90,0.3)', letters: true, ltr: true, sizeH: 0.8, sizeW: 0.92 },
   actionNavy: { bg: null, text: '#1f2b45', fill: '#1f2b45', outline: '#ffffff', outlineWidth: 0.14, shadow: 'rgba(30,40,60,0.25)', letters: true, ltr: true, sizeH: 0.82, sizeW: 0.78 },
   filmBlue: { bg: '#2190dc', bg2: '#1c83cc', border: null, text: '#f4f9ff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', ltr: true, film: '#e9f4fd' },
+  // 店內白色看板上的藍色標題（字直接印在看板上，沒有底色）
+  boardInk: { bg: null, text: '#2a659e', fill: '#2a659e', outline: '#f4f7f9', outlineWidth: 0.05, letters: true, ltr: true, sizeH: 0.8, sizeW: 0.9 },
   boardWhite: { bg: '#f1f4f6', bg2: '#e7ecef', border: null, text: '#245a8c', shadow: 'rgba(0,0,0,0)', grain: 'rgba(0,0,0,0.02)', ltr: true, sizeH: 0.62, sizeW: 0.86 },
   chalk: { bg: '#2c3431', bg2: '#262d2a', border: '#8a6a45', text: '#f1eee4', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.05)', ltr: true, sizeH: 0.5, sizeW: 0.8 },
   truckBlue: { bg: null, text: '#1f5fa8', fill: '#1f5fa8', outline: '#ffffff', outlineWidth: 0.06, shadow: 'rgba(0,0,0,0)', letters: true, ltr: true, sizeH: 0.8, sizeW: 0.9 },
