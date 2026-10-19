@@ -16,6 +16,7 @@ import {
   orbitDirection,
   pickBuilding,
   planBuildingFocus,
+  segmentBlocked,
 } from '../viewerCamera.js'
 import { useGameStore } from '../../state/useGameStore.js'
 
@@ -26,6 +27,8 @@ const TAP_SLOP = 9
 const TAP_TIME = 450
 /** 觀賞模式：鍵盤 WASD 平移注視點的速度（公尺／秒） */
 const VIEWER_KEY_SPEED = 7
+/** 在室內進入觀賞模式：注視點較低、鏡頭較平，才不會一開始就頂到天花板 */
+const VIEWER_INDOOR_START = { height: 1.7, pitch: 0.16 }
 
 /**
  * 鏡頭
@@ -214,6 +217,15 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       v.goalPitch = plan.pitch
       v.goalDistance = plan.distance
       v.lambda = 3.2
+      // 中間隔著牆（例如從市場裡聚焦外面的立面）：直接切換過去，鏡頭不從牆裡穿過
+      if (segmentBlocked(v.target, v.goalTarget, sceneRef.current.blockers)) {
+        v.target.copy(v.goalTarget)
+        v.yaw = v.goalYaw
+        v.pitch = v.goalPitch
+        v.distance = v.goalDistance
+        v.collision = plan.distance
+        cameraState.snap = true
+      }
     }
     rig.focusOn = focusOn
 
@@ -337,17 +349,26 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
         v.collision = v.distance
       }
       v.phase = 'active'
-      v.goalTarget.set(p.x, VIEWER.start.height, p.z)
+      const indoor = (interiorAmount(p, interiors)?.amount ?? 0) > 0.5
+      const start = indoor ? VIEWER_INDOOR_START : VIEWER.start
+      v.goalTarget.set(p.x, start.height, p.z)
       clampViewerTarget(v.goalTarget, blockers, viewerSpace)
       v.goalYaw = v.yaw + Math.atan2(Math.sin(cameraState.yaw - v.yaw), Math.cos(cameraState.yaw - v.yaw))
-      v.goalPitch = VIEWER.start.pitch
+      v.goalPitch = start.pitch
       v.goalDistance = VIEWER.start.distance
       v.lambda = 3
       v.focusNonce = viewerFocus?.nonce ?? v.focusNonce
     } else if (viewMode !== 'viewer' && v.phase === 'active') {
-      v.phase = 'returning'
-      v.returnTime = 0
-      v.lambda = 3.4
+      rig.target.set(p.x, CAMERA.targetHeight, p.z)
+      if (segmentBlocked(v.target, rig.target, blockers)) {
+        // 鏡頭與角色之間隔著牆（例如角色在市場裡、鏡頭在外面）：直接切回第三人稱，不穿牆飛回去
+        v.phase = 'off'
+        cameraState.snap = true
+      } else {
+        v.phase = 'returning'
+        v.returnTime = 0
+        v.lambda = 3.4
+      }
     } else if (v.phase === 'returning' && cameraState.snap) {
       // 返回途中角色被傳送（例如從店家名錄前往店門口）：直接交還第三人稱鏡頭
       v.phase = 'off'

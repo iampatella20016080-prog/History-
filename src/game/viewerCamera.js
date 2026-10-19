@@ -109,11 +109,37 @@ function exitDistance(o, d, b) {
   return Math.max(0, t)
 }
 
-/** 沿方向最多可以退多遠而不撞到建築、地面或街區邊界（已扣掉安全距離） */
+/** 注視點所在範圍的鏡頭高度上限（室內）：取所在範圍中最寬鬆的上限，沒有上限時為 Infinity */
+function cameraCeiling(target, regions) {
+  let found = false
+  let ceiling = -Infinity
+  for (const r of regions) {
+    if (!inRegion(r, target.x, target.z)) continue
+    found = true
+    ceiling = Math.max(ceiling, r.cameraMaxY ?? Infinity)
+  }
+  return found ? ceiling : Infinity
+}
+
+/** 沿方向最多可以退多遠而不撞到建築、地面、街區邊界或室內的高度上限（已扣掉安全距離） */
 export function allowedDistance(target, direction, wanted, blockers, space = DEFAULT_SPACE) {
   const hit = raycastBoxes(target, direction, wanted + VIEWER.margin, blockers)
   const exit = exitDistance(target, direction, space.bounds)
-  return Math.max(0.3, Math.min(hit, exit) - VIEWER.margin)
+  let allowed = Math.min(hit, exit) - VIEWER.margin
+  const ceiling = cameraCeiling(target, space.regions)
+  if (ceiling < Infinity && direction.y > 1e-3) allowed = Math.min(allowed, (ceiling - target.y) / direction.y)
+  return Math.max(0.3, allowed)
+}
+
+/** 兩點之間有沒有被建築擋住（例如角色在市場裡、鏡頭在外面）；起點在方塊裡也算被擋住 */
+export function segmentBlocked(a, b, blockers) {
+  const dx = b.x - a.x
+  const dy = b.y - a.y
+  const dz = b.z - a.z
+  const length = Math.hypot(dx, dy, dz)
+  if (length < 1e-6) return false
+  const direction = { x: dx / length, y: dy / length, z: dz / length }
+  return raycastBoxes(a, direction, length, blockers) < length - 1e-3
 }
 
 function insideBox(p, b, pad) {
@@ -271,21 +297,26 @@ export function planBuildingFocus(building, blockers, { yaw: currentYaw = 0, asp
   const facade = facadeOf(building)
   const halfV = Math.tan(((fov / 2) * Math.PI) / 180)
   const halfH = halfV * aspect
-  const needed = clamp(Math.max((facade.height * 0.6) / halfV, (facade.width * 0.56) / halfH), 5, VIEWER.maxDistance)
+  // 建築可以另外指定：注視點高度（viewHeight）、最遠距離（maxDistance）、最大仰角（maxPitch）與
+  // 最大的斜看角度（maxYawOffset），例如窄街盡頭的永樂市場從街上正面看，而不是退到屋頂上方俯瞰
+  const needed = clamp(Math.max((facade.height * 0.6) / halfV, (facade.width * 0.56) / halfH), 5, Math.min(VIEWER.maxDistance, facade.maxDistance ?? Infinity))
   const baseYaw = Math.atan2(facade.forward.x, facade.forward.z)
-  const baseHeight = clamp(facade.height * 0.45, 1.6, 12)
+  const baseHeight = facade.viewHeight ?? clamp(facade.height * 0.45, 1.6, 12)
+  const pitches = PITCHES.filter((pitch) => pitch <= (facade.maxPitch ?? Infinity))
+  const offsets = YAW_OFFSETS.filter((offset) => Math.abs(offset) <= (facade.maxYawOffset ?? Infinity))
+  const heights = facade.viewHeight != null ? [baseHeight] : [baseHeight, 1.7, clamp(facade.height * 0.75, 1.6, 14)]
   const direction = { x: 0, y: 0, z: 0 }
   let best = null
   // 注視點高度：立面中段為主；被樹冠等擋住時，也試試從樹下或樹上看
-  for (const height of [baseHeight, 1.7, clamp(facade.height * 0.75, 1.6, 14)]) {
+  for (const height of heights) {
     const target = {
       x: facade.center.x + facade.forward.x * TARGET_CLEARANCE,
       y: height,
       z: facade.center.z + facade.forward.z * TARGET_CLEARANCE,
     }
     clampViewerTarget(target, blockers, space)
-    for (const offset of YAW_OFFSETS) {
-      for (const pitch of PITCHES) {
+    for (const offset of offsets) {
+      for (const pitch of pitches) {
         const yaw = baseYaw + offset
         orbitDirection(yaw, pitch, direction)
         const available = allowedDistance(target, direction, needed, blockers, space)

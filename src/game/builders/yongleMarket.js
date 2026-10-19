@@ -524,12 +524,12 @@ function registerBlockers(b) {
   b.addBlocker(9.3, 15.9, 0, 13.7, -20.75, 0.5)
   // 廣場的樹冠
   b.addBlocker(-7.8, -3.6, 2.2, 5.6, 2.1, 6.3)
-  // 攤位（好粿緣另外記錄）
+  // 攤位（好粿緣另外記錄）：一直到天花板，鏡頭只能在走道上，不會飄到攤位上方
   let hao = null
   for (const stall of STALLS) {
     const r = stallRect(stall)
     const start = b.blockers.length
-    b.addBlocker(r.minX, r.maxX, 0, 3.45, r.minZ, r.maxZ)
+    b.addBlocker(r.minX, r.maxX, 0, hall.ceiling, r.minZ, r.maxZ)
     if (stall.storeId) hao = { start, end: b.blockers.length }
   }
   return hao
@@ -635,11 +635,16 @@ export function buildYongleMarket(b) {
     groundHeight: MARKET.groundH,
     topHeight: MARKET.top,
     anchors: { prompt: local(0, 2.6, arcade + 0.5), marker: local(0, 20.2, -2) },
+    // 觀賞模式聚焦：從街底的廣場與街道看立面（大門、招牌與玻璃帷幕），不從屋頂上方俯瞰
     focus: {
       center: { x: local(0, 0, arcade)[0], z: local(0, 0, arcade)[2] },
       forward: dir(0, 1),
       width: MARKET.half * 2,
       height: MARKET.top + 0.5,
+      viewHeight: 6.5,
+      maxDistance: 16,
+      maxPitch: 0.4,
+      maxYawOffset: 0.3,
     },
     subStores: [
       {
@@ -665,13 +670,14 @@ export function buildYongleMarket(b) {
         showRadius: 34,
       },
     ],
-    // 觀賞模式：注視點可以進到騎樓與一樓市場（高度不超過天花板）
+    // 觀賞模式：注視點可以進到騎樓與一樓市場；maxY 是注視點的高度上限，
+    // cameraMaxY 是注視點在這個範圍裡時鏡頭的高度上限（在日光燈與吊牌下方，不會鑽進天花板的管線裡）
     viewerRegions: [
       { ...rect(-MARKET.half + 0.5, MARKET.half - 0.5, arcade + 0.3, edge + 0.6), maxY: 18 },
-      { ...rect(-doorHalf + 0.6, doorHalf - 0.6, hall.front - 0.2, arcade + 0.3), maxY: 2.6 },
-      { ...rect(-hall.half + 0.6, hall.half - 0.6, hall.front - 2.2, hall.front - 0.2), maxY: ceiling - 0.8 },
-      { ...rect(-MARKET.aisleHalf + 0.3, MARKET.aisleHalf - 0.3, hall.back + 3.6, hall.front - 2.0), maxY: ceiling - 0.8 },
-      { ...rect(-hall.half + 0.6, hall.half - 0.6, hall.back + 0.6, hall.back + 3.8), maxY: ceiling - 0.8 },
+      { ...rect(-doorHalf + 0.6, doorHalf - 0.6, hall.front - 0.2, arcade + 0.3), maxY: 2.6, cameraMaxY: 3.4 },
+      { ...rect(-hall.half + 0.6, hall.half - 0.6, hall.front - 2.2, hall.front - 0.2), maxY: 2.8, cameraMaxY: 3.1 },
+      { ...rect(-MARKET.aisleHalf + 0.3, MARKET.aisleHalf - 0.3, hall.back + 3.6, hall.front - 2.0), maxY: 2.8, cameraMaxY: 3.1 },
+      { ...rect(-hall.half + 0.6, hall.half - 0.6, hall.back + 0.6, hall.back + 3.8), maxY: 2.8, cameraMaxY: 3.1 },
     ],
     viewerBounds: { maxX: rect(0, 0, MARKET.back - 2, MARKET.back - 2).maxX },
   }
