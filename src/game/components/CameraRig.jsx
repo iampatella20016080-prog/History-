@@ -501,8 +501,9 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], fol
       rig.direction.set(Math.sin(cameraState.yaw) * cosPitch, Math.sin(pitch), Math.cos(cameraState.yaw) * cosPitch)
       if (cameraState.snap) rig.collisionDistance = wanted
       const hit = raycastBoxes(rig.target, rig.direction, wanted + 0.45, blockers)
-      // 室內與窄巷（遮擋方塊貼著實際的牆與車）：鏡頭停在障礙物前面；街道維持原本的最近距離
-      const tight = k > 0.001 || inFollowArea(p, followAreas)
+      // 室內與窄巷（遮擋方塊貼著實際的牆與車）：鏡頭停在障礙物前面；街道維持原本的最近距離。
+      // 用角色現在的位置判斷（不用平滑後的 k），走出門口或換了年代時立刻回到街道的規則
+      const tight = indoorGoal >= 0.999 || inFollowArea(p, followAreas)
       let allowed = followAllowed(hit, minDistance, tight)
       if (k > 0.001 && rig.direction.y > 0.01) {
         // 室內的鏡頭高度上限（在吊牌與燈具下方）；越接近街道上限越高

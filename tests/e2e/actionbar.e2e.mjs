@@ -266,7 +266,8 @@ async function runDevice(browser, device) {
   /** 從迪化街走進巷子、穿過大門走到櫃台前 */
   const walkIn = async () => {
     await face('south')
-    const reached = await hold((z) => window.__DDC__.playerState.position.z > z, DOOR_Z - 0.25)
+    // 放開後還會減速滑行約 0.3–0.4 公尺：提早一點放開，停下來的位置才會在大門的中線附近
+    const reached = await hold((z) => window.__DDC__.playerState.position.z > z, DOOR_Z - 0.45)
     await settle()
     const a = await state(page)
     const correction = await align('z', DOOR_Z)
@@ -276,18 +277,18 @@ async function runDevice(browser, device) {
       return d.playerState.position.x > 31.0 && d.useGameStore.getState().nearbyShopId === 'action-bar'
     })
     await settle()
-    return { lane: reached && correction < 0.6, shop, laneState: a, correction }
+    return { lane: reached && correction < 0.8, shop, laneState: a, correction }
   }
   /** 從店裡走回巷子、走回迪化街 */
   const walkOut = async () => {
     await face('west')
-    const reached = await hold((x) => window.__DDC__.playerState.position.x < x, LANE_X + 0.4)
+    const reached = await hold((x) => window.__DDC__.playerState.position.x < x, LANE_X + 0.5)
     await settle()
     const correction = await align('x', LANE_X)
     await face('north')
     const street = await hold(() => window.__DDC__.playerState.position.z < 1.6)
     await settle()
-    return { lane: reached && correction < 0.6, street, correction }
+    return { lane: reached && correction < 0.8, street, correction }
   }
   const viewerSettled = () =>
     frames(3).then(() =>

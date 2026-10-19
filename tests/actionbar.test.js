@@ -88,7 +88,7 @@ function followCamera(world, p, yaw, pitch = CAMERA.pitch, distance = CAMERA.dis
   const direction = orbitDirection(yaw, follow.pitch)
   const hit = raycastBoxes(target, direction, follow.distance + 0.45, world.blockers)
   // 室內與窄巷停在障礙物前面；街道維持原本的最近距離（與 CameraRig 相同）
-  const tight = k > 0.001 || inFollowArea(p, world.followAreas)
+  const tight = k >= 0.999 || inFollowArea(p, world.followAreas)
   let allowed = followAllowed(hit, follow.minDistance, tight)
   if (k > 0.001 && direction.y > 0.01) allowed = Math.min(allowed, Math.max(follow.minDistance, (shot.maxHeight + (1 - k) * 6 - target.y) / direction.y))
   const d = Math.min(follow.distance, allowed)
@@ -308,10 +308,12 @@ describe('跟隨鏡頭貼著障礙物時不會進到障礙物裡', () => {
     for (const hit of [0, 0.345, 0.9, 1.5, 10]) assert.equal(followAllowed(hit, 1.3), Math.max(1.3, hit - 0.45))
   })
 
-  test('只有224巷是貼近障礙物的範圍；其他年代沒有', () => {
-    assert.equal(revival.followAreas.length, 1)
+  test('只有224巷與豆花店的騎樓是貼近障礙物的範圍；其他年代沒有', () => {
+    assert.equal(revival.followAreas.length, 2)
     assert.ok(inFollowArea({ x: MOUTH.x, z: MOUTH.z + 12 }, revival.followAreas))
+    assert.ok(inFollowArea(fromShop(0, -SHOP.arcade / 2), revival.followAreas), '騎樓')
     assert.ok(!inFollowArea({ x: MOUTH.x, z: 0 }, revival.followAreas), '迪化街上不是')
+    assert.ok(!inFollowArea({ x: 38, z: 0 }, revival.followAreas), '永樂市場的入口不是')
     for (const era of ERAS.filter((item) => item.id !== 'revival')) assert.equal(buildEraWorldSync(era.id).followAreas.length, 0, era.id)
   })
 
@@ -342,6 +344,36 @@ describe('跟隨鏡頭貼著障礙物時不會進到障礙物裡', () => {
         }
       }
     }
+  })
+
+  test('走向室內的入口（還沒進門）時鏡頭和修改前相同：永樂市場門前', () => {
+    // 修改前的跟隨鏡頭：最近距離隨室內混合程度變化，被擋住時退到 hit − 0.45
+    const preFollow = (world, p, yaw) => {
+      const found = interiorAmount(p, world.interiors)
+      const k = found?.amount ?? 0
+      const shot = found?.zone.camera
+      const follow = indoorFollow(CAMERA.pitch, CAMERA.distance, k, shot)
+      const target = { x: p.x, y: CAMERA.targetHeight, z: p.z }
+      const direction = orbitDirection(yaw, follow.pitch)
+      const hit = raycastBoxes(target, direction, follow.distance + 0.45, world.blockers)
+      let allowed = Math.max(follow.minDistance, hit - 0.45)
+      if (k > 0.001 && direction.y > 0.01) allowed = Math.min(allowed, Math.max(follow.minDistance, (shot.maxHeight + (1 - k) * 6 - target.y) / direction.y))
+      return Math.min(follow.distance, allowed)
+    }
+    // 永樂市場門前的轉角（入口範圍裡、離大門還遠，以前平滑後的混合程度會讓鏡頭貼到人物身上）
+    const points = [{ x: 35.5, z: 2.43 }, { x: 35.5, z: -2.43 }, { x: 37.5, z: 2.4 }, { x: 39.8, z: -2.4 }, { x: 40.5, z: 0 }]
+    let ramp = 0
+    for (const p of points) {
+      const found = interiorAmount(p, revival.interiors)
+      assert.equal(found?.zone.id, 'yong-le-market', `(${p.x}, ${p.z})`)
+      if (found.amount > 0.001) ramp++
+      for (let i = 0; i < 12; i++) {
+        const yaw = (i / 12) * Math.PI * 2
+        const where = `(${p.x}, ${p.z}) yaw ${yaw.toFixed(2)}`
+        assert.ok(Math.abs(followCamera(revival, p, yaw).distance - preFollow(revival, p, yaw)) < 1e-9, where)
+      }
+    }
+    assert.ok(ramp >= 2, '有些點在入口的過渡範圍裡')
   })
 
   test('站在豆花車旁、巷子的牆邊與店裡的牆邊，鏡頭朝向障礙物時都不在方塊裡', () => {

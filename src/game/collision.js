@@ -51,19 +51,46 @@ function insideShrunk(position, radius, rect) {
   )
 }
 
+function insideAny(x, z, walkable) {
+  for (const rect of walkable) {
+    if (x >= rect.minX && x <= rect.maxX && z >= rect.minZ && z <= rect.maxZ) return true
+  }
+  return false
+}
+
+// 圓周上的取樣點：圓心和這些點都在可行走區域（矩形聯集）裡，角色就算站得下。
+// 只看單一矩形的話，兩個矩形接起來的窄口會比角色還窄，小步走的時候會卡住。
+const PROBES = Array.from({ length: 16 }, (_, i) => [Math.cos((i * Math.PI) / 8), Math.sin((i * Math.PI) / 8)])
+
+function discInWalkable(x, z, radius, walkable) {
+  if (!insideAny(x, z, walkable)) return false
+  for (const [dx, dz] of PROBES) {
+    if (!insideAny(x + dx * radius, z + dz * radius, walkable)) return false
+  }
+  return true
+}
+
 function constrainToWalkable(position, radius, walkable) {
   if (walkable.some((rect) => insideShrunk(position, radius, rect))) return
+  if (discInWalkable(position.x, position.z, radius, walkable)) return
   let bestX = position.x
   let bestZ = position.z
   let bestDist = Infinity
   for (const rect of walkable) {
     const x = clamp(position.x, rect.minX + radius, rect.maxX - radius)
     const z = clamp(position.z, rect.minZ + radius, rect.maxZ - radius)
-    const dist = (x - position.x) ** 2 + (z - position.z) ** 2
-    if (dist < bestDist) {
+    // 縮小後矩形裡的點一定站得下；只修正單軸的點要另外確認，才能沿著接縫滑過去
+    for (const [cx, cz, safe] of [
+      [x, z, true],
+      [x, position.z, false],
+      [position.x, z, false],
+    ]) {
+      const dist = (cx - position.x) ** 2 + (cz - position.z) ** 2
+      if (dist >= bestDist) continue
+      if (!safe && !discInWalkable(cx, cz, radius, walkable)) continue
       bestDist = dist
-      bestX = x
-      bestZ = z
+      bestX = cx
+      bestZ = cz
     }
   }
   position.x = bestX

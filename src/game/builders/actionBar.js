@@ -375,7 +375,7 @@ function brickNeighbour(b) {
     b.box('brick', [w, 0.5, 0.36], [0, 7.25, -0.1], { tint: '#a9573e' })
     for (const s of [-1, 1]) b.box('plaster', [0.2, 7.5, d - 0.3], [s * (w / 2 - 0.1), 3.75, -d / 2 - 0.15], { tint: '#c9b8a6' })
     b.box('plaster', [w, 7.5, 0.2], [0, 3.75, -d + 0.1], { tint: '#c9b8a6' })
-    b.box('plaster', [w - 0.4, 0.2, d - 0.6], [0, 7.38, -d / 2 - 0.1], { tint: '#b9a896' })
+    b.box('plaster', [w - 0.4, 0.2, d - 0.5], [0, 7.38, -d / 2 - 0.05], { tint: '#b9a896' })
     // 一樓牆邊的綠色植物
     pottedPlant(b, [-1.6, 0, -0.9], { seed: 31, size: 1.05, potTint: '#7d5a44' })
     pottedPlant(b, [1.5, 0, -1.0], { seed: 32, size: 0.85, potTint: '#7d5a44' })
@@ -824,8 +824,8 @@ export function buildActionBar(b) {
       { ...zone(-S.half + S.wallT + 0.4, S.half - S.wallT - 0.4, S.counterZ + 0.3, -S.arcade - S.wallT - 0.3), maxY: 2.1, cameraMaxY: 2.75 },
     ],
     viewerBounds: { maxZ: toWorld(0, LANE.length + 3).z },
-    // 窄巷：人物可以貼著兩側的牆與豆花車走，第三人稱鏡頭在這裡停在障礙物前面
-    followAreas: [laneZone(-LANE.half, LANE.half, LANE.mouth, LANE.length)],
+    // 窄巷與騎樓：人物可以貼著兩側的牆、柱與豆花車走，第三人稱鏡頭在這裡停在障礙物前面
+    followAreas: [laneZone(-LANE.half, LANE.half, LANE.mouth, LANE.length), zone(-S.half, S.half, -S.arcade - S.wallT, 0.05)],
   }
 }
 
