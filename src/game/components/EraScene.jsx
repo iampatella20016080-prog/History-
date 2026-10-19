@@ -23,7 +23,8 @@ function distanceToRect(r, x, z) {
 
 /**
  * 可以走進去的建築的室內細部（永樂市場一樓的攤位、天花板設備與吊牌）：
- * 角色或鏡頭接近時才產生（或從店家名錄前往裡面的攤位時），離開一段距離後不再繪製。
+ * 角色接近時才產生（建築觀賞模式也看鏡頭的位置；從店家名錄前往裡面的攤位時也會產生），離開一段距離後不再繪製。
+ * 開始探索之前（開場的鳥瞰鏡頭）不產生。
  * 跟著這個年代的街景快取與釋放；其他年代沒有室內，也就不會產生或繪製。
  * 不投射也不接收陰影，改用略為自發光的材質，看起來像被日光燈均勻照亮。
  */
@@ -43,20 +44,23 @@ function InteriorLayer({ world }) {
   useFrame(({ camera, clock }) => {
     const state = status.current
     const p = playerState.position
+    const { started, viewMode, travel } = useGameStore.getState()
+    // 探索時鏡頭就在角色附近，看角色的位置；觀賞模式的鏡頭可以自由移動，也看鏡頭的位置
+    const useCamera = viewMode === 'viewer'
     let nearest = Infinity
     let loadRadius = 0
     let showRadius = 0
     for (const zone of world.interiors) {
-      const d = Math.min(distanceToRect(zone, p.x, p.z), distanceToRect(zone, camera.position.x, camera.position.z))
+      let d = distanceToRect(zone, p.x, p.z)
+      if (useCamera) d = Math.min(d, distanceToRect(zone, camera.position.x, camera.position.z))
       if (d < nearest) {
         nearest = d
         loadRadius = zone.loadRadius
         showRadius = zone.showRadius
       }
     }
-    const { travel } = useGameStore.getState()
     const travelInside = travel && world.shopModels.some((model) => model.shop.id === travel.shopId && model.shop.inside)
-    if (!state.requested && (nearest < loadRadius || travelInside) && clock.elapsedTime >= state.retryAt) {
+    if (started && !state.requested && (nearest < loadRadius || travelInside) && clock.elapsedTime >= state.retryAt) {
       state.requested = true
       loadEraInterior(world)
         .then((loaded) => {

@@ -27,8 +27,8 @@ const TAP_SLOP = 9
 const TAP_TIME = 450
 /** 觀賞模式：鍵盤 WASD 平移注視點的速度（公尺／秒） */
 const VIEWER_KEY_SPEED = 7
-/** 在室內進入觀賞模式：注視點較低、鏡頭較平，才不會一開始就頂到天花板 */
-const VIEWER_INDOOR_START = { height: 1.7, pitch: 0.16 }
+/** 在室內進入觀賞模式：注視點較低、鏡頭較平也較近，才不會一開始就頂到天花板或退到門外 */
+const VIEWER_INDOOR_START = { height: 1.7, pitch: 0.16, distance: 4.5 }
 
 /**
  * 鏡頭
@@ -355,7 +355,7 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       clampViewerTarget(v.goalTarget, blockers, viewerSpace)
       v.goalYaw = v.yaw + Math.atan2(Math.sin(cameraState.yaw - v.yaw), Math.cos(cameraState.yaw - v.yaw))
       v.goalPitch = start.pitch
-      v.goalDistance = VIEWER.start.distance
+      v.goalDistance = start.distance
       v.lambda = 3
       v.focusNonce = viewerFocus?.nonce ?? v.focusNonce
     } else if (viewMode !== 'viewer' && v.phase === 'active') {
