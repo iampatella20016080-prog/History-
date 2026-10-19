@@ -844,6 +844,30 @@ function glassTexture() {
 }
 
 /* ───────────────────────── 卡通渲染階調 ───────────────────────── */
+/* ───────────────────────── 洗石子（灰色花崗石粒） ───────────────────────── */
+function graniteTexture() {
+  const S = 512
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  const rng = createRng(2471)
+  g.fillStyle = '#d3d2ce'
+  g.fillRect(0, 0, S, S)
+  // 粉刷時的深淺不均與雨痕
+  for (let i = 0; i < 70; i++) {
+    const x = rng() * S
+    const y = rng() * S
+    const r = 30 + rng() * 90
+    const dark = rng() < 0.55
+    wrapped(S, x, y, r, (px, py) => softBlot(g, px, py, r, dark ? '70,72,74' : '250,250,246', 0.03 + rng() * 0.05))
+  }
+  // 石粒：深灰、黑與白色的細小顆粒
+  speckle(g, S, rng, 9000, '58,58,60', 0.25, 0.6, 2.2)
+  speckle(g, S, rng, 2600, '20,20,22', 0.3, 0.7, 1.6)
+  speckle(g, S, rng, 3200, '255,255,252', 0.35, 0.8, 1.8)
+  speckle(g, S, rng, 1400, '128,112,98', 0.2, 0.45, 1.8)
+  return toTexture(canvas)
+}
+
 function toonGradient() {
   // dot(N, L) 由 -1 → 1 對應 8 格：背光、過渡、受光三段
   const values = [82, 82, 82, 82, 170, 255, 255, 255]
@@ -881,6 +905,7 @@ export function getTextures() {
     lattice: latticeTexture(),
     interior: interiorTexture(),
     glass: glassTexture(),
+    granite: graniteTexture(),
     toonGradient: toonGradient(),
   }
   return cache

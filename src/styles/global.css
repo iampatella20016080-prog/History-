@@ -1429,6 +1429,38 @@ kbd {
   transform: rotate(-1.5deg);
 }
 
+.chapter-figures {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 6px 0 18px;
+}
+
+.chapter-figure {
+  margin: 0;
+  padding: 6px 6px 8px;
+  background: var(--paper-light);
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  box-shadow: 0 2px 0 rgba(58, 42, 31, 0.08);
+}
+
+.chapter-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.chapter-figure figcaption {
+  margin-top: 6px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
 .facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1986,6 +2018,10 @@ kbd {
 
   .story__footer {
     padding: 10px 24px 22px;
+  }
+
+  .chapter-figures {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .food-grid,

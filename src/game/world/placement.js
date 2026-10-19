@@ -7,6 +7,9 @@ export const FACING_ROTATION = {
   north: Math.PI,
   east: Math.PI / 2,
   west: -Math.PI / 2,
+  // 街角斜切的店面（例如滋養豆餡舖：面向迪化街與涼州街的路口）
+  southwest: -Math.PI / 4,
+  southeast: Math.PI / 4,
 }
 
 const cache = new Map()

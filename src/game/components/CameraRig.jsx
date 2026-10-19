@@ -36,8 +36,8 @@ export function CameraRig({ blockers, buildings, shopModels }) {
   const gl = useThree((state) => state.gl)
   const size = useThree((state) => state.size)
   // 事件處理只註冊一次，從 ref 讀取目前年代的建築資料
-  const sceneRef = useRef({ blockers, buildings })
-  sceneRef.current = { blockers, buildings }
+  const sceneRef = useRef({ blockers, buildings, shopModels })
+  sceneRef.current = { blockers, buildings, shopModels }
 
   const rig = useMemo(
     () => ({

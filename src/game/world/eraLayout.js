@@ -1,8 +1,9 @@
 import { PIER, PLAZA, STREET } from '../config.js'
-import { getShop, getShopBuilding } from '../../data/shops.js'
+import { getShop, getShopBuilding, getShopsByEra } from '../../data/shops.js'
 import { genericBuildingConfig } from './lineage.js'
 import { getLotPlan } from './lots.js'
 import { templeCollision } from '../builders/specials.js'
+import { ziYangCollision } from '../builders/ziyang.js'
 
 /**
  * 某個年代的街區配置：建築（依地段演變）、街道道具、路燈、電線、燈籠串、碰撞與可行走範圍。
@@ -75,8 +76,9 @@ const PROPS_BY_ERA = {
     { type: 'bench', position: [-41.2, 0, 6.7], rotationY: Math.PI, modern: true },
     { type: 'bench', position: [-38.2, 0, 6.7], rotationY: Math.PI, modern: true },
     { type: 'bench', position: [-41.2, 0, -6.7], rotationY: 0, modern: true },
-    { type: 'bicycle', position: [-36.4, 0, -6.6], rotationY: 0.0 },
-    { type: 'bicycle', position: [-35.6, 0, -6.6], rotationY: 0.0 },
+    // 停在涼州街邊（不擋住從河岸廣場走進涼州街的路）
+    { type: 'bicycle', position: [-37.95, 0, -12.6], rotationY: Math.PI / 2 },
+    { type: 'bicycle', position: [-37.95, 0, -13.5], rotationY: Math.PI / 2 + 0.06 },
     { type: 'bicycle', position: [9.6, 0, 2.45], rotationY: Math.PI },
     { type: 'planter', position: [-30.4, 0, 2.45] },
     { type: 'planter', position: [20.6, 0, -2.45] },
@@ -273,13 +275,36 @@ function arrangeModernRows(buildings) {
   }
 }
 
+/** 形狀特殊的店家建築（以 shop.site 指定位置）額外的可行走範圍與障礙物 */
+const SITE_COLLISION = { ziyang: ziYangCollision }
+
+function siteTransform({ x, z, rotationY = 0 }) {
+  const cos = Math.cos(rotationY)
+  const sin = Math.sin(rotationY)
+  return (lx, lz) => ({ x: x + lx * cos + lz * sin, z: z - lx * sin + lz * cos })
+}
+
+/**
+ * 這個年代以 site 指定位置的店家（例如滋養豆餡舖的轉角建築）：
+ * 只在店家出現的年代取代 site.replaces 列出的一般地段，其他年代的地段完全不變。
+ */
+function siteShops(era) {
+  return getShopsByEra(era)
+    .filter((shop) => shop.site)
+    .map((shop) => ({ shop, config: getShopBuilding(shop, era.id) }))
+    .filter((item) => item.config)
+}
+
 export function createEraLayout(era) {
   const plan = getLotPlan()
   const buildings = []
   const extraWalkable = []
   const extraObstacles = []
+  const sites = siteShops(era)
+  const replaced = new Set(sites.flatMap(({ shop }) => shop.site.replaces ?? []))
 
   for (const lot of plan.lots) {
+    if (replaced.has(lot.id)) continue
     if (lot.kind === 'store') {
       const shop = getShop(lot.storeId)
       const config = getShopBuilding(shop, era.id)
@@ -309,6 +334,23 @@ export function createEraLayout(era) {
       continue
     }
     buildings.push({ id: lot.id, x: lot.x, z: lot.z, rotationY: lot.rotationY, config: genericBuildingConfig(lot, era) })
+  }
+
+  for (const { shop, config } of sites) {
+    const { site } = shop
+    buildings.push({
+      id: `site-${shop.id}`,
+      x: site.x,
+      z: site.z,
+      rotationY: site.rotationY ?? 0,
+      storeId: shop.id,
+      config: { litWindows: era.lighting.glow > 0.5 ? 0.85 : 0.4, ...config },
+    })
+    const collision = SITE_COLLISION[config.archetype]?.(config, siteTransform(site))
+    if (collision) {
+      extraWalkable.push(...collision.walkable)
+      extraObstacles.push(...collision.obstacles)
+    }
   }
 
   if (era.id === 'banquet') diversifyRows(buildings)

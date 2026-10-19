@@ -15,6 +15,7 @@ import { DISPLAY_FONT, registerFontTexture } from './fonts.js'
  * - menu      攤販的手寫菜單牌
  * - modern    今日老屋新生的店招：簡潔、由左至右書寫
  * - label     說明牌（例如「江山樓｜歷史情境重建」）：米白底、由左至右書寫
+ * - engraved  嵌在牆面上的黑色立體字（無底板）；awningBlack 黑色布篷垂邊；whiteCloth 白色布旗、暖簾；road 綠色路名牌
  *
  * 橫式招牌依舊日習慣由右至左書寫（modern 除外）；直式招牌由上而下。
  */
@@ -33,6 +34,14 @@ const STYLES = {
   letters: { bg: null, text: 'gold', shadow: 'rgba(30,20,10,0.75)', letters: true },
   // 說明牌：米白底、深色字、由左至右書寫（標示「歷史情境重建」等說明）
   label: { bg: '#f4eddd', bg2: '#ebe2cf', border: '#8f3a2a', text: '#2b211a', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,95,60,0.05)', ltr: true, sizeH: 0.56, sizeW: 0.9 },
+  // 嵌在洗石子牆上的黑色立體字（滋養豆餡舖的店名），由左至右書寫
+  engraved: { bg: null, text: '#1f1d1b', shadow: '#77746f', ltr: true, sizeH: 0.82, sizeW: 0.84 },
+  // 黑色布篷垂邊上的白色店名
+  awningBlack: { bg: '#1f1d1c', bg2: '#2a2725', border: null, text: '#f1ece1', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', ltr: true, sizeH: 0.66, sizeW: 0.8 },
+  // 白底黑字的布旗與暖簾
+  whiteCloth: { bg: '#f7f5ef', bg2: '#ece8df', border: null, text: '#1f1b18', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,110,95,0.07)' },
+  // 綠底白字的路名牌
+  road: { bg: '#1d6a50', bg2: '#1a6149', border: '#f2f4f0', text: '#ffffff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.02)', ltr: true, sizeH: 0.6, sizeW: 0.82 },
 }
 
 const PAINTED_INKS = ['#a8301f', '#2e4a7a', '#a8301f', '#2a231e']

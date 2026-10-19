@@ -245,6 +245,7 @@ export const ERAS = [
     },
     availableStores: [
       'lin-fu-zhen',
+      'zi-yang',
       'dao-she',
       'ci-sheng-gong',
       'you-ji',

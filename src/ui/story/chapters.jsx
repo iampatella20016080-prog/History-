@@ -1,5 +1,6 @@
 import { getSource } from '../../data/sources.js'
 import { FoodIllustration } from '../FoodIllustration.jsx'
+import { PHOTOS } from './photos.js'
 
 /**
  * 店家介紹的三種章節版型。所有店家共用；版型由章節資料的 type 決定。
@@ -25,6 +26,25 @@ function SourceNote({ sourceIds, onShowSources }) {
   )
 }
 
+/** 實地照片（章節資料的 figures：{ id, caption }） */
+function Figures({ figures }) {
+  const items = (figures ?? []).filter((figure) => PHOTOS[figure.id])
+  if (!items.length) return null
+  return (
+    <div className="chapter-figures">
+      {items.map((figure) => {
+        const photo = PHOTOS[figure.id]
+        return (
+          <figure key={figure.id} className="chapter-figure">
+            <img src={photo.src} width={photo.width} height={photo.height} alt={figure.caption} loading="lazy" decoding="async" />
+            <figcaption>{figure.caption}</figcaption>
+          </figure>
+        )
+      })}
+    </div>
+  )
+}
+
 export function TextChapter({ chapter, onShowSources }) {
   return (
     <article className="chapter chapter--text">
@@ -46,6 +66,8 @@ export function TextChapter({ chapter, onShowSources }) {
           {paragraph}
         </p>
       ))}
+
+      <Figures figures={chapter.figures} />
 
       {chapter.timeline && (
         <ol className="timeline">
