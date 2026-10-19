@@ -11,6 +11,7 @@ import {
   allowedDistance,
   clampViewerTarget,
   followAllowed,
+  inFollowArea,
   indoorFollow,
   interiorAmount,
   orbitDirection,
@@ -86,7 +87,9 @@ function followCamera(world, p, yaw, pitch = CAMERA.pitch, distance = CAMERA.dis
   const target = { x: p.x, y: CAMERA.targetHeight, z: p.z }
   const direction = orbitDirection(yaw, follow.pitch)
   const hit = raycastBoxes(target, direction, follow.distance + 0.45, world.blockers)
-  let allowed = followAllowed(hit, follow.minDistance)
+  // 室內與窄巷停在障礙物前面；街道維持原本的最近距離（與 CameraRig 相同）
+  const tight = k > 0.001 || inFollowArea(p, world.followAreas)
+  let allowed = followAllowed(hit, follow.minDistance, tight)
   if (k > 0.001 && direction.y > 0.01) allowed = Math.min(allowed, Math.max(follow.minDistance, (shot.maxHeight + (1 - k) * 6 - target.y) / direction.y))
   const d = Math.min(follow.distance, allowed)
   return { x: target.x + direction.x * d, y: target.y + direction.y * d, z: target.z + direction.z * d, k, distance: d }
@@ -185,8 +188,15 @@ describe('導演的豆花店：從迪化街走進店裡（碰撞）', () => {
     // 巷子東側的鄰棟立面
     const neighbour = walk(revival, { x: MOUTH.x, z: MOUTH.z + 13 }, { x: 1, z: 0 }, 40)
     assert.ok(neighbour.x < MOUTH.x + LANE.half, `停在 x=${neighbour.x.toFixed(2)}`)
-    // 店裡的空地可以站
+    // 推開貼在前牆內側的門扇、巷底的盆栽、巷口路名牌的柱子、店裡的圓凳
+    assert.ok(!walkableAt(revival, fromShop(1.1, -2.36).x, fromShop(1.1, -2.36).z), '門扇')
+    assert.ok(!walkableAt(revival, MOUTH.x - 2.9, MOUTH.z + 24.5), '巷底西側的盆栽')
+    assert.ok(!walkableAt(revival, MOUTH.x + 3.4, MOUTH.z + 24.55), '巷底東側的盆栽')
+    assert.ok(!walkableAt(revival, MOUTH.x + LANE.half - 0.3, MOUTH.z - 0.6), '路名牌的柱子')
+    assert.ok(!walkableAt(revival, fromShop(0.95, -3.3).x, fromShop(0.95, -3.3).z), '圓凳')
+    // 店裡的空地可以站；門口沒有被門扇擋住
     assert.ok(walkableAt(revival, fromShop(0, -4.2).x, fromShop(0, -4.2).z))
+    assert.ok(walkableAt(revival, fromShop(-0.1, -1.9).x, fromShop(-0.1, -1.9).z), '門口')
   })
 
   test('換到其他年代時，站在店裡或巷子裡的人物會被推到最近、可以走的街道上', () => {
@@ -235,6 +245,10 @@ describe('導演的豆花店：互動、介紹鏡頭與店家名錄', () => {
     for (const id of ['action-bar-lane-brick', 'action-bar-lane-tan', 'action-bar-truck']) {
       assert.equal(revival.buildings.find((item) => item.id === id).storeId, null, id)
     }
+    // 巷子後方的平頂老屋不是另外的聚焦目標（點它們時聚焦豆花店的立面，而不是被拉進店裡）
+    assert.ok(!revival.buildings.some((item) => /filler/.test(item.id)))
+    const roof = { x: MOUTH.x + 13, y: 4, z: MOUTH.z + 28 }
+    assert.ok(facade.parts.some((part) => insideBox(roof, part, 0.01)), '後方平頂老屋的遮擋方塊屬於豆花店')
   })
 })
 
@@ -283,11 +297,51 @@ describe('導演的豆花店：鏡頭', () => {
 })
 
 describe('跟隨鏡頭貼著障礙物時不會進到障礙物裡', () => {
-  test('遮擋物比最近距離還近時，鏡頭停在遮擋物前面', () => {
-    assert.equal(followAllowed(10, 1.3), 9.55)
-    assert.equal(followAllowed(1.5, 1.3), 1.3)
-    assert.ok(Math.abs(followAllowed(0.9, 1.3) - 0.78) < 1e-9)
-    assert.equal(followAllowed(0.1, 1.3), 0.15)
+  test('室內與窄巷：遮擋物比最近距離還近時，鏡頭停在遮擋物前面；街道與注視點在方塊裡時維持最近距離', () => {
+    assert.equal(followAllowed(10, 1.3, true), 9.55)
+    assert.equal(followAllowed(1.5, 1.3, true), 1.3)
+    assert.ok(Math.abs(followAllowed(0.9, 1.3, true) - 0.78) < 1e-9)
+    assert.equal(followAllowed(0.1, 1.3, true), 0.15)
+    // 注視點在方塊裡（hit 為 0）：看不出牆在哪裡，維持最近距離
+    assert.equal(followAllowed(0, 1.3, true), 1.3)
+    // 街道（不是 tight）：和修改前一樣
+    for (const hit of [0, 0.345, 0.9, 1.5, 10]) assert.equal(followAllowed(hit, 1.3), Math.max(1.3, hit - 0.45))
+  })
+
+  test('只有224巷是貼近障礙物的範圍；其他年代沒有', () => {
+    assert.equal(revival.followAreas.length, 1)
+    assert.ok(inFollowArea({ x: MOUTH.x, z: MOUTH.z + 12 }, revival.followAreas))
+    assert.ok(!inFollowArea({ x: MOUTH.x, z: 0 }, revival.followAreas), '迪化街上不是')
+    for (const era of ERAS.filter((item) => item.id !== 'revival')) assert.equal(buildEraWorldSync(era.id).followAreas.length, 0, era.id)
+  })
+
+  test('街道上的鏡頭和修改前相同：江山樓的騎樓前、各年代騎樓邊，鏡頭不會貼到人物身上', () => {
+    const oldFollow = (world, p, yaw) => {
+      const follow = indoorFollow(CAMERA.pitch, CAMERA.distance, 0, null)
+      const target = { x: p.x, y: CAMERA.targetHeight, z: p.z }
+      const direction = orbitDirection(yaw, follow.pitch)
+      const hit = raycastBoxes(target, direction, follow.distance + 0.45, world.blockers)
+      return Math.min(follow.distance, Math.max(follow.minDistance, hit - 0.45))
+    }
+    const banquet = buildEraWorldSync('banquet')
+    // 江山樓的互動點與騎樓前（注視點會在江山樓粗略的遮擋方塊裡）
+    const spots = [{ world: banquet, points: [{ x: -13.5, z: 2.05 }, { x: -13.5, z: 2.48 }, { x: -16, z: 2.3 }] }]
+    for (const id of ['modern', 'postwar', 'revival']) {
+      const world = id === 'revival' ? revival : buildEraWorldSync(id)
+      spots.push({ world, points: [-20, -6, 4, 12].flatMap((x) => [{ x, z: 2.48 }, { x, z: -2.48 }]) })
+    }
+    for (const { world, points } of spots) {
+      for (const p of points) {
+        for (let i = 0; i < 12; i++) {
+          const yaw = (i / 12) * Math.PI * 2
+          const cam = followCamera(world, p, yaw)
+          if (cam.k > 0.001 || inFollowArea(p, world.followAreas)) continue
+          const where = `${world.eraId} (${p.x}, ${p.z}) yaw ${yaw.toFixed(2)}`
+          assert.ok(Math.abs(cam.distance - oldFollow(world, p, yaw)) < 1e-9, where)
+          assert.ok(cam.distance >= 1.3 - 1e-9, `${where}：${cam.distance.toFixed(2)} m`)
+        }
+      }
+    }
   })
 
   test('站在豆花車旁、巷子的牆邊與店裡的牆邊，鏡頭朝向障礙物時都不在方塊裡', () => {

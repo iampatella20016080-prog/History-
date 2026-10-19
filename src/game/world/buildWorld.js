@@ -212,6 +212,7 @@ export function* eraWorldSteps(eraId) {
   const buildings = []
   const interiors = []
   const viewerRegions = []
+  const followAreas = []
   let viewerBounds = null
   let hasTemple = false
 
@@ -251,6 +252,7 @@ export function* eraWorldSteps(eraId) {
     // 室內範圍記下所屬的建築，按需載入時只產生這棟建築的室內
     if (result.interiors) interiors.push(...result.interiors.map((zone) => ({ ...zone, building: building.id })))
     if (result.viewerRegions) viewerRegions.push(...result.viewerRegions)
+    if (result.followAreas) followAreas.push(...result.followAreas)
     if (result.viewerBounds) viewerBounds = { ...(viewerBounds ?? {}), ...result.viewerBounds }
     if (archetype === 'temple') {
       hasTemple = true
@@ -328,6 +330,8 @@ export function* eraWorldSteps(eraId) {
     interiors,
     viewerRegions,
     viewerBounds,
+    // 第三人稱鏡頭要貼近障礙物的範圍（窄巷；室內另外判斷）
+    followAreas,
   }
 }
 

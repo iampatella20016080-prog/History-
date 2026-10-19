@@ -56,10 +56,9 @@ function shopToLane(x, z) {
   return [ox + x * c + z * s, oz - x * s + z * c]
 }
 
-/** 黑框的長方形窗：外框、橫豎窗櫺、深色玻璃、內側的白色窗簾與白色 X 膠帶 */
+/** 黑框的長方形窗：外框、橫豎窗櫺、深色玻璃與白色 X 膠帶 */
 function window2F(b, x, y, w, h, { tape = true } = {}) {
   b.box('glass', [w - 0.1, h - 0.1, 0.04], [x, y, -0.08], { tint: '#3a4148' })
-  b.box('plain', [w - 0.2, h * 0.55, 0.02], [x, y + h * 0.15, -0.14], { tint: '#e9ecea' })
   for (const s of [-1, 1]) {
     b.box('dark', [0.06, h, 0.08], [x + s * (w / 2 - 0.03), y, -0.04], { tint: '#1f2224' })
     b.box('dark', [w, 0.06, 0.08], [x, y + s * (h / 2 - 0.03), -0.04], { tint: '#1f2224' })
@@ -135,7 +134,7 @@ function lane(b) {
     for (let i = 0; i < 6; i++) b.box('dark', [0.42, 0.01, 0.04], [half - 0.45, 0.052, z - 0.36 + i * 0.145], { tint: '#1f2020' })
   }
   // 巷口的綠色路名牌
-  b.cylinder('steel', 0.04, 0.04, 2.7, 8, [half - 0.3, 1.35, -0.6], { tint: '#9aa09f' })
+  b.cylinder('steel', 0.04, 0.04, 2.44, 8, [half - 0.3, 1.22, -0.6], { tint: '#9aa09f' })
   b.box('plain', [1.18, 0.34, 0.03], [half - 0.3, 2.62, -0.6], { tint: '#1d6a50' })
   b.addSign({ text: '迪化街一段224巷', style: 'road', width: 1.12, height: 0.28, position: [half - 0.3, 2.62, -0.62], rotationY: Math.PI })
   b.addSign({ text: '迪化街一段224巷', style: 'road', width: 1.12, height: 0.28, position: [half - 0.3, 2.62, -0.58] })
@@ -195,7 +194,8 @@ function shopShell(b) {
   const [dx0, dx1] = door
   for (const x of [dx0, dx1]) b.box('wood', [0.08, openTop, 0.24], [x, openTop / 2, fz - 0.1], { tint: WOOD_DARK })
   b.box('wood', [dx1 - dx0 + 0.16, 0.1, 0.24], [(dx0 + dx1) / 2, openTop + 0.05, fz - 0.1], { tint: WOOD_DARK })
-  b.group([dx1 - 0.04, 0, fz - wallT], -1.35, () => {
+  // 門扇整個推開、貼著前牆內側（不擋住門口與店內的走道）
+  b.group([dx1 - 0.04, 0, fz - wallT - 0.03], Math.PI + 0.04, () => {
     b.box('wood', [0.86, openTop - 0.08, 0.05], [-0.43, (openTop - 0.08) / 2, 0], { tint: WOOD })
     b.box('glassClear', [0.46, 0.9, 0.02], [-0.43, 1.65, 0.03], { tint: '#e7eef0' })
     b.box('steel', [0.03, 0.22, 0.04], [-0.78, 1.05, 0.05], { tint: '#c9a46a' })
@@ -283,7 +283,7 @@ function shopShell(b) {
     b.box('plaster', [wallT, parapet - groundH, arcade - 0.3], [s * (half - wallT / 2), (groundH + parapet) / 2, -0.3 - (arcade - 0.3) / 2], { tint: '#cfcac0', grime: 0.2 })
   }
   b.box('plaster', [half * 2, top, wallT], [0, top / 2, -depth + wallT / 2], { tint: '#cfcac0', grime: 0.2 })
-  b.box('plaster', [half * 2, 0.2, depth], [0, top - 0.1, -depth / 2], { tint: '#bfb9ae' })
+  b.box('plaster', [half * 2 - 2 * wallT, 0.2, depth - 0.3 - wallT], [0, top - 0.1, (-0.3 + SHOP.backZ) / 2], { tint: '#bfb9ae' })
   // 屋頂上的加蓋鐵皮屋與水塔
   b.box('plaster', [half * 2 - 1, 2.2, 3.4], [0, top + 1.1, -depth + 2.0], { tint: '#d9d6cf' })
   b.box('roof', [half * 2 - 0.6, 0.08, 3.8], [0, top + 2.28, -depth + 2.0], { rotation: [0.08, 0, 0], tint: '#a9adae' })
@@ -294,7 +294,7 @@ function shopShell(b) {
   for (const s of [-1, 1]) {
     b.box('dark', [0.04, ceiling, depth - arcade - 0.4], [s * (half - wallT - 0.02), ceiling / 2, front - (depth - arcade) / 2], { tint: '#3b2f27' })
   }
-  b.box('dark', [half * 2 - 0.4, ceiling, 0.04], [0, ceiling / 2, SHOP.backZ - 0.02], { tint: '#3b2f27' })
+  b.box('dark', [half * 2 - 0.4, ceiling, 0.02], [0, ceiling / 2, SHOP.backZ + 0.012], { tint: '#3b2f27' })
   // 從門口與櫥窗透出的暖光
   b.addGlow((dx0 + dx1) / 2, 1.9, fz - 0.6, 1.6, '#ffc98a')
   b.addPool((dx0 + dx1) / 2, fz + 0.9, 1.4, '#ffcf96')
@@ -375,7 +375,7 @@ function brickNeighbour(b) {
     b.box('brick', [w, 0.5, 0.36], [0, 7.25, -0.1], { tint: '#a9573e' })
     for (const s of [-1, 1]) b.box('plaster', [0.2, 7.5, d - 0.3], [s * (w / 2 - 0.1), 3.75, -d / 2 - 0.15], { tint: '#c9b8a6' })
     b.box('plaster', [w, 7.5, 0.2], [0, 3.75, -d + 0.1], { tint: '#c9b8a6' })
-    b.box('plaster', [w, 0.2, d], [0, 7.4, -d / 2], { tint: '#b9a896' })
+    b.box('plaster', [w - 0.4, 0.2, d - 0.6], [0, 7.38, -d / 2 - 0.1], { tint: '#b9a896' })
     // 一樓牆邊的綠色植物
     pottedPlant(b, [-1.6, 0, -0.9], { seed: 31, size: 1.05, potTint: '#7d5a44' })
     pottedPlant(b, [1.5, 0, -1.0], { seed: 32, size: 0.85, potTint: '#7d5a44' })
@@ -387,7 +387,10 @@ function whiteShed(b) {
   const w = 3.2
   const d = 6.6
   b.group([LANE.half, 0, 23.4], -Math.PI / 2, () => {
-    b.box('plaster', [w, 3.4, d], [0, 1.7, -d / 2 - 0.4], { tint: '#ecebe6', grime: 0.15 })
+    // 店面內凹：玻璃後面看得到暗色的店內與吊燈
+    b.box('plaster', [w, 3.4, d - 0.55], [0, 1.7, -0.95 - (d - 0.55) / 2], { tint: '#ecebe6', grime: 0.15 })
+    for (const s of [-1, 1]) b.box('plaster', [0.12, 3.4, 0.6], [s * (w / 2 - 0.06), 1.7, -0.68], { tint: '#ecebe6', grime: 0.15 })
+    b.box('plaster', [w, 0.9, 0.6], [0, 2.95, -0.68], { tint: '#ecebe6', grime: 0.15 })
     b.box('glassClear', [w - 0.5, 2.3, 0.04], [0, 1.35, -0.38], { tint: '#e6ecee' })
     for (const x of [-w / 2 + 0.25, 0, w / 2 - 0.25]) b.box('steel', [0.06, 2.4, 0.06], [x, 1.3, -0.36], { tint: '#d4d6d4' })
     b.box('dark', [w - 0.6, 2.2, 0.04], [0, 1.3, -0.9], { tint: '#3e3a35' })
@@ -605,7 +608,11 @@ function registerBlockers(b) {
     b.addBlocker(-half, half, ceiling, groundH, -depth, front)
     // 側邊突出的招牌
     b.addBlocker(half - 0.4, half + 0.05, groundH + 0.6, groundH + 3.4, 0.4, 1.55)
+    // 推開的門扇（貼著前牆內側）
+    b.addBlocker(door[1] - 0.04, door[1] + 0.86, 0, 2.5, front - wallT - 0.1, front - wallT)
   })
+  // 巷子後方的平頂老屋：只擋鏡頭，屬於豆花店這棟建築（觀賞模式點它們時聚焦豆花店的立面）
+  for (const [x0, x1, z0, z1, h] of FILLERS) b.addBlocker(x0, x1, 0, h + 0.45, z0, z1)
   // 豆花櫃台（另外成為一個可以點選、聚焦的目標）
   const start = b.blockers.length
   b.group(SHOP.origin, SHOP.rotationY, () => {
@@ -624,9 +631,7 @@ function registerBlockers(b) {
   add('action-bar-lane-shed', [lh, lh + 7, 0, 3.8, 21.8, length], laneFacade(b, lh, 23.4, -1, 0, 3.2, 3.8))
   add('action-bar-lane-tan', [-lh - 5.4, -lh, 0, 11, 11, length], laneFacade(b, -lh, 18, 1, 0, 14, 11))
   add('action-bar-lane-end', [-5, 5, 0, 6.8, length, length + 7], laneFacade(b, 0, length, 0, -1, 7, 6.8))
-  FILLERS.forEach(([x0, x1, z0, z1, h], i) => {
-    add(`action-bar-lane-filler-${i}`, [x0, x1, 0, h + 0.45, z0, z1], laneFacade(b, (x0 + x1) / 2, z0, 0, -1, x1 - x0, h))
-  })
+
   add(
     'action-bar-truck',
     [TRUCK.x - TRUCK.width / 2 - 0.1, TRUCK.x + TRUCK.width / 2 + 0.1, 0, 2.85, TRUCK.z - 0.4, TRUCK.z + TRUCK.length + 0.1],
@@ -685,8 +690,16 @@ export function actionBarCollision(config, transform) {
     fromShop(1.4, 2.1, -1.45, -0.85),
     fromShop(2.05, 2.55, -1.8, -1.3),
     fromShop(-2.85, -1.38, -1.8, -0.65),
-    // 店內：櫥窗前的豆花展示桌、右側的長椅與兩張小桌、左後方的攝影機腳架與飲水櫃
+    // 巷底的兩盆盆栽與巷口路名牌的柱子
+    rect(-3.3, -2.5, 24.1, 25),
+    rect(3.0, 3.5, 24.15, 25),
+    rect(half - 0.38, half - 0.22, -0.68, -0.52),
+    // 推開貼在前牆內側的門扇
+    fromShop(S.door[1] - 0.06, S.door[1] + 0.9, -S.arcade - S.wallT - 0.13, -S.arcade - S.wallT + 0.02),
+    // 店內：櫥窗前的豆花展示桌、右側的長椅與兩張小桌、兩張圓凳、左後方的攝影機腳架與飲水櫃
     fromShop(-2.35, -1.2, -3.15, -2.25),
+    fromShop(0.77, 1.13, -3.48, -3.12),
+    fromShop(0.77, 1.13, -5.28, -4.92),
     fromShop(2.15, 2.8, -6.2, -2.3),
     fromShop(1.15, 1.85, -3.65, -2.95),
     fromShop(1.15, 1.85, -5.45, -4.75),
@@ -811,6 +824,8 @@ export function buildActionBar(b) {
       { ...zone(-S.half + S.wallT + 0.4, S.half - S.wallT - 0.4, S.counterZ + 0.3, -S.arcade - S.wallT - 0.3), maxY: 2.1, cameraMaxY: 2.75 },
     ],
     viewerBounds: { maxZ: toWorld(0, LANE.length + 3).z },
+    // 窄巷：人物可以貼著兩側的牆與豆花車走，第三人稱鏡頭在這裡停在障礙物前面
+    followAreas: [laneZone(-LANE.half, LANE.half, LANE.mouth, LANE.length)],
   }
 }
 

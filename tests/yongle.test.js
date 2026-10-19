@@ -11,6 +11,7 @@ import {
   allowedDistance,
   clampViewerTarget,
   followAllowed,
+  inFollowArea,
   indoorFollow,
   interiorAmount,
   orbitDirection,
@@ -61,7 +62,9 @@ function followCamera(world, p, yaw, pitch = CAMERA.pitch, distance = CAMERA.dis
   const target = { x: p.x, y: CAMERA.targetHeight, z: p.z }
   const direction = orbitDirection(yaw, follow.pitch)
   const hit = raycastBoxes(target, direction, follow.distance + 0.45, world.blockers)
-  let allowed = followAllowed(hit, follow.minDistance)
+  // 室內與窄巷停在障礙物前面；街道維持原本的最近距離（與 CameraRig 相同）
+  const tight = k > 0.001 || inFollowArea(p, world.followAreas)
+  let allowed = followAllowed(hit, follow.minDistance, tight)
   if (k > 0.001 && direction.y > 0.01) allowed = Math.min(allowed, Math.max(follow.minDistance, (shot.maxHeight + (1 - k) * 6 - target.y) / direction.y))
   const d = Math.min(follow.distance, allowed)
   return { x: target.x + direction.x * d, y: target.y + direction.y * d, z: target.z + direction.z * d, k, distance: d }

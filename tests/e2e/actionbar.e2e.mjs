@@ -62,9 +62,9 @@ function record(test, step, ok, detail = '') {
   console.log(`${ok ? '✔' : '✘'} [${test}] ${step}${detail ? ` — ${detail}` : ''}`)
 }
 
-const waitFor = (page, fn, arg, timeout) =>
+const waitFor = (page, fn, arg, timeout, polling = 250) =>
   page
-    .waitForFunction(fn, arg, { timeout, polling: 250 })
+    .waitForFunction(fn, arg, { timeout, polling })
     .then(() => true)
     .catch(() => false)
 
@@ -206,10 +206,50 @@ async function runDevice(browser, device) {
         await page.keyboard.up('ShiftLeft')
       }
     }
-    const reached = await waitFor(page, until, arg, WALK_TIMEOUT)
+    // 每個影格檢查一次，條件成立的那個影格就放開（畫面更新率高時也不會衝過轉角）
+    const reached = await waitFor(page, until, arg, WALK_TIMEOUT, 'raf')
     await release()
     return reached
   }
+  /** 等人物停下來（放開按鍵或搖桿後還會減速滑行一小段）：連續兩個影格的位置幾乎不變 */
+  const settle = () =>
+    waitFor(
+      page,
+      () => {
+        const d = window.__DDC__
+        const p = d.playerState.position
+        const now = { x: p.x, z: p.z, frame: d.frameCount }
+        const prev = window.__abSettle
+        if (!prev || prev.frame === now.frame) {
+          window.__abSettle = prev ?? now
+          return false
+        }
+        window.__abSettle = now
+        return Math.hypot(now.x - prev.x, now.z - prev.z) < 0.002
+      },
+      null,
+      60000,
+    ).then(() =>
+      page.evaluate(() => {
+        window.__abSettle = null
+      }),
+    )
+  /**
+   * 轉彎前對準：巷子的轉角是直角、大門只有約 1.4 公尺寬，停下來的位置會因為畫面更新率而差幾十公分；
+   * 把人物移到轉角的中線上（回傳移動的距離，太遠表示其實沒有走到轉角）
+   */
+  const align = (axis, value) =>
+    page.evaluate(
+      ({ axis, value }) => {
+        const d = window.__DDC__
+        const p = d.playerState.position
+        const moved = Math.abs(p[axis] - value)
+        p[axis] = value
+        d.playerState.velocity.set(0, 0, 0)
+        return moved
+      },
+      { axis, value },
+    )
   const frames = async (n) => {
     const start = await page.evaluate(() => window.__DDC__.frameCount ?? 0)
     await waitFor(page, (goal) => (window.__DDC__.frameCount ?? 0) >= goal, start + n, 60000)
@@ -226,22 +266,28 @@ async function runDevice(browser, device) {
   /** 從迪化街走進巷子、穿過大門走到櫃台前 */
   const walkIn = async () => {
     await face('south')
-    const lane = await hold((z) => window.__DDC__.playerState.position.z > z, DOOR_Z - 0.25)
+    const reached = await hold((z) => window.__DDC__.playerState.position.z > z, DOOR_Z - 0.25)
+    await settle()
     const a = await state(page)
+    const correction = await align('z', DOOR_Z)
     await face('east')
     const shop = await hold(() => {
       const d = window.__DDC__
       return d.playerState.position.x > 31.0 && d.useGameStore.getState().nearbyShopId === 'action-bar'
     })
-    return { lane, shop, laneState: a }
+    await settle()
+    return { lane: reached && correction < 0.6, shop, laneState: a, correction }
   }
   /** 從店裡走回巷子、走回迪化街 */
   const walkOut = async () => {
     await face('west')
-    const lane = await hold((x) => window.__DDC__.playerState.position.x < x, LANE_X + 0.4)
+    const reached = await hold((x) => window.__DDC__.playerState.position.x < x, LANE_X + 0.4)
+    await settle()
+    const correction = await align('x', LANE_X)
     await face('north')
     const street = await hold(() => window.__DDC__.playerState.position.z < 1.6)
-    return { lane, street }
+    await settle()
+    return { lane: reached && correction < 0.6, street, correction }
   }
   const viewerSettled = () =>
     frames(3).then(() =>
@@ -488,7 +534,9 @@ async function runDevice(browser, device) {
     const sb = await state(page)
     const ok = a.lane && a.shop && b.lane && b.street && inShop(sa) && sa.indoor > 0.8 && !sa.camInside && !sb.camInside && sb.z < 2 && sa.era === 'revival' && sb.era === 'revival'
     cycles.push(ok)
-    console.log(`    第 ${i + 1} 次：進 (${round(sa.x)}, ${round(sa.z)}) 店內 ${round(sa.indoor)}；出 (${round(sb.x)}, ${round(sb.z)})${ok ? '' : '（失敗）'}`)
+    console.log(
+      `    第 ${i + 1} 次：進 (${round(sa.x)}, ${round(sa.z)}) 店內 ${round(sa.indoor)}（轉角對準 ${round(a.correction)} m）；出 (${round(sb.x)}, ${round(sb.z)})（對準 ${round(b.correction)} m）${ok ? '' : '（失敗）'}`,
+    )
   }
   const cycleStats = await samplerStats(page)
   const after = await page.evaluate(() => ({

@@ -12,12 +12,14 @@ import {
   clampViewerTarget,
   facadeOf,
   followAllowed,
+  inFollowArea,
   indoorFollow,
   interiorAmount,
   orbitDirection,
   pickBuilding,
   planBuildingFocus,
   segmentBlocked,
+  segmentCrossesWall,
 } from '../viewerCamera.js'
 import { useGameStore } from '../../state/useGameStore.js'
 
@@ -56,7 +58,7 @@ function horizontalDistanceToSegment(p, a, b) {
  * - 鏡頭不穿牆、不低於地面、不離開街區；返回探索時平滑回到角色身後
  * - 可以走進去的建築（viewerSpace 的額外範圍）：注視點可以移進騎樓與一樓室內，高度不超過天花板
  */
-export function CameraRig({ blockers, buildings, shopModels, interiors = [], viewerSpace }) {
+export function CameraRig({ blockers, buildings, shopModels, interiors = [], followAreas = [], viewerSpace }) {
   const camera = useThree((state) => state.camera)
   const gl = useThree((state) => state.gl)
   const size = useThree((state) => state.size)
@@ -499,7 +501,9 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       rig.direction.set(Math.sin(cameraState.yaw) * cosPitch, Math.sin(pitch), Math.cos(cameraState.yaw) * cosPitch)
       if (cameraState.snap) rig.collisionDistance = wanted
       const hit = raycastBoxes(rig.target, rig.direction, wanted + 0.45, blockers)
-      let allowed = followAllowed(hit, minDistance)
+      // 室內與窄巷（遮擋方塊貼著實際的牆與車）：鏡頭停在障礙物前面；街道維持原本的最近距離
+      const tight = k > 0.001 || inFollowArea(p, followAreas)
+      let allowed = followAllowed(hit, minDistance, tight)
       if (k > 0.001 && rig.direction.y > 0.01) {
         // 室內的鏡頭高度上限（在吊牌與燈具下方）；越接近街道上限越高
         const maxHeight = shot.maxHeight + (1 - k) * 6
@@ -516,8 +520,8 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       rig.focus.copy(rig.target)
       rig.followLambda = damp(rig.followLambda, 10, 1.6, dt)
       lambda = rig.followLambda
-      // 目標位置在牆、柱或車的另一側（例如鏡頭被拉到障礙物前面）：直接切過去，不從障礙物裡平滑穿過
-      if (segmentBlocked(rig.position, rig.desiredPosition, blockers)) cut = true
+      // 室內與窄巷：目標位置在牆、柱或車的另一側（例如鏡頭被拉到障礙物前面）時直接切過去，不從障礙物裡平滑穿過
+      if (tight && segmentCrossesWall(rig.position, rig.desiredPosition, blockers)) cut = true
     }
 
     // 開發模式：除錯用的自由鏡頭（截圖檢查建築用，正式版不包含）

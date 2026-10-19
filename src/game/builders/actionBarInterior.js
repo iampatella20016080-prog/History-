@@ -492,7 +492,7 @@ function displayTable(b) {
   toppingSaucer(b, x + 0.22, 0.79, z + 0.25, 'green', 23)
   for (const dx of [-0.42, 0.42]) b.box('woodLight', [0.02, 0.01, 0.16], [x + dx, 0.795, z + 0.24], { rotation: [0, 0.5, 0], tint: '#d7b98c' })
   // 桌旁的導演椅
-  directorChair(b, x + 0.05, z + 0.62, Math.PI)
+  directorChair(b, x + 0.05, z + 0.43, Math.PI)
 }
 
 export function buildActionBarInterior(b) {

@@ -36,6 +36,7 @@ export function World({ world, promptLayer, onSwap }) {
         buildings={world.buildings}
         shopModels={world.shopModels}
         interiors={world.interiors}
+        followAreas={world.followAreas}
         viewerSpace={viewerSpace}
       />
       <InteractionSystem shopModels={world.shopModels} />

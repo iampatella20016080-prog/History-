@@ -58,11 +58,33 @@ const FOLLOW_WALL_GAP = 0.12
 const FOLLOW_NEAREST = 0.15
 
 /**
- * 第三人稱鏡頭可以退到的距離：射線在 hit 公尺碰到遮擋物時，退到遮擋物前 0.45 公尺，但至少保持 minDistance；
- * 遮擋物比 minDistance 還近時（例如角色貼著巷子的牆或停著的豆花車），鏡頭停在遮擋物前面，不會進到遮擋物裡。
+ * 第三人稱鏡頭可以退到的距離：射線在 hit 公尺碰到遮擋物時，退到遮擋物前 0.45 公尺，但至少保持 minDistance。
+ * tight（室內與建築另外指定的窄巷，遮擋方塊貼著實際的牆、櫃台與車）時，遮擋物比 minDistance 還近
+ * （例如角色貼著巷子的牆或停著的豆花車），鏡頭停在遮擋物前面，不會進到遮擋物裡。
+ * 街道上的遮擋方塊比較粗略（例如騎樓上方的量體也涵蓋了騎樓），維持原本的最近距離；
+ * 注視點本身就在方塊裡（hit 為 0，看不出遮擋物在哪裡）時也維持最近距離。
  */
-export function followAllowed(hit, minDistance) {
-  return Math.min(Math.max(minDistance, hit - 0.45), Math.max(FOLLOW_NEAREST, hit - FOLLOW_WALL_GAP))
+export function followAllowed(hit, minDistance, tight = false) {
+  const loose = Math.max(minDistance, hit - 0.45)
+  if (!tight || hit <= 1e-4) return loose
+  return Math.min(loose, Math.max(FOLLOW_NEAREST, hit - FOLLOW_WALL_GAP))
+}
+
+/** 點是否在建築另外指定的「貼近障礙物」範圍裡（例如豆花店的224巷；室內範圍另外由 interiorAmount 判斷） */
+export function inFollowArea(p, areas = []) {
+  return areas.some((r) => p.x >= r.minX && p.x <= r.maxX && p.z >= r.minZ && p.z <= r.maxZ)
+}
+
+/**
+ * 線段 ab 是否穿過遮擋方塊；不算起點本身所在的方塊
+ * （例如鏡頭還在騎樓上方的粗略量體裡，從裡面往外的射線一定會「碰到」它，但那不是要穿過的牆）。
+ */
+export function segmentCrossesWall(a, b, blockers) {
+  return segmentBlocked(
+    a,
+    b,
+    blockers.filter((box) => !(a.x > box.minX && a.x < box.maxX && a.y > box.minY && a.y < box.maxY && a.z > box.minZ && a.z < box.maxZ)),
+  )
 }
 
 function insideRect(r, p) {
