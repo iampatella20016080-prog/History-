@@ -36,6 +36,8 @@ const shop = getShop('luguo-cafe')
 const zone = revival.interiors.find((item) => item.id === 'luguo-cafe')
 const space = viewerSpaceOf(revival)
 const H2 = ART_YARD.floor2
+/** 二樓樓板的底面（騎樓的天花） */
+const A_SLAB_BOTTOM = ART_YARD.floor2 - ART_YARD.slab
 const P = (x, z) => artYardToWorld(x, z)
 
 function insideBox(p, b, pad = 0) {
@@ -457,6 +459,13 @@ describe('爐鍋咖啡：鏡頭', () => {
       [-0.75, -1.0, 1, H2],
       [-0.3, -10.95, 1, H2],
       [-1.0, -7.2, 1, H2],
+      // 半樓平台貼著樓梯間與一樓店面之間的牆、西牆邊的書架與木格架、冰滴咖啡架前
+      [-2.3, -12.84, 0, 2],
+      [-2.6, -13.2, 0, 2],
+      [-3.2, -4.6, 1, H2],
+      [-3.2, -9.75, 1, H2],
+      [-3.0, -11.0, 1, H2],
+      [-1.0, -11.3, 1, H2],
     ]
     for (const [x, z, level, y] of spots) {
       const p = { ...P(x, z), level, y }
@@ -674,5 +683,178 @@ describe('爐鍋咖啡：介紹內容', () => {
       assert.match(source.url, /^https?:\/\//, id)
     }
     assert.ok(ids.has('taipei-pictorial-watson') && ids.has('artyard-about'))
+  })
+})
+
+describe('爐鍋咖啡：審查後的修正', () => {
+  test('二樓樓梯平台：人物的身體不會伸進樓梯間與店之間的牆（玻璃門兩側）', () => {
+    const wall = P(0, LUGUO_STAIRS.wellMaxZ).z
+    for (const x of [1.9, 2.2, 3.5]) {
+      const p = player(P(x, -13.5).x, P(x, -13.5).z, 1, H2)
+      walkDirection(revival, p, { x: 0, z: 1 }, 30, 0.05)
+      assert.ok(p.z + PLAYER.radius <= wall + 1e-6, `x ${x}：停在 z ${p.z.toFixed(3)}（牆面 ${wall.toFixed(2)}）`)
+      assert.ok(p.level === 1 && p.y === H2)
+    }
+    // 玻璃門仍然走得過去
+    const door = player(P(3.05, -13.1).x, P(3.05, -13.1).z, 1, H2)
+    assert.ok(walkTo(revival, door, P(3.05, -11.2)) < 0.15)
+  })
+
+  test('觀賞模式的起始注視點：二樓每個可以站的位置都在二樓，一樓（含貼著店面）都在一樓', () => {
+    const cafe = revival.collision.walkable.filter((r) => (r.level ?? 0) === 1 && !r.ramp)
+    let checked = 0
+    for (const r of cafe) {
+      for (let x = r.minX + PLAYER.radius; x <= r.maxX - PLAYER.radius; x += 0.25) {
+        for (let z = r.minZ + PLAYER.radius; z <= r.maxZ - PLAYER.radius; z += 0.25) {
+          if (!walkableAt(revival, x, z, 1)) continue
+          const target = { x, y: H2 + 1.7, z }
+          clampViewerTarget(target, revival.blockers, space)
+          assert.ok(target.y > H2 + 0.3, `二樓 (${x.toFixed(2)}, ${z.toFixed(2)})：注視點降到 y ${target.y.toFixed(2)}`)
+          checked++
+        }
+      }
+    }
+    assert.ok(checked > 300, `${checked} 個位置`)
+    // 一樓：迪化街側騎樓貼著店面、巷子側騎樓貼著牆
+    for (const [x, z] of [
+      [-2.0, 0.3],
+      [0.5, 0.3],
+      [2.9, -6.0],
+      [2.9, -11.0],
+    ]) {
+      const target = { ...P(x, z), y: 1.7 }
+      clampViewerTarget(target, revival.blockers, space)
+      assert.ok(target.y < A_SLAB_BOTTOM, `一樓 (${x}, ${z})：注視點升到 y ${target.y.toFixed(2)}`)
+    }
+  })
+
+  test('觀賞模式用 WASD 移動注視點（每步 0.1–0.6 m）：不會穿過二樓的樓板上下樓，只能沿著樓梯', () => {
+    const starts = [
+      [0.4, -6.0, H2 + 1.6],
+      [3.0, -7.6, H2 + 1.6],
+      [0.0, 0.9, H2 + 1.6],
+      [2.6, -14.2, H2 + 1.6],
+      [3.3, -8.0, 2.0],
+      [0.5, 0.9, 2.0],
+      [3.6, -14.5, 1.8],
+    ]
+    const directions = Array.from({ length: 8 }, (_, i) => ({ x: Math.sin((i / 8) * Math.PI * 2), z: Math.cos((i / 8) * Math.PI * 2) }))
+    const inStairwell = (t) => {
+      const local = { x: t.x - ART_YARD.site.x, z: t.z - ART_YARD.site.z }
+      return local.x < LUGUO_STAIRS.run.lower + 0.1 && local.z < LUGUO_STAIRS.wellMaxZ
+    }
+    for (const [x, z, y] of starts) {
+      for (const step of [0.1, 0.3, 0.6]) {
+        for (const d of directions) {
+          const target = { ...P(x, z), y }
+          clampViewerTarget(target, revival.blockers, space)
+          const upstairs = target.y > H2
+          for (let i = 0; i < 40; i++) {
+            const from = { ...target }
+            target.x += d.x * step
+            target.z += d.z * step
+            clampViewerTarget(target, revival.blockers, space, from)
+            if (!inStairwell(target)) {
+              const where = `從 (${x}, ${z}, ${y}) 往 (${d.x.toFixed(2)}, ${d.z.toFixed(2)}) 每步 ${step}：(${target.x.toFixed(2)}, ${target.y.toFixed(2)}, ${target.z.toFixed(2)})`
+              assert.equal(target.y > H2, upstairs, where)
+            }
+            assert.ok(!revival.blockers.some((box) => insideBox(target, box)), `注視點在方塊裡：(${target.x.toFixed(2)}, ${target.y.toFixed(2)}, ${target.z.toFixed(2)})`)
+          }
+        }
+      }
+    }
+  })
+
+  test('永樂市場前廣場的範圍蓋到店的東半部時，店裡的地板與天花仍然有效（拖曳上下、鏡頭高度）', () => {
+    for (const [x, z] of [
+      [2.5, -1.0],
+      [3.2, -3.0],
+      [-1.0, -1.0],
+    ]) {
+      const up = { ...P(x, z), y: H2 + 1.6 }
+      for (let i = 0; i < 30; i++) {
+        const from = { ...up }
+        up.y += 0.3
+        clampViewerTarget(up, revival.blockers, space, from)
+      }
+      assert.ok(up.y <= H2 + 2.4 + 1e-6 && inside(up), `往上拖 (${x}, ${z})：(${up.x.toFixed(2)}, ${up.y.toFixed(2)}, ${up.z.toFixed(2)})`)
+      const down = { ...P(x, z), y: H2 + 1.6 }
+      for (let i = 0; i < 30; i++) {
+        const from = { ...down }
+        down.y -= 0.3
+        clampViewerTarget(down, revival.blockers, space, from)
+      }
+      assert.ok(down.y >= H2 + 0.8 - 1e-6 && inside(down), `往下拖 (${x}, ${z})：(${down.x.toFixed(2)}, ${down.y.toFixed(2)}, ${down.z.toFixed(2)})`)
+      const target = { ...P(x, z), y: H2 + 1.6 }
+      for (let i = 0; i < 16; i++) {
+        const direction = orbitDirection((i / 16) * Math.PI * 2, 1.0)
+        const d = allowedDistance(target, direction, 8, revival.blockers, space)
+        assert.ok(target.y + direction.y * d <= ART_YARD.ceiling2 - 0.6 + 1e-6, `(${x}, ${z}) 方向 ${i}：鏡頭高 ${(target.y + direction.y * d).toFixed(2)}`)
+      }
+    }
+    function inside(t) {
+      return t.x > zone.minX && t.x < zone.maxX && t.z > P(0, LUGUO_CAFE.minZ).z && t.z < zone.maxZ
+    }
+  })
+
+  test('家具有鏡頭的遮擋方塊：書架、木格架、大木櫃、冰滴咖啡架與吧檯上的咖啡機', () => {
+    const covered = (x, y, z) => revival.blockers.some((box) => insideBox({ ...P(x, z), y }, box))
+    for (const type of ['bookshelf', 'latticeShelf', 'backCabinet', 'flyerCabinet', 'sofa', 'roundTable', 'carvedChair']) {
+      for (const item of CAFE_ITEMS.filter((it) => it.type === type)) assert.ok(covered(item.x, H2 + 0.5, item.z), `${type} (${item.x}, ${item.z})`)
+    }
+    const cabinet = CAFE_ITEMS.find((it) => it.type === 'backCabinet')
+    assert.ok(covered(cabinet.x, H2 + 2.3, cabinet.z), '大木櫃的上層')
+    const counter = CAFE_ITEMS.find((it) => it.type === 'barCounter')
+    assert.ok(covered(counter.x, H2 + 1.5, counter.z + counter.w / 2 - 1.6), '義式咖啡機')
+    // 一樓的騎樓沒有被二樓的家具擋住
+    assert.ok(!covered(3.35, 1.5, -7.6))
+  })
+
+  test('樓梯間與一樓店面之間的牆（一樓部分）是鏡頭的遮擋方塊', () => {
+    for (const x of [-2.5, 0, 2.0]) {
+      const p = P(x, LUGUO_STAIRS.wellMaxZ + 0.1)
+      assert.ok(revival.blockers.some((box) => insideBox({ x: p.x, y: 2.0, z: p.z }, box)), `x ${x}`)
+    }
+  })
+
+  test('一樓的資訊熱點（連同離開時的緩衝）不和其他店家的互動範圍重疊', () => {
+    const EXIT_MARGIN = 0.7
+    const placement = getShopPlacement(shop)
+    const others = ERAS.find((era) => era.id === 'revival')
+      .availableStores.filter((id) => id !== 'luguo-cafe')
+      .map((id) => getShop(id))
+      .filter((item) => item?.status === 'open')
+      .map((item) => ({ id: item.id, placement: getShopPlacement(item), radius: item.interaction?.radius ?? 3.2 }))
+      .filter((item) => (item.placement.level ?? 0) === 0)
+    for (const hotspot of placement.hotspots.filter((item) => item.level === 0)) {
+      for (const other of others) {
+        const d = Math.hypot(hotspot.interactionPoint.x - other.placement.interactionPoint.x, hotspot.interactionPoint.z - other.placement.interactionPoint.z)
+        assert.ok(d >= hotspot.radius + EXIT_MARGIN + other.radius, `${hotspot.id} 與 ${other.id}：相距 ${d.toFixed(2)} m`)
+      }
+    }
+  })
+
+  test('店家名錄的「閱讀故事」從第一章開始（不沿用附近的熱點）', () => {
+    const source = readFileSync(new URL('../src/ui/StoreDirectory.jsx', import.meta.url), 'utf8')
+    assert.match(source, /openShop\(shop\.id, null\)/)
+    resetStore('revival')
+    useGameStore.setState({ viewMode: 'explore', activeShopId: null, activeHotspotId: null, nearbyShopId: 'luguo-cafe', nearbyHotspotId: 'stairs' })
+    useGameStore.getState().openShop('luguo-cafe', null)
+    assert.equal(useGameStore.getState().chapterIndex, 0)
+    assert.equal(useGameStore.getState().activeHotspotId, null)
+    useGameStore.getState().closeShop()
+  })
+
+  test('介紹內容：不引用沒有根據的「最高」「最古老」；轉述的報紙內容不加引號；名錄的年份標明是品牌的年份並附上資料來源', () => {
+    const text = JSON.stringify(shop.chapters.filter((chapter) => chapter.type !== 'sources'))
+    assert.doesNotMatch(text, /最古老|不但最高|全臺歸李俊啟氏專營/)
+    assert.doesNotMatch(text, /2011年開幕時就有咖啡店/)
+    assert.match(shop.yearLabel, /品牌/)
+    assert.ok(shop.sourceIds.length >= 3)
+    for (const id of shop.sourceIds) assert.ok(getSource(id), id)
+    const all = new Set(shop.chapters.flatMap((chapter) => chapter.sourceIds ?? []))
+    assert.ok(all.has('boch-opendata-assets') && all.has('boch-opendata-historic'))
+    assert.match(getSource('boch-opendata-historic').url, /1\.2\.json$/)
+    assert.match(getSource('boch-bolero').citation, /「波麗路餐廳」/)
   })
 })

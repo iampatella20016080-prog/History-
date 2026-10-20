@@ -170,9 +170,23 @@ function regionRange(r, x, z) {
   }
 }
 
+/** 注視點在二樓的地板附近或更高時（地板下限以下這個距離內），就算在二樓 */
+const UPPER_FLOOR_MARGIN = 1.0
+
+/**
+ * 包含注視點 (x, z) 的範圍。疊在一樓上方的二樓範圍（有下限 minY，例如爐鍋咖啡）優先：
+ * 注視點在二樓的地板附近或更高時，只看二樓的範圍——鄰近建築寬鬆的範圍（例如永樂市場前廣場）
+ * 蓋到二樓的位置時，二樓的地板與天花仍然有效。沒有這種範圍的地方和以前一樣。
+ */
+function regionsHere(target, regions) {
+  const found = regions.filter((r) => inRegion(r, target.x, target.z))
+  const upper = found.filter((r) => r.minY != null && target.y >= regionRange(r, target.x, target.z).minY - UPPER_FLOOR_MARGIN)
+  return upper.length ? upper : found
+}
+
 /** 包含注視點的範圍；同一個位置有上下疊著的範圍時（例如二樓的咖啡館在一樓騎樓上方），只取高度區間包含注視點的那幾個 */
 function regionsAt(target, regions) {
-  const found = regions.filter((r) => inRegion(r, target.x, target.z))
+  const found = regionsHere(target, regions)
   const level = found.filter((r) => {
     const range = regionRange(r, target.x, target.z)
     return target.y >= range.minY - 1e-6 && target.y <= range.maxY + 1e-6
@@ -222,8 +236,7 @@ function inRegion(r, x, z) {
  */
 function clampRegionHeight(target, regions) {
   let best = null
-  for (const r of regions) {
-    if (!inRegion(r, target.x, target.z)) continue
+  for (const r of regionsHere(target, regions)) {
     const { minY, maxY } = regionRange(r, target.x, target.z)
     const y = clamp(target.y, minY, maxY)
     if (!best || Math.abs(y - target.y) < Math.abs(best - target.y)) best = y
@@ -231,8 +244,58 @@ function clampRegionHeight(target, regions) {
   if (best != null && Number.isFinite(best)) target.y = best
 }
 
-/** 把注視點限制在街道／廣場／碼頭（與年代額外的範圍）上方，並推出建築與樹的範圍（會直接修改 target） */
-export function clampViewerTarget(target, blockers = [], space = DEFAULT_SPACE) {
+/** 注視點一次升降超過這個高度時，檢查是不是穿過了樓板 */
+const FLOOR_JUMP = 0.5
+
+function overBox(p, b) {
+  return p.x > b.minX && p.x < b.maxX && p.z > b.minZ && p.z < b.maxZ
+}
+
+/**
+ * 從 from 移到 to，注視點是不是穿過了樓板：高度改變很多、而且 to 的正上下方在兩個高度之間有遮擋方塊。
+ * 往上一定不行（從一樓騎樓穿過樓板進到二樓）；往下只有在 from 的上方有屋頂時不行（從二樓的店裡穿過地板掉到騎樓），
+ * 從街道或廣場上方的空中降進市場、騎樓（上方沒有屋頂）仍然可以。
+ */
+function throughFloor(from, to, blockers) {
+  const dy = to.y - from.y
+  if (Math.abs(dy) < FLOOR_JUMP) return false
+  const lo = Math.min(from.y, to.y)
+  const hi = Math.max(from.y, to.y)
+  if (!blockers.some((b) => overBox(to, b) && b.maxY > lo && b.minY < hi)) return false
+  return dy > 0 || blockers.some((b) => overBox(from, b) && b.minY >= from.y)
+}
+
+/** 注視點一次移動超過這個距離時，分成幾小步處理（不會一步跨過牆） */
+const VIEWER_SUBSTEP = 0.2
+const subFrom = { x: 0, y: 0, z: 0 }
+
+/**
+ * 把注視點限制在街道／廣場／碼頭（與年代額外的範圍）上方，並推出建築與樹的範圍（會直接修改 target）。
+ * from：移動前的注視點（WASD、拖曳平移、往前推進時傳入）。一次移動很多時（畫面更新率低、往前推進）分成幾小步；
+ * 某一步會讓注視點穿過樓板時，留在那一步之前的位置（像撞到牆一樣）。
+ */
+export function clampViewerTarget(target, blockers = [], space = DEFAULT_SPACE, from = null) {
+  if (!from) return clampStep(target, blockers, space, null)
+  const dx = target.x - from.x
+  const dy = target.y - from.y
+  const dz = target.z - from.z
+  const n = Math.max(1, Math.ceil(Math.hypot(dx, dy, dz) / VIEWER_SUBSTEP))
+  target.x = from.x
+  target.y = from.y
+  target.z = from.z
+  for (let i = 0; i < n; i++) {
+    subFrom.x = target.x
+    subFrom.y = target.y
+    subFrom.z = target.z
+    target.x += dx / n
+    target.y += dy / n
+    target.z += dz / n
+    clampStep(target, blockers, space, subFrom)
+  }
+  return target
+}
+
+function clampStep(target, blockers, space, from) {
   const regions = space.regions
   const inTargetRegion = (x, z) => regions.some((r) => inRegion(r, x, z))
   target.y = clamp(target.y, VIEWER.minTargetY, VIEWER.maxTargetY)
@@ -289,6 +352,11 @@ export function clampViewerTarget(target, blockers = [], space = DEFAULT_SPACE) 
   }
   // 推出方塊後可能換了範圍，再檢查一次高度上限
   clampRegionHeight(target, regions)
+  if (from && throughFloor(from, target, blockers)) {
+    target.x = from.x
+    target.y = from.y
+    target.z = from.z
+  }
   return target
 }
 

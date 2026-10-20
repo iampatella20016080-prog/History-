@@ -706,7 +706,7 @@ export function luguoCollision(config, transform = (x, z) => artYardToWorld(x, z
     rect(landing.minX + 0.02, run.upper + 0.1, flight1.minZ + 0.02, flight2.maxZ - 0.02, { levels: [0, 1], floorY: landing.y }),
     rect(run.upper - 0.15, run.lower + 0.15, flight2.minZ + 0.02, flight2.maxZ - 0.02, { levels: [0, 1], ramp: rampWorld(transform, run.upper, run.lower, landing.y, H2) }),
     // 二樓：樓梯平台、玻璃門、咖啡館
-    rect(top.minX - 0.1, top.maxX - 0.08, flight1.minZ + 0.02, flight2.maxZ + 0.25, { level: 1, floorY: H2 }),
+    rect(top.minX - 0.1, top.maxX - 0.08, flight1.minZ + 0.02, ST.wellMaxZ - 0.03, { level: 1, floorY: H2 }),
     rect(CAFE.door.minX + 0.05, CAFE.door.maxX - 0.05, flight2.maxZ - 0.3, CAFE.minZ + 0.45, { level: 1, floorY: H2 }),
     rect(CAFE.minX + 0.05, CAFE.maxX - 0.05, CAFE.minZ + 0.03, CAFE.maxZ - 0.03, { level: 1, floorY: H2 }),
   ]
@@ -745,7 +745,7 @@ function registerBlockers(b) {
   const H2 = A.floor2
   const C = A.ceiling2
   // 一樓：迪化街側與巷子側的店面（騎樓後面的實心）、樓梯間以外的部分
-  b.addBlocker(-half, wx, 0, H, wellMaxZ + 0.2, 0)
+  b.addBlocker(-half, wx, 0, H, wellMaxZ, 0)
   b.addBlocker(-half, landing.minX - 0.2, 0, H, back, wellMaxZ + 0.2)
   // 巷子側的牆在樓梯入口兩側
   b.addBlocker(wx - wallT, wx, 0, H, back, door.minZ)
@@ -941,18 +941,19 @@ export function buildLuguoCafe(b) {
         showRadius: 22,
       },
     ],
-    // 觀賞模式：注視點可以進到巷子、兩側騎樓、樓梯入口、沿著樓梯走上二樓，再穿過玻璃門進到店裡
+    // 觀賞模式：注視點可以進到巷子、兩側騎樓、樓梯入口、沿著樓梯走上二樓，再穿過玻璃門進到店裡。
+    // 每一層的範圍都蓋到牆前（注視點與牆保持 0.35 m），注視點是被牆擋住、而不是走出範圍後換到上下疊著的另一層
     viewerRegions: [
       { ...rect(LANE.minX + 0.3, LANE.maxX - 0.3, LANE.minZ + 0.4, LANE.mouthZ + 0.6), maxY: 9 },
-      { ...rect(A.arcadeWallX + 0.35, A.half + 0.5, A.back + 0.4, A.front + 0.5), maxY: 2.9, cameraMaxY: 3.45 },
-      { ...rect(-A.half + 0.4, A.half + 0.5, 0.35, A.front + 0.5), maxY: 2.9, cameraMaxY: 3.45 },
+      { ...rect(A.arcadeWallX + 0.2, A.half + 0.5, A.back + 0.4, A.front + 0.5), maxY: 2.9, cameraMaxY: 3.45 },
+      { ...rect(-A.half + 0.4, A.half + 0.5, 0.2, A.front + 0.5), maxY: 2.9, cameraMaxY: 3.45 },
       { ...rect(ST.pad.minX - 0.2, A.arcadeWallX + 0.6, door.minZ + 0.2, door.maxZ - 0.2), maxY: 2.3, cameraMaxY: 2.6 },
       { ...rect(run.upper, run.lower, flight1.minZ + 0.25, flight1.maxZ - 0.25), ramp: rampWorld((x, z) => toWorld(x, z), run.lower, run.upper, 0, landing.y), minY: 0.8, maxY: 2.4, cameraMaxY: 3.2 },
       { ...rect(landing.minX + 0.3, run.upper + 0.2, flight1.minZ + 0.25, flight2.maxZ - 0.25), minY: landing.y + 0.8, maxY: landing.y + 2.4, cameraMaxY: landing.y + 3.6 },
       { ...rect(run.upper, run.lower, flight2.minZ + 0.25, flight2.maxZ - 0.25), ramp: rampWorld((x, z) => toWorld(x, z), run.upper, run.lower, landing.y, A.floor2), minY: 0.8, maxY: 2.4, cameraMaxY: 3.2 },
-      { ...rect(top.minX - 0.2, top.maxX - 0.3, flight2.minZ + 0.25, flight2.maxZ), minY: H2 + 0.8, maxY: H2 + 2.0, cameraMaxY: A.ceiling2 - 0.4 },
+      { ...rect(top.minX - 0.2, top.maxX - 0.3, wellMinZ + 0.3, wellMaxZ), minY: H2 + 0.8, maxY: H2 + 2.0, cameraMaxY: A.ceiling2 - 0.4 },
       { ...rect(CAFE.door.minX + 0.2, CAFE.door.maxX - 0.2, flight2.maxZ - 0.2, CAFE.minZ + 0.4), minY: H2 + 0.8, maxY: H2 + 2.0, cameraMaxY: H2 + 2.3 },
-      { ...rect(CAFE.minX + 0.4, CAFE.maxX - 0.4, CAFE.minZ + 0.4, CAFE.maxZ - 0.4), minY: H2 + 0.8, maxY: H2 + 2.4, cameraMaxY: A.ceiling2 - 0.6 },
+      { ...rect(CAFE.minX + 0.3, CAFE.maxX - 0.3, CAFE.minZ + 0.3, CAFE.maxZ - 0.3), minY: H2 + 0.8, maxY: H2 + 2.4, cameraMaxY: A.ceiling2 - 0.6 },
     ],
     viewerBounds: { minZ: toWorld(0, LANE.minZ - 3).z },
     // 32巷與兩側騎樓：人物可以貼著牆、柱走，第三人稱鏡頭在這裡停在障礙物前面

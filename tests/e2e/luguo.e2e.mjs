@@ -5,7 +5,8 @@
  *   1. 店家名錄有爐鍋咖啡；在出發點（離小藝埕約 15 m）二樓的室內還沒有產生；右下角沒有大型「探索店家」提示
  *   2. 迪化街 → 轉角騎樓 → 巷子側騎樓 → 樓梯入口 → 兩段樓梯 → 二樓的玻璃門 → 吧檯前：
  *      人物一路連續移動（沒有傳送、高度連續變化），到二樓時樓層為 1、地板 4 m；
- *      每一個影格鏡頭都不在牆、樓梯或天花板裡，看得到人物；室內在接近時產生並顯示
+ *      每一個影格鏡頭都不在牆、樓梯、天花板或家具裡，看得到人物；室內在接近時產生並顯示，
+ *      在二樓時不繪製永樂市場的室內
  *   3. 吧檯前的提示是熱點「咖啡吧檯」；按 E／點提示開啟介紹的「咖啡製作與飲食文化」章節（五個章節、五張圖鑑、文獻網址）
  *   4. 走到紅色扭蛋機前，點扭蛋機本身：開啟同一個章節（只是介紹，沒有付費或抽獎）；走到窗邊座位，開啟「小藝埕」章節
  *   5. 建築觀賞模式在店內：鏡頭在店裡、二樓地板與天花之間；旋轉；從店家名錄聚焦小藝埕（鏡頭在迪化街上）；返回探索
@@ -142,6 +143,7 @@ function state(page) {
       camInside: blockers.some((b) => inBox(c, b)),
       indoor: d.indoor?.amount ?? 0,
       interior: d.interiors?.['luguo-cafe'] ?? null,
+      market: d.interiors?.['yong-le-market'] ?? null,
       detailVisible: detail ? detail.visible : null,
       interiorCount: (() => {
         let n = 0
@@ -440,6 +442,12 @@ async function runDevice(browser, device) {
     '鏡頭切換成室內鏡頭（拉近）；接近時產生並顯示二樓的室內',
     atBar.indoor > 0.99 && street.cam.y - street.y > atBar.cam.y - atBar.y && atBar.interior?.loaded === true && atBar.interior?.visible === true,
     `街上鏡頭比人物高 ${round(street.cam.y - street.y)} m → 店內 ${round(atBar.cam.y - atBar.y)} m；室內 ${JSON.stringify(atBar.interior)}`,
+  )
+  record(
+    test,
+    '在二樓時不繪製永樂市場的室內（看不到，省下 iPad 的繪製量）',
+    !atBar.market || atBar.market.visible === false,
+    `永樂市場室內 ${JSON.stringify(atBar.market)}`,
   )
   await shot(page, `${device}-bar`)
 

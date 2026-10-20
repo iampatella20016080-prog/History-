@@ -32,6 +32,8 @@ const TAP_TIME = 450
 const VIEWER_KEY_SPEED = 7
 /** 在室內進入觀賞模式：注視點較低、鏡頭較平也較近，才不會一開始就頂到天花板或退到門外 */
 const VIEWER_INDOOR_START = { height: 1.7, pitch: 0.16, distance: 4.5 }
+/** 觀賞模式移動注視點前的位置（限制注視點不穿過樓板用） */
+const viewerFrom = new Vector3()
 
 /** 點 p 到線段 ab 的水平距離（只看 x、z） */
 function horizontalDistanceToSegment(p, a, b) {
@@ -176,10 +178,11 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], fol
       const cosYaw = Math.cos(v.yaw)
       const sinPitch = Math.sin(v.pitch)
       const cosPitch = Math.cos(v.pitch)
+      viewerFrom.copy(v.goalTarget)
       v.goalTarget.x += (-cosYaw * dx - sinYaw * sinPitch * dy) * scale
       v.goalTarget.y += cosPitch * dy * scale
       v.goalTarget.z += (sinYaw * dx - cosYaw * sinPitch * dy) * scale
-      clampViewerTarget(v.goalTarget, sceneRef.current.blockers, sceneRef.current.space)
+      clampViewerTarget(v.goalTarget, sceneRef.current.blockers, sceneRef.current.space, viewerFrom)
       v.lambda = 9
     }
     // 縮放：factor > 1 拉遠、< 1 拉近；已經拉到最近時，改成往前推進（方便沿街移動）
@@ -188,8 +191,9 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], fol
         const next = v.goalDistance * factor
         if (factor < 1 && v.goalDistance <= VIEWER.minDistance + 0.01) {
           orbitDirection(v.yaw, v.pitch, dir)
+          viewerFrom.copy(v.goalTarget)
           v.goalTarget.addScaledVector(dir, -(1 - factor) * 9)
-          clampViewerTarget(v.goalTarget, sceneRef.current.blockers, sceneRef.current.space)
+          clampViewerTarget(v.goalTarget, sceneRef.current.blockers, sceneRef.current.space, viewerFrom)
         } else if (factor > 1 && next > v.collision + 1.5) {
           v.goalDistance = Math.max(v.goalDistance, Math.min(next, v.collision + 1.5))
         } else {
@@ -453,9 +457,10 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], fol
         const right = (moveInput.right ? 1 : 0) - (moveInput.left ? 1 : 0)
         if (forward || right) {
           const step = VIEWER_KEY_SPEED * (moveInput.run ? 1.8 : 1) * dt
+          viewerFrom.copy(v.goalTarget)
           v.goalTarget.x += (-Math.sin(v.yaw) * forward + Math.cos(v.yaw) * right) * step
           v.goalTarget.z += (-Math.cos(v.yaw) * forward - Math.sin(v.yaw) * right) * step
-          clampViewerTarget(v.goalTarget, blockers, viewerSpace)
+          clampViewerTarget(v.goalTarget, blockers, viewerSpace, viewerFrom)
           v.lambda = 9
         }
       }

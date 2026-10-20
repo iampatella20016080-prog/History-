@@ -38,7 +38,7 @@ import { buildYongleInterior } from '../builders/yongleInterior.js'
 import { buildActionBar } from '../builders/actionBar.js'
 import { buildActionBarInterior } from '../builders/actionBarInterior.js'
 import { buildLuguoCafe } from '../builders/luguoCafe.js'
-import { buildLuguoCafeInterior, cafeSigns } from '../builders/luguoCafeInterior.js'
+import { buildLuguoCafeInterior, cafeFurnitureBlockers, cafeSigns } from '../builders/luguoCafeInterior.js'
 import { buildGrandRestaurant, buildTeaMansion, buildTemple } from '../builders/specials.js'
 import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
@@ -59,10 +59,11 @@ export const BUILDING_BUILDERS = {
   ziyang: buildZiYang,
   'yongle-market': buildYongleMarket,
   'action-bar': buildActionBar,
-  // 小藝埕與二樓的爐鍋咖啡：建築、樓梯與店內的空殼，加上店內的招牌字與燈火（位置與家具的配置相同）
+  // 小藝埕與二樓的爐鍋咖啡：建築、樓梯與店內的空殼，加上店內的招牌字、燈火與家具的鏡頭遮擋（位置與家具的配置相同）
   'luguo-cafe': (b, config) => {
     const result = buildLuguoCafe(b, config)
     cafeSigns(b)
+    cafeFurnitureBlockers(b)
     return result
   },
 }

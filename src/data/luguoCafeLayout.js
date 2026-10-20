@@ -84,9 +84,10 @@ export const LUGUO_HOTSPOTS = [
     label: '小藝埕（屈臣氏大藥房舊址）',
     note: '轉角塔樓的立面保留「A.S. WATSON & CO.」字樣',
     chapter: 'building',
-    point: [3.0, 3.6],
+    // 迪化街上、轉角塔樓前；連同離開時的緩衝（0.7 m），不和稻舍、永樂市場的互動範圍重疊
+    point: [2.4, 3.6],
     level: 0,
-    radius: 2.6,
+    radius: 1.8,
     prompt: [3.0, 3.4, 2.4],
     camera: { position: [-2.8, 2.6, 6.8], target: [2.2, 7.5, 0.5] },
   },

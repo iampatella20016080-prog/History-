@@ -130,8 +130,13 @@ function StoreMarker({ position, shopId, open, scale = 1 }) {
 
 /** 店名提示的位置：有資訊熱點的店家（例如爐鍋咖啡）移到附近那個熱點的提示位置 */
 function PromptAnchor({ shop, anchors, placement, promptLayer }) {
+  const nearby = useGameStore((state) => state.nearbyShopId === shop.id)
   const hotspotId = useGameStore((state) => (state.nearbyShopId === shop.id ? state.nearbyHotspotId : null))
-  const hotspot = hotspotId ? placement.hotspots.find((item) => item.id === hotspotId) : null
+  // 離開時提示會淡出：淡出的這段時間保留最後一個熱點的位置與文字，不跳回店家預設的位置
+  const last = useRef(null)
+  if (nearby) last.current = hotspotId
+  const shown = nearby ? hotspotId : last.current
+  const hotspot = shown ? placement.hotspots.find((item) => item.id === shown) : null
   const position = hotspot?.prompt ?? [anchors.prompt.x, anchors.prompt.y, anchors.prompt.z]
   return (
     <Html position={position} portal={promptLayer} calculatePosition={promptPosition} zIndexRange={[12, 0]} pointerEvents="none">

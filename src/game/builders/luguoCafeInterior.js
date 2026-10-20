@@ -105,6 +105,36 @@ const FOOTPRINT = {
   extinguisher: () => [0.12, 0.12],
 }
 
+/**
+ * 家具的高度（公尺，從二樓地板起算）：鏡頭的遮擋方塊用。
+ * 跟隨鏡頭與觀賞模式的鏡頭停在家具前面，不會停進書架、木櫃或冰滴咖啡架裡。
+ */
+const HEIGHT = {
+  roundTable: 0.78,
+  squareTable: 0.78,
+  sewingDesk: 0.8,
+  lowTable: 0.46,
+  spindleChair: 0.96,
+  windsorChair: 0.96,
+  leatherChair: 1.0,
+  armChair: 0.96,
+  bentwoodChair: 0.96,
+  carvedChair: 1.26,
+  softChair: 0.98,
+  sofa: 0.92,
+  cactus: 1.95,
+  plant: (item) => 1.5 * (item.size ?? 1),
+  floorLamp: 1.75,
+  backCabinet: 2.75,
+  barGate: 0.96,
+  bookshelf: (item) => item.h,
+  magazineRack: 0.92,
+  latticeShelf: (item) => item.h,
+  flyerCabinet: 2.62,
+  bike: 0.72,
+  extinguisher: 0.62,
+}
+
 function itemRotation(item) {
   if (item.face) return Math.atan2(item.face[0] - item.x, item.face[1] - item.z)
   return item.rot ?? 0
@@ -127,6 +157,31 @@ export function cafeObstacles(transform) {
     obstacles.push({ minX: Math.min(a.x, b.x), maxX: Math.max(a.x, b.x), minZ: Math.min(a.z, b.z), maxZ: Math.max(a.z, b.z), level: 1 })
   }
   return obstacles
+}
+
+/**
+ * 家具的鏡頭遮擋方塊（屬於街景，與 cafeObstacles 使用同一份家具配置）。
+ * 吧檯工作台本身與扭蛋機已經是可以點選的物件（luguoCafe.js 的 addSub），這裡另外加上檯面上的咖啡機與磨豆機。
+ */
+export function cafeFurnitureBlockers(b) {
+  for (const item of CAFE_ITEMS) {
+    const footprint = FOOTPRINT[item.type]
+    const height = HEIGHT[item.type]
+    if (!footprint || height == null) continue
+    const [hx, hz] = footprint(item)
+    const h = typeof height === 'function' ? height(item) : height
+    const r = itemRotation(item)
+    const c = Math.abs(Math.cos(r))
+    const sn = Math.abs(Math.sin(r))
+    const ex = hx * c + hz * sn
+    const ez = hx * sn + hz * c
+    b.addBlocker(item.x - ex, item.x + ex, F, F + h, item.z - ez, item.z + ez)
+  }
+  // 吧檯上的磨豆機與義式咖啡機（工作台的本地 x 從 -w/2 + 0.35 到 -w/2 + 2.1；工作台旋轉 90°，本地 x 對應建築的 -z）
+  const counter = CAFE_ITEMS.find((item) => item.type === 'barCounter')
+  const z0 = counter.z + counter.w / 2 - 2.1
+  const z1 = counter.z + counter.w / 2 - 0.35
+  b.addBlocker(counter.x - 0.32, counter.x + 0.3, F + 1.05, F + 1.85, z0, z1)
 }
 
 /* ── 小工具 ─────────────────────────────── */

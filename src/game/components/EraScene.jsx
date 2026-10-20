@@ -4,6 +4,7 @@ import { transitionState } from '../transition.js'
 import { QUALITY_MODES } from '../quality.js'
 import { playerState } from '../runtime.js'
 import { getInteriorMaterials } from '../rendering/materials.js'
+import { interiorAmount } from '../viewerCamera.js'
 import { getLoadedInterior, getLoadedInteriorDetail, loadEraInterior } from '../world/worldManager.js'
 import { useGameStore } from '../../state/useGameStore.js'
 import { GlowLayer } from './GlowLayer.jsx'
@@ -50,7 +51,10 @@ function InteriorZone({ world, zone, detail }) {
     if (viewMode === 'viewer') nearest = Math.min(nearest, distanceToRect(zone, camera.position.x, camera.position.z))
     const travelInside =
       travel && world.shopModels.some((model) => model.shop.id === travel.shopId && (model.shop.inside === zone.id || model.shop.id === zone.id))
-    if (started && !state.requested && (nearest < zone.loadRadius || travelInside) && clock.elapsedTime >= state.retryAt) {
+    // 角色已經在另一棟建築的室內（例如在爐鍋咖啡的二樓、永樂市場裡）：這一棟的室內看不到，不繪製，也先不產生
+    const here = viewMode === 'explore' ? interiorAmount(p, world.interiors, playerState.level) : null
+    const elsewhere = Boolean(here && here.amount >= 0.999 && here.zone.id !== zone.id)
+    if (started && !state.requested && !elsewhere && (nearest < zone.loadRadius || travelInside) && clock.elapsedTime >= state.retryAt) {
       state.requested = true
       loadEraInterior(world, zone)
         .then((loaded) => {
@@ -62,7 +66,7 @@ function InteriorZone({ world, zone, detail }) {
           state.retryAt = clock.elapsedTime + INTERIOR_RETRY
         })
     }
-    state.visible = nearest < zone.showRadius
+    state.visible = nearest < zone.showRadius && !elsewhere
     if (group.current) group.current.visible = state.visible
     if (import.meta.env.DEV && window.__DDC__) {
       window.__DDC__.interiors ??= {}
