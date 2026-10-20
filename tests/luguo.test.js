@@ -17,6 +17,7 @@ import {
   indoorFollow,
   interiorAmount,
   orbitDirection,
+  pickBuilding,
   planBuildingFocus,
   segmentBlocked,
   viewerSpaceOf,
@@ -856,5 +857,78 @@ describe('爐鍋咖啡：審查後的修正', () => {
     assert.ok(all.has('boch-opendata-assets') && all.has('boch-opendata-historic'))
     assert.match(getSource('boch-opendata-historic').url, /1\.2\.json$/)
     assert.match(getSource('boch-bolero').citation, /「波麗路餐廳」/)
+  })
+})
+
+describe('爐鍋咖啡：觀賞模式的注視點貼著牆與家具（第二次審查）', () => {
+  const local = (t) => ({ x: t.x - ART_YARD.site.x, z: t.z - ART_YARD.site.z })
+
+  test('在店裡用 WASD 往各個方向走（每影格 0.12、0.21 m）：注視點不會穿過牆跑到店外', () => {
+    const cafe = revival.collision.walkable.find((r) => r.level === 1 && r.maxX - r.minX > 7)
+    let runs = 0
+    for (let x = cafe.minX + 0.5; x < cafe.maxX - 0.3; x += 0.75) {
+      for (let z = cafe.minZ + 0.5; z < cafe.maxZ - 0.3; z += 0.75) {
+        if (!walkableAt(revival, x, z, 1)) continue
+        for (const lift of [1.0, 1.7]) {
+          for (let h = 0; h < 16; h++) {
+            const yaw = (h / 16) * Math.PI * 2
+            for (const step of [0.117, 0.21]) {
+              const target = { x, y: H2 + lift, z }
+              clampViewerTarget(target, revival.blockers, space)
+              for (let i = 0; i < 40; i++) {
+                const from = { ...target }
+                target.x += Math.sin(yaw) * step
+                target.z += Math.cos(yaw) * step
+                clampViewerTarget(target, revival.blockers, space, from)
+              }
+              const l = local(target)
+              const inRoom = l.x > LUGUO_CAFE.minX && l.x < LUGUO_CAFE.maxX && l.z > LUGUO_CAFE.minZ - 0.25 && l.z < LUGUO_CAFE.maxZ
+              const upstairs = l.z <= LUGUO_CAFE.minZ && l.x > LUGUO_STAIRS.run.upper && target.y > H2
+              assert.ok(inRoom || upstairs || (l.z < LUGUO_CAFE.minZ && l.x < LUGUO_STAIRS.run.lower + 0.2), `從 (${(x - ART_YARD.site.x).toFixed(2)}, ${(z - ART_YARD.site.z).toFixed(2)}) yaw ${h}/16 每步 ${step}：注視點到 (${l.x.toFixed(2)}, ${target.y.toFixed(2)}, ${l.z.toFixed(2)})`)
+              runs++
+            }
+          }
+        }
+      }
+    }
+    assert.ok(runs > 1000, `${runs} 次`)
+  })
+
+  test('斜著往窗邊的牆走：注視點沿著牆滑動，不會卡住', () => {
+    for (const [sx, sz, yaw, axis] of [
+      [3.3, -11.3, Math.PI / 4, 'z'],
+      [-0.8, 0.9, Math.PI / 2 + Math.PI / 4 - Math.PI / 2, 'x'],
+    ]) {
+      const target = { ...P(sx, sz), y: H2 + 2.2 }
+      clampViewerTarget(target, revival.blockers, space)
+      const start = { ...target }
+      for (let i = 0; i < 40; i++) {
+        const from = { ...target }
+        target.x += Math.sin(yaw) * 0.117
+        target.z += Math.cos(yaw) * 0.117
+        clampViewerTarget(target, revival.blockers, space, from)
+      }
+      const moved = Math.abs(target[axis] - start[axis])
+      assert.ok(moved > 2.0, `從 (${sx}, ${sz}) 沿著牆只走了 ${moved.toFixed(2)} m`)
+      assert.ok(target.y > H2, `y ${target.y.toFixed(2)}`)
+    }
+  })
+
+  test('家具的遮擋方塊只給鏡頭用：點窗邊的椅子、吧檯上的咖啡機時，點到的是窗邊座位與咖啡吧檯', () => {
+    const chair = CAFE_ITEMS.find((item) => item.type === 'armChair')
+    const cam = { ...P(0.4, chair.z), y: H2 + 2.0 }
+    const aim = { ...P(chair.x, chair.z), y: H2 + 0.6 }
+    const dir = (a, b) => {
+      const d = { x: b.x - a.x, y: b.y - a.y, z: b.z - a.z }
+      const l = Math.hypot(d.x, d.y, d.z)
+      return { x: d.x / l, y: d.y / l, z: d.z / l }
+    }
+    assert.equal(pickBuilding(cam, dir(cam, aim), revival.buildings)?.id, 'luguo-window')
+    const counter = CAFE_ITEMS.find((item) => item.type === 'barCounter')
+    const machine = { ...P(counter.x, counter.z + counter.w / 2 - 1.6), y: H2 + 1.3 }
+    const cam2 = { ...P(0.6, counter.z + counter.w / 2 - 1.6), y: H2 + 1.9 }
+    assert.equal(pickBuilding(cam2, dir(cam2, machine), revival.buildings)?.id, 'luguo-bar')
+    // 家具仍然擋鏡頭
+    assert.ok(revival.blockers.some((box) => insideBox({ ...P(chair.x, chair.z), y: H2 + 0.5 }, box)))
   })
 })

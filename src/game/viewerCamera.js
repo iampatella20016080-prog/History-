@@ -275,7 +275,10 @@ const subFrom = { x: 0, y: 0, z: 0 }
  * 某一步會讓注視點穿過樓板時，留在那一步之前的位置（像撞到牆一樣）。
  */
 export function clampViewerTarget(target, blockers = [], space = DEFAULT_SPACE, from = null) {
-  if (!from) return clampStep(target, blockers, space, null)
+  if (!from) {
+    clampStep(target, blockers, space, null)
+    return target
+  }
   const dx = target.x - from.x
   const dy = target.y - from.y
   const dz = target.z - from.z
@@ -290,11 +293,26 @@ export function clampViewerTarget(target, blockers = [], space = DEFAULT_SPACE, 
     target.x += dx / n
     target.y += dy / n
     target.z += dz / n
-    clampStep(target, blockers, space, subFrom)
+    if (!clampStep(target, blockers, space, subFrom)) continue
+    // 這一步過不去（會穿過牆或樓板）：改成只沿 x 或只沿 z 走，注視點貼著牆滑動，而不是停住
+    for (const axis of ['x', 'z']) {
+      target[axis] += (axis === 'x' ? dx : dz) / n
+      target.y += dy / n
+      if (!clampStep(target, blockers, space, subFrom)) break
+    }
   }
   return target
 }
 
+/** 這一步不能走：注視點回到 from（回傳 true） */
+function refuse(target, from) {
+  target.x = from.x
+  target.y = from.y
+  target.z = from.z
+  return true
+}
+
+/** 限制一步的注視點；有 from 而且這一步過不去時，注視點回到 from 並回傳 true */
 function clampStep(target, blockers, space, from) {
   const regions = space.regions
   const inTargetRegion = (x, z) => regions.some((r) => inRegion(r, x, z))
@@ -344,20 +362,19 @@ function clampStep(target, blockers, space, from) {
         const candidate = { ...target, [axis]: value }
         if (!inTargetRegion(candidate.x, candidate.z)) continue
         if (blockers.some((other) => insideBox(candidate, other, TARGET_CLEARANCE))) continue
+        // 一步一步移動時，不能從牆的另一側出來（例如牆邊兩個靠得很近的方塊之間）
+        if (from && segmentBlocked(from, candidate, blockers)) continue
         const cost = Math.abs(value - target[axis])
         if (!best || cost < best.cost) best = { axis, value, cost }
       }
     }
     if (best) target[best.axis] = best.value
+    else if (from) return refuse(target, from)
   }
   // 推出方塊後可能換了範圍，再檢查一次高度上限
   clampRegionHeight(target, regions)
-  if (from && throughFloor(from, target, blockers)) {
-    target.x = from.x
-    target.y = from.y
-    target.z = from.z
-  }
-  return target
+  if (from && throughFloor(from, target, blockers)) return refuse(target, from)
+  return false
 }
 
 function containsPoint(box, p) {

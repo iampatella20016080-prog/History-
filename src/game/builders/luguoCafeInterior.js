@@ -28,6 +28,16 @@ const WOOD_RED = '#7a4a32'
 const IRON = '#2a2826'
 const COPPER = '#c88a58'
 
+/** 吊燈（建築本地座標 x, z）：吧檯上方兩盞、走道上方兩盞 */
+const PENDANTS = [
+  [CAFE.bar.counterX, -0.3],
+  [CAFE.bar.counterX, -2.2],
+  [0.4, -3.4],
+  [0.4, -8.8],
+]
+/** 一串彩色紙燈籠：掛在閱讀區的矮桌上方（不在走道上，最下面一顆也在頭頂上方） */
+const LANTERNS = { x: -2.6, z: -7.2 }
+
 /* ── 家具配置（建築本地座標；碰撞也由這份清單產生） ───────── */
 
 /**
@@ -62,8 +72,8 @@ export const CAFE_ITEMS = [
   { type: 'sofa', x: -3.52, z: -7.2, rot: Math.PI / 2, w: 1.8, d: 0.8 },
   { type: 'lowTable', x: -2.6, z: -7.2, w: 0.55, d: 1.0 },
   { type: 'softChair', x: -2.55, z: -8.6, face: [-2.6, -7.2] },
-  { type: 'floorLamp', x: -3.62, z: -8.5 },
-  { type: 'plant', x: -3.5, z: -8.95, size: 1.25 },
+  { type: 'floorLamp', x: -3.62, z: -8.3 },
+  { type: 'plant', x: -3.5, z: -8.8, size: 1.0 },
   { type: 'bookshelf', x: -3.77, z: -9.75, rot: Math.PI / 2, w: 1.3, d: 0.36, h: 2.0 },
   { type: 'latticeShelf', x: -3.72, z: -11.3, rot: Math.PI / 2, w: 1.2, d: 0.44, h: 2.3 },
   { type: 'roundTable', x: -2.35, z: -10.6, d: 0.7 },
@@ -160,8 +170,8 @@ export function cafeObstacles(transform) {
 }
 
 /**
- * 家具的鏡頭遮擋方塊（屬於街景，與 cafeObstacles 使用同一份家具配置）。
- * 吧檯工作台本身與扭蛋機已經是可以點選的物件（luguoCafe.js 的 addSub），這裡另外加上檯面上的咖啡機與磨豆機。
+ * 家具的鏡頭遮擋方塊（屬於街景，與 cafeObstacles 使用同一份家具配置；只給鏡頭用，不是可以點選的物件）。
+ * 吧檯工作台、檯面上的咖啡機與扭蛋機已經是可以點選的物件（luguoCafe.js 的 addSub）。
  */
 export function cafeFurnitureBlockers(b) {
   for (const item of CAFE_ITEMS) {
@@ -177,11 +187,9 @@ export function cafeFurnitureBlockers(b) {
     const ez = hx * sn + hz * c
     b.addBlocker(item.x - ex, item.x + ex, F, F + h, item.z - ez, item.z + ez)
   }
-  // 吧檯上的磨豆機與義式咖啡機（工作台的本地 x 從 -w/2 + 0.35 到 -w/2 + 2.1；工作台旋轉 90°，本地 x 對應建築的 -z）
-  const counter = CAFE_ITEMS.find((item) => item.type === 'barCounter')
-  const z0 = counter.z + counter.w / 2 - 2.1
-  const z1 = counter.z + counter.w / 2 - 0.35
-  b.addBlocker(counter.x - 0.32, counter.x + 0.3, F + 1.05, F + 1.85, z0, z1)
+  // 吊燈與紙燈籠（連同電線到天花）
+  for (const [x, z] of PENDANTS) b.addBlocker(x - 0.2, x + 0.2, 6.25, A.ceiling2, z - 0.2, z + 0.2)
+  b.addBlocker(LANTERNS.x - 0.18, LANTERNS.x + 0.18, A.ceiling2 - 0.45 - 5 * 0.26 - 0.15, A.ceiling2, LANTERNS.z - 0.18, LANTERNS.z + 0.18)
 }
 
 /* ── 小工具 ─────────────────────────────── */
@@ -475,7 +483,7 @@ function backCabinet(b, d, item) {
       b.box('wood', [gw, 0.025, depth * 0.6], [cx, upY + upH * 0.45, -depth * 0.18], { tint: '#b07a48' })
       b.box('dark', [0.52, 0.34, 0.2], [cx - 0.2, upY + upH * 0.45 + 0.19, -depth * 0.2], { tint: '#33302b' })
       b.box('perforated', [0.46, 0.26, 0.01], [cx - 0.2, upY + upH * 0.45 + 0.19, -depth * 0.2 + 0.105], { tint: '#9a8f7a' })
-      for (let i = 0; i < 3; i++) d.cylinder('steel', 0.06, 0.06, 0.16, 10, [cx + 0.18 + i * 0.14, upY + 0.12, -depth * 0.15], { tint: '#c8b58a' })
+      for (let i = 0; i < 3; i++) d.cylinder('steel', 0.06, 0.06, 0.16, 10, [cx + 0.18 + i * 0.14, upY + 0.1, -depth * 0.15], { tint: '#c8b58a' })
       return
     }
     for (const s of [-1, 1]) {
@@ -501,6 +509,10 @@ function backCabinet(b, d, item) {
     d.cylinder('plain', 0.008, 0.012, 0.2, 6, [x + 0.12, y + 0.14, -depth * 0.14], { rotation: [0, 0, -0.9], tint })
     if (i % 3 === 1) d.cylinder('plain', 0.04, 0.035, 0.07, 10, [x + 0.2, y + 0.035, -depth * 0.1], { tint: i % 2 ? '#c8342c' : '#f2efe8' })
   })
+  // 下層檯面上的少量商品盒（精緻模式）
+  for (let i = 0; i < 4; i++) {
+    d.box('plain', [0.16, 0.22, 0.06], [w / 2 - 0.5 - i * 0.2, lowH + 0.05 + 0.11, 0.08], { tint: ['#b8463a', '#d9b25c', '#2f4a6b', '#efe3c8'][i] })
+  }
   // 櫃頂一端的「LUGUO CAFE」木字塊（字在 luguoCafe.js 的招牌層）
   b.box('wood', [1.3, 0.2, 0.08], [w / 2 - 0.8, top + 0.125, depth * 0.08], { tint: '#7a8c78' })
 }
@@ -556,9 +568,6 @@ function barCounter(b, d, item) {
   for (let i = 0; i < 6; i++) d.cylinder('plain', 0.04, 0.035, 0.07, 10, [em.x - 0.3 + i * 0.12, em.y + 0.515, -0.12], { tint: i % 2 ? '#f2efe8' : '#e8e0d0' })
   d.box('dark', [0.16, 0.025, 0.14], [px, h + 0.0125, 0.22], { tint: '#1f1f1f' })
   d.cylinder('plain', 0.07, 0.07, 0.12, 14, [px - 0.55, h + 0.06, 0.12], { tint: '#f3efe6' })
-  for (let i = 0; i < 4; i++) {
-    d.box('plain', [0.16, 0.22, 0.06], [-w / 2 + 0.95 + i * 0.18, h + 0.11, 0.24], { tint: ['#b8463a', '#d9b25c', '#2f4a6b', '#efe3c8'][i] })
-  }
   d.box('plain', [0.26, 0.16, 0.16], [cx + 0.1, h + 0.08, 0.3], { tint: '#e1c49a' })
   d.box('plain', [0.24, 0.12, 0.14], [cx - 0.22, h + 0.06, 0.3], { tint: '#6c8a9c' })
 }
@@ -656,16 +665,19 @@ function flyerCabinet(b, d, item) {
 /** 銅色的球形吊燈 */
 function copperPendant(b, x, z, y = 6.35) {
   b.cylinder('steel', 0.006, 0.006, A.ceiling2 - y - 0.12, 4, [x, (A.ceiling2 + y + 0.12) / 2, z], { tint: '#3a3a38' })
-  b.add('steel', new SphereGeometry(0.17, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.62), { position: [x, y, z], rotation: [Math.PI, 0, 0], tint: COPPER })
+  // 半球形的燈罩（開口朝下），電線接到燈罩頂端
+  b.add('steel', new SphereGeometry(0.17, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.62), { position: [x, y, z], tint: COPPER })
   b.cylinder('bulb', 0.06, 0.06, 0.06, 10, [x, y - 0.04, z], { tint: '#fff4dc' })
 }
 
 /** 一串彩色的紙燈籠（粉、橘、紅、綠、黃、藍） */
 function paperLanterns(b, x, z) {
   const colors = ['#f2b8b4', '#e98a4a', '#d8382e', '#7ab34a', '#f0d24a', '#3a9ad9']
-  b.cylinder('steel', 0.005, 0.005, 1.0, 4, [x, A.ceiling2 - 0.5, z], { tint: '#3a3a38' })
+  const top = A.ceiling2 - 0.45
+  const step = 0.26
+  b.cylinder('steel', 0.005, 0.005, A.ceiling2 - (top - (colors.length - 1) * step), 4, [x, (A.ceiling2 + top - (colors.length - 1) * step) / 2, z], { tint: '#3a3a38' })
   colors.forEach((tint, i) => {
-    b.add('cloth', new SphereGeometry(0.17 - Math.abs(i - 2.5) * 0.008, 12, 9), { position: [x + (i % 2) * 0.06, A.ceiling2 - 0.95 - i * 0.31, z], scale: [1, 0.86, 1], tint })
+    b.add('cloth', new SphereGeometry(0.15 - Math.abs(i - 2.5) * 0.008, 12, 9), { position: [x, top - i * step, z], scale: [1, 0.86, 1], tint })
   })
 }
 
@@ -837,14 +849,11 @@ export function buildLuguoCafeInterior(b, config, detail = b) {
   b.group([0.45, A.floor2 + 1.6, CAFE.minZ + 0.035], 0, () => poster(b, 0.62, 0.82))
   b.group([-1.45, A.floor2 + 1.95, CAFE.minZ + 0.035], 0, () => painting(b, 0.4, 0.3, { palette: ['#e2b04a', '#c8603a', '#f4efe4'], kind: 0 }))
   // 吊燈：吧檯上方兩盞銅色球燈、走道上方兩盞，一串彩色紙燈籠
-  copperPendant(b, CAFE.bar.counterX, -0.3)
-  copperPendant(b, CAFE.bar.counterX, -2.2)
-  copperPendant(b, 0.4, -3.4)
-  copperPendant(b, 0.4, -8.8)
-  paperLanterns(b, 0.35, -6.3)
+  for (const [x, z] of PENDANTS) copperPendant(b, x, z)
+  paperLanterns(b, LANTERNS.x, LANTERNS.z)
   // 吧檯上的盆栽與窗邊桌上的小植物
   pottedPlant(b, [CAFE.bar.counterX, F + 1.05, 0.9], { seed: 63, size: 0.45, potTint: '#2b2b2b' })
-  // 吧檯後方（工作區，客人走不進去）地上的麻布咖啡豆袋，與檯面上一小袋（精緻模式）
+  // 吧檯後方（工作區，客人走不進去）地上的麻布咖啡豆袋
   for (const [x, z, tint, r] of [
     [-2.92, 0.62, '#b89a6c', 0.2],
     [-2.88, 0.08, '#a88a5e', -0.15],
@@ -855,7 +864,6 @@ export function buildLuguoCafeInterior(b, config, detail = b) {
       b.box('cloth', [0.3, 0.12, 0.012], [0, 0.26, 0.157], { tint: '#6d5236' })
     })
   }
-  detail.box('cloth', [0.1, 0.2, 0.16], [CAFE.bar.counterX + 0.05, F + 1.15, -1.12], { tint: '#b89a6c' })
   for (const [x, z] of [
     [2.75, -4.45],
     [3.35, -7.6],
@@ -872,12 +880,13 @@ export function buildLuguoCafeInterior(b, config, detail = b) {
   })
   // 軌道燈與吊扇（精緻模式）
   for (const x of [-0.9, 1.9]) {
-    detail.box('steel', [0.04, 0.03, CAFE.maxZ - CAFE.minZ - 1.5], [x, A.ceiling2 - 0.45, (CAFE.minZ + CAFE.maxZ) / 2], { tint: '#ece9e2' })
+    detail.box('steel', [0.04, 0.03, CAFE.maxZ - CAFE.minZ - 1.5], [x, A.ceiling2 - 0.435, (CAFE.minZ + CAFE.maxZ) / 2], { tint: '#ece9e2' })
     for (let i = 0; i < 6; i++) {
       const z = CAFE.minZ + 1.4 + i * 2.1
       detail.cylinder('steel', 0.035, 0.045, 0.12, 10, [x, A.ceiling2 - 0.55, z], { rotation: [0.5, 0, 0], tint: '#f4f2ec' })
     }
   }
+  detail.cylinder('steel', 0.015, 0.015, 0.3, 6, [0.35, A.ceiling2 - 0.15, -10.4], { tint: '#f1efe9' })
   detail.cylinder('steel', 0.08, 0.08, 0.12, 10, [0.35, A.ceiling2 - 0.36, -10.4], { tint: '#f1efe9' })
   for (let i = 0; i < 3; i++) {
     const a = (i / 3) * Math.PI * 2
@@ -912,11 +921,9 @@ export function cafeSigns(b) {
   b.addSign({ text: '迷你模型', style: 'label', width: 0.26, height: 0.08, position: itemPoint(machine, 0, 0.5 + 0.08, 0.127), rotationY: itemRotation(machine) })
   // 燈火：吧檯與走道的吊燈、紙燈籠、桌燈與立燈
   const glow = ([x, y, z], size, color = '#ffd9a0') => b.addGlow(x, y, z, size, color)
-  glow([CAFE.bar.counterX, 6.15, -0.3], 0.9)
-  glow([CAFE.bar.counterX, 6.15, -2.2], 0.9)
-  glow([0.4, 6.15, -3.4], 0.9)
-  glow([0.4, 6.15, -8.8], 0.9)
-  glow([0.35, 5.6, -6.3], 1.2, '#ffc58a')
+  for (const [x, z] of PENDANTS) glow([x, 6.15, z], 0.9)
+  glow([LANTERNS.x, A.ceiling2 - 1.1, LANTERNS.z], 1.2, '#ffc58a')
   glow([3.62, F + 1.05, -1.45], 0.6)
-  glow([-3.62, F + 1.45, -8.44], 0.7)
+  const lamp = find('floorLamp')
+  glow([lamp.x, F + 1.45, lamp.z + 0.06], 0.7)
 }

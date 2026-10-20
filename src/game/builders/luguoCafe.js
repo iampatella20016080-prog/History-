@@ -154,9 +154,11 @@ function lane(b) {
   }
   // 巷口的綠色路名牌
   b.cylinder('steel', 0.04, 0.04, 2.44, 8, [maxX - 0.35, 1.22, mouthZ - 0.4], { tint: '#9aa09f' })
-  b.box('plain', [1.18, 0.34, 0.03], [maxX - 0.35, 2.62, mouthZ - 0.4], { tint: '#1d6a50' })
-  b.addSign({ text: '迪化街一段32巷', style: 'road', width: 1.12, height: 0.28, position: [maxX - 0.35, 2.62, mouthZ - 0.38] })
-  b.addSign({ text: '迪化街一段32巷', style: 'road', width: 1.12, height: 0.28, position: [maxX - 0.35, 2.62, mouthZ - 0.42], rotationY: Math.PI })
+  // 牌子掛在柱子西側（在巷子裡，不伸進永樂市場轉角的柱子）
+  b.box('plain', [1.18, 0.34, 0.03], [maxX - 0.95, 2.62, mouthZ - 0.4], { tint: '#1d6a50' })
+  b.box('steel', [0.6, 0.04, 0.04], [maxX - 0.62, 2.82, mouthZ - 0.4], { tint: '#9aa09f' })
+  b.addSign({ text: '迪化街一段32巷', style: 'road', width: 1.12, height: 0.28, position: [maxX - 0.95, 2.62, mouthZ - 0.38] })
+  b.addSign({ text: '迪化街一段32巷', style: 'road', width: 1.12, height: 0.28, position: [maxX - 0.95, 2.62, mouthZ - 0.42], rotationY: Math.PI })
 }
 
 /** 巷子東側的紅磚老屋（二層，一樓手作小店；不使用實際店家的招牌）與巷底收尾的三層樓 */
@@ -217,12 +219,7 @@ function arcades(b) {
   // 天花只鋪到柱列上方的梁的內側（不與梁的外側面重疊）
   b.box('planks', [2 * half - 0.7, 0.05, front - 0.5], [-0.15, H - 0.03, (front - 0.5) / 2], { tint: '#c79a6a' })
   b.box('planks', [half - 0.5 - wx, 0.05, -(A.back + wallT)], [(half - 0.5 + wx) / 2, H - 0.03, (A.back + wallT) / 2], { tint: '#c79a6a' })
-  for (const [x, z] of [
-    [-2.2, 0.85],
-    [1.4, 0.85],
-    [3.3, -4.4],
-    [3.3, -10.6],
-  ]) {
+  for (const [x, z] of ARCADE_LAMPS) {
     b.cylinder('steel', 0.012, 0.012, 0.3, 6, [x, H - 0.2, z], { tint: '#6b6b66' })
     b.add('bulb', new CylinderGeometry(0.06, 0.28, 0.12, 18), { position: [x, H - 0.38, z], tint: '#fff4dc' })
     b.addGlow(x, H - 0.5, z, 0.9, '#ffe3b0')
@@ -268,6 +265,7 @@ function groundShops(b) {
   // 轉角店的小方燈箱（一般的店種字樣，不使用實際店家的商標）
   b.box('plain', [0.5, 0.5, 0.5], [tower.minX + 0.6, 3.15, 0.55], { tint: '#f2efe8' })
   b.box('plain', [0.52, 0.32, 0.52], [tower.minX + 0.6, 3.15, 0.55], { tint: '#7d2b2b' })
+  b.cylinder('steel', 0.015, 0.015, H - 0.05 - 3.4, 6, [tower.minX + 0.6, (3.4 + H - 0.05) / 2, 0.55], { tint: '#3a3a38' })
   for (const r of [0, Math.PI / 2, Math.PI, -Math.PI / 2]) {
     const nx = Math.sin(r) * 0.265
     const nz = Math.cos(r) * 0.265
@@ -309,14 +307,14 @@ function groundShops(b) {
   b.box('wood', [0.08, 2.55, 1.1], [wx - 0.1, 1.33, -13.2], { tint: '#a8784c' })
   b.box('glass', [0.04, 0.9, 0.72], [wx - 0.05, 2.05, -13.2], { tint: '#a9b3b4' })
   // 海報（原創的簡化圖樣，不複製實際的海報）
-  b.box('plain', [0.02, 0.6, 0.44], [wx + 0.01, 1.55, -13.2], { tint: '#e8e3d6' })
-  b.box('plain', [0.025, 0.3, 0.3], [wx + 0.015, 1.6, -13.2], { tint: '#c99a52' })
-  b.box('plain', [0.02, 0.5, 0.3], [wx + 0.01, 1.0, -12.95], { tint: '#d95a3b' })
+  b.box('plain', [0.02, 0.6, 0.44], [wx - 0.015, 1.55, -13.2], { tint: '#e8e3d6' })
+  b.box('plain', [0.025, 0.3, 0.3], [wx - 0.005, 1.6, -13.2], { tint: '#c99a52' })
+  b.box('plain', [0.02, 0.5, 0.3], [wx - 0.045, 1.0, -12.95], { tint: '#d95a3b' })
 
   // 樓梯入口：深色木門框、推開貼在牆上的木門，上方是爐鍋咖啡的木製招牌
   const dz = (door.minZ + door.maxZ) / 2
-  for (const z of [door.minZ - 0.04, door.maxZ + 0.04]) b.box('wood', [0.28, 2.7, 0.08], [wx - 0.05, 1.35, z], { tint: '#5a3c2a' })
-  b.box('wood', [0.28, 0.1, door.maxZ - door.minZ + 0.16], [wx - 0.05, 2.7, dz], { tint: '#5a3c2a' })
+  for (const z of [door.minZ - 0.035, door.maxZ + 0.035]) b.box('wood', [0.28, 2.7, 0.08], [wx - 0.05, 1.35, z], { tint: '#5a3c2a' })
+  b.box('wood', [0.28, 0.1, door.maxZ - door.minZ + 0.16], [wx - 0.05, 2.695, dz], { tint: '#5a3c2a' })
   b.box('wood', [0.9, 2.5, 0.05], [wx + 0.42, 1.27, door.minZ - 0.12], { tint: '#9a6a42' })
   b.box('glass', [0.6, 0.9, 0.02], [wx + 0.42, 1.95, door.minZ - 0.09], { tint: '#a9b3b4' })
   // 招牌：黑框淺色木板（店名與英文），兩側淡淡的咖啡枝葉線條
@@ -332,20 +330,20 @@ function groundShops(b) {
     }
   }
   // 牆上的方形小招牌（2F）與騎樓下的木製立牌
-  b.box('dark', [0.04, 0.5, 0.5], [wx + 0.02, 2.3, door.maxZ + 0.75], { tint: '#262321' })
-  b.addSign({ text: '爐鍋咖啡', style: 'modern', width: 0.42, height: 0.16, position: [wx + 0.045, 2.38, door.maxZ + 0.75], rotationY: Math.PI / 2 })
-  b.addSign({ text: '2F', style: 'modern', width: 0.2, height: 0.14, position: [wx + 0.045, 2.18, door.maxZ + 0.75], rotationY: Math.PI / 2 })
+  b.box('dark', [0.04, 0.5, 0.5], [wx - 0.035, 2.3, door.maxZ + 0.75], { tint: '#262321' })
+  b.addSign({ text: '爐鍋咖啡', style: 'modern', width: 0.42, height: 0.16, position: [wx - 0.01, 2.38, door.maxZ + 0.75], rotationY: Math.PI / 2 })
+  b.addSign({ text: '2F', style: 'modern', width: 0.2, height: 0.14, position: [wx - 0.01, 2.18, door.maxZ + 0.75], rotationY: Math.PI / 2 })
   aBoardSign(b, wx + 0.34, door.maxZ + 0.5)
-  pottedPlant(b, [wx + 0.35, 0, door.minZ - 0.45], { seed: 52, size: 0.8, potTint: '#7e6450' })
 }
 
 /** 騎樓下的木製 A 字立牌（爐鍋咖啡 2F）：靠在入口旁的牆邊，兩面朝向騎樓的兩頭 */
 function aBoardSign(b, x, z) {
   b.group([x, 0, z], 0.12, () => {
+    // 兩片木板的頂端靠在一起、底部張開（A 字）；字貼在外側的板面上
     for (const s of [-1, 1]) {
-      b.box('woodLight', [0.55, 1.0, 0.04], [0, 0.5, s * 0.16], { rotation: [s * 0.2, 0, 0], tint: '#cfa877' })
-      b.addSign({ text: '爐鍋咖啡', style: 'luguoWood', width: 0.42, height: 0.2, position: [0, 0.72, s * 0.19], rotationY: s > 0 ? 0 : Math.PI })
-      b.addSign({ text: '2F', style: 'luguoWood', width: 0.18, height: 0.14, position: [0, 0.5, s * 0.185], rotationY: s > 0 ? 0 : Math.PI })
+      b.box('woodLight', [0.55, 1.0, 0.04], [0, 0.5, s * 0.12], { rotation: [-s * 0.2, 0, 0], tint: '#cfa877' })
+      b.addSign({ text: '爐鍋咖啡', style: 'luguoWood', width: 0.42, height: 0.2, position: [0, 0.72, s * 0.125], rotationY: s > 0 ? 0 : Math.PI })
+      b.addSign({ text: '2F', style: 'luguoWood', width: 0.18, height: 0.14, position: [0, 0.5, s * 0.16], rotationY: s > 0 ? 0 : Math.PI })
     }
   })
 }
@@ -378,9 +376,9 @@ function upperFacades(b) {
   b.box('dark', [2 * half - 0.3, A.top - A.floor3 - 0.1, front - back - 0.3], [0, (A.floor3 + A.top) / 2, (front + back) / 2], { tint: '#3d3a36' })
   b.box('dark', [half - tower.minX - 0.3, A.towerTop - A.top, front - tower.minZ - 0.3], [(tower.minX + half) / 2, (A.top + A.towerTop) / 2, (front + tower.minZ) / 2], { tint: '#3d3a36' })
   // 西側與後側的牆（與鄰棟相接的山牆，素面）
-  b.box('stucco', [0.2, A.top - H, front - back], [-half + 0.1, (H + A.top) / 2, (front + back) / 2], { tint: '#cfc8bb', grime: 0.2 })
-  b.box('stucco', [2 * half, A.top, wallT], [0, A.top / 2, back + wallT / 2], { tint: '#cfc8bb', grime: 0.2 })
-  b.box('stucco', [0.2, H, -back], [-half + 0.1, H / 2, back / 2], { tint: '#cfc8bb', grime: 0.2 })
+  b.box('stucco', [0.2, A.top - H, front - 0.12 - back - wallT], [-half + 0.1, (H + A.top) / 2, (front - 0.12 + back + wallT) / 2], { tint: '#cfc8bb', grime: 0.2 })
+  b.box('stucco', [2 * half - 0.01, A.top, wallT], [-0.005, A.top / 2, back + wallT / 2], { tint: '#cfc8bb', grime: 0.2 })
+  b.box('stucco', [0.2, H, -0.01 - back - wallT], [-half + 0.1, H / 2, (back + wallT - 0.01) / 2], { tint: '#cfc8bb', grime: 0.2 })
 
   // 窗：二樓（透明玻璃，看得見咖啡館）與三、四樓
   for (const o of cafeSide) woodWindow(b, { along: 'z', plane: half, inward: -1, ...o, sashes: o.a1 - o.a0 > 1 ? 3 : 1, glass: 'glassClear', transom: 0.5 })
@@ -549,7 +547,7 @@ function staircase(b) {
     const x0 = run.lower - (k + 0.5) * TREAD
     const y = k * RISER
     b.box('stucco', [x1 - x0, y - 0.03, fw], [(x0 + x1) / 2, (y - 0.03) / 2, fz], { tint: RISE })
-    b.box('terracotta', [x1 - x0 + 0.03, 0.035, fw], [(x0 + x1) / 2 - 0.015, y - 0.017, fz], { tint: STEP })
+    b.box('terracotta', [x1 - x0 + 0.03, 0.035, fw], [(x0 + x1) / 2 + 0.015, y - 0.017, fz], { tint: STEP })
   }
   // 半樓的迴轉平台（兩段之間）
   const lx1 = run.upper + 0.5 * TREAD
@@ -564,7 +562,7 @@ function staircase(b) {
     const x1 = run.upper + (k + 0.5) * TREAD
     const y = landing.y + k * RISER
     b.box('stucco', [x1 - x0, y - 0.03, gw], [(x0 + x1) / 2, (y - 0.03) / 2, gz], { tint: RISE })
-    b.box('terracotta', [x1 - x0 + 0.03, 0.035, gw], [(x0 + x1) / 2 + 0.015, y - 0.017, gz], { tint: STEP })
+    b.box('terracotta', [x1 - x0 + 0.03, 0.035, gw], [(x0 + x1) / 2 - 0.015, y - 0.017, gz], { tint: STEP })
   }
   // 二樓的樓梯平台（與咖啡館的地板同高）
   const tx0 = run.lower - 0.5 * TREAD
@@ -599,7 +597,7 @@ function staircase(b) {
   const wallTop = A.ceiling2
   b.box('plaster', [ST.pad.maxX - landing.minX, wallTop, 0.06], [(landing.minX + ST.pad.maxX) / 2, wallTop / 2, wellMinZ + 0.03], { tint: '#f1ebdf' })
   b.box('plaster', [0.2, wallTop, wellMaxZ - wellMinZ], [landing.minX - 0.1, wallTop / 2, (wellMinZ + wellMaxZ) / 2], { tint: '#f1ebdf' })
-  b.box('plaster', [ST.pad.maxX - landing.minX, H2, 0.2], [(landing.minX + ST.pad.maxX) / 2, H2 / 2, wellMaxZ + 0.1], { tint: '#f1ebdf' })
+  b.box('plaster', [ST.pad.maxX - 0.01 - landing.minX, H2, 0.2], [(landing.minX + ST.pad.maxX - 0.01) / 2, H2 / 2, wellMaxZ + 0.1], { tint: '#f1ebdf' })
   // 樓梯間的天花與燈
   b.box('plaster', [A.half - landing.minX, 0.08, wellMaxZ - wellMinZ], [(landing.minX + A.half) / 2, wallTop + 0.04, (wellMinZ + wellMaxZ) / 2], { tint: '#f6f2ea' })
   b.cylinder('bulb', 0.18, 0.18, 0.06, 14, [0, wallTop - 0.04, -13.8], { tint: '#fff4dc' })
@@ -611,6 +609,14 @@ function staircase(b) {
 }
 
 /* ── 二樓咖啡館的空殼（地板、牆、天花、柱與門） ─────────────── */
+
+/** 騎樓天花的圓盤吊燈（迪化街側兩盞、巷子側兩盞） */
+const ARCADE_LAMPS = [
+  [-2.2, 0.85],
+  [1.4, 0.85],
+  [3.3, -4.4],
+  [3.3, -10.6],
+]
 
 /** 咖啡館裡的方柱（從地板到天花） */
 export const CAFE_PILLARS = [
@@ -717,9 +723,8 @@ export function luguoCollision(config, transform = (x, z) => artYardToWorld(x, z
     ...[-half + inset, A.tower.minX, half - inset].map((x) => column(x, front - inset)),
     ...A.sideBays.filter((z) => z > back).map((z) => column(half - inset, z)),
     column(half - inset, back + inset),
-    // 樓梯入口旁的木製立牌與盆栽、推開的門扇
+    // 樓梯入口旁的木製立牌、推開的門扇
     rect(wx + 0.02, wx + 0.66, door.maxZ + 0.24, door.maxZ + 0.76),
-    rect(wx + 0.12, wx + 0.58, door.minZ - 0.68, door.minZ - 0.22),
     rect(wx + 0.02, wx + 0.86, door.minZ - 0.16, door.minZ - 0.08),
     // 巷子東側老屋門口的盆栽
     rect(LANE.maxX - 0.3, LANE.maxX + 0.1, -11.95, -11.55),
@@ -756,16 +761,23 @@ function registerBlockers(b) {
   for (const x of [-half + inset, tower.minX, half - inset]) b.addBlocker(x - 0.3, x + 0.3, 0, H, front - inset - 0.3, front - inset + 0.3)
   for (const z of [...A.sideBays.filter((z) => z > back), back + inset]) b.addBlocker(half - inset - 0.3, half - inset + 0.3, 0, H, z - 0.3, z + 0.3)
   b.addBlocker(-half, half, H, H2, CAFE.minZ - 0.2, front)
+  // 柱列上方的石梁、轉角店的燈箱與騎樓的吊燈（鏡頭停在它們前面）
+  b.addBlocker(-half, half, H - 0.32, H, front - 0.5, front)
+  b.addBlocker(half - 0.5, half, H - 0.32, H, back, front - 0.5)
+  b.addBlocker(tower.minX + 0.34, tower.minX + 0.86, 2.99, H, 0.29, 0.81)
+  for (const [x, z] of ARCADE_LAMPS) b.addBlocker(x - 0.3, x + 0.3, H - 0.46, H, z - 0.3, z + 0.3)
   b.addBlocker(wx, half, H, H2, back, CAFE.minZ - 0.2)
   // 樓梯間：後牆、西牆、樓梯的實心（分段的階梯量體）與兩段之間的矮牆
   b.addBlocker(landing.minX - 0.2, half, 0, C, back, wellMinZ)
   b.addBlocker(landing.minX - 0.2, landing.minX, 0, C, wellMinZ, wellMaxZ)
-  for (let k = 0; k < 4; k++) {
-    const x1 = run.lower - k * ((run.lower - run.upper) / 4)
-    const x0 = x1 - (run.lower - run.upper) / 4
-    b.addBlocker(x0, x1, 0, (landing.y * (run.lower - x1)) / (run.lower - run.upper) + 0.05, flight1.minZ, flight1.maxZ)
-    const g0 = run.upper + k * ((run.lower - run.upper) / 4)
-    b.addBlocker(g0, g0 + (run.lower - run.upper) / 4, 0, landing.y + ((H2 - landing.y) * (g0 - run.upper)) / (run.lower - run.upper) + 0.05, flight2.minZ, flight2.maxZ)
+  // 每一段樓梯分成 8 塊，每塊取較高那一端的高度（看得見的踏階都在方塊裡）
+  const piece = (run.lower - run.upper) / 8
+  for (let k = 0; k < 8; k++) {
+    const x1 = run.lower - k * piece
+    const x0 = x1 - piece
+    b.addBlocker(x0, x1, 0, (landing.y * (run.lower - x0)) / (run.lower - run.upper) + 0.05, flight1.minZ, flight1.maxZ)
+    const g0 = run.upper + k * piece
+    b.addBlocker(g0, g0 + piece, 0, landing.y + ((H2 - landing.y) * (g0 + piece - run.upper)) / (run.lower - run.upper) + 0.05, flight2.minZ, flight2.maxZ)
   }
   b.addBlocker(landing.minX, run.upper, 0, landing.y - 0.05, flight1.minZ, flight2.maxZ)
   // 兩段之間的矮牆與扶手（頂部跟著第二段的斜度）
@@ -833,7 +845,11 @@ export function buildLuguoCafe(b) {
     maxYawOffset: 0.6,
   }, { detail: true, hotspot: 'stairs' })
   // 咖啡吧檯
-  addSub('luguo-bar', 'luguo-cafe', [[bar.counterX - 0.35, bar.counterX + 0.35, H2, H2 + 1.12, bar.minZ, bar.maxZ]], {
+  // 工作台與檯面上的磨豆機、義式咖啡機（工作台的長邊沿著 z；機器在南端 2.1 m 內）
+  addSub('luguo-bar', 'luguo-cafe', [
+    [bar.counterX - 0.35, bar.counterX + 0.35, H2, H2 + 1.12, bar.minZ, bar.maxZ],
+    [bar.counterX - 0.32, bar.counterX + 0.3, H2 + 1.12, H2 + 1.9, bar.maxZ - 2.1, bar.maxZ - 0.35],
+  ], {
     center: toWorld(bar.counterX + 0.35, (bar.minZ + bar.maxZ) / 2),
     forward: dir(1, 0),
     width: 4.2,
@@ -942,18 +958,18 @@ export function buildLuguoCafe(b) {
       },
     ],
     // 觀賞模式：注視點可以進到巷子、兩側騎樓、樓梯入口、沿著樓梯走上二樓，再穿過玻璃門進到店裡。
-    // 每一層的範圍都蓋到牆前（注視點與牆保持 0.35 m），注視點是被牆擋住、而不是走出範圍後換到上下疊著的另一層
+    // 每一層的範圍都蓋到牆邊（比注視點與牆保持的 0.35 m 更靠牆），注視點是被牆擋住、沿著牆滑動，而不是走出範圍後換到上下疊著的另一層
     viewerRegions: [
       { ...rect(LANE.minX + 0.3, LANE.maxX - 0.3, LANE.minZ + 0.4, LANE.mouthZ + 0.6), maxY: 9 },
-      { ...rect(A.arcadeWallX + 0.2, A.half + 0.5, A.back + 0.4, A.front + 0.5), maxY: 2.9, cameraMaxY: 3.45 },
-      { ...rect(-A.half + 0.4, A.half + 0.5, 0.2, A.front + 0.5), maxY: 2.9, cameraMaxY: 3.45 },
+      { ...rect(A.arcadeWallX + 0.1, A.half + 0.5, A.back + 0.4, A.front + 0.5), maxY: 2.9, cameraMaxY: 3.45 },
+      { ...rect(-A.half + 0.4, A.half + 0.5, 0.1, A.front + 0.5), maxY: 2.9, cameraMaxY: 3.45 },
       { ...rect(ST.pad.minX - 0.2, A.arcadeWallX + 0.6, door.minZ + 0.2, door.maxZ - 0.2), maxY: 2.3, cameraMaxY: 2.6 },
       { ...rect(run.upper, run.lower, flight1.minZ + 0.25, flight1.maxZ - 0.25), ramp: rampWorld((x, z) => toWorld(x, z), run.lower, run.upper, 0, landing.y), minY: 0.8, maxY: 2.4, cameraMaxY: 3.2 },
       { ...rect(landing.minX + 0.3, run.upper + 0.2, flight1.minZ + 0.25, flight2.maxZ - 0.25), minY: landing.y + 0.8, maxY: landing.y + 2.4, cameraMaxY: landing.y + 3.6 },
       { ...rect(run.upper, run.lower, flight2.minZ + 0.25, flight2.maxZ - 0.25), ramp: rampWorld((x, z) => toWorld(x, z), run.upper, run.lower, landing.y, A.floor2), minY: 0.8, maxY: 2.4, cameraMaxY: 3.2 },
-      { ...rect(top.minX - 0.2, top.maxX - 0.3, wellMinZ + 0.3, wellMaxZ), minY: H2 + 0.8, maxY: H2 + 2.0, cameraMaxY: A.ceiling2 - 0.4 },
+      { ...rect(top.minX - 0.2, top.maxX - 0.1, wellMinZ + 0.1, wellMaxZ), minY: H2 + 0.8, maxY: H2 + 2.0, cameraMaxY: A.ceiling2 - 0.4 },
       { ...rect(CAFE.door.minX + 0.2, CAFE.door.maxX - 0.2, flight2.maxZ - 0.2, CAFE.minZ + 0.4), minY: H2 + 0.8, maxY: H2 + 2.0, cameraMaxY: H2 + 2.3 },
-      { ...rect(CAFE.minX + 0.3, CAFE.maxX - 0.3, CAFE.minZ + 0.3, CAFE.maxZ - 0.3), minY: H2 + 0.8, maxY: H2 + 2.4, cameraMaxY: A.ceiling2 - 0.6 },
+      { ...rect(CAFE.minX + 0.1, CAFE.maxX - 0.1, CAFE.minZ + 0.1, CAFE.maxZ - 0.1), minY: H2 + 0.8, maxY: H2 + 2.4, cameraMaxY: A.ceiling2 - 0.6 },
     ],
     viewerBounds: { minZ: toWorld(0, LANE.minZ - 3).z },
     // 32巷與兩側騎樓：人物可以貼著牆、柱走，第三人稱鏡頭在這裡停在障礙物前面

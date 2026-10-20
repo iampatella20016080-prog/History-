@@ -63,7 +63,10 @@ export const BUILDING_BUILDERS = {
   'luguo-cafe': (b, config) => {
     const result = buildLuguoCafe(b, config)
     cafeSigns(b)
+    // 家具的遮擋方塊只給鏡頭用：不算在小藝埕這棟建築的點選範圍裡（點窗邊的椅子、吧檯上的咖啡機時仍然點到那個熱點）
+    const start = b.blockers.length
     cafeFurnitureBlockers(b)
+    result.cameraOnly = [{ start, end: b.blockers.length }]
     return result
   },
 }
@@ -240,6 +243,8 @@ export function* eraWorldSteps(eraId) {
     // 它們的遮擋方塊另外成為一棟「建築」，可以點選與聚焦
     const subStores = result.subStores ?? []
     const subParts = new Set()
+    // 只給鏡頭用的遮擋方塊（例如店裡的家具）：不屬於任何一棟可以點選的建築
+    for (const range of result.cameraOnly ?? []) b.blockers.slice(range.start, range.end).forEach((part) => subParts.add(part))
     for (const sub of subStores) {
       const own = b.blockers.slice(sub.range.start, sub.range.end)
       own.forEach((part) => subParts.add(part))
