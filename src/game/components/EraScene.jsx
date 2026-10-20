@@ -77,7 +77,7 @@ function InteriorZone({ world, zone, detail }) {
       <StaticBatches batches={batches} materials={getInteriorMaterials()} castShadow={false} receiveShadow={false} dispose={false} />
       {/* 細小的擺飾：精緻模式才顯示 */}
       {small.length > 0 && (
-        <group visible={detail}>
+        <group name={`interior-${zone.id}-detail`} visible={detail}>
           <StaticBatches batches={small} materials={getInteriorMaterials()} castShadow={false} receiveShadow={false} dispose={false} />
         </group>
       )}

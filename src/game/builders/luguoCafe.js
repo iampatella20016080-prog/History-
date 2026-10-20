@@ -838,8 +838,8 @@ export function buildLuguoCafe(b) {
     maxPitch: 0.5,
     maxYawOffset: 0.7,
   }, { detail: true, hotspot: 'bar' })
-  // 窗邊座位（中間一組窗前的桌子）
-  addSub('luguo-window', 'luguo-cafe', [[2.35, 3.35, H2, H2 + 0.8, -8.15, -7.05]], {
+  // 窗邊座位（中間一組窗前的桌子與扶手椅）
+  addSub('luguo-window', 'luguo-cafe', [[2.15, 3.8, H2, H2 + 0.9, -8.15, -7.05]], {
     center: toWorld(CAFE.maxX - 0.2, -7.6),
     forward: dir(-1, 0),
     width: 6.4,
@@ -850,8 +850,9 @@ export function buildLuguoCafe(b) {
     maxYawOffset: 0.8,
   }, { detail: true, hotspot: 'window' })
   // 紅色扭蛋機
-  addSub('luguo-gacha', 'luguo-cafe', [[0.3, 0.8, H2, H2 + 1.75, CAFE.minZ, CAFE.minZ + 0.45]], {
-    center: toWorld(0.55, CAFE.minZ + 0.45),
+  const { gacha } = CAFE
+  addSub('luguo-gacha', 'luguo-cafe', [[gacha.x - 0.3, gacha.x + 0.3, H2, H2 + 1.75, CAFE.minZ, gacha.z + 0.3]], {
+    center: toWorld(gacha.x, gacha.z + 0.3),
     forward: dir(0, 1),
     width: 1.6,
     height: 2.2,
@@ -930,8 +931,9 @@ export function buildLuguoCafe(b) {
         // 樓梯間與二樓：鏡頭較近、較低，高度上限在天花板（7.5 m）與梁的下方
         camera: { distance: 3.2, maxHeight: A.ceiling2 - 0.55, minPitch: 0.06, maxPitch: 0.62, lookHeight: 1.45, minDistance: 0.6 },
         viewerStart: { distance: 3.4 },
-        loadRadius: 18,
-        showRadius: 26,
+        // 按需載入：走到小藝埕附近（迪化街街尾、32巷、永樂市場前廣場）才產生；出發點（約 15 m 外）還不產生
+        loadRadius: 14,
+        showRadius: 22,
       },
     ],
     // 觀賞模式：注視點可以進到巷子、兩側騎樓、樓梯入口、沿著樓梯走上二樓，再穿過玻璃門進到店裡

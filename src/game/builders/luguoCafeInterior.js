@@ -71,7 +71,7 @@ export const CAFE_ITEMS = [
   { type: 'carvedChair', x: -1.62, z: -10.85, face: [-2.35, -10.6] },
   // D. 樓梯入口與扭蛋機（北牆）
   { type: 'flyerCabinet', x: -1.25, z: -11.88, w: 0.8, d: 0.55 },
-  { type: 'gacha', x: -0.3, z: -11.9 },
+  { type: 'gacha', x: CAFE.gacha.x, z: CAFE.gacha.z },
   { type: 'bike', x: 0.6, z: -11.98 },
   { type: 'extinguisher', x: 1.15, z: -12.03 },
 ]
@@ -430,7 +430,9 @@ function backCabinet(b, d, item) {
       for (let k = 0; k < 8; k++) b.box('plain', [0.008, upH - 0.18, 0.005], [dx - gw / 4 + 0.08 + k * ((gw / 2 - 0.16) / 7), upY + upH / 2, depth * 0.2 + 0.025], { tint: '#e9dcc4' })
       b.box('steel', [0.015, 0.22, 0.03], [dx - s * (gw / 4 - 0.06), upY + upH * 0.45, depth * 0.2 + 0.03], { tint: IRON })
     }
-    // 原創的小貼紙（色塊）
+    // 原創的小貼紙（色塊）與中央層架兩側的紅色春聯（字在 luguoCafe.js 的招牌層，原創的吉祥話）
+    if (g === 0) b.box('plain', [0.13, 0.95, 0.006], [cx + w / 6 - 0.11, upY + upH / 2, depth * 0.2 + 0.03], { tint: '#c8342c' })
+    if (g === 2) b.box('plain', [0.13, 0.95, 0.006], [cx - w / 6 + 0.11, upY + upH / 2, depth * 0.2 + 0.03], { tint: '#c8342c' })
     d.box('plain', [0.22, 0.3, 0.005], [cx - gw / 4, upY + upH * 0.6, depth * 0.2 + 0.03], { tint: ['#d6573f', '#2e6fa0', '#e8c04a'][g] })
     d.box('plain', [0.16, 0.16, 0.005], [cx + gw / 4, upY + upH * 0.35, depth * 0.2 + 0.03], { rotation: [0, 0, Math.PI / 4], tint: ['#c8342c', '#e5b84a', '#3e7a5a'][g] })
   })
@@ -454,7 +456,15 @@ function barCounter(b, d, item) {
   const depth = item.d
   const h = 1.05
   b.box('wood', [w, h - 0.06, depth], [0, (h - 0.06) / 2, 0], { tint: '#9a6a42' })
-  for (let i = 0; i < 9; i++) b.box('wood', [0.05, h - 0.2, 0.02], [-w / 2 + 0.25 + i * ((w - 0.5) / 8), h / 2 - 0.05, depth / 2 + 0.01], { tint: '#7a4f33' })
+  // 檯前：上排一列抽屜（黃銅把手），下面是直條木板
+  for (let i = 0; i < 9; i++) b.box('wood', [0.05, 0.62, 0.02], [-w / 2 + 0.25 + i * ((w - 0.5) / 8), 0.36, depth / 2 + 0.01], { tint: '#7a4f33' })
+  const drawers = 5
+  const dw = (w - 0.3) / drawers
+  for (let i = 0; i < drawers; i++) {
+    const x = -w / 2 + 0.15 + (i + 0.5) * dw
+    b.box('wood', [dw - 0.05, 0.2, 0.025], [x, 0.84, depth / 2 + 0.012], { tint: '#b07a48' })
+    b.box('steel', [0.1, 0.022, 0.03], [x, 0.84, depth / 2 + 0.035], { tint: '#b8933e' })
+  }
   b.box('steel', [w + 0.06, 0.06, depth + 0.06], [0, h - 0.03, 0], { tint: '#6d6a64' })
   // 義式咖啡機（不鏽鋼，兩個沖煮頭）
   const em = { x: -w / 2 + 1.6, y: h }
@@ -779,6 +789,18 @@ export function buildLuguoCafeInterior(b, config, detail = b) {
   paperLanterns(b, 0.35, -6.3)
   // 吧檯上的盆栽與窗邊桌上的小植物
   pottedPlant(b, [CAFE.bar.counterX, F + 1.05, 0.9], { seed: 63, size: 0.45, potTint: '#2b2b2b' })
+  // 吧檯後方（工作區，客人走不進去）地上的麻布咖啡豆袋，與檯面上一小袋（精緻模式）
+  for (const [x, z, tint, r] of [
+    [-2.92, 0.62, '#b89a6c', 0.2],
+    [-2.88, 0.08, '#a88a5e', -0.15],
+  ]) {
+    b.group([x, F, z], r, () => {
+      b.box('cloth', [0.44, 0.46, 0.3], [0, 0.23, 0], { tint })
+      b.add('cloth', new IcosahedronGeometry(0.22, 1), { position: [0, 0.48, 0], scale: [1, 0.35, 0.7], tint })
+      b.box('cloth', [0.3, 0.12, 0.012], [0, 0.26, 0.157], { tint: '#6d5236' })
+    })
+  }
+  detail.box('cloth', [0.1, 0.2, 0.16], [CAFE.bar.counterX + 0.05, F + 1.15, -1.12], { tint: '#b89a6c' })
   for (const [x, z] of [
     [2.75, -4.45],
     [3.35, -7.6],
@@ -821,6 +843,11 @@ export function cafeSigns(b) {
   const cabinet = find('backCabinet')
   // 大木櫃頂上的木字塊
   b.addSign({ text: 'LUGUO CAFE', style: 'modernLight', width: 1.2, height: 0.16, position: itemPoint(cabinet, cabinet.w / 2 - 0.8, 2.575, cabinet.d * 0.08 + 0.042), rotationY: itemRotation(cabinet) })
+  // 大木櫃中央層架兩側的春聯（原創的吉祥話）
+  const couplet = (lx, text) =>
+    b.addSign({ text, style: 'couplet', vertical: true, width: 0.11, height: 0.86, position: itemPoint(cabinet, lx, 1.32 + 1.13 / 2, cabinet.d * 0.2 + 0.036), rotationY: itemRotation(cabinet) })
+  couplet(-cabinet.w / 6 - 0.11, '豆香滿室')
+  couplet(cabinet.w / 6 + 0.11, '茶暖人間')
   // 吧檯前的小黑板
   const counter = find('barCounter')
   b.addSign({ text: '手沖・義式', style: 'chalk', width: 0.62, height: 0.24, position: itemPoint(counter, counter.w / 2 - 0.7, 0.72, counter.d / 2 + 0.045), rotationY: itemRotation(counter) })

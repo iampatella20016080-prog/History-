@@ -374,6 +374,23 @@ describe('爐鍋咖啡：資訊熱點與介紹', () => {
       ['bar', 'gacha', 'stairs', 'window'],
     )
     for (const id of ['luguo-lane-brick', 'luguo-lane-end']) assert.equal(revival.buildings.find((item) => item.id === id).storeId, null, id)
+    // 點選的目標包住實際的物件：扭蛋機、窗邊的方桌、吧檯
+    const target = (id) => revival.buildings.find((item) => item.id === id).parts[0]
+    const contains = (box, x, z, y) => {
+      const p = P(x, z)
+      return insideBox({ x: p.x, y, z: p.z }, box)
+    }
+    const gacha = CAFE_ITEMS.find((item) => item.type === 'gacha')
+    assert.deepEqual([gacha.x, gacha.z], [LUGUO_CAFE.gacha.x, LUGUO_CAFE.gacha.z])
+    assert.ok(contains(target('luguo-gacha'), gacha.x, gacha.z, H2 + 1.0), '扭蛋機')
+    const bike = CAFE_ITEMS.find((item) => item.type === 'bike')
+    assert.ok(!contains(target('luguo-gacha'), bike.x, bike.z, H2 + 0.5), '不是旁邊的腳踏車')
+    const table = CAFE_ITEMS.find((item) => item.type === 'squareTable')
+    assert.ok(contains(target('luguo-window'), table.x, table.z, H2 + 0.5), '窗邊的方桌')
+    assert.ok(contains(target('luguo-bar'), LUGUO_CAFE.bar.counterX, -1.0, H2 + 0.9), '吧檯')
+    // 熱點（站的位置）在物件前面
+    const hotspot = LUGUO_HOTSPOTS.find((item) => item.id === 'gacha')
+    assert.equal(hotspot.point[0], gacha.x)
   })
 })
 
@@ -585,6 +602,16 @@ describe('爐鍋咖啡：室內按需載入與畫質', () => {
     const market = revival.interiors.find((item) => item.id === 'yong-le-market')
     for (const batch of buildEraInteriorSync('revival', market.building).batches) assert.ok(batch.geometry.boundingBox.min.x > zone.maxX, batch.material)
     assert.ok(zone.loadRadius > 0 && zone.showRadius >= zone.loadRadius)
+    // 出發點（離小藝埕約 15 m）還不產生；迪化街街尾的立面前、32巷與永樂市場前廣場都會產生
+    const distance = (x, z) => Math.hypot(Math.max(zone.minX - x, 0, x - zone.maxX), Math.max(zone.minZ - z, 0, z - zone.maxZ))
+    assert.ok(distance(13, 0.7) > zone.loadRadius, `出發點距離 ${distance(13, 0.7).toFixed(1)} m`)
+    for (const [x, z] of [
+      [31.8, 0],
+      [38, -12],
+      [40, 0],
+    ]) {
+      assert.ok(distance(x, z) < zone.loadRadius, `(${x}, ${z})`)
+    }
     assert.equal(QUALITY_MODES.smooth.detail, false)
     assert.equal(QUALITY_MODES.fine.detail, true)
   })

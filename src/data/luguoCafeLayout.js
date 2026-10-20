@@ -61,6 +61,8 @@ export const LUGUO_CAFE = {
   door: { minX: 2.55, maxX: 3.55 }, // 北牆（z -12.2 – -12.4）上的玻璃門（寬 1 m）
   /** 吧檯：靠西牆的大木櫃與平行的工作台（客人站在東側） */
   bar: { cabinetX: -3.95, counterX: -1.95, minZ: -3.3, maxZ: 1.15 },
+  /** 紅色扭蛋機（北牆前，玻璃門西側）：家具、點選的目標、資訊熱點與鏡頭都用這個位置 */
+  gacha: { x: -0.3, z: -11.9 },
 }
 
 /** 建築本地座標 → 世界座標（建築沒有旋轉） */
@@ -126,10 +128,10 @@ export const LUGUO_HOTSPOTS = [
     label: '紅色扭蛋機',
     note: '裝著咖啡器具的迷你模型（依實地照片）',
     chapter: 'coffee',
-    point: [-0.3, -10.95],
+    point: [LUGUO_CAFE.gacha.x, LUGUO_CAFE.gacha.z + 0.95],
     level: 1,
     radius: 1.4,
-    prompt: [-0.3, 6.15, -11.9],
-    camera: { position: [2.3, 5.55, -9.85], target: [-0.35, 4.95, -11.95] },
+    prompt: [LUGUO_CAFE.gacha.x, 6.15, LUGUO_CAFE.gacha.z],
+    camera: { position: [2.3, 5.55, -9.85], target: [LUGUO_CAFE.gacha.x - 0.05, 4.95, LUGUO_CAFE.gacha.z - 0.05] },
   },
 ]
