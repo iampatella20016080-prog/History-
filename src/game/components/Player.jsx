@@ -137,6 +137,10 @@ export function Player({ collision, shopModels }) {
       if (!first && Math.hypot(pos.x - beforeX, pos.y - beforeY, pos.z - beforeZ) > 1.5) {
         vel.set(0, 0, 0)
         cameraState.snap = true
+        // 被推出建築（例如從爐鍋咖啡的二樓回到街上）：鏡頭放在推出去的那一側（街道上），不留在原本建築的方向、貼著騎樓
+        const dx = pos.x - beforeX
+        const dz = pos.z - beforeZ
+        if (Math.hypot(dx, dz) > 1.5) cameraState.targetYaw = cameraState.yaw = Math.atan2(dx, dz)
       }
     }
 

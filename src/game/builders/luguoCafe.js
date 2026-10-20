@@ -573,15 +573,20 @@ function staircase(b) {
   // 兩段之間的矮牆（頂部跟著第二段的斜度）與木扶手
   const divZ = (flight1.maxZ + flight2.minZ) / 2
   const divT = flight2.minZ - flight1.maxZ
-  for (let k = 0; k < 4; k++) {
-    const x0 = run.upper + 0.5 * TREAD + k * ((run.lower - run.upper - TREAD) / 4)
-    const x1 = x0 + (run.lower - run.upper - TREAD) / 4
-    const h = landing.y + ((x1 - run.upper) / (run.lower - run.upper)) * (H2 - landing.y) + 0.85
-    b.box('stucco', [x1 - x0, h, divT], [(x0 + x1) / 2, h / 2, divZ], { tint: '#ece6da' })
-  }
+  const slopeY = (x) => landing.y + ((x - run.upper) / (run.lower - run.upper)) * (H2 - landing.y)
+  const divX0 = run.upper + 0.5 * TREAD
+  const divX1 = run.lower - 0.5 * TREAD
+  const divider = new Shape()
+  divider.moveTo(divX0, 0)
+  divider.lineTo(divX1, 0)
+  divider.lineTo(divX1, slopeY(divX1) + 0.85)
+  divider.lineTo(divX0, slopeY(divX0) + 0.85)
+  divider.lineTo(divX0, 0)
+  b.extrude('stucco', divider, divT, { position: [0, 0, flight1.maxZ], tint: '#ece6da' })
   const slope = Math.atan2(H2 - landing.y, run.lower - run.upper)
   const railLen = Math.hypot(run.lower - run.upper, H2 - landing.y)
-  b.box('wood', [railLen, 0.07, 0.09], [(run.lower + run.upper) / 2, (landing.y + H2) / 2 + 0.95, divZ], { rotation: [0, 0, slope], tint: '#6e4a2f' })
+  // 扶手貼著矮牆的斜頂（不浮在牆上）
+  b.box('wood', [railLen, 0.07, 0.09], [(run.lower + run.upper) / 2, (landing.y + H2) / 2 + 0.85 + 0.035, divZ], { rotation: [0, 0, slope], tint: '#6e4a2f' })
   // 牆邊扶手（第一段沿後牆，第二段沿咖啡館的牆）
   b.box('wood', [Math.hypot(run.lower - run.upper, landing.y), 0.06, 0.06], [(run.lower + run.upper) / 2, landing.y / 2 + 0.9, wellMinZ + 0.07], { rotation: [0, 0, -Math.atan2(landing.y, run.lower - run.upper)], tint: '#6e4a2f' })
   b.box('wood', [railLen, 0.06, 0.06], [(run.lower + run.upper) / 2, (landing.y + H2) / 2 + 0.9, wellMaxZ - 0.07], { rotation: [0, 0, slope], tint: '#6e4a2f' })
