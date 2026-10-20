@@ -214,8 +214,9 @@ function arcades(b) {
   b.box('terracotta', [2 * half, 0.04, front], [0, 0.02, front / 2], { tint: '#ffffff' })
   b.box('terracotta', [half - wx, 0.04, -(A.back + wallT)], [(half + wx) / 2, 0.02, (A.back + wallT) / 2], { tint: '#ffffff' })
   // 木條天花與白色的圓盤吊燈
-  b.box('planks', [2 * half, 0.05, front], [0, H - 0.03, front / 2], { tint: '#c79a6a' })
-  b.box('planks', [half - wx, 0.05, -(A.back + wallT)], [(half + wx) / 2, H - 0.03, (A.back + wallT) / 2], { tint: '#c79a6a' })
+  // 天花只鋪到柱列上方的梁的內側（不與梁的外側面重疊）
+  b.box('planks', [2 * half - 0.7, 0.05, front - 0.5], [-0.15, H - 0.03, (front - 0.5) / 2], { tint: '#c79a6a' })
+  b.box('planks', [half - 0.5 - wx, 0.05, -(A.back + wallT)], [(half - 0.5 + wx) / 2, H - 0.03, (A.back + wallT) / 2], { tint: '#c79a6a' })
   for (const [x, z] of [
     [-2.2, 0.85],
     [1.4, 0.85],
@@ -762,7 +763,13 @@ function registerBlockers(b) {
     b.addBlocker(g0, g0 + (run.lower - run.upper) / 4, 0, landing.y + ((H2 - landing.y) * (g0 - run.upper)) / (run.lower - run.upper) + 0.05, flight2.minZ, flight2.maxZ)
   }
   b.addBlocker(landing.minX, run.upper, 0, landing.y - 0.05, flight1.minZ, flight2.maxZ)
-  b.addBlocker(run.upper, run.lower, 0, landing.y + 0.6, flight1.maxZ, flight2.minZ)
+  // 兩段之間的矮牆與扶手（頂部跟著第二段的斜度）
+  for (let k = 0; k < 4; k++) {
+    const x0 = run.upper + k * ((run.lower - run.upper) / 4)
+    const x1 = x0 + (run.lower - run.upper) / 4
+    const h = landing.y + ((x1 - run.upper) / (run.lower - run.upper)) * (H2 - landing.y) + 1.0
+    b.addBlocker(x0, x1, 0, h, flight1.maxZ - 0.02, flight2.minZ + 0.02)
+  }
   b.addBlocker(run.lower - 0.5 * TREAD, half, H, H2, wellMinZ, wellMaxZ)
   // 二樓：西牆、東牆（巷子側立面）、迪化街側立面、北牆（玻璃門以外）、天花與三樓以上
   b.addBlocker(-half, CAFE.minX, H2, C, back, front)

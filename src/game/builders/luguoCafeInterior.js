@@ -673,7 +673,7 @@ function interiorShell(b) {
   const { minX, maxX, minZ, maxZ, door } = CAFE
   const y0 = A.floor2
   const C = A.ceiling2
-  b.box('terracotta', [maxX - minX, 0.01, maxZ - minZ], [(minX + maxX) / 2, F + 0.005, (minZ + maxZ) / 2], { tint: '#e6d6c3' })
+  b.box('terracotta', [maxX - minX, 0.01, maxZ - minZ], [(minX + maxX) / 2, F + 0.005, (minZ + maxZ) / 2], { tint: '#d9c6b0' })
   const side = sideOpenings()
   const fr = frontOpenings()
   const east = [...side.tower, ...side.bays.slice(0, 3)].map(([a0, a1]) => ({ a0, a1, ...LUGUO_WIN2 }))
