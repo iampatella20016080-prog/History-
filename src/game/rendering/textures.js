@@ -898,6 +898,52 @@ function marketTileTexture() {
   return toTexture(canvas)
 }
 
+/* ───────────────────────── 陶磚（橘紅色方磚，例如爐鍋咖啡的地板） ───────────────────────── */
+function terracottaTexture() {
+  const S = 512
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  const rng = createRng(4207)
+  // 磚縫
+  g.fillStyle = '#8c5a45'
+  g.fillRect(0, 0, S, S)
+  const n = 4
+  const t = S / n
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      // 每塊磚的色差（燒製時的深淺不同）
+      const h = hash2(r, c, 53)
+      const red = 214 + Math.floor(h * 22)
+      g.fillStyle = `rgb(${red},${Math.floor(red * 0.5 + h * 10)},${Math.floor(red * 0.32)})`
+      g.fillRect(c * t + 4, r * t + 4, t - 8, t - 8)
+      g.fillStyle = 'rgba(255,236,214,0.16)'
+      g.fillRect(c * t + 7, r * t + 6, t - 16, 3)
+    }
+  }
+  // 輕微的磨損：走道上的淺色斑與細小的刮痕、深色的污點
+  for (let i = 0; i < 40; i++) {
+    const x = rng() * S
+    const y = rng() * S
+    const r = 18 + rng() * 60
+    const light = rng() < 0.6
+    wrapped(S, x, y, r, (px, py) => softBlot(g, px, py, r, light ? '250,214,186' : '96,52,34', 0.04 + rng() * 0.05))
+  }
+  speckle(g, S, rng, 2400, '120,64,42', 0.12, 0.35, 1.5)
+  g.strokeStyle = 'rgba(255,230,210,0.18)'
+  g.lineWidth = 1
+  for (let i = 0; i < 26; i++) {
+    const x = rng() * S
+    const y = rng() * S
+    const a = rng() * Math.PI
+    const len = 6 + rng() * 22
+    g.beginPath()
+    g.moveTo(x, y)
+    g.lineTo(x + Math.cos(a) * len, y + Math.sin(a) * len)
+    g.stroke()
+  }
+  return toTexture(canvas)
+}
+
 /* ───────────────────────── 白色牆面磁磚 ───────────────────────── */
 function whiteTileTexture() {
   const S = 256
@@ -998,6 +1044,7 @@ export function getTextures() {
     granite: graniteTexture(),
     marketTile: marketTileTexture(),
     whiteTile: whiteTileTexture(),
+    terracotta: terracottaTexture(),
     steel: steelTexture(),
     perforated: perforatedTexture(),
     toonGradient: toonGradient(),

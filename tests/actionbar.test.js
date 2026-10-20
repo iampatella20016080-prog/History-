@@ -308,8 +308,8 @@ describe('跟隨鏡頭貼著障礙物時不會進到障礙物裡', () => {
     for (const hit of [0, 0.345, 0.9, 1.5, 10]) assert.equal(followAllowed(hit, 1.3), Math.max(1.3, hit - 0.45))
   })
 
-  test('只有224巷與豆花店的騎樓是貼近障礙物的範圍；其他年代沒有', () => {
-    assert.equal(revival.followAreas.length, 2)
+  test('224巷與豆花店的騎樓是貼近障礙物的範圍（老屋新生另外有小藝埕的32巷與騎樓）；迪化街與其他年代沒有', () => {
+    assert.ok(revival.followAreas.length >= 2)
     assert.ok(inFollowArea({ x: MOUTH.x, z: MOUTH.z + 12 }, revival.followAreas))
     assert.ok(inFollowArea(fromShop(0, -SHOP.arcade / 2), revival.followAreas), '騎樓')
     assert.ok(!inFollowArea({ x: MOUTH.x, z: 0 }, revival.followAreas), '迪化街上不是')

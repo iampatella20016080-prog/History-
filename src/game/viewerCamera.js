@@ -1,5 +1,5 @@
 import { CAMERA, STREET } from './config.js'
-import { raycastBoxes, raycastBoxIndex } from './collision.js'
+import { onLevel, raycastBoxes, raycastBoxIndex, rampAt } from './collision.js'
 import { clamp } from './utils/math.js'
 
 /**
@@ -70,9 +70,9 @@ export function followAllowed(hit, minDistance, tight = false) {
   return Math.min(loose, Math.max(FOLLOW_NEAREST, hit - FOLLOW_WALL_GAP))
 }
 
-/** 點是否在建築另外指定的「貼近障礙物」範圍裡（例如豆花店的224巷；室內範圍另外由 interiorAmount 判斷） */
-export function inFollowArea(p, areas = []) {
-  return areas.some((r) => p.x >= r.minX && p.x <= r.maxX && p.z >= r.minZ && p.z <= r.maxZ)
+/** 點是否在建築另外指定的「貼近障礙物」範圍裡（例如豆花店的224巷；室內範圍另外由 interiorAmount 判斷）；範圍屬於某個樓層（預設 0） */
+export function inFollowArea(p, areas = [], level = 0) {
+  return areas.some((r) => onLevel(r, level) && p.x >= r.minX && p.x <= r.maxX && p.z >= r.minZ && p.z <= r.maxZ)
 }
 
 /**
@@ -92,14 +92,25 @@ function insideRect(r, p) {
 }
 
 /**
+ * 點是否在室內範圍裡。範圍可以由幾塊組成（parts，各自屬於某個樓層），
+ * 例如爐鍋咖啡的樓梯間（上下兩層）、二樓的樓梯平台與店內；範圍本身的矩形是這幾塊的外框。
+ */
+function insideZone(zone, p, level) {
+  if (zone.parts) return zone.parts.some((part) => onLevel(part, level) && insideRect(part, p))
+  return onLevel(zone, level) && insideRect(zone, p)
+}
+
+/**
  * 角色在室內（例如永樂市場一樓）時為 1；在通往大門的入口範圍內，越靠近大門越接近 1；其他地方為 0。
  * 室內範圍可以另外指定過渡的距離（entryHold、entryRamp，例如巷子裡的小店較短）。
+ * 室內範圍屬於某個樓層（level，預設 0；樓梯間可以用 levels 同時屬於上下兩層），
+ * 例如二樓的咖啡館只在角色走上二樓時才算室內，站在下面的騎樓不算。入口範圍屬於一樓。
  * 回傳 { zone, amount }，不在任何室內或入口範圍時回傳 null。
  */
-export function interiorAmount(p, interiors = []) {
-  for (const zone of interiors) if (insideRect(zone, p)) return { zone, amount: 1 }
+export function interiorAmount(p, interiors = [], level = 0) {
+  for (const zone of interiors) if (insideZone(zone, p, level)) return { zone, amount: 1 }
   for (const zone of interiors) {
-    if (!zone.entry || !insideRect(zone.entry, p)) continue
+    if (!zone.entry || (zone.entry.level ?? 0) !== level || !insideRect(zone.entry, p)) continue
     const d = Math.hypot(p.x - zone.door.x, p.z - zone.door.z)
     const hold = zone.entryHold ?? ENTRY_HOLD
     const ramp = zone.entryRamp ?? ENTRY_RAMP
@@ -145,16 +156,35 @@ function exitDistance(o, d, b) {
   return Math.max(0, t)
 }
 
+/**
+ * 範圍在 (x, z) 的高度區間 [minY, maxY] 與鏡頭高度上限 cameraMaxY。
+ * 一般範圍只有上限（例如一樓室內不超過天花板）；疊在一樓上方的二樓室內另外有下限 minY。
+ * 樓梯間的範圍有 ramp（與碰撞的斜面相同）：minY、maxY 與 cameraMaxY 是相對於樓梯斜面的高度。
+ */
+function regionRange(r, x, z) {
+  const base = r.ramp ? rampAt(r.ramp, { x, z }).y : 0
+  return {
+    minY: r.minY == null ? -Infinity : base + r.minY,
+    maxY: r.maxY == null ? Infinity : base + r.maxY,
+    cameraMaxY: r.cameraMaxY == null ? Infinity : base + r.cameraMaxY,
+  }
+}
+
+/** 包含注視點的範圍；同一個位置有上下疊著的範圍時（例如二樓的咖啡館在一樓騎樓上方），只取高度區間包含注視點的那幾個 */
+function regionsAt(target, regions) {
+  const found = regions.filter((r) => inRegion(r, target.x, target.z))
+  const level = found.filter((r) => {
+    const range = regionRange(r, target.x, target.z)
+    return target.y >= range.minY - 1e-6 && target.y <= range.maxY + 1e-6
+  })
+  return level.length ? level : found
+}
+
 /** 注視點所在範圍的鏡頭高度上限（室內）：取所在範圍中最寬鬆的上限，沒有上限時為 Infinity */
 function cameraCeiling(target, regions) {
-  let found = false
-  let ceiling = -Infinity
-  for (const r of regions) {
-    if (!inRegion(r, target.x, target.z)) continue
-    found = true
-    ceiling = Math.max(ceiling, r.cameraMaxY ?? Infinity)
-  }
-  return found ? ceiling : Infinity
+  const found = regionsAt(target, regions)
+  if (!found.length) return Infinity
+  return Math.max(...found.map((r) => regionRange(r, target.x, target.z).cameraMaxY))
 }
 
 /** 沿方向最多可以退多遠而不撞到建築、地面、街區邊界或室內的高度上限（已扣掉安全距離） */
@@ -186,11 +216,19 @@ function inRegion(r, x, z) {
   return x >= r.minX - 1e-6 && x <= r.maxX + 1e-6 && z >= r.minZ - 1e-6 && z <= r.maxZ + 1e-6
 }
 
-/** 範圍的高度上限（室內不超過天花板）：取所在範圍中最寬鬆的上限 */
+/**
+ * 範圍的高度區間（室內不超過天花板，二樓不低於地板）：注視點已經在某個所在範圍的區間裡就不動，
+ * 否則移到最近的區間（只有上限時，就是取所在範圍中最寬鬆的上限）
+ */
 function clampRegionHeight(target, regions) {
-  let maxY = -Infinity
-  for (const r of regions) if (inRegion(r, target.x, target.z)) maxY = Math.max(maxY, r.maxY ?? Infinity)
-  if (Number.isFinite(maxY)) target.y = Math.min(target.y, maxY)
+  let best = null
+  for (const r of regions) {
+    if (!inRegion(r, target.x, target.z)) continue
+    const { minY, maxY } = regionRange(r, target.x, target.z)
+    const y = clamp(target.y, minY, maxY)
+    if (!best || Math.abs(y - target.y) < Math.abs(best - target.y)) best = y
+  }
+  if (best != null && Number.isFinite(best)) target.y = best
 }
 
 /** 把注視點限制在街道／廣場／碼頭（與年代額外的範圍）上方，並推出建築與樹的範圍（會直接修改 target） */

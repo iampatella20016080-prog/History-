@@ -1,18 +1,84 @@
 import { clamp } from './utils/math.js'
 
 /**
- * 2D 碰撞（XZ 平面）
+ * 2D 碰撞（XZ 平面），分樓層
  *
  * - walkable：可行走區域（多個矩形的聯集），角色必須留在其中
  * - obstacles：障礙物矩形（貨物堆、推車、柱子…），角色會被推開
  *
- * 矩形格式：{ minX, maxX, minZ, maxZ }
+ * 矩形格式：{ minX, maxX, minZ, maxZ }，另外可以有：
+ * - level：所在的樓層（預設 0，街道與一樓）；levels：同時屬於好幾層（例如樓梯）
+ * - floorY：地板高度（預設 0）
+ * - ramp：樓梯的斜面 { axis: 'x'｜'z', from, to, y0, y1 }，沿著 axis 從 from（高度 y0）到 to（高度 y1）；
+ *         levels 依序是 from 端與 to 端的樓層。看得見的階梯另外建模，角色踩的是這個看不見的連續斜面。
+ *
+ * 角色只跟目前樓層的範圍與障礙物碰撞，所以二樓的地板可以蓋在一樓的騎樓上方。
  */
-export function resolvePlayerPosition(position, radius, world) {
+export function resolvePlayerPosition(position, radius, world, level = 0) {
+  const { walkable, obstacles } = collisionForLevel(world, level)
   for (let pass = 0; pass < 2; pass++) {
-    for (const box of world.obstacles) pushOutOfBox(position, radius, box)
-    constrainToWalkable(position, radius, world.walkable)
+    for (const box of obstacles) pushOutOfBox(position, radius, box)
+    constrainToWalkable(position, radius, walkable)
   }
+}
+
+export function onLevel(item, level) {
+  return item.levels ? item.levels.includes(level) : (item.level ?? 0) === level
+}
+
+/** 每個樓層的可行走範圍與障礙物（同一份碰撞資料只篩選一次） */
+const levelCache = new WeakMap()
+
+function collisionForLevel(world, level) {
+  let byLevel = levelCache.get(world)
+  if (!byLevel) levelCache.set(world, (byLevel = new Map()))
+  let entry = byLevel.get(level)
+  if (!entry) {
+    const walkable = world.walkable.filter((rect) => onLevel(rect, level))
+    // 這份資料沒有這個樓層（例如換到沒有二樓店家的年代）：改用一樓
+    entry = walkable.length
+      ? { walkable, obstacles: world.obstacles.filter((box) => onLevel(box, level)), level }
+      : level === 0
+        ? { walkable, obstacles: world.obstacles, level: 0 }
+        : collisionForLevel(world, 0)
+    byLevel.set(level, entry)
+  }
+  return entry
+}
+
+/** 這份碰撞資料有沒有這個樓層（沒有時角色要回到一樓） */
+export function hasLevel(world, level) {
+  return collisionForLevel(world, level).level === level
+}
+
+/** 斜面在點 p 的高度與位置比例（0：from 端，1：to 端） */
+export function rampAt(ramp, p) {
+  const value = ramp.axis === 'x' ? p.x : p.z
+  const t = clamp((value - ramp.from) / (ramp.to - ramp.from), 0, 1)
+  return { t, y: ramp.y0 + (ramp.y1 - ramp.y0) * t }
+}
+
+/** 角色的高度和斜面差多少以內才算踩在樓梯上（從二樓的地板上方經過樓梯時不會掉下去） */
+const RAMP_CATCH = 0.6
+
+/**
+ * 角色所在的樓層與地板高度：踩在樓梯上時依斜面計算，過了樓梯的一半就換到另一層；
+ * 否則是目前樓層的地板。y 為角色目前的高度（省略時不檢查高度，例如傳送後）。
+ */
+export function groundAt(position, world, level = 0, y = null) {
+  const entry = collisionForLevel(world, level)
+  let floor = null
+  for (const rect of entry.walkable) {
+    if (position.x < rect.minX || position.x > rect.maxX || position.z < rect.minZ || position.z > rect.maxZ) continue
+    if (rect.ramp) {
+      const on = rampAt(rect.ramp, position)
+      if (y != null && Math.abs(on.y - y) > RAMP_CATCH) continue
+      const levels = rect.levels ?? [entry.level, entry.level]
+      return { level: on.t < 0.5 ? levels[0] : levels[1], y: on.y }
+    }
+    floor ??= rect.floorY ?? 0
+  }
+  return { level: entry.level, y: floor ?? entry.walkable.find((rect) => !rect.ramp)?.floorY ?? 0 }
 }
 
 function pushOutOfBox(position, radius, box) {

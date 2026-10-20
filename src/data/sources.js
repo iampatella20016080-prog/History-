@@ -276,6 +276,146 @@ SOURCES['moa-ice-toppings'] = {
   context: '說明粉粿是粉漿加上山梔子煮過的水攪拌後蒸熟；粉粿黃黃的顏色來自天然色素「山梔子」，又名黃梔。',
 }
 
+// 爐鍋咖啡與小藝埕（屈臣氏大藥房舊址）：建築興建年份各資料記載不一（1928年，一說1917年），介紹中並列
+SOURCES['taipei-pictorial-watson'] = {
+  id: 'taipei-pictorial-watson',
+  citation: '魚夫，〈屈臣氏大樓的興衰起落〉，《台北畫刊》2017年2月號，頁56–57。',
+  publisher: '臺北市政府',
+  title: '屈臣氏大樓的興衰起落',
+  url: 'http://www-ws.gov.taipei/001/Upload/public/MMO/READ/589-09.pdf',
+  context:
+    '「最早屈臣氏是臺中實業家李俊啟全權負責經營，他本來在彰化員林開設「德壽堂」」；「1928 年（一說為1917 年）興建了這棟位於臺北大稻埕的屈臣氏大樓，以批發進口西藥為主，也代理英國史谷脫（Scott）魚肝油」；1934年香港屈臣氏本店控告李俊啟擅自使用商標；「現存建築立面3 樓外牆所鑲鐫的飛龍與麒麟護衛七層寶塔圖騰」，兩旁書有「龍麟伴塔為記，別人不得冒效」；「1996 年遭逢大火，直至2005年由市府列為巿定古蹟後，交由李家後代李永崇建築師修復完成」。',
+}
+SOURCES['boch-opendata-assets'] = {
+  id: 'boch-opendata-assets',
+  citation: '文化部文化資產局，文化資產開放資料：古蹟（1.1）與歷史建築（1.2）案件清單。',
+  publisher: '文化部文化資產局',
+  title: '文化資產開放資料（古蹟、歷史建築）',
+  url: 'https://data.boch.gov.tw/opendata/v2/assetsCase/1.1.json',
+  context: '2026年10月查詢古蹟（1.1.json）與歷史建築（1.2.json）的案件清單，沒有找到名稱含「屈臣氏」或地址為迪化街一段34號、32巷的案件；附近的兩江醫院（迪化街1段28號）是另一棟直轄市定古蹟。',
+}
+SOURCES['businesstoday-2012-watson'] = {
+  id: 'businesstoday-2012-watson',
+  citation: '《今周刊》，2012年10月25日報導（小藝埕與屈臣氏大藥房）。',
+  publisher: '今周刊',
+  title: '今周刊 2012年10月25日報導',
+  url: 'https://www.businesstoday.com.tw/article/category/80392/post/201210250013/',
+  context: '「這棟洗石子外牆的三層樓平樑式結構，坐落在街角」；「在日治時期，這棟樓不但最高，也最氣派」；「二○一一年右翼內棟作為「小藝埕」，內有…藝術設計品鋪、獨立書店、咖啡店及劇場」。',
+}
+SOURCES['businesstoday-2015-dadaocheng'] = {
+  id: 'businesstoday-2015-dadaocheng',
+  citation: '《今周刊》，2015年6月25日報導（大稻埕的老屋新生）。',
+  publisher: '今周刊',
+  title: '今周刊 2015年6月25日報導',
+  url: 'https://www.businesstoday.com.tw/article/category/183016/post/201506250043/',
+  context: '報導以「這波大稻埕文藝復興風潮」形容迪化街一帶的老屋再利用。',
+}
+SOURCES['gvm-2013-artyard'] = {
+  id: 'gvm-2013-artyard',
+  citation: '《遠見雜誌》，2013年8月28日報導（周奕成與小藝埕）。',
+  publisher: '遠見雜誌',
+  title: '遠見雜誌 2013年8月28日報導',
+  url: 'https://www.gvm.com.tw/article/18274',
+  context: '「2010年周奕成好不容易獲得大稻埕最古老的建築物「屈臣氏大藥房」屋主點頭出租，以「大稻埕上賣小藝」發想創立小藝埕，展開他的文化復興大計。」報導稱周奕成為「世代文化創業群負責人」。',
+}
+SOURCES['artyard-about'] = {
+  id: 'artyard-about',
+  citation: '大藝埕 ArtYard 官方網站，〈關於〉。',
+  publisher: '世代群 Sedai Group',
+  title: '大藝埕 ArtYard：關於',
+  url: 'https://www.artyard.tw/about',
+  context: '「自 2011 年的「小藝埕」至今，世代群在大稻埕經營了 10 棟藝埕系列街屋」；「大藝埕 ArtYard.tw 是由世代群 Sedai Group 建置」。',
+}
+SOURCES['ntpu-2014-dadaocheng'] = {
+  id: 'ntpu-2014-dadaocheng',
+  citation: '國立臺北大學都市計劃研究所，〈大稻埕歷史風貌特定專用區之街區再生計畫〉，2014年6月13日。',
+  publisher: '國立臺北大學',
+  title: '大稻埕歷史風貌特定專用區之街區再生計畫',
+  url: 'https://urbanplanning.ntpu.edu.tw/wp-content/uploads/2018/07/%E5%A4%A7%E7%A8%BB%E5%9F%95%E6%AD%B7%E5%8F%B2%E9%A2%A8%E8%B2%8C%E7%89%B9%E5%AE%9A%E5%B0%88%E7%94%A8%E5%8D%80%E4%B9%8B%E8%A1%97%E5%8D%80%E5%86%8D%E7%94%9F%E8%A8%88%E7%95%AB.pdf',
+  context: '報告引用小藝埕官網：「一樓：「Bookstore 1920s」及「印花樂」 二樓：「爐鍋咖啡」 三樓：展示和聚會場所」。',
+}
+SOURCES['supertaste-artyard'] = {
+  id: 'supertaste-artyard',
+  citation: 'TVBS《食尚玩家》，大稻埕小藝埕介紹。',
+  publisher: 'TVBS 食尚玩家',
+  title: '食尚玩家：小藝埕',
+  url: 'https://supertaste.tvbs.com.tw/travel/313760',
+  context: '「2樓的「爐鍋咖啡」主打來自各產區、莊園的單品咖啡，還有義式濃縮和拿鐵。」；「3樓是思劇場」。',
+}
+SOURCES['storm-2018-luguo'] = {
+  id: 'storm-2018-luguo',
+  citation: '《風傳媒》，2018年12月26日報導（迪化街的屈臣氏大藥房與爐鍋咖啡）。',
+  publisher: '風傳媒',
+  title: '風傳媒 2018年12月26日報導',
+  url: 'https://www.storm.mg/lifestyle/721968',
+  context: '「屈臣氏大藥房的二樓，有間網路上頗具知名度的爐鍋咖啡」；「所有的咖啡豆都是老闆精選各國的豆子，而且每杯咖啡強調不加糖、不加奶精」；「地址：台北市大同區迪化街一段32巷1號」。',
+}
+SOURCES['storm-2015-luguo-guandu'] = {
+  id: 'storm-2015-luguo-guandu',
+  citation: '欣台灣，〈居高臨下的窗景令人心醉！五家藏在二樓的好咖啡〉，《風傳媒》，2015年10月10日。',
+  publisher: '風傳媒',
+  title: '居高臨下的窗景令人心醉！五家藏在二樓的好咖啡',
+  url: 'https://www.storm.mg/lifestyle/68081',
+  context: '「位於台北藝術大學關渡校區的爐鍋咖啡，基本上是開外掛形式的二樓咖啡」。',
+}
+SOURCES['moa-taiwan-coffee'] = {
+  id: 'moa-taiwan-coffee',
+  citation: '農業部農業知識入口網（農業試驗所），〈台灣咖啡沿革〉。',
+  publisher: '農業部',
+  title: '台灣咖啡沿革',
+  url: 'https://kmweb.moa.gov.tw/subject/subject.php?id=45295',
+  context:
+    '「西元1884年(清光緒10年)臺灣咖啡樹栽培最早紀錄，始於英國茶商自馬尼拉引進一百株阿拉比卡咖啡在台北三峽種植。」；1902年在恆春設立熱帶植物殖育場；1917年嘉義試驗支場研究阿拉比卡種；「1942年時全台栽培面積已達1,000公頃之多」；戰後「全台栽培咖啡產地因此大多荒蕪」。',
+}
+SOURCES['boch-bolero'] = {
+  id: 'boch-bolero',
+  citation: '文化部文化資產局，國家文化資產網：歷史建築「波麗路西餐廳」（2006年5月17日登錄）。',
+  publisher: '文化部文化資產局',
+  title: '波麗路西餐廳（歷史建築）',
+  url: 'http://nchdb.boch.gov.tw/assets/advanceSearch/historicalBuilding/20060517000001',
+  context: '「本店位於本市民生西路314號，初建於1920年代，後於1934年餐廳開業後進行裝修」；「「波麗路」為臺北市1930年代最著名的西餐廳，是「沙龍文化」的先鋒，為生活西化重要見證。」',
+}
+SOURCES['moe-coffee'] = {
+  id: 'moe-coffee',
+  citation: '教育部《國語辭典簡編本》，「咖啡」。',
+  publisher: '教育部',
+  title: '咖啡',
+  url: 'https://dict.concised.moe.edu.tw/dictView.jsp?ID=17911&q=1',
+  context: '「種子為咖啡原料，焙乾後研成細末可沖泡為飲料，有興奮神經的效果。」',
+}
+SOURCES['nca-pour-over'] = {
+  id: 'nca-pour-over',
+  citation: 'National Coffee Association USA, "Pour Over Coffee."',
+  publisher: 'National Coffee Association USA',
+  title: 'Pour Over Coffee',
+  url: 'https://www.aboutcoffee.org/brewing/pour-over/',
+  context: '"hand-pour water over coffee grounds in a filter"（手沖：用手把水倒在濾器裡的咖啡粉上）。',
+}
+SOURCES['nca-espresso'] = {
+  id: 'nca-espresso',
+  citation: 'National Coffee Association USA, "Espresso."',
+  publisher: 'National Coffee Association USA',
+  title: 'Espresso',
+  url: 'https://www.aboutcoffee.org/brewing/espresso/',
+  context: '"uses high pressure to force nearly boiling water through finely ground coffee in about 20–30 seconds"（以高壓讓接近沸騰的水在約20–30秒內通過細研磨的咖啡粉）。',
+}
+SOURCES['nca-cold-brew'] = {
+  id: 'nca-cold-brew',
+  citation: 'National Coffee Association USA, "Cold Brew."',
+  publisher: 'National Coffee Association USA',
+  title: 'Cold Brew',
+  url: 'https://www.aboutcoffee.org/brewing/cold-brew/',
+  context: '"coffee made using room-temperature or cooler water"，浸泡「12–18+ hours」；冰咖啡則是 "brewed hot…then cooled"。',
+}
+SOURCES['foodnext-cold-brew'] = {
+  id: 'foodnext-cold-brew',
+  citation: '《食力 foodNEXT》，2017年10月20日（冷萃咖啡與冰滴咖啡的差別）。',
+  publisher: '食力 foodNEXT',
+  title: '食力 2017年10月20日報導',
+  url: 'https://www.foodnext.net/life/lifesafe/paper/4357992699',
+  context: '冷萃：「注入冷水，於低溫環境中浸泡至少約12小時」；冰滴：「利用5度C以下的冰水混合物…滴入咖啡粉…一點一點滴漏出萃取液」。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

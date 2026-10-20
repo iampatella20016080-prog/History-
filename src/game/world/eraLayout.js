@@ -6,6 +6,8 @@ import { templeCollision } from '../builders/specials.js'
 import { ziYangCollision } from '../builders/ziyang.js'
 import { yongleCollision, yongleFootprint } from '../builders/yongleMarket.js'
 import { actionBarCollision, actionBarFootprint } from '../builders/actionBar.js'
+import { luguoCollision, luguoFootprint } from '../builders/luguoCafe.js'
+import { cafeObstacles } from '../builders/luguoCafeInterior.js'
 
 /**
  * 某個年代的街區配置：建築（依地段演變）、街道道具、路燈、電線、燈籠串、碰撞與可行走範圍。
@@ -278,9 +280,18 @@ function arrangeModernRows(buildings) {
 }
 
 /** 形狀特殊的店家建築（以 shop.site 指定位置）額外的可行走範圍與障礙物 */
-const SITE_COLLISION = { ziyang: ziYangCollision, 'yongle-market': yongleCollision, 'action-bar': actionBarCollision }
+const SITE_COLLISION = {
+  ziyang: ziYangCollision,
+  'yongle-market': yongleCollision,
+  'action-bar': actionBarCollision,
+  // 小藝埕：騎樓、32巷、樓梯（看不見的斜面）與二樓；二樓的家具障礙物來自店內的家具配置
+  'luguo-cafe': (config, transform) => {
+    const collision = luguoCollision(config, transform)
+    return { walkable: collision.walkable, obstacles: [...collision.obstacles, ...cafeObstacles(transform)] }
+  },
+}
 /** 佔地較大的店家建築（含巷子）：範圍內不產生遠景房屋與遠景的樹 */
-const SITE_FOOTPRINT = { 'yongle-market': yongleFootprint, 'action-bar': actionBarFootprint }
+const SITE_FOOTPRINT = { 'yongle-market': yongleFootprint, 'action-bar': actionBarFootprint, 'luguo-cafe': luguoFootprint }
 
 function siteTransform({ x, z, rotationY = 0 }) {
   const cos = Math.cos(rotationY)

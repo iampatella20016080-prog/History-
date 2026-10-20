@@ -10,6 +10,16 @@ function initialEra() {
   return id && getEra(id) ? id : DEFAULT_ERA_ID
 }
 
+/** 店家的某個資訊熱點（沒有或找不到時回傳 null） */
+function hotspotOf(shop, hotspotId) {
+  return (hotspotId && shop?.hotspots?.find((item) => item.id === hotspotId)) || null
+}
+
+/** 熱點對應的介紹章節（章節 id；找不到時從第一章開始） */
+function hotspotChapterIndex(shop, hotspot) {
+  return Math.max(0, shop.chapters?.findIndex((chapter) => chapter.id === hotspot.chapter) ?? 0)
+}
+
 function detectTouch() {
   if (typeof window === 'undefined') return false
   return window.matchMedia?.('(pointer: coarse)').matches || navigator.maxTouchPoints > 1
@@ -57,7 +67,10 @@ export const useGameStore = create((set, get) => ({
   worldReady: false,
   mode: 'explore',
   nearbyShopId: null,
+  /** 店家的資訊熱點（例如爐鍋咖啡的吧檯、扭蛋機）：附近的熱點與目前介紹開啟時的熱點 */
+  nearbyHotspotId: null,
   activeShopId: null,
+  activeHotspotId: null,
   chapterIndex: 0,
   menuOpen: false,
   visited: {},
@@ -84,24 +97,31 @@ export const useGameStore = create((set, get) => ({
     if (get().inputMode !== inputMode) set({ inputMode })
   },
 
-  setNearbyShop: (id) => {
-    if (get().nearbyShopId !== id) set({ nearbyShopId: id })
+  setNearbyShop: (id, hotspotId = null) => {
+    const state = get()
+    if (state.nearbyShopId !== id || state.nearbyHotspotId !== hotspotId) set({ nearbyShopId: id, nearbyHotspotId: hotspotId })
   },
 
-  /** 玩家在已開放的店家附近按下 E 或點店面 */
-  interact: () => {
-    const { started, mode, nearbyShopId, transitioning, viewMode } = get()
+  /**
+   * 玩家在已開放的店家附近按下 E 或點店面。
+   * hotspotId：點到的是店裡的某個資訊熱點（例如扭蛋機）時，開啟那個熱點的章節；否則用附近的熱點。
+   */
+  interact: (hotspotId = null) => {
+    const { started, mode, nearbyShopId, nearbyHotspotId, transitioning, viewMode } = get()
     if (!started || mode !== 'explore' || viewMode !== 'explore' || !nearbyShopId || transitioning) return
-    if (getShop(nearbyShopId)?.status === 'open') get().openShop(nearbyShopId)
+    if (getShop(nearbyShopId)?.status === 'open') get().openShop(nearbyShopId, hotspotId ?? nearbyHotspotId)
   },
 
-  /** 開啟店家介紹（建築觀賞模式中不開啟故事） */
-  openShop: (id) => {
-    if (get().viewMode !== 'explore') return false
+  /** 開啟店家介紹（建築觀賞模式中不開啟故事）；hotspotId 省略時，若正在這家店的熱點附近就用那個熱點 */
+  openShop: (id, hotspotId) => {
+    const state = get()
+    if (state.viewMode !== 'explore') return false
+    const hotspot = hotspotOf(getShop(id), hotspotId === undefined && id === state.nearbyShopId ? state.nearbyHotspotId : hotspotId)
     set((state) => ({
       mode: 'focus',
       activeShopId: id,
-      chapterIndex: 0,
+      activeHotspotId: hotspot?.id ?? null,
+      chapterIndex: hotspot ? hotspotChapterIndex(getShop(id), hotspot) : 0,
       menuOpen: false,
       qualityOpen: false,
       visited: { ...state.visited, [id]: true },
@@ -115,7 +135,7 @@ export const useGameStore = create((set, get) => ({
   },
 
   closeShop: () => {
-    if (get().mode !== 'explore') set({ mode: 'explore', activeShopId: null })
+    if (get().mode !== 'explore') set({ mode: 'explore', activeShopId: null, activeHotspotId: null })
   },
 
   setChapter: (index) => set({ chapterIndex: index }),
@@ -146,6 +166,7 @@ export const useGameStore = create((set, get) => ({
       titleSeq: titleSeq + 1,
       titleCard: { eraId: id, nonce: titleSeq + 1 },
       nearbyShopId: null,
+      nearbyHotspotId: null,
       menuOpen: false,
     })
     return requestId
@@ -154,7 +175,7 @@ export const useGameStore = create((set, get) => ({
   /** 轉場中霧氣最濃時：街景換成新的年代（只接受目前這次轉場的 id） */
   swapEra: (transitionId, eraId) => {
     if (get().eraTransition?.id !== transitionId || !getEra(eraId)) return false
-    set({ eraId, nearbyShopId: null })
+    set({ eraId, nearbyShopId: null, nearbyHotspotId: null })
     return true
   },
 
@@ -193,7 +214,7 @@ export const useGameStore = create((set, get) => ({
     if (viewMode === state.viewMode) return false
     if (viewMode === 'viewer') {
       if (!state.started || state.mode !== 'explore') return false
-      set({ viewMode: 'viewer', uiHidden: false, nearbyShopId: null, menuOpen: false, viewerFocus: null })
+      set({ viewMode: 'viewer', uiHidden: false, nearbyShopId: null, nearbyHotspotId: null, menuOpen: false, viewerFocus: null })
       return true
     }
     if (viewMode === 'explore') {

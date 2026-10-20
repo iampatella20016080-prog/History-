@@ -4,7 +4,7 @@ import { transitionState } from '../transition.js'
 import { QUALITY_MODES } from '../quality.js'
 import { playerState } from '../runtime.js'
 import { getInteriorMaterials } from '../rendering/materials.js'
-import { getLoadedInterior, loadEraInterior } from '../world/worldManager.js'
+import { getLoadedInterior, getLoadedInteriorDetail, loadEraInterior } from '../world/worldManager.js'
 import { useGameStore } from '../../state/useGameStore.js'
 import { GlowLayer } from './GlowLayer.jsx'
 import { LanternLayer } from './LanternLayer.jsx'
@@ -28,7 +28,7 @@ function distanceToRect(r, x, z) {
  * 跟著這個年代的街景快取與釋放；其他年代沒有室內，也就不會產生或繪製。
  * 不投射也不接收陰影，改用略為自發光的材質，看起來像被室內的燈均勻照亮。
  */
-function InteriorZone({ world, zone }) {
+function InteriorZone({ world, zone, detail }) {
   const [batches, setBatches] = useState(() => getLoadedInterior(world, zone))
   const group = useRef()
   const status = useRef({ requested: false, retryAt: 0, visible: false, mounted: true })
@@ -71,9 +71,16 @@ function InteriorZone({ world, zone }) {
   })
 
   if (!batches) return null
+  const small = getLoadedInteriorDetail(world, zone)
   return (
     <group ref={group} name={`interior-${zone.id}`}>
       <StaticBatches batches={batches} materials={getInteriorMaterials()} castShadow={false} receiveShadow={false} dispose={false} />
+      {/* 細小的擺飾：精緻模式才顯示 */}
+      {small.length > 0 && (
+        <group visible={detail}>
+          <StaticBatches batches={small} materials={getInteriorMaterials()} castShadow={false} receiveShadow={false} dispose={false} />
+        </group>
+      )}
     </group>
   )
 }
@@ -99,7 +106,7 @@ export function EraScene({ world }) {
         <StaticBatches batches={world.detailBatches ?? []} dispose={false} />
       </group>
       {(world.interiors ?? []).map((zone) => (
-        <InteriorZone key={zone.id} world={world} zone={zone} />
+        <InteriorZone key={zone.id} world={world} zone={zone} detail={detail} />
       ))}
       <SignLayer signs={world.signs} banners={world.banners} />
       <LanternLayer lanterns={world.lanterns} />

@@ -562,6 +562,122 @@ function RedGreenBeans() {
   )
 }
 
+/* ── 爐鍋咖啡：咖啡豆與幾種萃取方式 ── */
+
+/** 一顆咖啡豆（中間一道彎曲的溝） */
+function Bean({ x, y, r = 0, s = 1, fill = '#6b3e24' }) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${r}) scale(${s})`}>
+      <ellipse cx="0" cy="0" rx="9" ry="12.5" fill={fill} stroke={INK} strokeWidth="1.6" />
+      <path d="M0 -10 Q-4 -3 0 0 Q4 4 0 10" stroke="#2a170d" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+      <path d="M-4 -7 Q-6 -2 -5 3" stroke="#a8724a" strokeWidth="1.3" fill="none" strokeLinecap="round" />
+    </g>
+  )
+}
+
+function CoffeeBeans() {
+  // 咖啡豆：一小堆烘焙過的深褐色咖啡豆，旁邊一枝帶著紅色果實的咖啡枝
+  const beans = [
+    [70, 104, -20],
+    [92, 108, 15],
+    [114, 104, -35],
+    [136, 108, 25],
+    [80, 88, 40],
+    [104, 90, -10],
+    [126, 88, 30],
+    [92, 72, -25],
+    [116, 74, 10],
+    [104, 58, 35],
+  ]
+  return (
+    <>
+      <Shadow cy={124} rx={66} />
+      {beans.map(([x, y, r], i) => (
+        <Bean key={i} x={x} y={y} r={r} fill={i % 3 === 0 ? '#5a321c' : '#6b3e24'} />
+      ))}
+      <path d="M150 112 Q160 80 178 62" stroke="#5d7a3a" strokeWidth="3" fill="none" strokeLinecap="round" />
+      <path d="M162 84 Q176 78 182 86 Q172 94 162 84 Z" fill="#7aa04a" stroke={INK} strokeWidth="1.4" />
+      <circle cx="156" cy="96" r="5" fill="#c8342c" stroke={INK} strokeWidth="1.4" />
+      <circle cx="166" cy="92" r="5" fill="#d8503a" stroke={INK} strokeWidth="1.4" />
+    </>
+  )
+}
+
+function PourOver() {
+  // 手沖咖啡：細口壺把熱水倒進濾杯，咖啡滴進下方的玻璃分享壺
+  return (
+    <>
+      <Shadow cy={126} rx={70} />
+      <path d="M62 82 L66 120 Q90 126 114 120 L118 82 Z" fill="#e8f0f2" stroke={INK} strokeWidth="2" strokeLinejoin="round" opacity="0.95" />
+      <path d="M67 100 L69 118 Q90 123 111 118 L113 100 Q90 104 67 100 Z" fill="#6b3e24" stroke={INK} strokeWidth="1.4" />
+      <path d="M118 88 Q130 90 126 104 Q124 112 116 112" stroke={INK} strokeWidth="2" fill="none" />
+      <path d="M58 78 L122 78 L108 52 L72 52 Z" fill="#f4f1ea" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M74 56 L106 56" stroke="#d6cfbf" strokeWidth="2" />
+      <ellipse cx="90" cy="53" rx="18" ry="4" fill="#5a321c" stroke={INK} strokeWidth="1.4" />
+      <path d="M90 80 L90 98" stroke="#5a321c" strokeWidth="2.4" strokeDasharray="3 4" />
+      {/* 細口壺 */}
+      <path d="M140 46 Q140 26 160 26 Q178 26 178 46 L176 66 L142 66 Z" fill="#2b2b2b" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M142 54 Q120 50 108 36" stroke="#2b2b2b" strokeWidth="4" fill="none" strokeLinecap="round" />
+      <path d="M178 36 Q192 40 186 56" stroke={INK} strokeWidth="2.4" fill="none" />
+      <path d="M106 38 Q100 44 98 50" stroke="#9fd3e6" strokeWidth="2" fill="none" />
+    </>
+  )
+}
+
+function Espresso() {
+  // 義式濃縮：白色小杯裡帶著一層金棕色泡沫（crema）的濃縮咖啡，放在碟子上
+  return (
+    <>
+      <Shadow cy={124} rx={62} />
+      <ellipse cx="100" cy="112" rx="58" ry="12" fill="#f4f1ea" stroke={INK} strokeWidth="2" />
+      <ellipse cx="100" cy="110" rx="40" ry="7" fill="#e4dfd2" />
+      <path d="M68 62 Q70 104 100 108 Q130 104 132 62 Z" fill="#fbfaf6" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+      <path d="M132 70 Q152 70 150 86 Q148 98 128 94" stroke={INK} strokeWidth="2.2" fill="none" />
+      <ellipse cx="100" cy="62" rx="32" ry="9" fill="#5a321c" stroke={INK} strokeWidth="2" />
+      <ellipse cx="100" cy="62" rx="26" ry="6.5" fill="#c08a4a" />
+      <path d="M86 61 Q96 57 110 62" stroke="#e2b77a" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M90 44 Q86 36 92 28 M106 44 Q102 34 110 26" stroke="#c9c2b4" strokeWidth="2" fill="none" strokeLinecap="round" />
+    </>
+  )
+}
+
+function ColdDrip() {
+  // 冰滴咖啡：木架上方裝冰水的玻璃瓶，一滴一滴落進咖啡粉，再經過螺旋管滴進下方的玻璃壺
+  return (
+    <>
+      <Shadow cy={128} rx={52} />
+      <path d="M62 14 L62 126 M138 14 L138 126" stroke="#5d3b27" strokeWidth="6" strokeLinecap="round" />
+      <path d="M56 16 L144 16 M56 60 L144 60 M56 94 L144 94" stroke="#5d3b27" strokeWidth="5" strokeLinecap="round" />
+      <path d="M84 20 L116 20 L114 50 Q100 56 86 50 Z" fill="#e8f0f2" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M86 36 L114 36 L114 50 Q100 56 86 50 Z" fill="#b8dce8" opacity="0.8" />
+      <path d="M100 54 L100 62" stroke="#9fd3e6" strokeWidth="2" strokeDasharray="2 3" />
+      <rect x="88" y="64" width="24" height="22" rx="3" fill="#5a321c" stroke={INK} strokeWidth="1.8" />
+      <path d="M92 98 Q108 101 92 104 Q108 107 92 110" stroke="#9aaeb2" strokeWidth="2" fill="none" />
+      <path d="M84 112 L116 112 L118 124 Q100 128 82 124 Z" fill="#e8f0f2" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M84 118 L116 118 L117 124 Q100 127 83 124 Z" fill="#6b3e24" />
+    </>
+  )
+}
+
+function ColdBrew() {
+  // 冷萃咖啡：玻璃瓶裡浸泡著濾袋，旁邊一杯加了冰塊的冷萃
+  return (
+    <>
+      <Shadow cy={126} rx={70} />
+      <path d="M50 46 L50 116 Q50 122 56 122 L94 122 Q100 122 100 116 L100 46 Z" fill="#e8f0f2" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M52 62 L98 62 L98 116 Q98 120 94 120 L56 120 Q52 120 52 116 Z" fill="#4a2a18" />
+      <rect x="46" y="34" width="58" height="12" rx="3" fill="#b8bcbb" stroke={INK} strokeWidth="1.8" />
+      <path d="M66 48 L66 70 Q75 84 84 70 L84 48" fill="#e9dcc4" stroke={INK} strokeWidth="1.6" opacity="0.9" />
+      <path d="M75 46 L75 30" stroke="#b8bcbb" strokeWidth="2" />
+      <path d="M120 70 L124 120 Q140 124 156 120 L160 70 Z" fill="#eef4f6" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M121 82 L159 82 L156 118 Q140 121 124 118 Z" fill="#6b3e24" />
+      <rect x="128" y="76" width="12" height="12" rx="2" fill="#dff2f8" stroke={INK} strokeWidth="1.2" transform="rotate(-12 134 82)" />
+      <rect x="142" y="80" width="11" height="11" rx="2" fill="#dff2f8" stroke={INK} strokeWidth="1.2" transform="rotate(14 147 85)" />
+      <path d="M150 50 L144 104" stroke="#c8342c" strokeWidth="3" strokeLinecap="round" />
+    </>
+  )
+}
+
 const ILLUSTRATIONS = {
   shiitake: Shiitake,
   'dried-shrimp': DriedShrimp,
@@ -581,6 +697,11 @@ const ILLUSTRATIONS = {
   'sweet-potato-balls': SweetPotatoBalls,
   'fen-guo': FenGuo,
   'red-green-beans': RedGreenBeans,
+  'coffee-beans': CoffeeBeans,
+  'pour-over': PourOver,
+  espresso: Espresso,
+  'cold-drip': ColdDrip,
+  'cold-brew': ColdBrew,
 }
 
 export function FoodIllustration({ id, label }) {

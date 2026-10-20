@@ -163,6 +163,7 @@ function disposeWorld(world) {
   for (const state of Object.values(world?.interior ?? {})) {
     state.disposed = true
     state.batches?.forEach(({ geometry }) => geometry.dispose())
+    state.detailBatches?.forEach(({ geometry }) => geometry.dispose())
   }
   if (world) world.interior = null
 }
@@ -184,9 +185,11 @@ export function loadEraInterior(world, zone = world?.interiors?.[0]) {
     .then((raw) => {
       if (state.disposed) {
         raw.batches.forEach(({ geometry }) => geometry.dispose())
+        raw.detailBatches?.forEach(({ geometry }) => geometry.dispose())
         return null
       }
       state.batches = raw.batches
+      state.detailBatches = raw.detailBatches ?? []
       if (DEV) console.info(`[大稻埕食光街] ${world.eraId}／${zone.id} 室內完成：${(performance.now() - startTime).toFixed(0)} ms`)
       return raw.batches
     })
@@ -199,6 +202,11 @@ export function loadEraInterior(world, zone = world?.interiors?.[0]) {
 /** 已經產生完成的某棟建築的室內（沒有則回傳 null） */
 export function getLoadedInterior(world, zone) {
   return world?.interior?.[zone.building ?? zone.id]?.batches ?? null
+}
+
+/** 某棟建築的室內裡，精緻模式才顯示的細小擺飾（還沒產生或沒有時回傳空陣列） */
+export function getLoadedInteriorDetail(world, zone) {
+  return world?.interior?.[zone.building ?? zone.id]?.detailBatches ?? []
 }
 
 /** 超過快取上限時，釋放最久沒用到、而且沒有顯示或鎖定中的年代 */

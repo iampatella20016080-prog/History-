@@ -37,6 +37,8 @@ import { buildYongleMarket } from '../builders/yongleMarket.js'
 import { buildYongleInterior } from '../builders/yongleInterior.js'
 import { buildActionBar } from '../builders/actionBar.js'
 import { buildActionBarInterior } from '../builders/actionBarInterior.js'
+import { buildLuguoCafe } from '../builders/luguoCafe.js'
+import { buildLuguoCafeInterior, cafeSigns } from '../builders/luguoCafeInterior.js'
 import { buildGrandRestaurant, buildTeaMansion, buildTemple } from '../builders/specials.js'
 import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
@@ -57,6 +59,12 @@ export const BUILDING_BUILDERS = {
   ziyang: buildZiYang,
   'yongle-market': buildYongleMarket,
   'action-bar': buildActionBar,
+  // 小藝埕與二樓的爐鍋咖啡：建築、樓梯與店內的空殼，加上店內的招牌字與燈火（位置與家具的配置相同）
+  'luguo-cafe': (b, config) => {
+    const result = buildLuguoCafe(b, config)
+    cafeSigns(b)
+    return result
+  },
 }
 
 /**
@@ -66,6 +74,7 @@ export const BUILDING_BUILDERS = {
 export const BUILDING_INTERIORS = {
   'yongle-market': buildYongleInterior,
   'action-bar': buildActionBarInterior,
+  'luguo-cafe': buildLuguoCafeInterior,
 }
 
 const PROP_BUILDERS = {
@@ -237,6 +246,8 @@ export function* eraWorldSteps(eraId) {
       if (subBox) {
         const record = { id: sub.id, storeId: sub.storeId, rotationY: building.rotationY ?? 0, box: subBox, parts: own, focus: sub.focus }
         if (sub.detail) record.detail = true
+        // 店裡的資訊熱點（例如爐鍋咖啡的扭蛋機）：探索時點它開啟那個熱點的介紹章節
+        if (sub.hotspot) record.hotspot = sub.hotspot
         buildings.push(record)
       }
       if (sub.anchors) stores[sub.storeId] = { anchors: sub.anchors }
@@ -345,11 +356,15 @@ export function* eraInteriorSteps(eraId, buildingId = null) {
   if (!era) throw new Error(`未知的年代：${eraId}`)
   const layout = createEraLayout(era)
   const b = new PartBuilder()
+  // 細小的擺飾（例如爐鍋咖啡吧檯上的杯具與商品盒）另外合併：流暢模式下不顯示
+  const detail = new PartBuilder()
   for (const building of layout.buildings) {
     const builder = BUILDING_INTERIORS[building.config.archetype]
     if (!builder || (buildingId && building.id !== buildingId)) continue
     b.push([building.x, 0, building.z], building.rotationY)
-    builder(b, building.config)
+    detail.push([building.x, 0, building.z], building.rotationY)
+    builder(b, building.config, detail)
+    detail.pop()
     b.pop()
     yield
   }
@@ -358,7 +373,12 @@ export function* eraInteriorSteps(eraId, buildingId = null) {
     batches.push(...b.buildMaterial(material))
     yield
   }
-  return { eraId: era.id, batches }
+  const detailBatches = []
+  for (const material of [...detail.groups.keys()]) {
+    detailBatches.push(...detail.buildMaterial(material))
+    yield
+  }
+  return { eraId: era.id, batches, detailBatches }
 }
 
 export function buildEraInteriorSync(eraId, buildingId = null) {
