@@ -6,7 +6,7 @@ import { useGameStore } from '../state/useGameStore.js'
  * 電腦按 E、觸控裝置點店面（或點這張提示）即可開啟介紹。
  * 未開放的店家不顯示提示；建築觀賞模式也不顯示。
  */
-export function ShopPrompt({ shop }) {
+export function ShopPrompt({ shop, hotspot = null }) {
   const visible = useGameStore(
     (state) =>
       state.started &&
@@ -25,12 +25,19 @@ export function ShopPrompt({ shop }) {
         className="shop-prompt__card paper"
         tabIndex={visible ? 0 : -1}
         onPointerDown={(event) => event.stopPropagation()}
-        onClick={() => visible && openShop(shop.id)}
+        onClick={() => visible && openShop(shop.id, hotspot?.id ?? null)}
       >
-        <span className="shop-prompt__name">{shop.name}</span>
+        {/* 店裡的資訊熱點（例如爐鍋咖啡的吧檯、扭蛋機）：熱點名稱與一句簡短介紹，下方是店名 */}
+        <span className="shop-prompt__name">{hotspot ? hotspot.label : shop.name}</span>
         <span className="shop-prompt__meta">
-          {shopYearText(shop) ? `${shopYearText(shop)}｜` : ''}
-          {shop.category}
+          {hotspot ? (
+            `${shop.name}｜${hotspot.note}`
+          ) : (
+            <>
+              {shopYearText(shop) ? `${shopYearText(shop)}｜` : ''}
+              {shop.category}
+            </>
+          )}
         </span>
         {shop.reconstruction && <span className="shop-prompt__note">歷史情境重建</span>}
         <span className="shop-prompt__action">

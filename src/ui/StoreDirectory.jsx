@@ -92,7 +92,7 @@ export function StoreDirectory({ era, shops }) {
                         className="button-solid"
                         onClick={() => {
                           travelToShop(shop.id)
-                          openShop(shop.id)
+                          openShop(shop.id, null)
                         }}
                       >
                         閱讀故事

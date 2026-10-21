@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { CanvasTexture, MeshBasicMaterial, SRGBColorSpace } from 'three'
 import { LAYERS, PLAYER } from '../config.js'
-import { resolvePlayerPosition } from '../collision.js'
+import { groundAt, hasLevel, resolvePlayerPosition } from '../collision.js'
 import { moveInput } from '../input.js'
 import { cameraState, playerState } from '../runtime.js'
 import { RIG } from '../character/outfitBuilder.js'
@@ -31,6 +31,13 @@ function createBlobTexture() {
   const texture = new CanvasTexture(canvas)
   texture.colorSpace = SRGBColorSpace
   return texture
+}
+
+/** 角色站到所在樓層的地板（或樓梯的斜面）上，並更新樓層 */
+function settleOnGround(pos, collision, y) {
+  const ground = groundAt(pos, collision, playerState.level, y)
+  playerState.level = ground.level
+  pos.y = ground.y
 }
 
 /** 某個部位的服裝網格（同一部位、同一材質已合併） */
@@ -103,8 +110,12 @@ export function Player({ collision, shopModels }) {
       anim.current.travelNonce = st.travel.nonce
       const model = shopModels.find((item) => item.shop.id === st.travel.shopId)
       if (model) {
-        const { interactionPoint, forward } = model.placement
+        const { interactionPoint, forward, level = 0 } = model.placement
         pos.set(interactionPoint.x + forward.x * 0.5, 0, interactionPoint.z + forward.z * 0.5)
+        // 二樓的店家（例如爐鍋咖啡）：直接到那一層的地板上
+        playerState.level = hasLevel(collision, level) ? level : 0
+        resolvePlayerPosition(pos, PLAYER.radius, collision, playerState.level)
+        settleOnGround(pos, collision, null)
         vel.set(0, 0, 0)
         playerState.heading = Math.atan2(-forward.x, -forward.z)
         cameraState.targetYaw = cameraState.yaw = playerState.heading + Math.PI + (model.shop.travelYawOffset ?? 0.5)
@@ -117,11 +128,19 @@ export function Player({ collision, shopModels }) {
       const first = !anim.current.collision
       anim.current.collision = collision
       const beforeX = pos.x
+      const beforeY = pos.y
       const beforeZ = pos.z
-      resolvePlayerPosition(pos, PLAYER.radius, collision)
-      if (!first && Math.hypot(pos.x - beforeX, pos.z - beforeZ) > 1.5) {
+      // 新的年代沒有角色所在的樓層（例如在爐鍋咖啡的二樓切換年代）：回到一樓，再推到最近的街道上
+      if (!hasLevel(collision, playerState.level)) playerState.level = 0
+      resolvePlayerPosition(pos, PLAYER.radius, collision, playerState.level)
+      settleOnGround(pos, collision, pos.y)
+      if (!first && Math.hypot(pos.x - beforeX, pos.y - beforeY, pos.z - beforeZ) > 1.5) {
         vel.set(0, 0, 0)
         cameraState.snap = true
+        // 被推出建築（例如從爐鍋咖啡的二樓回到街上）：鏡頭放在推出去的那一側（街道上），不留在原本建築的方向、貼著騎樓
+        const dx = pos.x - beforeX
+        const dz = pos.z - beforeZ
+        if (Math.hypot(dx, dz) > 1.5) cameraState.targetYaw = cameraState.yaw = Math.atan2(dx, dz)
       }
     }
 
@@ -167,7 +186,9 @@ export function Player({ collision, shopModels }) {
     const prevZ = pos.z
     pos.x += vel.x * dt
     pos.z += vel.z * dt
-    resolvePlayerPosition(pos, PLAYER.radius, collision)
+    resolvePlayerPosition(pos, PLAYER.radius, collision, playerState.level)
+    // 樓梯：沿著看不見的斜面上下樓，過了一半就換到另一層
+    settleOnGround(pos, collision, pos.y)
     const actualSpeed = dt > 0 ? Math.hypot(pos.x - prevX, pos.z - prevZ) / dt : 0
     playerState.speed = actualSpeed
 
@@ -181,7 +202,7 @@ export function Player({ collision, shopModels }) {
     playerState.heading = dampAngle(playerState.heading, targetHeading, 11, dt)
 
     if (root.current) {
-      root.current.position.set(pos.x, 0.004, pos.z)
+      root.current.position.set(pos.x, pos.y + 0.004, pos.z)
       root.current.rotation.y = playerState.heading
       root.current.visible = st.viewMode !== 'viewer'
       root.current.userData.outfit = outfitRef.current.id

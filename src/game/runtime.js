@@ -10,6 +10,8 @@ export const playerState = {
   velocity: new Vector3(),
   heading: PLAYER.spawn.heading,
   speed: 0,
+  /** 所在樓層（0：街道與一樓；position.y 是腳下地板的高度，例如走樓梯上二樓） */
+  level: 0,
 }
 
 export const cameraState = {

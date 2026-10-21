@@ -45,12 +45,14 @@ export function unpackWorld(payload) {
   return { ...payload, batches: unpackBatches(payload.batches), detailBatches: unpackBatches(payload.detailBatches ?? []) }
 }
 
-/** 室內細部（按需載入）只有依材質合併的網格 */
+/** 室內細部（按需載入）只有依材質合併的網格（以及精緻模式才顯示的細小擺飾） */
 export function packInterior(interior) {
   const transfer = []
-  return { payload: { ...interior, batches: packBatches(interior.batches, transfer) }, transfer }
+  const batches = packBatches(interior.batches, transfer)
+  const detailBatches = packBatches(interior.detailBatches ?? [], transfer)
+  return { payload: { ...interior, batches, detailBatches }, transfer }
 }
 
 export function unpackInterior(payload) {
-  return { ...payload, batches: unpackBatches(payload.batches) }
+  return { ...payload, batches: unpackBatches(payload.batches), detailBatches: unpackBatches(payload.detailBatches ?? []) }
 }

@@ -40,7 +40,15 @@ export function getShopPlacement(shop) {
       .addScaledVector(forward, 0.6)
       .setY(cam.lookHeight ?? 3),
   }
-  const placement = { rotationY, forward, right, origin, interactionPoint, camera }
+  // 二樓的店家（例如爐鍋咖啡）：互動點與從店家名錄前往的位置在二樓（level 1）
+  const level = shop.interaction?.level ?? 0
+  // 資訊熱點（世界座標）：各自的互動位置、所在樓層、提示框位置與開啟介紹時的鏡頭
+  const hotspots = (shop.hotspots ?? []).map((hotspot) => ({
+    ...hotspot,
+    interactionPoint: new Vector3(hotspot.point.x, 0, hotspot.point.z),
+    camera: { position: new Vector3(...hotspot.camera.position), target: new Vector3(...hotspot.camera.target) },
+  }))
+  const placement = { rotationY, forward, right, origin, interactionPoint, camera, level, hotspots }
   cache.set(shop.id, placement)
   return placement
 }

@@ -12,12 +12,14 @@ import {
   clampViewerTarget,
   facadeOf,
   followAllowed,
+  inFollowArea,
   indoorFollow,
   interiorAmount,
   orbitDirection,
   pickBuilding,
   planBuildingFocus,
   segmentBlocked,
+  segmentCrossesWall,
 } from '../viewerCamera.js'
 import { useGameStore } from '../../state/useGameStore.js'
 
@@ -30,6 +32,8 @@ const TAP_TIME = 450
 const VIEWER_KEY_SPEED = 7
 /** 在室內進入觀賞模式：注視點較低、鏡頭較平也較近，才不會一開始就頂到天花板或退到門外 */
 const VIEWER_INDOOR_START = { height: 1.7, pitch: 0.16, distance: 4.5 }
+/** 觀賞模式移動注視點前的位置（限制注視點不穿過樓板用） */
+const viewerFrom = new Vector3()
 
 /** 點 p 到線段 ab 的水平距離（只看 x、z） */
 function horizontalDistanceToSegment(p, a, b) {
@@ -56,7 +60,7 @@ function horizontalDistanceToSegment(p, a, b) {
  * - 鏡頭不穿牆、不低於地面、不離開街區；返回探索時平滑回到角色身後
  * - 可以走進去的建築（viewerSpace 的額外範圍）：注視點可以移進騎樓與一樓室內，高度不超過天花板
  */
-export function CameraRig({ blockers, buildings, shopModels, interiors = [], viewerSpace }) {
+export function CameraRig({ blockers, buildings, shopModels, interiors = [], followAreas = [], viewerSpace }) {
   const camera = useThree((state) => state.camera)
   const gl = useThree((state) => state.gl)
   const size = useThree((state) => state.size)
@@ -174,10 +178,11 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       const cosYaw = Math.cos(v.yaw)
       const sinPitch = Math.sin(v.pitch)
       const cosPitch = Math.cos(v.pitch)
+      viewerFrom.copy(v.goalTarget)
       v.goalTarget.x += (-cosYaw * dx - sinYaw * sinPitch * dy) * scale
       v.goalTarget.y += cosPitch * dy * scale
       v.goalTarget.z += (sinYaw * dx - cosYaw * sinPitch * dy) * scale
-      clampViewerTarget(v.goalTarget, sceneRef.current.blockers, sceneRef.current.space)
+      clampViewerTarget(v.goalTarget, sceneRef.current.blockers, sceneRef.current.space, viewerFrom)
       v.lambda = 9
     }
     // 縮放：factor > 1 拉遠、< 1 拉近；已經拉到最近時，改成往前推進（方便沿街移動）
@@ -186,8 +191,9 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
         const next = v.goalDistance * factor
         if (factor < 1 && v.goalDistance <= VIEWER.minDistance + 0.01) {
           orbitDirection(v.yaw, v.pitch, dir)
+          viewerFrom.copy(v.goalTarget)
           v.goalTarget.addScaledVector(dir, -(1 - factor) * 9)
-          clampViewerTarget(v.goalTarget, sceneRef.current.blockers, sceneRef.current.space)
+          clampViewerTarget(v.goalTarget, sceneRef.current.blockers, sceneRef.current.space, viewerFrom)
         } else if (factor > 1 && next > v.collision + 1.5) {
           v.goalDistance = Math.max(v.goalDistance, Math.min(next, v.collision + 1.5))
         } else {
@@ -213,7 +219,8 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       if (inViewer()) {
         focusOn(building)
       } else if (canExplore() && building.storeId && building.storeId === store().nearbyShopId) {
-        store().interact()
+        // 店裡的資訊熱點（例如扭蛋機、吧檯）：開啟點到的那個熱點的章節
+        store().interact(building.hotspot ?? null)
       }
     }
     const focusOn = (building) => {
@@ -342,7 +349,7 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
 
   useFrame((frame, rawDelta) => {
     const dt = Math.min(rawDelta, 0.05)
-    const { started, mode, activeShopId, viewMode, viewerFocus } = useGameStore.getState()
+    const { started, mode, activeShopId, activeHotspotId, viewMode, viewerFocus } = useGameStore.getState()
     const v = rig.viewer
     const p = playerState.position
 
@@ -361,10 +368,10 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
         v.collision = v.distance
       }
       v.phase = 'active'
-      const found = interiorAmount(p, interiors)
+      const found = interiorAmount(p, interiors, playerState.level)
       // 室內範圍可以另外指定起始距離（例如巷子裡的小店，鏡頭才不會退到門外）
       const start = (found?.amount ?? 0) > 0.5 ? { ...VIEWER_INDOOR_START, ...found.zone.viewerStart } : VIEWER.start
-      v.goalTarget.set(p.x, start.height, p.z)
+      v.goalTarget.set(p.x, p.y + start.height, p.z)
       clampViewerTarget(v.goalTarget, blockers, viewerSpace)
       v.goalYaw = v.yaw + Math.atan2(Math.sin(cameraState.yaw - v.yaw), Math.cos(cameraState.yaw - v.yaw))
       v.goalPitch = start.pitch
@@ -372,7 +379,7 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       v.lambda = 3
       v.focusNonce = viewerFocus?.nonce ?? v.focusNonce
     } else if (viewMode !== 'viewer' && v.phase === 'active') {
-      rig.target.set(p.x, CAMERA.targetHeight, p.z)
+      rig.target.set(p.x, p.y + CAMERA.targetHeight, p.z)
       if (segmentBlocked(v.target, rig.target, blockers)) {
         // 鏡頭與角色之間隔著牆（例如角色在市場裡、鏡頭在外面）：直接切回第三人稱，不穿牆飛回去
         v.phase = 'off'
@@ -409,13 +416,16 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       rig.followLambda = 1.6
       lambda = 1.5
     } else if (mode !== 'explore' && model) {
-      // 探索店家：鏡頭靠近店面
+      // 探索店家：鏡頭靠近店面（從店裡的資訊熱點開啟時，用那個熱點的鏡頭，例如爐鍋咖啡的扭蛋機）
       v.phase = 'off'
-      const { camera: shot, origin } = model.placement
+      const hotspot = activeHotspotId ? model.placement.hotspots.find((item) => item.id === activeHotspotId) : null
+      const { origin } = model.placement
+      const shot = hotspot?.camera ?? model.placement.camera
       rig.desiredPosition.copy(shot.position)
       rig.desiredLook.copy(shot.target)
-      if (rig.storyShop !== model.shop.id) {
-        rig.storyShop = model.shop.id
+      const storyKey = `${model.shop.id}:${hotspot?.id ?? ''}`
+      if (rig.storyShop !== storyKey) {
+        rig.storyShop = storyKey
         // 介紹的鏡頭在人物的另一側（例如從豆花櫃台後方看）：直接切過去，不從人物身上或頭頂擦過
         if (horizontalDistanceToSegment(p, rig.position, shot.position) < 1) cut = true
       }
@@ -427,15 +437,16 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
         rig.screenRight.subVectors(shot.target, shot.position).cross(UP).normalize()
         rig.desiredLook.addScaledVector(rig.screenRight, distance * Math.tan(hfov / 2) * 0.5)
       }
-      rig.focus.set(origin.x, 3, origin.z)
+      if (hotspot) rig.focus.copy(shot.target)
+      else rig.focus.set(origin.x, 3, origin.z)
       rig.followLambda = 2.2
       lambda = 3.2
     } else if (v.phase !== 'off') {
       // 建築觀賞：繞著注視點環繞；返回探索時，目標改成第三人稱鏡頭的位置（在室內就是室內的鏡頭）
       if (v.phase === 'returning') {
-        const indoor = interiorAmount(p, interiors)
+        const indoor = interiorAmount(p, interiors, playerState.level)
         const follow = indoorFollow(cameraState.pitch, cameraState.distance, indoor?.amount ?? 0, indoor?.zone.camera)
-        v.goalTarget.set(p.x, CAMERA.targetHeight, p.z)
+        v.goalTarget.set(p.x, p.y + CAMERA.targetHeight, p.z)
         v.goalYaw = v.yaw + Math.atan2(Math.sin(cameraState.yaw - v.yaw), Math.cos(cameraState.yaw - v.yaw))
         v.goalPitch = follow.pitch
         v.goalDistance = follow.distance
@@ -446,9 +457,10 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
         const right = (moveInput.right ? 1 : 0) - (moveInput.left ? 1 : 0)
         if (forward || right) {
           const step = VIEWER_KEY_SPEED * (moveInput.run ? 1.8 : 1) * dt
+          viewerFrom.copy(v.goalTarget)
           v.goalTarget.x += (-Math.sin(v.yaw) * forward + Math.cos(v.yaw) * right) * step
           v.goalTarget.z += (-Math.cos(v.yaw) * forward - Math.sin(v.yaw) * right) * step
-          clampViewerTarget(v.goalTarget, blockers, viewerSpace)
+          clampViewerTarget(v.goalTarget, blockers, viewerSpace, viewerFrom)
           v.lambda = 9
         }
       }
@@ -479,16 +491,16 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
           v.phase = 'off'
           rig.collisionDistance = v.collision
           rig.followLambda = 5
-          const indoor = interiorAmount(p, interiors)
+          const indoor = interiorAmount(p, interiors, playerState.level)
           rig.indoor = indoor?.amount ?? 0
           if (indoor) rig.indoorZone = indoor.zone
         }
       }
     } else {
       // 第三人稱跟隨
-      rig.target.set(p.x, CAMERA.targetHeight, p.z)
+      rig.target.set(p.x, p.y + CAMERA.targetHeight, p.z)
       // 室內：從街道走向大門時逐漸拉近、壓低（混合程度平滑變化；傳送時直接到位）
-      const indoor = interiorAmount(p, interiors)
+      const indoor = interiorAmount(p, interiors, playerState.level)
       if (indoor) rig.indoorZone = indoor.zone
       const indoorGoal = indoor?.amount ?? 0
       rig.indoor = cameraState.snap ? indoorGoal : damp(rig.indoor, indoorGoal, 2.4, dt)
@@ -499,7 +511,10 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       rig.direction.set(Math.sin(cameraState.yaw) * cosPitch, Math.sin(pitch), Math.cos(cameraState.yaw) * cosPitch)
       if (cameraState.snap) rig.collisionDistance = wanted
       const hit = raycastBoxes(rig.target, rig.direction, wanted + 0.45, blockers)
-      let allowed = followAllowed(hit, minDistance)
+      // 室內與窄巷（遮擋方塊貼著實際的牆與車）：鏡頭停在障礙物前面；街道維持原本的最近距離。
+      // 用角色現在的位置判斷（不用平滑後的 k），走出門口或換了年代時立刻回到街道的規則
+      const tight = indoorGoal >= 0.999 || inFollowArea(p, followAreas, playerState.level)
+      let allowed = followAllowed(hit, minDistance, tight)
       if (k > 0.001 && rig.direction.y > 0.01) {
         // 室內的鏡頭高度上限（在吊牌與燈具下方）；越接近街道上限越高
         const maxHeight = shot.maxHeight + (1 - k) * 6
@@ -512,12 +527,12 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], vie
       const lookBlend = clamp(distance / CAMERA.distance, 0, 1)
       let lookHeight = CAMERA.targetHeight + (CAMERA.lookHeight - CAMERA.targetHeight) * lookBlend
       if (k > 0.001) lookHeight += (shot.lookHeight - lookHeight) * k
-      rig.desiredLook.set(p.x, lookHeight, p.z)
+      rig.desiredLook.set(p.x, p.y + lookHeight, p.z)
       rig.focus.copy(rig.target)
       rig.followLambda = damp(rig.followLambda, 10, 1.6, dt)
       lambda = rig.followLambda
-      // 目標位置在牆、柱或車的另一側（例如鏡頭被拉到障礙物前面）：直接切過去，不從障礙物裡平滑穿過
-      if (segmentBlocked(rig.position, rig.desiredPosition, blockers)) cut = true
+      // 室內與窄巷：目標位置在牆、柱或車的另一側（例如鏡頭被拉到障礙物前面）時直接切過去，不從障礙物裡平滑穿過
+      if (tight && segmentCrossesWall(rig.position, rig.desiredPosition, blockers)) cut = true
     }
 
     // 開發模式：除錯用的自由鏡頭（截圖檢查建築用，正式版不包含）

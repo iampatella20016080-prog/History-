@@ -430,7 +430,9 @@ async function testQuality(browser, test, { touch }) {
   for (const year of [1930, 1895]) {
     if (!(await switchEra(page, test, year, { touch }))) break
   }
-  const cdp = touch && BROWSER === 'chromium' ? await context.newCDPSession(page) : null
+  // 年代在設定面板裡切換；面板蓋住畫面中央，拖曳鏡頭前先關掉（和測試 F 相同）
+  await closeSettings(page)
+  const cdp =touch && BROWSER === 'chromium' ? await context.newCDPSession(page) : null
   await testMovementAndCamera(page, test, { touch, cdp })
   await testShopInteraction(page, test, { touch })
   const gl = await webglStatus(page)

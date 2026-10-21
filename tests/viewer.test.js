@@ -10,6 +10,7 @@ import {
   orbitDirection,
   pickBuilding,
   planBuildingFocus,
+  viewerSpaceOf,
 } from '../src/game/viewerCamera.js'
 import { buildEraWorldSync } from '../src/game/world/buildWorld.js'
 import { useGameStore } from '../src/state/useGameStore.js'
@@ -202,7 +203,8 @@ describe('點選與聚焦建築', () => {
     const direction = { x: 0, y: 0, z: 0 }
     for (const [eraId, world] of Object.entries(worlds)) {
       for (const building of world.buildings) {
-        const plan = planBuildingFocus(building, world.blockers, { yaw: 0, aspect: 4 / 3, fov: 42 })
+        // 和遊戲中相同：傳入這個年代的觀賞範圍（例如可以走進去的市場、巷子與店裡）
+        const plan = planBuildingFocus(building, world.blockers, { yaw: 0, aspect: 4 / 3, fov: 42, space: viewerSpaceOf(world) })
         const facade = facadeOf(building)
         orbitDirection(plan.yaw, plan.pitch, direction)
         const camera = {

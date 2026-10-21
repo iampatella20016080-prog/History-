@@ -1,3 +1,5 @@
+import { ART_YARD, LUGUO_CAFE, LUGUO_HOTSPOTS, artYardToWorld } from './luguoCafeLayout.js'
+
 /**
  * 店家資料
  *
@@ -36,6 +38,9 @@ const LIN_FU_ZHEN_BASE = {
   // 店前展示的貨品（對應食物圖鑑的 id）
   display: ['shiitake', 'dried-shrimp', 'mullet-roe', 'dried-goods'],
 }
+
+/** 爐鍋咖啡在二樓：互動點與從店家名錄前往的位置在 level 1（樓層 2） */
+const LUGUO_LEVEL = 1
 
 export const SHOPS = [
   {
@@ -721,6 +726,210 @@ export const SHOPS = [
         ],
         disclaimer:
           '店面、巷子與豆花車的 3D 模型依實地照片建模，尺寸與比例為估算；店內的留言本、兒童圖畫、獎項框與展板都是原創的示意內容，並非店內實際的作品、照片、獎項或影展標誌。本站沒有查證建築的興建年代，也不列出營業時間與價格。',
+      },
+    ],
+  },
+
+  {
+    id: 'luguo-cafe',
+    name: '爐鍋咖啡',
+    status: 'open',
+    year: 2004,
+    yearLabel: '品牌 2004年（店門口的海報「since 2004」）',
+    yearNote:
+      '品牌：店門口的海報印著「since 2004」；建築：屈臣氏大藥房大樓1928年（一說1917年）興建；小藝埕：2011年開幕。爐鍋咖啡進駐小藝埕的年份未能查證（2014年的資料已記載二樓是爐鍋咖啡）。',
+    category: '咖啡館・小藝埕二樓',
+    seal: '咖啡',
+    summary: '小藝埕（屈臣氏大藥房舊址）二樓的咖啡館：從巷子側的騎樓走上樓梯，窗邊是面向小巷的木格窗。',
+    // 所在的建築與樓層（二樓，碰撞與鏡頭的 level 1）；可以走進去的室內
+    // 店家名錄「年份與資料來源」：建築的興建年份、小藝埕的開幕年份與2014年的樓層資料
+    sourceIds: ['taipei-pictorial-watson', 'artyard-about', 'businesstoday-2012-watson', 'ntpu-2014-dadaocheng'],
+    buildingId: 'art-yard',
+    floor: 2,
+    hasInterior: true,
+
+    // ── 場景配置 ──────────────────────────────
+    // 只在「老屋新生」出現：小藝埕取代迪化街北側街尾的兩個一般地段，面向永樂市場前廣場北邊的小巷（32巷）；
+    // 位置、樓梯、房間、資訊熱點與鏡頭都在 data/luguoCafeLayout.js（建築與室內見 builders/luguoCafe*.js）。
+    // position 為二樓咖啡吧檯的正面中央（互動點與店家名錄前往的位置在二樓）。
+    position: artYardToWorld(LUGUO_CAFE.bar.counterX + 0.35, -1.0),
+    facing: 'east',
+    interaction: { radius: 2.0, distance: 0.85, level: LUGUO_LEVEL },
+    site: { ...ART_YARD.site },
+    building: { archetype: 'luguo-cafe', width: ART_YARD.half * 2, depth: -ART_YARD.back },
+    buildingByEra: {
+      revival: { condition: 'restored' },
+    },
+    eraNotes: {
+      revival:
+        '小藝埕（屈臣氏大藥房舊址）與二樓的爐鍋咖啡只出現在「老屋新生」。建築、巷子與店內依實地照片建模，尺寸為估算；巷子的位置是情境示意。店內的畫作、海報、春聯與貼紙都是原創的簡化圖樣。',
+    },
+    // 介紹的鏡頭（從店家名錄開啟時）：在店裡看吧檯與後方的大木櫃
+    camera: { distance: 2.9, height: ART_YARD.floor2 + 1.95, side: -0.8, lookHeight: ART_YARD.floor2 + 1.0 },
+    // 資訊熱點：小藝埕外觀、樓梯入口、窗邊座位、咖啡吧檯、紅色扭蛋機（世界座標）
+    hotspots: LUGUO_HOTSPOTS.map((hotspot) => {
+      const point = artYardToWorld(...hotspot.point)
+      const at = ([x, y, z]) => {
+        const p = artYardToWorld(x, z)
+        return [p.x, y, p.z]
+      }
+      return {
+        id: hotspot.id,
+        label: hotspot.label,
+        note: hotspot.note,
+        chapter: hotspot.chapter,
+        level: hotspot.level,
+        radius: hotspot.radius,
+        point,
+        prompt: at(hotspot.prompt),
+        camera: { position: at(hotspot.camera.position), target: at(hotspot.camera.target) },
+      }
+    }),
+
+    // ── 介紹章節 ──────────────────────────────
+    chapters: [
+      {
+        id: 'building',
+        type: 'text',
+        tab: '屈臣氏大藥房',
+        title: '第一章｜屈臣氏大藥房與歷史建築',
+        lead: '小藝埕所在的轉角大樓，是日治時期大稻埕的「屈臣氏大藥房」。',
+        paragraphs: [
+          '魚夫2017年在《台北畫刊》發表的〈屈臣氏大樓的興衰起落〉記載：「最早屈臣氏是臺中實業家李俊啟全權負責經營，他本來在彰化員林開設「德壽堂」」；文章也提到，1926年時的報紙報導，香港屈臣氏的藥品由李俊啟在全臺專營。',
+          '同一篇文章寫道，李俊啟在「1928 年（一說為1917 年）興建了這棟位於臺北大稻埕的屈臣氏大樓，以批發進口西藥為主，也代理英國史谷脫（Scott）魚肝油」。各資料記載的興建年份不一，這裡兩者並列。',
+          '立面上的圖案也有故事。1934年，香港屈臣氏本店控告李俊啟擅自使用商標，李俊啟最終敗訴。文章記載，現存立面三樓外牆鑲著「飛龍與麒麟護衛七層寶塔圖騰」，兩旁寫著「龍麟伴塔為記，別人不得冒效」。',
+          '《台北畫刊》也記載，大樓「1996 年遭逢大火，直至2005年由市府列為巿定古蹟後，交由李家後代李永崇建築師修復完成」。不過，我們在文化部文化資產局的開放資料中，沒有找到以「屈臣氏」或這個地址登錄的古蹟或歷史建築，文化資產的身分還需要查證。',
+          '2012年《今周刊》形容這棟樓是「洗石子外牆的三層樓平樑式結構，坐落在街角」。場景中的建築依實地照片建模：灰色洗石子立面、連續的木格窗、轉角的塔樓與圓球柱頭、「屈臣氏大藥房」的店號與「A.S. WATSON & CO.」字樣；寶塔與龍、麒麟的浮雕是簡化的示意，尺寸為估算。',
+        ],
+        timeline: [
+          { place: '1926', text: '據《台北畫刊》，當時的報紙報導香港屈臣氏的藥品由李俊啟在全臺專營。' },
+          { place: '1928', text: '屈臣氏大樓興建（一說1917年）。' },
+          { place: '1934', text: '香港屈臣氏本店控告商標被擅自使用。' },
+          { place: '1996', text: '大樓遭逢大火。' },
+          { place: '2005', text: '《台北畫刊》記載市府列為市定古蹟，之後修復完成。' },
+        ],
+        facts: [
+          { label: '店號', value: '屈臣氏大藥房（A.S. WATSON & CO.）' },
+          { label: '經營者', value: '李俊啟（臺中實業家）' },
+          { label: '興建', value: '1928年（一說1917年）' },
+          { label: '位置', value: '迪化街一段與32巷的轉角' },
+        ],
+        sourceIds: ['taipei-pictorial-watson', 'businesstoday-2012-watson', 'boch-opendata-assets', 'boch-opendata-historic'],
+      },
+      {
+        id: 'art-yard',
+        type: 'text',
+        tab: '小藝埕',
+        title: '第二章｜小藝埕與老屋再利用',
+        lead: '「大稻埕上賣小藝」：2011年，屈臣氏大藥房的大樓成了小藝埕。',
+        paragraphs: [
+          '《遠見雜誌》2013年報導：「2010年周奕成好不容易獲得…「屈臣氏大藥房」屋主點頭出租，以「大稻埕上賣小藝」發想創立小藝埕，展開他的文化復興大計。」報導稱周奕成是「世代文化創業群負責人」。',
+          '2012年《今周刊》記載：「二○一一年右翼內棟作為「小藝埕」，內有…藝術設計品鋪、獨立書店、咖啡店及劇場。」大藝埕的官方網站寫道：「自 2011 年的「小藝埕」至今，世代群在大稻埕經營了 10 棟藝埕系列街屋」。2015年的《今周刊》以「這波大稻埕文藝復興風潮」形容這一帶的老屋再利用。',
+          '2014年國立臺北大學的報告引用小藝埕官網，記載當時「一樓：「Bookstore 1920s」及「印花樂」 二樓：「爐鍋咖啡」 三樓：展示和聚會場所」；TVBS《食尚玩家》的介紹則寫「3樓是思劇場」。各樓層的店家會隨時間調整。',
+          '老屋再利用保留了老建築的外觀：二樓臨巷的三組深棕色木格窗，上方還有小氣窗。場景中只呈現一樓的騎樓、店面與樓梯入口，以及二樓的爐鍋咖啡；其他樓層沒有室內，一樓轉角的店只用一般的「BOOK CAFE」字樣，不使用實際店家的商標。',
+        ],
+        facts: [
+          { label: '開幕', value: '2011年' },
+          { label: '經營', value: '世代群（世代文化創業群）' },
+          { label: '概念', value: '「大稻埕上賣小藝」' },
+        ],
+        sourceIds: ['gvm-2013-artyard', 'businesstoday-2012-watson', 'artyard-about', 'businesstoday-2015-dadaocheng', 'ntpu-2014-dadaocheng', 'supertaste-artyard'],
+      },
+      {
+        id: 'luguo',
+        type: 'text',
+        tab: '爐鍋咖啡',
+        title: '第三章｜爐鍋咖啡的創立及進駐',
+        lead: '從巷子側的騎樓走上樓梯，二樓就是爐鍋咖啡。',
+        paragraphs: [
+          '2018年《風傳媒》的報導寫道：「屈臣氏大藥房的二樓，有間網路上頗具知名度的爐鍋咖啡」，地址是臺北市大同區迪化街一段32巷1號。',
+          '創立：店門口的海報印著「since 2004」（依實地照片）。2015年《風傳媒》（欣台灣）也介紹了「位於台北藝術大學關渡校區的爐鍋咖啡」。',
+          '進駐：2012年的《今周刊》寫到小藝埕「內有…咖啡店」，但沒有寫出店名，也沒有寫咖啡店是哪一年進駐的；我們查到最早明確寫出「二樓：「爐鍋咖啡」」的資料，是2014年臺北大學的報告。因此這裡不寫確切的進駐年份。',
+          'TVBS《食尚玩家》記載：「2樓的「爐鍋咖啡」主打來自各產區、莊園的單品咖啡，還有義式濃縮和拿鐵。」《風傳媒》也寫道：「所有的咖啡豆都是老闆精選各國的豆子，而且每杯咖啡強調不加糖、不加奶精」。',
+          '場景中的二樓依實地照片建模：臨巷的窗邊座位、靠牆的大木櫃與咖啡吧檯、書架與閱讀角、門口的紅色扭蛋機與冰滴咖啡架。牆上的畫作、海報、春聯與貼紙都換成原創的簡化圖樣，不複製店內實際的作品；也不列出營業時間、價格與經營者的姓名。',
+        ],
+        facts: [
+          { label: '店名', value: '爐鍋咖啡 LUGUO CAFE' },
+          { label: '位置', value: '小藝埕二樓（迪化街一段32巷1號）' },
+          { label: '品牌', value: '海報上的「since 2004」' },
+          { label: '進駐小藝埕', value: '年份未能查證（2014年的資料已記載在二樓）' },
+        ],
+        sourceIds: ['storm-2018-luguo', 'storm-2015-luguo-guandu', 'businesstoday-2012-watson', 'ntpu-2014-dadaocheng', 'supertaste-artyard'],
+      },
+      {
+        id: 'coffee',
+        type: 'foods',
+        tab: '一杯咖啡',
+        title: '第四章｜咖啡製作與飲食文化',
+        intro:
+          '依農業部〈台灣咖啡沿革〉，臺灣栽培咖啡最早的紀錄是1884年英國茶商自馬尼拉引進一百株阿拉比卡咖啡，在台北三峽種植；日治時期在恆春與嘉義試種推廣，1942年全臺栽培面積達1,000公頃，戰後大多荒蕪。1930年代的大稻埕也有西洋飲食的身影：1934年開業的「波麗路」是「臺北市1930年代最著名的西餐廳」（臺北市歷史建築）。以下是吧檯上常見的幾種做法；門口的紅色扭蛋機，裝的則是咖啡器具造型的迷你模型（依實地照片）。',
+        items: [
+          {
+            id: 'coffee-beans',
+            name: '咖啡豆',
+            category: '咖啡樹的種子｜烘焙',
+            description: '咖啡樹的「種子為咖啡原料，焙乾後研成細末可沖泡為飲料」（教育部《國語辭典簡編本》）。',
+            note: '《食尚玩家》記載，爐鍋咖啡主打來自各產區、莊園的單品咖啡。',
+          },
+          {
+            id: 'pour-over',
+            name: '手沖咖啡',
+            category: '濾杯｜細口壺',
+            description: '用手把熱水緩緩倒在濾杯裡的咖啡粉上，讓咖啡液滴進下方的壺中（美國國家咖啡協會："hand-pour water over coffee grounds in a filter"）。',
+            note: '吧檯上有濾杯、細口壺與分享壺（依實地照片）。',
+          },
+          {
+            id: 'espresso',
+            name: '義式濃縮',
+            category: '高壓萃取',
+            description: '用高壓讓接近沸騰的熱水在約20–30秒內通過細研磨的咖啡粉（美國國家咖啡協會）。',
+            note: '加入牛奶就成了拿鐵；《食尚玩家》記載店裡有義式濃縮和拿鐵。',
+          },
+          {
+            id: 'cold-drip',
+            name: '冰滴咖啡',
+            category: '冰水｜慢慢滴漏',
+            description: '「利用5度C以下的冰水混合物」一滴一滴滴入咖啡粉，「一點一點滴漏出萃取液」（《食力》）。',
+            note: '店門口旁有一座木架的冰滴咖啡器（依實地照片）。',
+          },
+          {
+            id: 'cold-brew',
+            name: '冷萃咖啡',
+            category: '冷水｜長時間浸泡',
+            description: '咖啡粉「注入冷水，於低溫環境中浸泡至少約12小時」（《食力》）；和先熱沖、再冰鎮的冰咖啡不同（美國國家咖啡協會）。',
+            note: '冷萃與冰滴都是低溫萃取：一個浸泡，一個滴漏。',
+          },
+        ],
+        sourceIds: ['moa-taiwan-coffee', 'boch-bolero', 'moe-coffee', 'nca-pour-over', 'nca-espresso', 'nca-cold-brew', 'foodnext-cold-brew', 'supertaste-artyard'],
+      },
+      {
+        id: 'sources',
+        type: 'sources',
+        tab: '參考文獻',
+        title: '第五章｜參考文獻',
+        intro: '小藝埕、屈臣氏大藥房與爐鍋咖啡的介紹整理自下列資料，點選即可開啟原始網頁。',
+        sourceIds: [
+          'taipei-pictorial-watson',
+          'businesstoday-2012-watson',
+          'boch-opendata-assets',
+          'boch-opendata-historic',
+          'gvm-2013-artyard',
+          'artyard-about',
+          'businesstoday-2015-dadaocheng',
+          'ntpu-2014-dadaocheng',
+          'supertaste-artyard',
+          'storm-2018-luguo',
+          'storm-2015-luguo-guandu',
+          'moa-taiwan-coffee',
+          'boch-bolero',
+          'moe-coffee',
+          'nca-pour-over',
+          'nca-espresso',
+          'nca-cold-brew',
+          'foodnext-cold-brew',
+        ],
+        disclaimer:
+          '建築、巷子、樓梯與店內的 3D 模型依實地照片建模，尺寸與比例為估算；巷子在遊戲街道上的位置是情境示意。店內的畫作、海報、春聯、貼紙與扭蛋機的圖樣都是原創的簡化內容，並非店內實際的作品或商標。建築的興建年份資料不一（1928年，一說1917年），文化資產身分與爐鍋咖啡進駐小藝埕的年份未能查證；本站不列出營業時間、價格與經營者姓名。',
       },
     ],
   },

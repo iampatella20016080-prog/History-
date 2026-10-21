@@ -20,6 +20,7 @@ import { DISPLAY_FONT, registerFontTexture } from './fonts.js'
  *   redOnDark 門楣、marketWhite 指示吊牌、marketBoard 指示牌、exitGreen 出口、tag 木製品名牌、stall* 攤位招牌
  * - 導演的豆花店：actionBlue／actionNavy 立面上白邊的藍色與深藍色立體字、filmBlue 電影膠卷邊的藍色突出招牌、
  *   boardWhite 店內的展示看板、chalk 黑板菜單、truckBlue 豆花車車身上的藍字
+ * - 小藝埕與爐鍋咖啡：relief／redRelief 洗石子立面上的浮雕字、artYard 旗幟、luguoWood 木製招牌、couplet 春聯
  *
  * 橫式招牌依舊日習慣由右至左書寫（modern 除外）；直式招牌由上而下。
  */
@@ -68,6 +69,14 @@ const STYLES = {
   boardWhite: { bg: '#f1f4f6', bg2: '#e7ecef', border: null, text: '#245a8c', shadow: 'rgba(0,0,0,0)', grain: 'rgba(0,0,0,0.02)', ltr: true, sizeH: 0.62, sizeW: 0.86 },
   chalk: { bg: '#2c3431', bg2: '#262d2a', border: '#8a6a45', text: '#f1eee4', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.05)', ltr: true, sizeH: 0.5, sizeW: 0.8 },
   truckBlue: { bg: null, text: '#1f5fa8', fill: '#1f5fa8', outline: '#ffffff', outlineWidth: 0.06, shadow: 'rgba(0,0,0,0)', letters: true, ltr: true, sizeH: 0.8, sizeW: 0.9 },
+  // 小藝埕（屈臣氏大藥房舊址）：洗石子立面上的浮雕英文字、紅褐色的店號浮雕字（由右往左）、紅褐色的垂掛旗幟
+  relief: { bg: null, text: '#d2cec4', fill: '#d6d2c8', outline: '#8a867e', outlineWidth: 0.05, shadow: '#5f5c56', letters: true, ltr: true, sizeH: 0.82, sizeW: 0.8 },
+  redRelief: { bg: null, text: '#ad5b4c', fill: '#b0604f', outline: '#6f3a30', outlineWidth: 0.05, shadow: '#4f2e28', letters: true, sizeH: 0.8, sizeW: 0.86 },
+  artYard: { bg: '#7b3a31', bg2: '#6e322a', border: null, text: '#f5ece0', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', sizeW: 0.7 },
+  artYardLatin: { bg: '#7b3a31', bg2: '#6e322a', border: null, text: '#f5ece0', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', ltr: true, sizeH: 0.62, sizeW: 0.86 },
+  // 爐鍋咖啡：大木櫃上的紅色春聯（直式、黑字）；淺色木板、黑框黑字的招牌
+  couplet: { bg: '#c8342c', bg2: '#b62a24', border: null, text: '#1f1612', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,220,200,0.06)' },
+  luguoWood: { bg: '#c99d64', bg2: '#bb8f58', border: '#2a1f18', text: '#1d1611', shadow: 'rgba(255,236,200,0.25)', grain: 'rgba(70,40,20,0.16)', ltr: true },
 }
 
 /** 電影膠卷的齒孔：沿著招牌的上下（橫式）或左右（直式）兩邊排一列圓角方孔 */

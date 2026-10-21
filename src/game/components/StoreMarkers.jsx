@@ -128,22 +128,29 @@ function StoreMarker({ position, shopId, open, scale = 1 }) {
   )
 }
 
+/** 店名提示的位置：有資訊熱點的店家（例如爐鍋咖啡）移到附近那個熱點的提示位置 */
+function PromptAnchor({ shop, anchors, placement, promptLayer }) {
+  const nearby = useGameStore((state) => state.nearbyShopId === shop.id)
+  const hotspotId = useGameStore((state) => (state.nearbyShopId === shop.id ? state.nearbyHotspotId : null))
+  // 離開時提示會淡出：淡出的這段時間保留最後一個熱點的位置與文字，不跳回店家預設的位置
+  const last = useRef(null)
+  if (nearby) last.current = hotspotId
+  const shown = nearby ? hotspotId : last.current
+  const hotspot = shown ? placement.hotspots.find((item) => item.id === shown) : null
+  const position = hotspot?.prompt ?? [anchors.prompt.x, anchors.prompt.y, anchors.prompt.z]
+  return (
+    <Html position={position} portal={promptLayer} calculatePosition={promptPosition} zIndexRange={[12, 0]} pointerEvents="none">
+      <ShopPrompt shop={shop} hotspot={hotspot} />
+    </Html>
+  )
+}
+
 /** 這個年代所有店家的屋頂標記；已開放的店家另有靠近時的店名提示（未開放的店家不顯示提示） */
 export function StoreMarkers({ shopModels, promptLayer }) {
-  return shopModels.map(({ shop, anchors }) => (
+  return shopModels.map(({ shop, anchors, placement }) => (
     <group key={shop.id} name={`store-${shop.id}`}>
       <StoreMarker position={anchors.marker} shopId={shop.id} open={shop.status === 'open'} scale={anchors.markerScale} />
-      {shop.status === 'open' && (
-        <Html
-          position={[anchors.prompt.x, anchors.prompt.y, anchors.prompt.z]}
-          portal={promptLayer}
-          calculatePosition={promptPosition}
-          zIndexRange={[12, 0]}
-          pointerEvents="none"
-        >
-          <ShopPrompt shop={shop} />
-        </Html>
-      )}
+      {shop.status === 'open' && <PromptAnchor shop={shop} anchors={anchors} placement={placement} promptLayer={promptLayer} />}
     </group>
   ))
 }

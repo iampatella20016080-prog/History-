@@ -37,6 +37,8 @@ import { buildYongleMarket } from '../builders/yongleMarket.js'
 import { buildYongleInterior } from '../builders/yongleInterior.js'
 import { buildActionBar } from '../builders/actionBar.js'
 import { buildActionBarInterior } from '../builders/actionBarInterior.js'
+import { buildLuguoCafe } from '../builders/luguoCafe.js'
+import { buildLuguoCafeInterior, cafeFurnitureBlockers, cafeSigns } from '../builders/luguoCafeInterior.js'
 import { buildGrandRestaurant, buildTeaMansion, buildTemple } from '../builders/specials.js'
 import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
@@ -57,6 +59,16 @@ export const BUILDING_BUILDERS = {
   ziyang: buildZiYang,
   'yongle-market': buildYongleMarket,
   'action-bar': buildActionBar,
+  // 小藝埕與二樓的爐鍋咖啡：建築、樓梯與店內的空殼，加上店內的招牌字、燈火與家具的鏡頭遮擋（位置與家具的配置相同）
+  'luguo-cafe': (b, config) => {
+    const result = buildLuguoCafe(b, config)
+    cafeSigns(b)
+    // 家具的遮擋方塊只給鏡頭用：不算在小藝埕這棟建築的點選範圍裡（點窗邊的椅子、吧檯上的咖啡機時仍然點到那個熱點）
+    const start = b.blockers.length
+    cafeFurnitureBlockers(b)
+    result.cameraOnly = [{ start, end: b.blockers.length }]
+    return result
+  },
 }
 
 /**
@@ -66,6 +78,7 @@ export const BUILDING_BUILDERS = {
 export const BUILDING_INTERIORS = {
   'yongle-market': buildYongleInterior,
   'action-bar': buildActionBarInterior,
+  'luguo-cafe': buildLuguoCafeInterior,
 }
 
 const PROP_BUILDERS = {
@@ -212,6 +225,7 @@ export function* eraWorldSteps(eraId) {
   const buildings = []
   const interiors = []
   const viewerRegions = []
+  const followAreas = []
   let viewerBounds = null
   let hasTemple = false
 
@@ -229,6 +243,8 @@ export function* eraWorldSteps(eraId) {
     // 它們的遮擋方塊另外成為一棟「建築」，可以點選與聚焦
     const subStores = result.subStores ?? []
     const subParts = new Set()
+    // 只給鏡頭用的遮擋方塊（例如店裡的家具）：不屬於任何一棟可以點選的建築
+    for (const range of result.cameraOnly ?? []) b.blockers.slice(range.start, range.end).forEach((part) => subParts.add(part))
     for (const sub of subStores) {
       const own = b.blockers.slice(sub.range.start, sub.range.end)
       own.forEach((part) => subParts.add(part))
@@ -236,6 +252,8 @@ export function* eraWorldSteps(eraId) {
       if (subBox) {
         const record = { id: sub.id, storeId: sub.storeId, rotationY: building.rotationY ?? 0, box: subBox, parts: own, focus: sub.focus }
         if (sub.detail) record.detail = true
+        // 店裡的資訊熱點（例如爐鍋咖啡的扭蛋機）：探索時點它開啟那個熱點的介紹章節
+        if (sub.hotspot) record.hotspot = sub.hotspot
         buildings.push(record)
       }
       if (sub.anchors) stores[sub.storeId] = { anchors: sub.anchors }
@@ -251,6 +269,7 @@ export function* eraWorldSteps(eraId) {
     // 室內範圍記下所屬的建築，按需載入時只產生這棟建築的室內
     if (result.interiors) interiors.push(...result.interiors.map((zone) => ({ ...zone, building: building.id })))
     if (result.viewerRegions) viewerRegions.push(...result.viewerRegions)
+    if (result.followAreas) followAreas.push(...result.followAreas)
     if (result.viewerBounds) viewerBounds = { ...(viewerBounds ?? {}), ...result.viewerBounds }
     if (archetype === 'temple') {
       hasTemple = true
@@ -328,6 +347,8 @@ export function* eraWorldSteps(eraId) {
     interiors,
     viewerRegions,
     viewerBounds,
+    // 第三人稱鏡頭要貼近障礙物的範圍（窄巷；室內另外判斷）
+    followAreas,
   }
 }
 
@@ -341,11 +362,15 @@ export function* eraInteriorSteps(eraId, buildingId = null) {
   if (!era) throw new Error(`未知的年代：${eraId}`)
   const layout = createEraLayout(era)
   const b = new PartBuilder()
+  // 細小的擺飾（例如爐鍋咖啡吧檯上的杯具與商品盒）另外合併：流暢模式下不顯示
+  const detail = new PartBuilder()
   for (const building of layout.buildings) {
     const builder = BUILDING_INTERIORS[building.config.archetype]
     if (!builder || (buildingId && building.id !== buildingId)) continue
     b.push([building.x, 0, building.z], building.rotationY)
-    builder(b, building.config)
+    detail.push([building.x, 0, building.z], building.rotationY)
+    builder(b, building.config, detail)
+    detail.pop()
     b.pop()
     yield
   }
@@ -354,7 +379,12 @@ export function* eraInteriorSteps(eraId, buildingId = null) {
     batches.push(...b.buildMaterial(material))
     yield
   }
-  return { eraId: era.id, batches }
+  const detailBatches = []
+  for (const material of [...detail.groups.keys()]) {
+    detailBatches.push(...detail.buildMaterial(material))
+    yield
+  }
+  return { eraId: era.id, batches, detailBatches }
 }
 
 export function buildEraInteriorSync(eraId, buildingId = null) {

@@ -27,6 +27,7 @@ export const MATERIAL_TILE = {
   granite: 1.3,
   marketTile: 1.2,
   whiteTile: 1.2,
+  terracotta: 1.2,
   steel: 0.8,
   perforated: 0.5,
   earth: 4.0,
@@ -88,6 +89,8 @@ export function getMaterials() {
     // 永樂市場：灰色地磚、白色磁磚、不鏽鋼、電纜線槽
     marketTile: toon({ map: textures.marketTile }),
     whiteTile: toon({ map: textures.whiteTile }),
+    // 陶磚地板（爐鍋咖啡二樓、小藝埕的騎樓）
+    terracotta: toon({ map: textures.terracotta }),
     steel: toon({ map: textures.steel }),
     perforated: toon({ map: textures.perforated }),
     earth: toon({ map: textures.earth }),
