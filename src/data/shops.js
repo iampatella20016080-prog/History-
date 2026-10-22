@@ -22,6 +22,19 @@ import {
 import { HUANG_YUJIE_HOTSPOTS, MUSEUM, MUSEUM_SITE, museumToWorld } from './huangYujieLayout.js'
 import { MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN } from './huangYujieMuseum.js'
 import { ACTION_BAR_SITE } from './actionBarLayout.js'
+import {
+  DOUHUA_STALL,
+  DOUHUA_STALL_HOTSPOTS,
+  DOUHUA_STALL_SITE,
+  DOUHUA_THEME,
+  KUEH_STALL,
+  KUEH_STALL_HOTSPOTS,
+  KUEH_STALL_SITE,
+  KUEH_THEME,
+  TEMPLE_DINING,
+  douhuaStallToWorld,
+  kuehStallToWorld,
+} from './templeSnackLayout.js'
 
 /**
  * 店家資料
@@ -1526,6 +1539,219 @@ export const SHOPS = [
     ],
   },
   {
+    id: 'temple-douhua-stall',
+    name: '廟口豆花攤',
+    status: 'open',
+    category: '廟口甜食・豆花',
+    seal: '豆',
+    // 飲食主題：只以食物主題連結 2000–現在的導演的豆花店（參訪對照，沒有品牌傳承關係）
+    theme: DOUHUA_THEME.id,
+    // 飲食文化的情境示意：不是特定的攤位，沒有店名、年份與店史
+    scenarioNote: '飲食文化情境示意',
+    yearNote: '飲食文化情境示意：這個攤位不對應任何實際的店家，沒有創立年份或店史。',
+    sourceIds: ['moe-douhua', 'moa-douhua-gel', 'moe-tiam-sim-tann', 'wiki-ci-sheng-gong'],
+    summary:
+      '慈聖宮廟口小吃區裡的一攤豆花：木框推車、有蓋的豆花桶、糖水壺與兩張木凳，攤販用扁平的舀匙舀豆花。這是飲食文化的情境示意，不是特定的店家。',
+
+    // ── 場景配置 ──────────────────────────────
+    // 只在「庶民生活」出現：慈聖宮廟埕西側的後段、天公爐與榕樹之間（取代這個年代原本在榕樹後方的一般小吃攤），推車朝向廟埕中央的通道。
+    // position 為推車前的互動點；推車、布棚、木凳、人物與碰撞由 builders/templeDouhuaStall.js 產生。
+    position: douhuaStallToWorld(DOUHUA_STALL_HOTSPOTS[0].point[0], 0),
+    facing: 'east',
+    // 從店家名錄前往：站在推車前的通道邊，面向推車
+    interaction: { radius: 1.6, distance: 1.6 },
+    site: { ...DOUHUA_STALL_SITE },
+    building: { archetype: 'temple-douhua-stall', width: 2.0, depth: 2.4 },
+    buildingByEra: {
+      postwar: { condition: 'aged' },
+    },
+    eraNotes: {
+      postwar:
+        '廟口的豆花攤只出現在「庶民生活」（1945–1980），是飲食文化的情境示意：攤位的樣子、位置與人物依一般的推車式甜食攤設計，不代表某一家實際的攤位，也不是2000年之後導演的豆花店的前身；展示在這個年代也不代表豆花起源於1945年。',
+    },
+    camera: { distance: 3.8, height: 1.9, side: 2.0, lookHeight: 1.0 },
+    hotspots: hotspotsToWorld(DOUHUA_STALL_HOTSPOTS, douhuaStallToWorld),
+
+    // ── 介紹章節 ──────────────────────────────
+    chapters: [
+      {
+        id: 'douhua-stall',
+        type: 'text',
+        tab: '豆花與甜食攤',
+        title: '豆花與甜食攤',
+        lead: '廟口小吃區裡的一攤豆花：木框推車上放著有蓋的豆花桶與糖水壺，攤販用扁平的舀匙把豆花一片一片舀進碗裡，淋上糖水，喜歡的話再加一小撮花生。',
+        paragraphs: [
+          '說明｜這是本站依一般的推車式甜食攤設計的飲食文化情境示意。本站沒有找到記錄戰後大稻埕慈聖宮廟口豆花攤的文獻或照片，所以不寫哪一年、哪一攤，也不寫攤販是誰；攤位出現在1945–1980，也不表示豆花是從這個時期才有的。',
+          '史料｜教育部《臺灣台語常用詞辭典》的「豆花」（tāu-hue）：「在豆漿中加入少量的鹽滷或石膏，使能凝結成比豆腐還嫩的食品。通常加糖水和花生，當作甜食。」',
+          '史料｜農業部〈豆花凝膠機制的介紹〉說明，豆漿中的大豆蛋白和凝固劑作用，形成凝膠的結構；凝固劑不同，口感也不同，例如以鹽滷凝結的豆花口感偏硬脆。',
+          '史料｜辭典裡賣點心小吃的攤販稱為「點心擔」，「廟口」是「廟門口、廟前廣場」。維基百科〈大稻埕慈聖宮〉記載，慈聖宮「廟前則是一排老牌的小吃攤」；這段記載沒有提到豆花，本站也不據此推定當時的攤位。',
+          '情境設計｜木框推車（一端兩個木輪，另一端是腳架與推把）、推車背面兩根木柱撐起的小布棚，棚角掛著只寫「豆花」的米白布幌；推車上是有蓋的圓形木豆花桶與扁平的舀匙、糖水壺、一小盆花生、泡著湯匙的水盆與疊碗，以及展示的兩碗豆花；推車前兩張木凳，推車後是攤販舀豆花的空間。攤販是沒有名字的情境人物。',
+          '現代相關店家｜切換到「2000–現在」，迪化街一段224巷裡有導演的豆花店。它和這個攤位只是同類食物的參訪對照：導演的豆花店有自己的店史（2019年的豆花車、2021年的店面），場景與介紹都不表示它由廟口的豆花攤發展而來，兩者也沒有品牌的傳承關係。',
+        ],
+        facts: [
+          { label: '位置', value: '慈聖宮廟埕西側的後段、天公爐與榕樹之間（場景配置）' },
+          { label: '年代', value: '1945–1980「庶民生活」（攤位本身沒有對應的年份）' },
+          { label: '性質', value: '飲食文化情境示意，不是特定的店家' },
+          { label: '招牌', value: '只寫「豆花」的米白布幌' },
+          { label: '現代相關店家', value: '導演的豆花店（2000–現在；同類食物的參訪對照，沒有品牌傳承關係）' },
+        ],
+        glossary: [
+          { term: '豆花', definition: '豆漿加入少量的鹽滷或石膏凝結成比豆腐還嫩的食品，通常加糖水和花生當作甜食（教育部《臺灣台語常用詞辭典》）。' },
+          { term: '點心擔', definition: '賣點心小吃的攤販（同上）。' },
+          { term: '廟口', definition: '廟門口、廟前廣場（同上）。' },
+        ],
+        sourceIds: ['moe-douhua', 'moa-douhua-gel', 'moe-tiam-sim-tann', 'moe-biau-khau', 'wiki-ci-sheng-gong'],
+      },
+      {
+        id: 'douhua-bowls',
+        type: 'foods',
+        tab: '兩碗豆花',
+        title: '兩碗豆花',
+        intro: '推車上展示的兩碗豆花：米白色、薄而柔軟的豆花片浮在淡琥珀色的糖水裡。材料是辭典的一般說明，不是某一家的配方。',
+        items: [
+          {
+            id: 'temple-plain-douhua',
+            name: '原味糖水豆花',
+            category: '甜食｜豆花',
+            description: '用扁平的舀匙一片一片舀起的豆花，淋上淡琥珀色的糖水。豆花是豆漿加少量鹽滷或石膏凝結而成，比豆腐還嫩（教育部辭典）。',
+            note: '場景中的一碗是示意，不代表配方、甜度或份量；這個攤位不對應任何實際的店家。',
+          },
+          {
+            id: 'temple-peanut-douhua',
+            name: '花生豆花',
+            category: '甜食｜豆花',
+            description: '同樣的豆花與糖水，再加一小撮花生。教育部辭典的說明：豆花「通常加糖水和花生，當作甜食」。',
+            note: '花生做成小小的橢圓顆粒；本站沒有查到戰後廟口豆花攤的配料紀錄，這一碗只是一般的示意。',
+          },
+        ],
+        footnote: '展示的兩碗是示意模型，不代表價格、份量或配方。',
+        sourceIds: ['moe-douhua'],
+      },
+      {
+        id: 'sources',
+        type: 'sources',
+        tab: '資料來源',
+        title: '資料來源',
+        intro: '廟口豆花攤的介紹整理自下列資料，點選即可開啟原始網頁；每一筆都標示出版時間與用途。',
+        sourceIds: ['moe-douhua', 'moa-douhua-gel', 'moe-tiam-sim-tann', 'moe-biau-khau', 'wiki-ci-sheng-gong'],
+        disclaimer:
+          '廟口的豆花攤是「飲食文化情境示意」：攤位的樣子、位置與人物都是依一般的推車式甜食攤設計的，不代表某一家實際的攤位；未查證的年代、店史與傳承關係都沒有寫入。布幌只寫「豆花」，沒有使用導演的豆花店或任何店家的店名、商標、包裝與裝潢。',
+      },
+    ],
+  },
+  {
+    id: 'temple-kueh-stall',
+    name: '廟口糕粿攤',
+    status: 'open',
+    category: '廟口小吃・糕粿',
+    seal: '粿',
+    // 飲食主題：只以食物主題連結 2000–現在永樂市場的好粿緣（參訪對照，沒有品牌傳承關係）
+    theme: KUEH_THEME.id,
+    scenarioNote: '飲食文化情境示意',
+    yearNote: '飲食文化情境示意：這個攤位不對應任何實際的店家，沒有創立年份或店史。',
+    sourceIds: ['moe-guo', 'moe-cao-guo', 'moe-hong-gui', 'moe-oo-kue', 'moe-cai-tau-guo', 'nmth-hong-gui-mold'],
+    summary:
+      '慈聖宮廟口小吃區裡的一攤糕粿：低矮的木桌上有竹蒸籠與分區的木托盤，擺著草仔粿、紅龜粿、芋粿與蘿蔔糕。這是飲食文化的情境示意，不是特定的店家。',
+
+    // ── 場景配置 ──────────────────────────────
+    // 只在「庶民生活」出現：慈聖宮廟埕東側的後段、天公爐與榕樹之間（取代這個年代原本在榕樹後方的一般小吃攤），矮桌朝向廟埕中央的通道。
+    // position 為矮桌前的互動點；矮桌、橫牌、器具、人物與碰撞由 builders/templeKuehStall.js 產生。
+    position: kuehStallToWorld(KUEH_STALL_HOTSPOTS[0].point[0], 0),
+    facing: 'west',
+    interaction: { radius: 1.6, distance: 1.6 },
+    site: { ...KUEH_STALL_SITE },
+    building: { archetype: 'temple-kueh-stall', width: 2.0, depth: 2.4 },
+    buildingByEra: {
+      postwar: { condition: 'aged' },
+    },
+    eraNotes: {
+      postwar:
+        '廟口的糕粿攤只出現在「庶民生活」（1945–1980），是飲食文化的情境示意：攤位的樣子、位置與人物依一般的矮桌式糕粿攤設計，不代表某一家實際的攤位，也不是2000年之後好粿緣的前身；展示在這個年代也不代表這些米食起源於1945年。',
+    },
+    camera: { distance: 3.8, height: 1.9, side: -2.0, lookHeight: 0.9 },
+    hotspots: hotspotsToWorld(KUEH_STALL_HOTSPOTS, kuehStallToWorld),
+
+    chapters: [
+      {
+        id: 'kueh-stall',
+        type: 'text',
+        tab: '糕粿與米食',
+        title: '糕粿與日常／節慶米食',
+        lead: '廟口小吃區裡的一攤糕粿：低矮的木桌上擺著竹蒸籠與分區的木托盤，草仔粿與紅龜粿墊著葉子，旁邊的木板上是芋粿與蘿蔔糕，一部分用乾淨的布巾蓋著。',
+        paragraphs: [
+          '說明｜這是本站依一般的矮桌式糕粿攤設計的飲食文化情境示意。本站沒有找到記錄戰後大稻埕慈聖宮廟口糕粿攤的文獻或照片，所以不寫哪一年、哪一攤，也不寫攤販是誰；攤位出現在1945–1980，也不表示這些米食是從這個時期才有的。',
+          '史料｜教育部《臺灣台語常用詞辭典》的「粿」：「糕的總稱，指用糯米或粳米等做成的食品。因所加的原料不同而有不同的稱法。」農業部〈「粿」然如此製粿稻米品種介紹〉說明，蘿蔔糕、碗粿等以在來米製成，圓糯米磨粉後則製成草仔粿、紅龜粿、菜包等。',
+          '節慶的米食｜辭典的「草仔粿」：外皮以「粿粞」加入艾草或鼠麴草揉成，外墊黃槿葉或月桃葉等，以蒸籠蒸熟，常做為農曆七月普渡或清明掃墓時的供品。「紅龜粿」：粿皮染紅、以模具印上龜型的圖樣後蒸製，經常用來祭拜神明、酬神，或在添丁時分送親友。國立臺灣歷史博物館的粿模藏品說明，神明誕辰、年節慶典祭祀、祖先祭拜與長輩做壽都可見到紅龜粿。',
+          '日常與年節的米食｜辭典的「芋粿」是「臺灣小吃的一種。以米漿和芋頭為主要材料，蒸熟後食用」；「菜頭粿」就是蘿蔔糕，是在來米漿拌入炒過的蘿蔔絲、蝦米等配料蒸製而成。農業部的〈年糕＆蘿蔔糕〉提到，「菜頭」與「彩頭」諧音，蘿蔔糕因此成為過年必備的菜色。',
+          '情境設計｜兩組木架腳撐起的矮木桌、桌後兩根木柱撐著的木製橫牌「傳統糕粿」；桌上一疊竹蒸籠（少量蒸氣）、分區的木托盤（草仔粿、紅龜粿，墊著葉子，後排用布巾蓋著）、木板上的芋粿與蘿蔔糕（整塊與切片）與食品夾；桌後是少量備用的籃筐與糕模。攤販是沒有名字的情境人物。草仔粿與紅龜粿是主要的展示，芋粿與蘿蔔糕是傳統米食的示意。',
+          '現代相關店家｜切換到「2000–現在」，永樂市場一樓有好粿緣的粿攤。它和這個攤位只是同類食物的參訪對照：場景與介紹都不表示好粿緣由廟口的糕粿攤發展而來，兩者沒有品牌的傳承關係；這裡的四種米食也不是好粿緣的菜單。',
+        ],
+        facts: [
+          { label: '位置', value: '慈聖宮廟埕東側的後段、天公爐與榕樹之間（場景配置）' },
+          { label: '年代', value: '1945–1980「庶民生活」（攤位本身沒有對應的年份）' },
+          { label: '性質', value: '飲食文化情境示意，不是特定的店家' },
+          { label: '招牌', value: '木製橫牌「傳統糕粿」' },
+          { label: '現代相關店家', value: '好粿緣（2000–現在，永樂市場一樓；同類食物的參訪對照，沒有品牌傳承關係）' },
+        ],
+        glossary: [
+          { term: '粿', definition: '糕的總稱，指用糯米或粳米等做成的食品（教育部《臺灣台語常用詞辭典》）。' },
+          { term: '粿粞', definition: '草仔粿的外皮材料：加入艾草或鼠麴草揉成（同上，「草仔粿」）。' },
+          { term: '粿模', definition: '印出紅龜粿龜甲紋路的木模；早期農業社會居家常見（國立臺灣歷史博物館）。' },
+        ],
+        sourceIds: ['moe-guo', 'moa-guo-rice', 'moe-cao-guo', 'moa-cao-guo', 'moe-hong-gui', 'nmth-hong-gui-mold', 'moe-oo-kue', 'moe-cai-tau-guo', 'moa-niangao'],
+      },
+      {
+        id: 'kueh-foods',
+        type: 'foods',
+        tab: '四種米食',
+        title: '四種傳統米食',
+        intro: '托盤與木板上分盤陳列的四種米食：形狀、顏色與厚度各不相同。說明整理自教育部辭典、農業部與國立臺灣歷史博物館的資料，是一般的說明，不是某一家的配方或菜單。',
+        items: [
+          {
+            id: 'temple-cao-a-kue',
+            name: '草仔粿',
+            category: '米食｜節慶（主要展示）',
+            description: '深綠色、扁圓的粿，表面略有手捏的起伏，墊著葉子。外皮以粿粞加入艾草或鼠麴草揉成，以蒸籠蒸熟；常做為農曆七月普渡或清明掃墓時的供品（教育部辭典）。',
+            note: '內餡沒有切開展示；場景中的模型不代表口味、配方或份量。',
+          },
+          {
+            id: 'temple-ang-ku-kue',
+            name: '紅龜粿',
+            category: '米食｜節慶（主要展示）',
+            description: '紅色、扁橢圓的粿，表面是印模壓出的龜甲紋——中央的六角形與外圈的龜殼紋路（國立臺灣歷史博物館的粿模藏品）。用來祭拜神明、酬神，或在添丁時分送親友（教育部辭典）。',
+            note: '龜甲紋是簡化的示意，沒有複製特定的粿模。',
+          },
+          {
+            id: 'temple-oo-kue',
+            name: '芋粿',
+            category: '米食｜日常（示意）',
+            description: '灰白色的厚片，切面看得到少量紫灰色的芋頭顆粒。辭典的說明：「以米漿和芋頭為主要材料，蒸熟後食用」的臺灣小吃。',
+            note: '傳統米食的示意，不代表任何店家現行的菜單。',
+          },
+          {
+            id: 'temple-cai-tau-kue',
+            name: '蘿蔔糕（菜頭粿）',
+            category: '米食｜年節（示意）',
+            description: '米白色的長方塊，展示整塊與切片兩種樣子。在來米漿拌入炒過的蘿蔔絲、蝦米等配料蒸製而成（教育部辭典）；「菜頭」與「彩頭」諧音，是過年必備的菜色（農業部）。',
+            note: '傳統米食的示意，不代表任何店家現行的菜單。',
+          },
+        ],
+        footnote: '展示的米食是示意模型，不代表價格、份量或配方；草仔粿與紅龜粿是主要的展示，芋粿與蘿蔔糕是傳統米食的示意，不是好粿緣的菜單。',
+        sourceIds: ['moe-cao-guo', 'moe-hong-gui', 'nmth-hong-gui-mold', 'moe-oo-kue', 'moe-cai-tau-guo', 'moa-niangao'],
+      },
+      {
+        id: 'sources',
+        type: 'sources',
+        tab: '資料來源',
+        title: '資料來源',
+        intro: '廟口糕粿攤的介紹整理自下列資料，點選即可開啟原始網頁；每一筆都標示出版時間與用途。',
+        sourceIds: ['moe-guo', 'moa-guo-rice', 'moe-cao-guo', 'moa-cao-guo', 'moe-hong-gui', 'nmth-hong-gui-mold', 'moe-oo-kue', 'moe-cai-tau-guo', 'moa-niangao'],
+        disclaimer:
+          '廟口的糕粿攤是「飲食文化情境示意」：攤位的樣子、位置與人物都是依一般的矮桌式糕粿攤設計的，不代表某一家實際的攤位；未查證的年代、店史與傳承關係都沒有寫入。橫牌只寫「傳統糕粿」，沒有使用好粿緣或任何店家的店名、招牌、包裝與售價。',
+      },
+    ],
+  },
+  {
     id: 'yong-le-mi-tai-mu',
     name: '永樂米苔目',
     status: 'open',
@@ -1853,8 +2079,18 @@ export const SHOPS = [
       banquet: { condition: 'mature', stalls: false },
       modern: { condition: 'mature', stalls: false },
       // 戰後：廟埕西側的前緣另有魷魚羹攤（temple-squid-stall），西側榕樹在攤位上方留出空間；
-      // 東側的前緣是米苔目攤（temple-mi-tai-mu-stall，取代那裡原本的一般小吃攤），東側榕樹也讓出空間
-      postwar: { condition: 'aged', stalls: true, clearing: TEMPLE_STALL.clearing, eastClearing: MI_TAI_MU_STALL.clearing, frontStall: false },
+      // 東側的前緣是米苔目攤（temple-mi-tai-mu-stall，取代那裡原本的一般小吃攤），東側榕樹也讓出空間；
+      // 廟埕後段、天公爐兩側是豆花攤（西，temple-douhua-stall）與糕粿攤（東，temple-kueh-stall），取代榕樹後方原本的兩個一般小吃攤
+      postwar: {
+        condition: 'aged',
+        stalls: true,
+        clearing: [TEMPLE_STALL.clearing, DOUHUA_STALL.clearing],
+        eastClearing: [MI_TAI_MU_STALL.clearing, KUEH_STALL.clearing],
+        frontStall: false,
+        sideStalls: false,
+        // 共用桌椅集中在中央通道西側的用餐區（豆花攤的客人也坐這裡），天公爐與桌椅之間留出走到豆花攤的路
+        sharedTables: TEMPLE_DINING.tables,
+      },
       revival: { condition: 'restored', stalls: true },
     },
   },
@@ -1907,7 +2143,12 @@ export function getShop(id) {
 }
 
 /** 飲食主題（例如「魷魚羹飲食文化」：兩個年代各一個版本，只以主題串連） */
-const THEMES = { [SQUID_SOUP_THEME.id]: SQUID_SOUP_THEME, [MI_TAI_MU_THEME.id]: MI_TAI_MU_THEME }
+const THEMES = {
+  [SQUID_SOUP_THEME.id]: SQUID_SOUP_THEME,
+  [MI_TAI_MU_THEME.id]: MI_TAI_MU_THEME,
+  [DOUHUA_THEME.id]: DOUHUA_THEME,
+  [KUEH_THEME.id]: KUEH_THEME,
+}
 
 export function getTheme(id) {
   return THEMES[id] ?? null
@@ -1920,6 +2161,15 @@ export function getThemeVersions(shop) {
   return Object.entries(theme.versions)
     .filter(([, id]) => id !== shop.id)
     .map(([eraId, id]) => ({ eraId, shop: getShop(id) }))
+}
+
+/**
+ * 同一個飲食主題的現代相關店家（例如廟口豆花攤 → 2000–現在的導演的豆花店）：只是同類食物的參訪對照，
+ * 沒有品牌傳承關係；回傳年代 id、店家與關係的說明
+ */
+export function getThemeRelated(shop) {
+  const theme = getTheme(shop?.theme)
+  return (theme?.related ?? []).map(({ eraId, shopId, relation }) => ({ eraId, shop: getShop(shopId), relation }))
 }
 
 /** 某個年代出現在街上的店家（依 eras.js 的 availableStores 排序） */

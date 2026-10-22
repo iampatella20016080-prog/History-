@@ -316,7 +316,14 @@ describe('跟隨鏡頭貼著障礙物時不會進到障礙物裡', () => {
     assert.ok(inFollowArea(fromShop(0, -SHOP.arcade / 2), revival.followAreas), '騎樓')
     assert.ok(!inFollowArea({ x: MOUTH.x, z: 0 }, revival.followAreas), '迪化街上不是')
     assert.ok(!inFollowArea({ x: 38, z: 0 }, revival.followAreas), '永樂市場的入口不是')
-    for (const era of ERAS.filter((item) => item.id !== 'revival')) assert.equal(buildEraWorldSync(era.id).followAreas.length, 0, era.id)
+    for (const era of ERAS.filter((item) => item.id !== 'revival')) {
+      const areas = buildEraWorldSync(era.id).followAreas
+      // 戰後只有慈聖宮廟埕裡、豆花攤與糕粿攤前的兩塊（見 tests/templeSnacks.test.js），迪化街上沒有
+      if (era.id === 'postwar') {
+        assert.equal(areas.length, 2, era.id)
+        for (const r of areas) assert.ok(r.minX > -2 && r.maxX < 10 && r.minZ > 4.5 && r.maxZ < 10.7, `${era.id} 在廟埕裡`)
+      } else assert.equal(areas.length, 0, era.id)
+    }
   })
 
   test('街道上的鏡頭和修改前相同：江山樓的騎樓前、各年代騎樓邊，鏡頭不會貼到人物身上', () => {

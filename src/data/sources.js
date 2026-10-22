@@ -121,6 +121,8 @@ SOURCES['moe-guo'] = {
   publisher: '教育部',
   title: '粿',
   url: 'https://sutian.moe.edu.tw/zh-hant/su/10694/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '「粿」的定義（糯米或粳米等做成的食品的總稱）。',
   context: '釋義：「糕的總稱，指用糯米或粳米等做成的食品。因所加的原料不同而有不同的稱法。」',
 }
 SOURCES['moe-cao-guo'] = {
@@ -129,6 +131,8 @@ SOURCES['moe-cao-guo'] = {
   publisher: '教育部',
   title: '草仔粿',
   url: 'https://sutian.moe.edu.tw/zh-hant/su/13709/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '草仔粿的材料、做法（外墊葉片、蒸籠蒸熟）與普渡、清明的用途。',
   context: '釋義：外皮以「粿粞」加入艾草或鼠麴草揉成，外墊黃槿葉或月桃葉等，以蒸籠蒸熟；常做為農曆七月普渡或清明掃墓時的供品。',
 }
 SOURCES['moe-hong-gui'] = {
@@ -137,6 +141,8 @@ SOURCES['moe-hong-gui'] = {
   publisher: '教育部',
   title: '紅龜粿',
   url: 'https://sutian.moe.edu.tw/zh-hant/su/5433/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '紅龜粿的做法（染紅、以模具印上龜型圖樣後蒸製）與祭祀、添丁的用途。',
   context: '釋義：由糯米製成，粿皮染紅、以模具印上龜型圖樣後蒸製；常用來祭拜神明、酬神，或在添丁時分送親友。',
 }
 SOURCES['moe-cai-tau-guo'] = {
@@ -145,6 +151,8 @@ SOURCES['moe-cai-tau-guo'] = {
   publisher: '教育部',
   title: '菜頭粿',
   url: 'https://sutian.moe.edu.tw/zh-hant/su/8972/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '菜頭粿（蘿蔔糕）的材料與做法。',
   context: '釋義：「蘿蔔糕。在來米漿拌入炒過的蘿蔔絲、蝦米等配料，蒸製而成的食品。」',
 }
 SOURCES['moe-yu-guo-qiao'] = {
@@ -161,6 +169,8 @@ SOURCES['nmth-hong-gui-mold'] = {
   publisher: '國立臺灣歷史博物館',
   title: '紅龜粿印模轉印紙張',
   url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2010.003.0248',
+  published: '典藏網頁（未標示日期；2026年10月查閱）',
+  usage: '粿模的龜甲紋樣，以及紅龜粿在祭祀、年節與做壽的用途。',
   context: '說明：粿模為早期農業社會居家常見之模具；紅龜粿與紅桃粿在神明誕辰、年節慶典祭祀、祖先祭拜與長輩做壽都可見到。',
 }
 SOURCES['moa-guo-rice'] = {
@@ -169,6 +179,8 @@ SOURCES['moa-guo-rice'] = {
   publisher: '農業部 農業知識入口網',
   title: '「粿」然如此製粿稻米品種介紹',
   url: 'https://kmweb.moa.gov.tw/knowledgebase.php?type=13259&id=420096',
+  published: '2023年5月29日（《臺中區農情月刊》第285期）',
+  usage: '製粿的米：在來米（蘿蔔糕等）與圓糯米（草仔粿、紅龜粿等）。',
   context: '說明蘿蔔糕、碗粿等以在來米製成；圓糯米磨粉後製成草仔粿、紅龜粿、菜包等。',
 }
 SOURCES['moa-cao-guo'] = {
@@ -177,6 +189,8 @@ SOURCES['moa-cao-guo'] = {
   publisher: '農業部',
   title: '美味與傳統完美結合的草仔粿',
   url: 'https://fae.moa.gov.tw/theme_data.php?theme=news&sub_theme=hot_news&id=1294',
+  published: '2023年4月4日',
+  usage: '草仔粿在清明節掃墓祭祖的用途。',
   context: '說明草仔粿「是閩南人與客家人在清明節掃墓祭祖時的經典糕點」。',
 }
 SOURCES['moa-niangao'] = {
@@ -185,6 +199,8 @@ SOURCES['moa-niangao'] = {
   publisher: '農業部 農業知識入口網',
   title: '年糕＆蘿蔔糕',
   url: 'https://kmweb.moa.gov.tw/theme_data.php?theme=news&sub_theme=agri_life&id=55163',
+  published: '2019年3月8日',
+  usage: '蘿蔔糕「菜頭」與「彩頭」的諧音與過年的習俗。',
   context: '提到「菜頭」與「彩頭」諧音，蘿蔔糕成為過年必備菜色；臺語俗諺「食甜粿，予你趁家伙」；過年前在家做菜頭粿、甜粿、發糕等糕點。',
 }
 
@@ -237,6 +253,8 @@ SOURCES['moe-douhua'] = {
   publisher: '教育部',
   title: '豆花',
   url: 'https://sutian.moe.edu.tw/zh-hant/su/3437/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '豆花的定義（豆漿加鹽滷或石膏凝結；通常加糖水和花生）。',
   context: '釋義：「在豆漿中加入少量的鹽滷或石膏，使能凝結成比豆腐還嫩的食品。通常加糖水和花生，當作甜食。」',
 }
 SOURCES['moe-maltose'] = {
@@ -269,6 +287,8 @@ SOURCES['moa-douhua-gel'] = {
   publisher: '農業部',
   title: '豆花凝膠機制的介紹',
   url: 'https://fae.moa.gov.tw/theme_data.php?theme=topics&sub_theme=knowledge&id=3484',
+  published: '2023年4月15日（《桃園區農情月刊》第285期）',
+  usage: '豆花凝結的原理（大豆蛋白與凝固劑形成凝膠）與鹽滷豆花的口感。',
   context: '說明豆漿中的大豆蛋白和凝固劑作用形成凝膠結構；以鹽滷作為凝固劑凝結的豆花口感偏硬脆。',
 }
 SOURCES['moa-ice-toppings'] = {
@@ -712,6 +732,18 @@ SOURCES['merit-2026-huang-yujie'] = {
   supports: ['元珍豆醬店如今成為黃玉階文史館', '門口掛「元珍」與「源珍」兩塊招牌', '醬缸、「學貫中西」匾額與人體解剖圖', '三窗四柱的立面'],
   usage: '文史館與歷史商號的關係、兩種店名的說法與館內陳設。文章沒有寫營運單位、開館日、門牌與開放時間；文中只出現一次的說法（例如請願設立女子分校）本站列為待核實。',
   context: '文章寫到：文史館位在大稻埕靠近碼頭的巷弄；百年前的元珍豆醬店如今是黃玉階文史館；門口有「元珍」「源珍」兩塊招牌，耆老口述稱「源珍」、帳冊上寫「元珍」；館內有醬缸、「學貫中西」匾額與人體解剖圖。',
+}
+
+/* ── 廟口的豆花攤與糕粿攤（1945–1980，飲食文化情境示意） ── */
+SOURCES['moe-oo-kue'] = {
+  id: 'moe-oo-kue',
+  citation: '教育部《臺灣台語常用詞辭典》，「芋粿」。',
+  publisher: '教育部',
+  title: '芋粿',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/3486/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '芋粿的定義與台語讀音（ōo-kué）。',
+  context: '釋義：「臺灣小吃的一種。以米漿和芋頭為主要材料，蒸熟後食用。」',
 }
 
 export function getSource(id) {
