@@ -418,6 +418,13 @@ kbd {
   border-color: rgba(60, 45, 30, 0.3);
 }
 
+/* 文化據點（文化展示、歷史街屋，不是店家） */
+.menu-shop__note.is-heritage {
+  color: #4f6248;
+  border-color: rgba(85, 100, 79, 0.55);
+  background: rgba(125, 139, 118, 0.12);
+}
+
 .menu-shop__info {
   display: flex;
   flex-wrap: wrap;
@@ -1785,6 +1792,69 @@ kbd {
   font-size: 13px;
   line-height: 1.75;
   color: var(--ink-faint);
+}
+
+/* 網站延伸整理的摘要（與館方展板原文分開標示） */
+.chapter-summary {
+  padding: 12px 18px 14px;
+  margin-bottom: 18px;
+  background: rgba(255, 251, 242, 0.7);
+  border: 1px dashed rgba(165, 64, 44, 0.45);
+  border-radius: 2px;
+}
+
+.chapter-summary__label {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 1px 8px;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--vermilion);
+  border: 1px solid rgba(165, 64, 44, 0.45);
+  border-radius: 2px;
+}
+
+.chapter-summary p {
+  font-size: 16px;
+  line-height: 1.95;
+  text-align: justify;
+}
+
+/* 分類清單：使用者照片觀察、情境設計、待核實 */
+.chapter-list {
+  padding: 12px 18px;
+  margin-top: 16px;
+  background: rgba(125, 139, 118, 0.1);
+  border-left: 4px solid var(--sage);
+}
+
+.chapter-list.is-pending {
+  background: rgba(179, 138, 74, 0.1);
+  border-left-color: var(--gold);
+}
+
+.chapter-list.is-observation {
+  background: rgba(58, 42, 31, 0.05);
+  border-left-color: var(--line-strong);
+}
+
+.chapter-list__title {
+  margin-bottom: 6px;
+  font-size: 13px;
+  letter-spacing: 0.24em;
+  color: #55644f;
+}
+
+.chapter-list ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.chapter-list li {
+  font-size: 14.5px;
+  line-height: 1.8;
 }
 
 .disclaimer {

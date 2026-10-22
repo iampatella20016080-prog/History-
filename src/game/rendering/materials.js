@@ -1,5 +1,6 @@
 import { Color, DoubleSide, MeshToonMaterial } from 'three'
 import { getTextures } from './textures.js'
+import { ensureExhibitTexture, getExhibitTexture } from './exhibitTexture.js'
 
 /**
  * 共用的卡通渲染材質。
@@ -51,6 +52,8 @@ export const MATERIAL_TILE = {
   windowLit: 1,
   lanternLit: 1,
   bulb: 1,
+  // 黃玉階文史館的展板圖集：平面零件自己指定圖集上的 UV（見 exhibitAtlas.js）
+  exhibit: null,
 }
 
 /** 發光材質的基礎亮度（乘上年代 glow 值） */
@@ -126,8 +129,18 @@ export function getMaterials() {
     windowLit: toon({ emissive: new Color('#ffb768'), emissiveIntensity: 0.2 }),
     lanternLit: toon({ emissive: new Color('#ff7a45'), emissiveIntensity: 0.2 }),
     bulb: toon({ emissive: new Color('#fff0c8'), emissiveIntensity: 0.4 }),
+    // 黃玉階文史館的展板（圖集很大，第一次有網格用到時才繪製；其他年代不佔記憶體）
+    exhibit: exhibitMaterial(toon),
   }
   return cache
+}
+
+function exhibitMaterial(toon) {
+  const material = toon({ map: getExhibitTexture() })
+  material.onBeforeCompile = () => {
+    ensureExhibitTexture()
+  }
+  return material
 }
 
 let interiorCache = null
@@ -147,6 +160,8 @@ export function getInteriorMaterials() {
       continue
     }
     const copy = material.clone()
+    // clone 不會複製 onBeforeCompile（展板圖集靠它在第一次使用時才繪製）
+    if (material.onBeforeCompile) copy.onBeforeCompile = material.onBeforeCompile
     copy.emissive = new Color('#ffffff')
     copy.emissiveMap = material.map ?? null
     copy.emissiveIntensity = material.map ? 0.2 : 0.14

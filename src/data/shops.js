@@ -19,6 +19,9 @@ import {
   miTaiMuStallToWorld,
   yongleMtmToWorld,
 } from './miTaiMuLayout.js'
+import { HUANG_YUJIE_HOTSPOTS, MUSEUM, MUSEUM_SITE, museumToWorld } from './huangYujieLayout.js'
+import { MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN } from './huangYujieMuseum.js'
+import { ACTION_BAR_SITE } from './actionBarLayout.js'
 import {
   DOUHUA_STALL,
   DOUHUA_STALL_HOTSPOTS,
@@ -633,7 +636,7 @@ export const SHOPS = [
     // 從店家名錄前往時，鏡頭偏向店門口的方向（窄店裡不要正對櫃台後退）
     travelYawOffset: 0.35,
     // 巷口的基準點（建築本地座標原點：迪化街南側的立面線），以及這個巷口取代的一般地段
-    site: { x: 22.9, z: 4.5, rotationY: 0, replaces: ['south-17'] },
+    site: { ...ACTION_BAR_SITE, replaces: [...ACTION_BAR_SITE.replaces] },
     building: { archetype: 'action-bar', width: 7, depth: 9 },
     buildingByEra: {
       revival: { condition: 'restored' },
@@ -782,6 +785,200 @@ export const SHOPS = [
         ],
         disclaimer:
           '店面、巷子與豆花車的 3D 模型依實地照片建模，尺寸與比例為估算；店內的留言本、兒童圖畫、獎項框與展板都是原創的示意內容，並非店內實際的作品、照片、獎項或影展標誌。本站沒有查證建築的興建年代，也不列出營業時間與價格。',
+      },
+    ],
+  },
+
+  {
+    id: 'huang-yujie-museum',
+    name: '黃玉階文史館',
+    // 文化據點（文化展示／歷史街屋）：不是餐廳，沒有點餐或食物圖鑑
+    kind: MUSEUM_RECORD.kind,
+    status: 'open',
+    // 老屋的興建年與文史館的開館日都未核實：留空（不以黃玉階的遷居年份或協會的登記日代替）
+    year: null,
+    yearLabel: '',
+    yearNote: '老屋的興建年、文史館的開館日、詳細門牌與開放時間都未核實，資料留空。歷史商號「元珍豆醬店」的說法見《人間福報》2026年的文章。',
+    category: '文化據點｜文化展示・歷史街屋',
+    seal: '文史',
+    summary: '紅磚拱窗的二層街屋，百年前是黃玉階的元珍豆醬店，如今是黃玉階文史館：保留老屋的木梁，展示醬缸、商號器物與大稻埕的人物、社會改革與教育史。',
+    sourceIds: ['merit-2026-huang-yujie', 'tcmb-huang-yujie', 'ncl-huang-yujie'],
+    hasInterior: true,
+
+    // ── 場景配置 ──────────────────────────────
+    // 只在「老屋新生」出現：224巷東側、導演的豆花店的北鄰（從巷子看是豆花店的左邊），依豆花店的位置、朝向與面寬定位。
+    // 位置、入口、展間配置、資訊熱點與鏡頭都在 data/huangYujieLayout.js（外觀見 builders/huangYujieExterior.js，展間見 huangYujieInterior.js）。
+    // position 為騎樓下的入口前；從店家名錄前往時站在騎樓下、面向大門，再自己走進去。
+    position: museumToWorld(HUANG_YUJIE_HOTSPOTS[0].point[0], 0),
+    facing: 'west',
+    // 店面朝西（巷子）；入口前的互動點在騎樓裡，也就是立面線往室內 0.95 m（距離為負）
+    interaction: { radius: 1.0, distance: HUANG_YUJIE_HOTSPOTS[0].point[1] },
+    travelYawOffset: 0.4,
+    site: { ...MUSEUM_SITE },
+    building: { archetype: 'huang-yujie-museum', width: MUSEUM.half * 2, depth: -MUSEUM.back },
+    buildingByEra: {
+      revival: { condition: 'restored' },
+    },
+    eraNotes: {
+      revival:
+        '黃玉階文史館只出現在「老屋新生」（2000–現在）。外觀與一樓展間依使用者提供的實地照片建模（尺寸為估算），一樓可以走進去，二樓只做外觀。館內可以讀到清末與日治的歷史，但現代的展板、協會與設備不會出現在其他年代；本站也沒有替其他年代另外做歷史版本。',
+    },
+    // 從店家名錄開啟介紹：在巷子裡斜看紅磚立面、拱窗與騎樓
+    camera: { distance: 3.4, height: 1.8, side: -1.3, lookHeight: 3.5 },
+    hotspots: hotspotsToWorld(HUANG_YUJIE_HOTSPOTS, museumToWorld),
+
+    // ── 介紹章節 ──────────────────────────────
+    chapters: [
+      {
+        id: 'museum',
+        type: 'text',
+        tab: '場館與老屋',
+        title: '黃玉階文史館｜元珍豆醬店',
+        lead: '224巷裡一棟紅磚拱窗的二層街屋：百年前的「元珍豆醬店」，如今是黃玉階文史館（《人間福報》2026年的文章）。',
+        summary: {
+          text: '文史館保留老屋的紅磚立面與裸露的木梁，一樓展示陶醬缸、舊商號的器物，以及黃玉階的生平、日治初期的社會改革與大稻埕的教育史。站在巷子裡正對立面時，左邊是文史館、右邊是導演的豆花店，兩棟的騎樓由拱門相連。老屋的興建年、開館日與開放時間尚未核實。',
+        },
+        paragraphs: [
+          '場館與商號分開看｜「黃玉階文史館」是現代的文化展示空間；「元珍豆醬店」是這棟老屋過去的商號。《人間福報》的文章寫到，門口掛著「元珍」與「源珍」兩塊招牌，地方耆老說的是「源珍」，帳冊上寫的是「元珍」。場景照原樣保留兩塊匾額，不把兩種寫法改成同一種。',
+          '外觀（依使用者照片）｜二樓三組拱形窗，中央較寬、兩側較窄，拱頂是放射狀的磚紋，窗間是四道磚柱（文章的圖說稱為「三窗四柱」）；窗下中央是黑底金字、由右往左讀的「元珍」匾額，左右兩塊有淺色邊框的彩色陶飾板。一樓兩根紅磚圓柱、灰色柱頭，後面是退縮的木造門面，門前是木質花槽。',
+          '老屋的構造｜騎樓與展間的頂部都露出深褐色的木梁與木板，色澤不均、有剝落的痕跡，也看得到修補過的木料與金屬固定構件（照片觀察）。點天花的木梁可以近看。',
+          '尚未核實的資料｜老屋的興建年、文史館的開館日、詳細門牌、開放時間與營運單位都沒有查到可靠的資料，所以留空；本站不以黃玉階遷居大稻埕的年份或其他組織的登記日期代替。',
+        ],
+        facts: [
+          { label: '場館', value: '黃玉階文史館（文化展示／歷史街屋）' },
+          { label: '歷史商號', value: '元珍豆醬店（另有「源珍」的說法）' },
+          { label: '位置', value: '迪化街一段224巷，導演的豆花店北鄰（依照片）；門牌未核實' },
+          { label: '興建年／開館日', value: '未核實（留空）' },
+        ],
+        lists: [
+          { title: '使用者照片觀察', kind: 'observation', items: PHOTO_OBSERVATIONS.filter((o) => ['neighbour', 'facade', 'columns', 'arcade', 'beams'].includes(o.id)).map((o) => o.text) },
+          { title: '3D 場景的情境設計', kind: 'scenario', items: SCENARIO_DESIGN.filter((o) => ['size', 'ceramics', 'omitted', 'upstairs'].includes(o.id)).map((o) => o.text) },
+        ],
+        sourceIds: ['merit-2026-huang-yujie'],
+      },
+      {
+        id: 'huang',
+        type: 'text',
+        tab: '黃玉階與大稻埕',
+        title: 'A｜黃玉階與大稻埕',
+        lead: '一位經營醬菜坊、也行醫的大稻埕仕紳。',
+        summary: {
+          text: '黃玉階（1850–1918）生於彰化大肚堡，1882年遷居大稻埕，經營醬菜坊，也以漢醫行醫。日治初期霍亂、鼠疫流行時，他奔走救治、不收謝禮，並取得官方核發的醫生執照（有1897、1901年兩種記載）。1900–1917年任大稻埕區長。',
+        },
+        paragraphs: [
+          '本章是本站依國家文化記憶庫（國家中醫藥研究所建檔）與國家圖書館「臺灣記憶」整理的摘要，不是館方展板的原文。',
+          '醫療的記載是歷史資料：它說明黃玉階在疫病流行時的角色，不代表任何療法在今天的效果，本站也不提供任何藥方或配方。',
+          '館內的人物展示牆有肖像看板、醫療公衛與社會參與的說明與裝框的文件（照片觀察）；後牆掛著「學貫中西」匾額與人體解剖圖（《人間福報》的文章也寫到）。場景中的看板只做版面示意，不重製照片中的肖像與文件。',
+        ],
+        timeline: [
+          { place: '1850', text: '生於彰化大肚堡五汊港（今臺中市梧棲區）。' },
+          { place: '1882', text: '遷居大稻埕，經營醬菜坊並行醫。' },
+          { place: '1897／1901', text: '取得官方核發的醫生執照（兩種記載）。' },
+          { place: '1900–1917', text: '擔任大稻埕區長。' },
+          { place: '1918', text: '逝世。' },
+        ],
+        facts: [
+          { label: '生卒', value: '1850–1918' },
+          { label: '遷居大稻埕', value: '1882年（光緒八年）' },
+          { label: '行業', value: '醬菜業（醬菜坊）、漢醫' },
+          { label: '執照年份', value: '1897年（臺灣記憶）／1901年（國家文化記憶庫）' },
+        ],
+        sourceIds: ['tcmb-huang-yujie', 'ncl-huang-yujie', 'merit-2026-huang-yujie'],
+      },
+      {
+        id: 'yuanzhen',
+        type: 'text',
+        tab: '元珍豆醬店',
+        title: 'B｜元珍豆醬店與飲食生活',
+        lead: '醬缸、包裝與商號名稱，留下了一家醬料商號的記憶。',
+        summary: {
+          text: '國家文化記憶庫與臺灣記憶都記載黃玉階經營醬菜業。《人間福報》2026年的文章寫到，百年前的「元珍豆醬店」如今是黃玉階文史館，門口掛著「元珍」與「源珍」兩塊招牌：耆老口述稱「源珍」，帳冊寫「元珍」。館內的醬缸與陳設留下醬料商號的記憶。',
+        },
+        paragraphs: [
+          '兩種名稱｜二樓窗下的黑底金字匾額是「元珍」，騎樓斜掛的綠色匾額與室內的布旗是「源珍」（照片觀察）。兩種寫法都出自同一篇文章的記載，本站照原樣保留，沒有自動改成同一種。',
+          '醬缸與陳列（照片觀察）｜入口一側與右前方的陳列區擺著深褐色的陶醬缸，有的加木蓋、有的用紅布或麻布封口，缸身貼著「醬」「醋」的紅色菱形紙；陳列區的木架上掛著秤與繩索，地上靠著大型竹篩。場景中的醬缸是展示物的示意。',
+          '本站沒有查到的事｜商號的創立年、配方、販售過的產品與醬缸的確切年代都沒有可靠的資料，所以不寫；場景也沒有點餐或販售的功能。',
+        ],
+        facts: [
+          { label: '商號', value: '元珍豆醬店（「源珍」為另一種說法）' },
+          { label: '行業', value: '醬菜業（國家文化記憶庫、臺灣記憶）' },
+          { label: '創立年', value: '未核實（留空）' },
+        ],
+        sourceIds: ['merit-2026-huang-yujie', 'tcmb-huang-yujie', 'ncl-huang-yujie'],
+      },
+      {
+        id: 'reform',
+        type: 'text',
+        tab: '社會改革與教育',
+        title: 'C｜社會改革與初等教育',
+        lead: '放足、斷髮與新式學校：日治初期大稻埕的變化。',
+        summary: {
+          text: '日治初期，纏足與辮髮成為社會改革的議題；臺灣記憶記載，黃玉階被推為臺北天然足會與斷髮不改裝會的會長。館內有「日治初期大稻埕的初等教育發展」展板（照片觀察）。依中研院臺史所整理，1898年國語傳習所改為公學校與小學校，1941年改稱國民學校。',
+        },
+        paragraphs: [
+          '本章是本站整理的延伸說明，不是館方展板的原文。展板上的小字在場景中只做版面示意（標題、年代軸、段落、圖片與城市剪影）；點選展板可以閱讀這一章的文字。',
+          '教育制度的背景｜中研院臺史所檔案館把日治時期的初等教育分成三個時期：1895–1922年日臺分離、1922–1941年日臺共學制、1941–1945年國民學校時期。領臺之初先設國語傳習所，1898年改為收臺籍兒童的公學校與收日籍兒童的小學校。',
+          '館內有教育主題的展覽，不代表這棟建築以前是學校；展板上的校名與年份本站沒有逐一核對，因此不轉載。',
+        ],
+        glossary: [
+          { term: '國語傳習所', definition: '日治初期教臺灣人學日語的學校，1898年改為公學校（中研院臺史所）。' },
+          { term: '公學校', definition: '日治時期收臺籍兒童的初等學校；日籍兒童讀小學校（中研院臺史所）。' },
+          { term: '放足', definition: '解開纏足，讓女子的腳自然生長。' },
+          { term: '斷髮不改裝', definition: '剪去辮髮、但不必改穿和服或西服的主張。' },
+        ],
+        lists: [
+          { title: '待核實', kind: 'pending', items: PENDING.filter((p) => ['girls-school', 'board-schools'].includes(p.id)).map((p) => `${p.field}：${p.note}`) },
+        ],
+        sourceIds: ['ncl-huang-yujie', 'tcmb-huang-yujie', 'ith-primary-education'],
+      },
+      {
+        id: 'objects',
+        type: 'text',
+        tab: '日常器物',
+        title: '日常器物與商號生活',
+        lead: '層架上的包裝、提籃與茶具，把舊商號的日常帶進老屋裡。',
+        summary: {
+          label: '使用者照片觀察',
+          text: '展間右側是高到天花的深色木製層架：牛皮紙包裝與紅紙封條、竹編與藤編提籃、綁紅繩的小陶甕、茶具與鍋具、便當提盒、書籍、舊式電視與玻璃燈具。後方的茶席在圓形竹托盤上擺著黑色茶壺與杯底朝上的茶杯，上方掛著紅色紋樣的布旗。',
+        },
+        paragraphs: [
+          '這些器物是文史館的陳設，用來呈現舊商號與日常生活的氣氛。本站沒有查證每一件器物的年代與來歷，所以不寫成某個年代的文物。',
+          '場景中的層架、器物與茶具是依照片簡化的示意，不是館藏的複製；每一層的擺設各不相同，但數量與細節做了精簡。',
+        ],
+        sourceIds: ['merit-2026-huang-yujie'],
+      },
+      {
+        id: 'association',
+        type: 'text',
+        tab: '相關組織資料',
+        title: 'D｜相關組織資料：社團法人臺灣文化事業發展協會',
+        lead: '以公開的法院公告為準；與文史館的關係尚待核實。',
+        summary: {
+          text: '社團法人臺灣文化事業發展協會經內政部2023年10月18日許可設立，2024年5月16日完成法人設立登記（臺灣桃園地方法院公告），宗旨是文化記憶保存、文化調查、人才培訓及教育推廣。公開資料沒有說明它與本館的關係，因此只列為相關組織資料。',
+        },
+        paragraphs: [
+          '這一章是協會本身的資料，不是文史館的介紹；在營運關係確認以前，本站不把協會標示為文史館的主辦、館方或所有權人，場景裡也沒有放協會的招牌或標誌。',
+        ],
+        facts: [
+          { label: '名稱', value: ORGANIZATIONS[0].name },
+          { label: '許可設立', value: '2023年10月18日（內政部）' },
+          { label: '法人設立登記', value: '2024年5月16日（臺灣桃園地方法院）' },
+          { label: '與文史館的關係', value: '待核實' },
+        ],
+        sourceIds: ['judicial-2024-tcda'],
+      },
+      {
+        id: 'sources',
+        type: 'sources',
+        tab: '參考文獻',
+        title: '參考文獻',
+        intro: '文史館、元珍豆醬店、黃玉階與相關組織的介紹整理自下列資料，點選即可開啟原始網頁。每一筆都註明出版時間與用途。',
+        sourceIds: ['merit-2026-huang-yujie', 'tcmb-huang-yujie', 'ncl-huang-yujie', 'ith-primary-education', 'judicial-2024-tcda'],
+        disclaimer:
+          '外觀與一樓展間依使用者提供的實地照片建模，尺寸為估算；展板、肖像看板與文件框只做版面示意，器物是簡化的示意，不是館藏的複製。來源對細節記載不一時（例如執照的年份）並列說明，不自行選定一種。' +
+          '尚未核實而留空的資料：' +
+          PENDING.map((p) => p.field).join('、') +
+          '。',
       },
     ],
   },

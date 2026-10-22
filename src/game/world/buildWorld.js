@@ -48,6 +48,8 @@ import { buildTempleDouhuaStall } from '../builders/templeDouhuaStall.js'
 import { buildTempleKuehStall } from '../builders/templeKuehStall.js'
 import { buildYongleMiTaiMuExterior, yongleMiTaiMuFurnitureBlockers } from '../builders/yongleMiTaiMuExterior.js'
 import { buildYongleMiTaiMuInterior } from '../builders/yongleMiTaiMuInterior.js'
+import { buildHuangYujieExterior, museumFurnitureBlockers } from '../builders/huangYujieExterior.js'
+import { buildHuangYujieInterior } from '../builders/huangYujieInterior.js'
 import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
 import { getEra } from '../../data/eras.js'
@@ -100,6 +102,14 @@ export const BUILDING_BUILDERS = {
     result.cameraOnly = [{ start, end: b.blockers.length }]
     return result
   },
+  // 2000–現在：黃玉階文史館（導演的豆花店北鄰）的紅磚立面、騎樓、招牌與展間的外殼；長桌、板凳與藤椅的遮擋方塊只給鏡頭用
+  'huang-yujie-museum': (b, config, detail) => {
+    const result = buildHuangYujieExterior(b, config, detail)
+    const start = b.blockers.length
+    museumFurnitureBlockers(b)
+    result.cameraOnly = [{ start, end: b.blockers.length }]
+    return result
+  },
 }
 
 /**
@@ -112,6 +122,7 @@ export const BUILDING_INTERIORS = {
   'luguo-cafe': buildLuguoCafeInterior,
   'lao-pan': buildLaoPanInterior,
   'yong-le-mi-tai-mu': buildYongleMiTaiMuInterior,
+  'huang-yujie-museum': buildHuangYujieInterior,
 }
 
 const PROP_BUILDERS = {
