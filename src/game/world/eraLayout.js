@@ -13,6 +13,7 @@ import { templeSquidStallCollision } from '../builders/templeSquidStall.js'
 import { laoPanCollision, laoPanFootprint } from '../builders/laoPanExterior.js'
 import { templeMiTaiMuStallCollision } from '../builders/templeMiTaiMuStall.js'
 import { yongleMiTaiMuCollision, yongleMiTaiMuFootprint } from '../builders/yongleMiTaiMuExterior.js'
+import { riceAndShineCollision } from '../builders/riceAndShine/riceAndShineExterior.js'
 
 /**
  * 某個年代的街區配置：建築（依地段演變）、街道道具、路燈、電線、燈籠串、碰撞與可行走範圍。
@@ -356,6 +357,15 @@ export function createEraLayout(era) {
           const { walk, obstacles } = templeCollision(config, transform)
           extraWalkable.push(walk)
           extraObstacles.push(...obstacles)
+        }
+        // 迪化街329號店屋（稻舍）：同一個地段，依年代的 variant 決定能不能走進去（騎樓、前進、天井、後進、樓梯與二樓）
+        if (config.archetype === 'rice-and-shine') {
+          const cos = Math.cos(lot.rotationY)
+          const sin = Math.sin(lot.rotationY)
+          const transform = (x, z) => ({ x: lot.x + x * cos + z * sin, z: lot.z - x * sin + z * cos })
+          const collision = riceAndShineCollision(config, transform)
+          extraWalkable.push(...collision.walkable)
+          extraObstacles.push(...collision.obstacles)
         }
         continue
       }

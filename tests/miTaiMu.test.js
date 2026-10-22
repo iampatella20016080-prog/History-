@@ -400,7 +400,8 @@ describe('米苔目：情境人物（NPC）', () => {
       assert.ok(!walkableAt(revival, YL(p.x, p.z).x, YL(p.x, p.z).z), `${npc.id} 有碰撞`)
     }
     const scene = readFileSync(new URL('../src/game/components/EraScene.jsx', import.meta.url), 'utf8')
-    assert.match(scene, /npc\.zone === zone\.id/)
+    // 店裡的人物跟著所屬建築的室內一起顯示（同一棟建築的室內範圍共用一份室內）
+    assert.match(scene, /zones\.some\(\(item\) => item\.id === npc\.zone\)/)
   })
 })
 

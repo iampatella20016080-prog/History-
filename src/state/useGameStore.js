@@ -109,19 +109,19 @@ export const useGameStore = create((set, get) => ({
   interact: (hotspotId = null) => {
     const { started, mode, nearbyShopId, nearbyHotspotId, transitioning, viewMode } = get()
     if (!started || mode !== 'explore' || viewMode !== 'explore' || !nearbyShopId || transitioning) return
-    if (getShop(nearbyShopId)?.status === 'open') get().openShop(nearbyShopId, hotspotId ?? nearbyHotspotId)
+    if (getShop(nearbyShopId, get().eraId)?.status === 'open') get().openShop(nearbyShopId, hotspotId ?? nearbyHotspotId)
   },
 
   /** 開啟店家介紹（建築觀賞模式中不開啟故事）；hotspotId 省略時，若正在這家店的熱點附近就用那個熱點 */
   openShop: (id, hotspotId) => {
     const state = get()
     if (state.viewMode !== 'explore') return false
-    const hotspot = hotspotOf(getShop(id), hotspotId === undefined && id === state.nearbyShopId ? state.nearbyHotspotId : hotspotId)
+    const hotspot = hotspotOf(getShop(id, state.eraId), hotspotId === undefined && id === state.nearbyShopId ? state.nearbyHotspotId : hotspotId)
     set((state) => ({
       mode: 'focus',
       activeShopId: id,
       activeHotspotId: hotspot?.id ?? null,
-      chapterIndex: hotspot ? hotspotChapterIndex(getShop(id), hotspot) : 0,
+      chapterIndex: hotspot ? hotspotChapterIndex(getShop(id, state.eraId), hotspot) : 0,
       menuOpen: false,
       qualityOpen: false,
       visited: { ...state.visited, [id]: true },

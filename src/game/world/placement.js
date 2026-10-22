@@ -12,7 +12,8 @@ export const FACING_ROTATION = {
   southeast: Math.PI / 4,
 }
 
-const cache = new Map()
+// 依店家物件快取：同一家店在不同年代可能是不同的物件（例如迪化街329號店屋），各有自己的互動位置與熱點
+const cache = new WeakMap()
 
 /**
  * 由店家資料推導場景中會用到的位置：
@@ -21,7 +22,7 @@ const cache = new Map()
  * - camera：按 E 探索時的鏡頭位置與注視點
  */
 export function getShopPlacement(shop) {
-  if (cache.has(shop.id)) return cache.get(shop.id)
+  if (cache.has(shop)) return cache.get(shop)
   const rotationY = FACING_ROTATION[shop.facing] ?? 0
   const forward = new Vector3(Math.sin(rotationY), 0, Math.cos(rotationY))
   const right = new Vector3(Math.cos(rotationY), 0, -Math.sin(rotationY))
@@ -49,7 +50,7 @@ export function getShopPlacement(shop) {
     camera: { position: new Vector3(...hotspot.camera.position), target: new Vector3(...hotspot.camera.target) },
   }))
   const placement = { rotationY, forward, right, origin, interactionPoint, camera, level, hotspots }
-  cache.set(shop.id, placement)
+  cache.set(shop, placement)
   return placement
 }
 

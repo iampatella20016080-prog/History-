@@ -714,6 +714,125 @@ SOURCES['merit-2026-huang-yujie'] = {
   context: '文章寫到：文史館位在大稻埕靠近碼頭的巷弄；百年前的元珍豆醬店如今是黃玉階文史館；門口有「元珍」「源珍」兩塊招牌，耆老口述稱「源珍」、帳冊上寫「元珍」；館內有醬缸、「學貫中西」匾額與人體解剖圖。',
 }
 
+/* ── 迪化街一段329號店屋（稻舍 Rice & Shine）與北街米業 ── */
+SOURCES['moc-329-shophouse'] = {
+  id: 'moc-329-shophouse',
+  citation: '文化部文化資產開放資料，〈迪化街一段329號店屋〉（歷史建築；國家文化資產網紀錄 20200514000006，經「諸彼特開放資料閱讀網」轉載）。',
+  title: '迪化街一段329號店屋',
+  publisher: '文化部（開放資料；管理單位臺北市政府）',
+  url: 'https://data.zhupiter.com/oddt/11362669/%E8%BF%AA%E5%8C%96%E8%A1%97%E4%B8%80%E6%AE%B5329%E8%99%9F%E5%BA%97%E5%B1%8B/',
+  sourceDate: '2020-04-28',
+  accessedAt: ACCESSED,
+  published: '登錄（註冊）時間 2020年4月28日',
+  supports: ['歷史建築', '建立年代 1907 年', '2020-04-28 登錄', '大稻埕北段日治時期為米產業中心', '與331號原相通、唐家米行'],
+  usage: '只支持建築的身分、建立年代、登錄日期與簡介；頁面沒有建築形式的描述與後來的用途。',
+  context: '簡介大意：大稻埕北段於日治時期為米產業中心，本建物與鄰房331號原相通，當時為唐家米行。',
+}
+SOURCES['taiwannews-2022-rice-shine'] = {
+  id: 'taiwannews-2022-rice-shine',
+  citation: '台灣英文新聞（中央社稿），〈北市「老房子文化運動」活化22處文資　台灣大稻埕百年店屋重生〉，2022年6月8日。',
+  title: '北市「老房子文化運動」活化22處文資　台灣大稻埕百年店屋重生',
+  publisher: '台灣英文新聞（引述中央社）',
+  url: 'https://www.taiwannews.com.tw/ch/news/4563917',
+  sourceDate: '2022-06-08',
+  accessedAt: ACCESSED,
+  published: '2022年6月8日',
+  supports: ['唐益興米行 1916 年由唐塗薩創立', '2014 年唐家後代捐贈市府', '負責人葉守倫、改造為米食文化餐館', 'URS 示範基地、老房子文化運動剪綵'],
+  usage: '稻舍的由來與活化經過（負責人的介紹）。',
+  context: '副市長為稻舍與貝殼好室剪綵；稻舍前身為大正五年唐塗薩創立的唐益興米行，唐家後代2014年捐給北市府，由葉守倫接手維護經營。',
+}
+SOURCES['pts-2022-rice-shine'] = {
+  id: 'pts-2022-rice-shine',
+  citation: '公視新聞網，〈迪化街老屋活化再利用 餐飲文化延續米行精神〉，2022年6月8日。',
+  title: '迪化街老屋活化再利用 餐飲文化延續米行精神',
+  publisher: '公共電視（公視新聞網）',
+  url: 'https://news.pts.org.tw/article/584613',
+  sourceDate: '2022-06-08',
+  accessedAt: ACCESSED,
+  published: '2022年6月8日',
+  supports: ['老屋曾是碾米廠、約2020年列為歷史建築', '保留碾米廠氛圍、陳列碾米機等器物', '稻米文化策展與米食餐飲'],
+  usage: '稻舍的空間與展示（碾米器物、策展）。',
+  context: '營運團隊修復老屋，保留碾米廠的歷史氛圍，屋內陳列碾米機等器物，並規畫稻米文化策展。',
+}
+SOURCES['traveler-2019-rice-shine'] = {
+  id: 'traveler-2019-rice-shine',
+  citation: '洪禎璐，〈看台北迪化街紅磚洋樓的華麗變身，現在老碾米行也能「麻雀變鳳凰」〉，《TRAVELER Luxe 旅人誌》，2019年7月21日。',
+  title: '看台北迪化街紅磚洋樓的華麗變身，現在老碾米行也能「麻雀變鳳凰」',
+  publisher: 'TRAVELER Luxe 旅人誌',
+  url: 'https://www.travelerluxe.com/article/desc/190002766',
+  sourceDate: '2019-07-21',
+  accessedAt: ACCESSED,
+  published: '2019年7月21日',
+  supports: ['迪化街北段碾米行全盛近五十家', '兩進兩層、過廊相通、各有木梯', '第一進一樓左邊碾米機、右邊堆白米', '天井的碾米流程插畫', '葉守倫為葉晉發米行（1923）後代'],
+  usage: '北街碾米行的數量與這棟店屋的空間配置；文中的營業時間與價格本站不採用。',
+  context: '迪化街北段為碾米行聚集地，全盛時期將近五十家；建築為兩進兩層樓，第一進與第二進之間有過廊相通。',
+}
+SOURCES['cna-2020-kuo-hsueh-hu'] = {
+  id: 'cna-2020-kuo-hsueh-hu',
+  citation: '趙靜瑜，〈104歲的時光旅人 郭雪湖的心靈風景〉，中央社《文化+》，2020年6月20日。',
+  title: '104歲的時光旅人 郭雪湖的心靈風景',
+  publisher: '中央通訊社',
+  url: 'https://www.cna.com.tw/culture/article/20200620w004',
+  sourceDate: '2020-06-20',
+  accessedAt: ACCESSED,
+  published: '2020年6月20日',
+  supports: ['《南街殷賑》1930 年', '描繪迪化街霞海城隍廟口的中元普渡', '臺展得獎、臺北市立美術館典藏', '從寶香齋二樓的窗戶看南街'],
+  usage: '只用來介紹作品的年份、題材與典藏；本站不重製畫作的圖像。',
+  context: '南街即今日迪化街，「殷賑」取日語熱鬧繁榮之意；畫中有乾元藥行、寶香齋等招牌。',
+}
+SOURCES['moe-dou'] = {
+  id: 'moe-dou',
+  citation: '教育部《重編國語辭典修訂本》，「斗」。',
+  title: '斗',
+  publisher: '教育部',
+  url: 'https://dict.revised.moe.edu.tw/dictView.jsp?ID=1989&q=1&word=%E6%96%97',
+  sourceDate: null,
+  accessedAt: ACCESSED,
+  published: '線上辭典（2026年10月查閱）',
+  supports: ['斗是計算容量的單位，十升為一斗', '「米斗」為形狀像斗的器具'],
+  usage: '米斗與斗、升的計量。',
+  context: '量詞：計算容量的單位，十升為一斗、十斗為一石；另一義項為形狀像斗的器具，例詞「米斗」。',
+}
+SOURCES['moe-long'] = {
+  id: 'moe-long',
+  citation: '教育部《重編國語辭典修訂本》，「礱」。',
+  title: '礱',
+  publisher: '教育部',
+  url: 'https://dict.revised.moe.edu.tw/dictView.jsp?ID=3875&q=1&word=%E7%A4%B1',
+  sourceDate: null,
+  accessedAt: ACCESSED,
+  published: '線上辭典（2026年10月查閱）',
+  supports: ['礱是磨去穀殼的器具'],
+  usage: '碾米的「脫殼」。',
+  context: '一種用來磨去穀殼的器具，形狀似磨，具有齒痕，多以木料製成。',
+}
+SOURCES['moe-caomi'] = {
+  id: 'moe-caomi',
+  citation: '教育部《重編國語辭典修訂本》，「糙米」。',
+  title: '糙米',
+  publisher: '教育部',
+  url: 'https://dict.revised.moe.edu.tw/dictView.jsp?ID=141450&q=1&word=%E7%B3%99%E7%B1%B3',
+  sourceDate: null,
+  accessedAt: ACCESSED,
+  published: '線上辭典（2026年10月查閱）',
+  supports: ['糙米是稻去殼後碾得不精的米'],
+  usage: '碾米的「糙米」。',
+  context: '稻去殼後，碾得不精的米。',
+}
+SOURCES['moe-jingmiji'] = {
+  id: 'moe-jingmiji',
+  citation: '教育部《重編國語辭典修訂本》，「精米機」（以「精米」檢索）。',
+  title: '精米機',
+  publisher: '教育部',
+  url: 'https://dict.revised.moe.edu.tw/search.jsp?md=1&word=%E7%B2%BE%E7%B1%B3',
+  sourceDate: null,
+  accessedAt: ACCESSED,
+  published: '線上辭典（2026年10月查閱）',
+  supports: ['精米機去除糙米的米糠層，使成為白米'],
+  usage: '碾米的「精米」。',
+  context: '一種農業機械，用來去除糙米的米糠層，使成為白米。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

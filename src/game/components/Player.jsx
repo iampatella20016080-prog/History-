@@ -132,7 +132,7 @@ export function Player({ collision, shopModels }) {
       const beforeZ = pos.z
       // 新的年代沒有角色所在的樓層（例如在爐鍋咖啡的二樓切換年代）：回到一樓，再推到最近的街道上
       if (!hasLevel(collision, playerState.level)) playerState.level = 0
-      resolvePlayerPosition(pos, PLAYER.radius, collision, playerState.level)
+      resolvePlayerPosition(pos, PLAYER.radius, collision, playerState.level, { relocate: true })
       settleOnGround(pos, collision, pos.y)
       if (!first && Math.hypot(pos.x - beforeX, pos.y - beforeY, pos.z - beforeZ) > 1.5) {
         vel.set(0, 0, 0)

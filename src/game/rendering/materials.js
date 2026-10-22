@@ -1,6 +1,7 @@
 import { Color, DoubleSide, MeshToonMaterial } from 'three'
 import { getTextures } from './textures.js'
 import { ensureExhibitTexture, getExhibitTexture } from './exhibitTexture.js'
+import { ensureRiceTexture, getRiceTexture } from './riceTexture.js'
 
 /**
  * 共用的卡通渲染材質。
@@ -54,6 +55,8 @@ export const MATERIAL_TILE = {
   bulb: 1,
   // 黃玉階文史館的展板圖集：平面零件自己指定圖集上的 UV（見 exhibitAtlas.js）
   exhibit: null,
+  // 迪化街329號店屋（稻舍）的壁畫、展板與老照片圖集
+  riceExhibit: null,
 }
 
 /** 發光材質的基礎亮度（乘上年代 glow 值） */
@@ -131,8 +134,17 @@ export function getMaterials() {
     bulb: toon({ emissive: new Color('#fff0c8'), emissiveIntensity: 0.4 }),
     // 黃玉階文史館的展板（圖集很大，第一次有網格用到時才繪製；其他年代不佔記憶體）
     exhibit: exhibitMaterial(toon),
+    riceExhibit: lazyAtlasMaterial(toon, getRiceTexture, ensureRiceTexture),
   }
   return cache
+}
+
+function lazyAtlasMaterial(toon, getTexture, ensure) {
+  const material = toon({ map: getTexture() })
+  material.onBeforeCompile = () => {
+    ensure()
+  }
+  return material
 }
 
 function exhibitMaterial(toon) {

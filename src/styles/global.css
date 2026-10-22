@@ -418,6 +418,13 @@ kbd {
   border-color: rgba(60, 45, 30, 0.3);
 }
 
+/* 同一棟建築在這個年代的狀態（例如「米行與碾米產業」） */
+.menu-shop__note.is-era {
+  color: #7a5a2e;
+  border-color: rgba(179, 138, 74, 0.6);
+  background: rgba(179, 138, 74, 0.1);
+}
+
 /* 文化據點（文化展示、歷史街屋，不是店家） */
 .menu-shop__note.is-heritage {
   color: #4f6248;
@@ -2638,5 +2645,238 @@ kbd {
 @media (max-width: 820px) {
   .hud.is-touch.is-viewer .hud-controls {
     bottom: calc(78px + var(--safe-bottom));
+  }
+}
+
+/* 步驟動畫（碾米：稻穀 → 脫殼 → 糙米 → 精米） */
+.process {
+  display: grid;
+  gap: 12px;
+  margin: 4px 0 18px;
+  padding: 14px;
+  background: rgba(255, 251, 242, 0.7);
+  border: 1px solid rgba(120, 86, 52, 0.3);
+  border-radius: 4px;
+}
+
+.process__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+}
+
+.process__grains {
+  width: 100%;
+  height: auto;
+  background: linear-gradient(#f3e6c8, #e8d3a6);
+  border-radius: 4px;
+}
+
+.process__grains .grain {
+  animation: grain-in 0.5s ease-out both;
+}
+
+.grain__shell.is-left {
+  animation: shell-left 1.2s ease-out both;
+}
+
+.grain__shell.is-right {
+  animation: shell-right 1.2s ease-out both;
+}
+
+@keyframes grain-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes shell-left {
+  to {
+    transform: translate(-10px, 6px) rotate(-35deg);
+    opacity: 0.4;
+  }
+}
+
+@keyframes shell-right {
+  to {
+    transform: translate(10px, 6px) rotate(35deg);
+    opacity: 0.4;
+  }
+}
+
+.process__caption {
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.process__caption strong {
+  display: block;
+  font-size: 20px;
+  color: var(--vermilion);
+  letter-spacing: 0.1em;
+}
+
+.process__steps {
+  display: flex;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.process__steps li {
+  flex: 1;
+}
+
+.process__step {
+  width: 100%;
+  min-height: 44px;
+  padding: 6px 4px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(120, 86, 52, 0.35);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.process__step.is-done {
+  background: rgba(201, 160, 74, 0.18);
+}
+
+.process__step.is-active {
+  color: #fff;
+  background: var(--vermilion);
+  border-color: var(--vermilion);
+}
+
+.process__num {
+  margin-right: 4px;
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.process__toggle {
+  justify-self: end;
+}
+
+/* 可以拖曳旋轉的米斗（CSS 立體模型） */
+.measure3d {
+  --measure-half: 74px;
+  --measure-tilt: -12deg;
+  position: relative;
+  height: 260px;
+  margin: 4px 0 18px;
+  perspective: 700px;
+  background: radial-gradient(circle at 50% 40%, #f8efdc, #e3cfa6);
+  border: 1px solid rgba(120, 86, 52, 0.3);
+  border-radius: 4px;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  overflow: hidden;
+}
+
+.measure3d:active {
+  cursor: grabbing;
+}
+
+.measure3d__model {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
+
+.measure3d__side {
+  position: absolute;
+  left: -74px;
+  top: 0;
+  width: 148px;
+  height: 104px;
+  transform-origin: 50% 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(60, 35, 15, 0.12) 0 2px, transparent 2px 13px),
+    linear-gradient(#a8784a, #7a5232);
+  clip-path: polygon(0 0, 100% 0, 85% 100%, 15% 100%);
+  backface-visibility: visible;
+}
+
+.measure3d__side::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 8px;
+  background: #6a4428;
+}
+
+.measure3d__corner {
+  position: absolute;
+  top: 0;
+  width: 10px;
+  height: 22px;
+  background: #3f3a34;
+}
+
+.measure3d__corner.is-left {
+  left: 0;
+}
+
+.measure3d__corner.is-right {
+  right: 0;
+}
+
+.measure3d__bottom,
+.measure3d__rice {
+  position: absolute;
+  transform-style: preserve-3d;
+}
+
+.measure3d__bottom {
+  left: -52px;
+  top: 50px;
+  width: 104px;
+  height: 104px;
+  background: #5a3a24;
+  transform: rotateX(90deg);
+}
+
+.measure3d__rice {
+  left: -66px;
+  top: -54px;
+  width: 132px;
+  height: 132px;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.9) 0 2px, transparent 3px) 0 0 / 14px 11px,
+    radial-gradient(circle at 70% 60%, rgba(220, 210, 180, 0.9) 0 2px, transparent 3px) 0 0 / 17px 13px,
+    #f1ead6;
+  transform: translateY(14px) rotateX(90deg);
+}
+
+.measure3d__hint {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  color: rgba(70, 45, 25, 0.7);
+}
+
+@media (max-width: 640px) {
+  .process__stage {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process__grains .grain,
+  .grain__shell.is-left,
+  .grain__shell.is-right {
+    animation: none;
   }
 }

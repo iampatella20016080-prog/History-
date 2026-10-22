@@ -21,6 +21,7 @@ import {
 } from '../src/game/viewerCamera.js'
 import { buildEraInteriorSync, buildEraWorldSync } from '../src/game/world/buildWorld.js'
 import { getShopPlacement } from '../src/game/world/placement.js'
+import { inRiceAndShineLot } from './helpers.js'
 
 /**
  * 永樂市場與好粿緣：只在「老屋新生」出現的街底市場大樓、可以走進去的一樓市場（碰撞、鏡頭、觀賞模式）、
@@ -29,7 +30,7 @@ import { getShopPlacement } from '../src/game/world/placement.js'
 const revival = buildEraWorldSync('revival')
 const market = getShop('yong-le-market')
 const hao = getShop('hao-guo-yuan')
-const zone = revival.interiors[0]
+const zone = revival.interiors.find((item) => item.building === 'site-yong-le-market')
 const space = viewerSpaceOf(revival)
 
 function insideBox(p, b, pad = 0) {
@@ -93,10 +94,14 @@ describe('永樂市場：只在「老屋新生」的街底', () => {
   test('其他年代沒有市場、室內與額外的觀賞範圍', () => {
     for (const era of ERAS.filter((item) => item.id !== 'revival')) {
       const world = buildEraWorldSync(era.id)
-      assert.equal(world.interiors.length, 0, era.id)
-      assert.equal(world.viewerRegions.length, 0, era.id)
+      // 1930 起稻舍（迪化街329號店屋）可以走進去，其他的室內與觀賞範圍都沒有
+      assert.ok(world.interiors.every((item) => item.building === 'store-rice-and-shine-329'), era.id)
+      assert.ok(world.viewerRegions.every(inRiceAndShineLot), era.id)
       assert.ok(!world.buildings.some((item) => item.storeId === 'yong-le-market' || item.storeId === 'hao-guo-yuan'), era.id)
-      assert.equal(buildEraInteriorSync(era.id).batches.length, 0, era.id)
+      const market = world.buildings.find((item) => item.storeId === 'yong-le-market')
+      assert.ok(!market)
+      const others = buildEraInteriorSync(era.id).batches.filter((batch) => !inRiceAndShineLot({ minX: batch.geometry.boundingBox.min.x, maxX: batch.geometry.boundingBox.max.x, minZ: batch.geometry.boundingBox.min.z, maxZ: batch.geometry.boundingBox.max.z }))
+      assert.equal(others.length, 0, era.id)
     }
   })
 

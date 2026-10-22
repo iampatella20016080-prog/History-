@@ -100,6 +100,10 @@ const STYLES = {
   heritageGreen: { bg: '#2f5a47', bg2: '#284e3d', border: null, text: '#b5e0bd', shadow: 'rgba(8,26,18,0.7)', grain: 'rgba(255,255,255,0.05)', sizeH: 0.64, sizeW: 0.72 },
   jarLabel: { bg: null, text: '#1c1612', fill: '#1c1612', outline: '#1c1612', outlineWidth: 0.02, shadow: 'rgba(0,0,0,0)', letters: true, sizeH: 0.82, sizeW: 0.86 },
   pinkBanner: { bg: '#ecd2d6', bg2: '#e4c3c9', border: '#3c3236', text: '#2a2326', shadow: 'rgba(0,0,0,0)', grain: 'rgba(90,60,70,0.05)' },
+  // 迪化街329號店屋（稻舍）：入口上方的金色立體字、黑底金字的吊牌、二樓飾板上深褐色的浮雕字（由左往右）
+  riceGold: { bg: null, text: 'gold', shadow: 'rgba(40,20,10,0.8)', outline: '#5a3a18', outlineWidth: 0.05, letters: true, ltr: true, sizeH: 0.8, sizeW: 0.86 },
+  riceBlack: { bg: '#1b1918', bg2: '#232120', border: null, text: '#e7c77e', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', ltr: true, sizeH: 0.7, sizeW: 0.9 },
+  riceRelief: { bg: null, text: '#4a2e22', fill: '#4a2e22', outline: '#2a1a12', outlineWidth: 0.03, shadow: 'rgba(60,40,30,0.35)', letters: true, ltr: true, sizeH: 0.8, sizeW: 0.62 },
   flagCloth: { bg: '#f1eee6', bg2: '#e8e3d8', border: null, text: '#2a2420', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,110,95,0.08)', sizeH: 0.5, sizeW: 0.62 },
 }
 

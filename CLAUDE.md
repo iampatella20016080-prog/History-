@@ -92,6 +92,13 @@ node tests/e2e/viewer.e2e.mjs http://127.0.0.1:5173/
   - 建模：`builders/templeSquidStall.js`、`laoPanExterior.js`
   - 測試：`tests/squidSoup.test.js`、`tests/miTaiMu.test.js`
 
+**同一棟建築的跨年代版本**（例如稻舍／迪化街329號店屋）：
+
+- 同一個店家 ID、同一個地段；`buildingByEra` 指定各年代的 `variant`，`eras` 放各年代的名稱、章節、熱點與狀態，用 `getShop(id, eraId)` 取得年代版本（不要直接讀 `SHOPS`）。
+- 年代設定在 `src/data/riceAndShineEraConfig.js`，配置在 `riceAndShineLayout.js`，建模在 `builders/riceAndShine/`；碰撞在 `eraLayout.js` 的店家地段裡依版本加上。
+- 店屋的可行走範圍標 `inBuilding`：換年代時人物用 `resolvePlayerPosition(..., { relocate: true })` 移到戶外，不會被推進店屋。
+- 測試：`tests/riceAndShine.test.js`、`tests/e2e/riceAndShine.e2e.mjs`；其他店家的測試檢查「這個年代沒有室內」時用 `helpers.js` 的 `inRiceAndShineLot` 排除它。
+
 ## 慣例
 
 - 介面文字、註解、測試名稱、commit 說明都用**繁體中文**。commit 標題格式為「功能名: 說明」，例如 `爐鍋咖啡: fixes from the adversarial review`。

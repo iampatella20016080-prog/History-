@@ -21,6 +21,7 @@ import {
 } from '../src/game/viewerCamera.js'
 import { buildEraInteriorSync, buildEraWorldSync } from '../src/game/world/buildWorld.js'
 import { getShopPlacement } from '../src/game/world/placement.js'
+import { inRiceAndShineLot } from './helpers.js'
 
 /**
  * 導演的豆花店 Action! Bar：只在「老屋新生」出現的迪化街一段224巷、巷子裡的二層樓店面、
@@ -203,7 +204,7 @@ describe('導演的豆花店：從迪化街走進店裡（碰撞）', () => {
     const modern = buildEraWorldSync('modern')
     for (const start of [fromShop(0, -4.2), { x: MOUTH.x, z: MOUTH.z + 15 }]) {
       const p = { ...start }
-      resolvePlayerPosition(p, PLAYER.radius, modern.collision)
+      resolvePlayerPosition(p, PLAYER.radius, modern.collision, 0, { relocate: true })
       assert.ok(walkableAt(modern, p.x, p.z), `推到 (${p.x.toFixed(2)}, ${p.z.toFixed(2)})`)
       // 不會留在原本巷子或店的位置（那一帶在其他年代是街屋）
       assert.ok(p.z < MOUTH.z + 6, `推到 (${p.x.toFixed(2)}, ${p.z.toFixed(2)})`)
@@ -316,7 +317,8 @@ describe('跟隨鏡頭貼著障礙物時不會進到障礙物裡', () => {
     assert.ok(inFollowArea(fromShop(0, -SHOP.arcade / 2), revival.followAreas), '騎樓')
     assert.ok(!inFollowArea({ x: MOUTH.x, z: 0 }, revival.followAreas), '迪化街上不是')
     assert.ok(!inFollowArea({ x: 38, z: 0 }, revival.followAreas), '永樂市場的入口不是')
-    for (const era of ERAS.filter((item) => item.id !== 'revival')) assert.equal(buildEraWorldSync(era.id).followAreas.length, 0, era.id)
+    // 其他年代只有稻舍（迪化街329號店屋，1930 起可以走進去）店裡的範圍
+    for (const era of ERAS.filter((item) => item.id !== 'revival')) assert.ok(buildEraWorldSync(era.id).followAreas.every(inRiceAndShineLot), era.id)
   })
 
   test('街道上的鏡頭和修改前相同：江山樓的騎樓前、各年代騎樓邊，鏡頭不會貼到人物身上', () => {

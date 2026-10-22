@@ -18,7 +18,7 @@ export function useGameKeyboard() {
     const onKeyDown = (event) => {
       const store = useGameStore.getState()
       if (event.code === 'KeyE' && !event.repeat) {
-        const shop = store.nearbyShopId ? getShop(store.nearbyShopId) : null
+        const shop = store.nearbyShopId ? getShop(store.nearbyShopId, store.eraId) : null
         if (store.started && store.mode === 'explore' && store.viewMode === 'explore' && shop?.status === 'open' && !store.transitioning) {
           event.preventDefault()
           store.openShop(store.nearbyShopId)
@@ -33,7 +33,7 @@ export function useGameKeyboard() {
       } else if (store.mode === 'reading' && (event.code === 'ArrowRight' || event.code === 'ArrowLeft')) {
         event.preventDefault()
         const delta = event.code === 'ArrowRight' ? 1 : -1
-        const count = getShop(store.activeShopId)?.chapters.length ?? 1
+        const count = getShop(store.activeShopId, store.eraId)?.chapters.length ?? 1
         store.setChapter(Math.max(0, Math.min(count - 1, store.chapterIndex + delta)))
       } else if (!store.started && event.code === 'Enter' && event.target === document.body) {
         store.start()
