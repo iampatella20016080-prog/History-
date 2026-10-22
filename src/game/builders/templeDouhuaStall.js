@@ -183,8 +183,9 @@ export function buildTempleDouhuaStall(b, cfg = {}, detail = b) {
           width: 0.6,
           height: 0.35,
           viewHeight: top + 0.06,
-          maxDistance: 2.1,
-          maxPitch: 0.8,
+          // 廟埕裡觀賞鏡頭的高度上限是 2.1 m（在榕樹樹冠的方塊下）：仰角放低，鏡頭才能在 2 m 內看著食物
+          maxDistance: 2.0,
+          maxPitch: 0.55,
           maxYawOffset: 0.6,
         },
       },

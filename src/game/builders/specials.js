@@ -150,6 +150,8 @@ export function buildTemple(b, cfg) {
     b.box('plain', [0.1, 0.5, 0.1], [Math.cos(a) * 0.3, 0.25, burnerZ + Math.sin(a) * 0.3], { tint: '#5a4a30' })
   }
   b.addSteam(0, 1.15, burnerZ, 0.6)
+  // 戰後的廟埕後段有觀賞鏡頭（cfg.courtCamera）：天公爐也是遮擋方塊，聚焦兩側的攤位時鏡頭不會躲在爐子後面
+  if (cfg.courtCamera) b.addBlocker(-0.5, 0.5, 0, 1.1, burnerZ - 0.5, burnerZ + 0.5)
 
   // 兩棵大榕樹與環樹石座
   const treeZ = -2.4
