@@ -976,6 +976,66 @@ function creamTileTexture() {
   return toTexture(canvas)
 }
 
+/* ───────────────────────── 白色小方磚外牆（永樂米苔目的立面） ───────────────────────── */
+function mosaicTileTexture() {
+  const S = 256
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  const rng = createRng(6217)
+  // 磚縫（淺灰色）
+  g.fillStyle = '#b9bcbb'
+  g.fillRect(0, 0, S, S)
+  const n = 16
+  const t = S / n
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      const v = 236 + Math.floor(hash2(r, c, 47) * 16)
+      g.fillStyle = `rgb(${v},${v},${v - 2})`
+      g.fillRect(c * t + 1.2, r * t + 1.2, t - 2.4, t - 2.4)
+      g.fillStyle = 'rgba(255,255,255,0.45)'
+      g.fillRect(c * t + 2, r * t + 2, t - 6, 1.4)
+    }
+  }
+  // 雨水留下的淡淡灰痕
+  for (let i = 0; i < 10; i++) {
+    const x = rng() * S
+    const y = rng() * S
+    const r = 18 + rng() * 40
+    wrapped(S, x, y, r, (px, py) => softBlot(g, px, py, r, '120,124,122', 0.025 + rng() * 0.03))
+  }
+  return toTexture(canvas)
+}
+
+/* ───────────────────────── 淺色亮面大地磚（永樂米苔目的店內） ───────────────────────── */
+function glossTileTexture() {
+  const S = 512
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  const rng = createRng(7303)
+  g.fillStyle = '#d2cfc6'
+  g.fillRect(0, 0, S, S)
+  const n = 2
+  const t = S / n
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      const v = 240 + Math.floor(hash2(r, c, 61) * 8)
+      g.fillStyle = `rgb(${v},${v - 3},${v - 10})`
+      g.fillRect(c * t + 2, r * t + 2, t - 4, t - 4)
+      // 亮面的反光：斜斜的一道柔和亮帶
+      const grad = g.createLinearGradient(c * t, r * t, c * t + t, r * t + t)
+      grad.addColorStop(0.28, 'rgba(255,255,255,0)')
+      grad.addColorStop(0.42, 'rgba(255,255,255,0.32)')
+      grad.addColorStop(0.5, 'rgba(255,255,255,0.08)')
+      grad.addColorStop(0.62, 'rgba(255,255,255,0)')
+      g.fillStyle = grad
+      g.fillRect(c * t + 2, r * t + 2, t - 4, t - 4)
+    }
+  }
+  // 細小的斑點（磁磚的紋理）
+  speckle(g, S, rng, 1600, '170,162,148', 0.08, 0.22, 1.2)
+  return toTexture(canvas)
+}
+
 /* ───────────────────────── 白色牆面磁磚 ───────────────────────── */
 function whiteTileTexture() {
   const S = 256
@@ -1077,6 +1137,8 @@ export function getTextures() {
     marketTile: marketTileTexture(),
     whiteTile: whiteTileTexture(),
     creamTile: creamTileTexture(),
+    mosaicTile: mosaicTileTexture(),
+    glossTile: glossTileTexture(),
     terracotta: terracottaTexture(),
     steel: steelTexture(),
     perforated: perforatedTexture(),

@@ -10,7 +10,7 @@ import { bowlStack, condimentSet, plate } from './squidSoupWares.js'
  * 攤車後方的瀝水區與碗盤架、後牆旁的飲料冰箱、天花的吊扇，以及四道展示餐點（laoPanFoodDisplay.js）。
  * 店內的外殼（地磚、牆、天花、布簾門）、攤車與招牌在 laoPanExterior.js，黑白貓在 components/LaoPanCat.jsx。
  *
- * 未拍攝的部分（店內深處的尺寸與配置）是簡化的示意；使用者提供的「內湖店」室內照片沒有用來重建這裡的平面。
+ * 未拍攝的部分（店內深處的尺寸與配置）是簡化的示意；需求說明提到的「內湖店」室內照片沒有用來重建這裡的平面。
  * 細小的擺飾（調味料、菜單卡、碗盤架上的碗、吊扇）放在 detail，流暢模式不顯示。
  */
 const F = LAO_PAN_FLOOR_Y

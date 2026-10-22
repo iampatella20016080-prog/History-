@@ -196,7 +196,7 @@ export const ERAS = [
       items: ['foodStalls', 'bicycles', 'tricycle', 'baskets', 'stools'],
       boats: 'sampans',
     },
-    availableStores: ['lin-fu-zhen', 'ci-sheng-gong', 'temple-squid-stall', 'you-ji', 'li-ting-xiang', 'lin-hua-tai', 'bolero', 'xin-fang-chun'],
+    availableStores: ['lin-fu-zhen', 'ci-sheng-gong', 'temple-squid-stall', 'temple-mi-tai-mu-stall', 'you-ji', 'li-ting-xiang', 'lin-hua-tai', 'bolero', 'xin-fang-chun'],
   },
   {
     id: 'revival',
@@ -251,6 +251,7 @@ export const ERAS = [
       'action-bar',
       'luguo-cafe',
       'lao-pan-squid-soup',
+      'yong-le-mi-tai-mu',
       'dao-she',
       'ci-sheng-gong',
       'you-ji',

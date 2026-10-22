@@ -536,7 +536,8 @@ async function runDevice(browser, device) {
   const toCat = await walk(DEEP)
   await face(LP(LAO_PAN.cat.x, LAO_PAN.cat.z))
   const catA = await state(page)
-  const sawBlink = await waitFor(page, () => (window.__DDC__.cats?.['lao-pan-cat']?.blink ?? 1) < 0.9, null, 60000, 'raf')
+  // 軟體繪圖每秒只有 1–2 影格：0.16 秒的眨眼要多等幾輪才會剛好取樣到
+  const sawBlink = await waitFor(page, () => (window.__DDC__.cats?.['lao-pan-cat']?.blink ?? 1) < 0.9, null, 240000, 'raf')
   const catB = await state(page)
   record(
     test,

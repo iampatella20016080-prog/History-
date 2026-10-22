@@ -552,6 +552,43 @@ describe('魷魚羹：熱點、點選與章節', () => {
     useGameStore.getState().setViewMode('explore')
   })
 
+  test('店門前的街上：人物背對老潘走出來時，第三人稱鏡頭停在雨棚前面，不在雨棚裡', () => {
+    const away = LP(0, 1)
+    const origin = LP(0, 0)
+    const heading = Math.atan2(away.x - origin.x, away.z - origin.z)
+    let checked = 0
+    for (let z = 1.8; z <= 4.6; z += 0.2) {
+      for (let x = -1.6; x <= 1.6; x += 0.4) {
+        const p = { ...LP(x, z), level: 0, y: 0 }
+        if (!walkableAt(revival, p.x, p.z)) continue
+        for (const offset of [0, 0.5, -0.5]) {
+          const cam = followCamera(revival, p, heading + Math.PI + offset)
+          assert.ok(!revival.blockers.some((box) => insideBox(cam, box, -0.02)), `(${x.toFixed(1)}, ${z.toFixed(1)}) ${offset}：鏡頭 (${cam.x.toFixed(2)}, ${cam.y.toFixed(2)}, ${cam.z.toFixed(2)})`)
+          checked++
+        }
+      }
+    }
+    assert.ok(checked > 100, `${checked}`)
+  })
+
+  test('站在攤位的提示前、鏡頭在人物背後（iPad 的預設鏡頭）：點攤台上的那一碗點得到它，不會先點到帆布棚', () => {
+    const dir = (a, b) => {
+      const d = { x: b.x - a.x, y: b.y - a.y, z: b.z - a.z }
+      const l = Math.hypot(d.x, d.y, d.z)
+      return { x: d.x / l, y: d.y / l, z: d.z / l }
+    }
+    const top = S().counter.height + 0.06
+    const bowl = { ...TS(S().bowl.x, S().bowl.z), y: top + 0.05 }
+    const at = TEMPLE_STALL_HOTSPOTS[0].point
+    for (const dx of [-0.6, -0.3, 0, 0.3]) {
+      const p = { ...TS(at[0] + dx, at[1]), level: 0, y: 0 }
+      const yaw = Math.atan2(bowl.x - p.x, bowl.z - p.z) + Math.PI
+      const cam = followCamera(postwar, p, yaw)
+      const hit = pickBuilding(cam, dir(cam, bowl), postwar.buildings)
+      assert.equal(hit?.id, 'temple-squid-stall-bowl', `${dx}：鏡頭 (${cam.x.toFixed(2)}, ${cam.y.toFixed(2)}, ${cam.z.toFixed(2)})`)
+    }
+  })
+
   test('點選：攤台上的那一碗、攤車、四道餐點、招牌各自是可以點選、聚焦的細部目標', () => {
     const dir = (a, b) => {
       const d = { x: b.x - a.x, y: b.y - a.y, z: b.z - a.z }

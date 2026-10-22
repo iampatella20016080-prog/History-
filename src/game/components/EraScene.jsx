@@ -10,6 +10,7 @@ import { useGameStore } from '../../state/useGameStore.js'
 import { GlowLayer } from './GlowLayer.jsx'
 import { CatLayer } from './LaoPanCat.jsx'
 import { LanternLayer } from './LanternLayer.jsx'
+import { NpcLayer } from './NpcLayer.jsx'
 import { SignLayer } from './SignLayer.jsx'
 import { StaticBatches } from './StaticBatches.jsx'
 import { SteamLayer } from './SteamLayer.jsx'
@@ -32,6 +33,8 @@ function distanceToRect(r, x, z) {
  */
 function InteriorZone({ world, zone, detail }) {
   const [batches, setBatches] = useState(() => getLoadedInterior(world, zone))
+  // 店裡的人物（例如永樂米苔目的客人與店員）：跟著這間店的室內一起產生與顯示
+  const npcs = (world.npcs ?? []).filter((npc) => npc.zone === zone.id)
   const group = useRef()
   const status = useRef({ requested: false, retryAt: 0, visible: false, mounted: true })
 
@@ -86,6 +89,7 @@ function InteriorZone({ world, zone, detail }) {
           <StaticBatches batches={small} materials={getInteriorMaterials()} castShadow={false} receiveShadow={false} dispose={false} />
         </group>
       )}
+      <NpcLayer npcs={npcs} name={`interior-${zone.id}-npcs`} />
     </group>
   )
 }
@@ -120,6 +124,8 @@ export function EraScene({ world }) {
       <SteamLayer steam={world.steam} />
       {/* 店裡的小動物（老潘的黑白貓）：跟著這個年代的街景掛載與卸載 */}
       <CatLayer cats={world.cats} />
+      {/* 攤位與騎樓的情境人物（店裡的人物在室內群組裡）：跟著這個年代的街景掛載與卸載 */}
+      <NpcLayer npcs={(world.npcs ?? []).filter((npc) => !npc.zone)} />
     </group>
   )
 }

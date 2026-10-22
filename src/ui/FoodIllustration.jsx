@@ -840,6 +840,146 @@ function DryShachaSquid() {
   )
 }
 
+/** 米苔目：短而粗、兩端略尖的白色米條 */
+function MiTaiMuStrand({ x, y, r = 0, s = 1 }) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${r}) scale(${s})`}>
+      <path d="M-11 0 Q-6 -3.4 0 -3.4 Q6 -3.4 11 0 Q6 3.4 0 3.4 Q-6 3.4 -11 0 Z" fill="#f3eee2" stroke={INK} strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M-5 -1.2 Q0 -2 5 -1.2" fill="none" stroke="#ffffff" strokeWidth="1.1" strokeLinecap="round" opacity="0.8" />
+    </g>
+  )
+}
+
+/** 撒在湯上的韭菜段與油蔥酥 */
+function ChivesAndShallots({ chives, shallots }) {
+  return (
+    <>
+      {chives.map(([x, y, r], i) => (
+        <rect key={`c${i}`} x={x - 3.5} y={y - 1.6} width="7" height="3.2" rx="1.2" transform={`rotate(${r} ${x} ${y})`} fill={i % 2 ? '#4f8a3a' : '#6a9e48'} stroke={INK} strokeWidth="0.9" />
+      ))}
+      {shallots.map(([x, y], i) => (
+        <path key={`s${i}`} d={`M${x - 2.6} ${y} l2.4 -2.2 l2.8 1.4 l-1.6 2.4 z`} fill={i % 2 ? '#9a6532' : '#b07a3e'} stroke={INK} strokeWidth="0.8" strokeLinejoin="round" />
+      ))}
+    </>
+  )
+}
+
+function MiTaiMuSoup() {
+  // 湯米苔目：淡琥珀色的大骨湯、浮在湯面的白色米條、韭菜與油蔥酥
+  const strands = [
+    [72, 66, -14, 1], [92, 62, 8, 1.05], [114, 64, -6, 0.95], [132, 68, 18, 0.9], [84, 72, 24, 0.9], [106, 72, -20, 1], [124, 74, 4, 0.85], [64, 72, 30, 0.8], [98, 66, 40, 0.85],
+  ]
+  return (
+    <>
+      <Shadow cy={126} rx={66} />
+      <SteamLines />
+      <Bowl rimY={66} depth={50} fill="#2f2a27">
+        <ellipse cx="100" cy="68" rx="56" ry="13" fill="#d9b98a" stroke={INK} strokeWidth="1.4" />
+        <ellipse cx="80" cy="66" rx="7" ry="2.4" fill="#ecd09a" opacity="0.9" />
+        {strands.map(([x, y, r, s], i) => (
+          <MiTaiMuStrand key={i} x={x} y={y} r={r} s={s} />
+        ))}
+        <ChivesAndShallots chives={[[90, 68, 20], [118, 66, -30], [102, 74, 60], [76, 70, -10], [128, 72, 40]]} shallots={[[86, 64], [110, 70], [122, 64], [96, 76], [70, 68]]} />
+      </Bowl>
+    </>
+  )
+}
+
+function TempleMiTaiMu() {
+  // 廟口攤位的湯米苔目：藍邊白瓷碗
+  const strands = [[72, 66, -10, 1], [94, 62, 12, 1], [116, 64, -8, 0.95], [132, 70, 20, 0.85], [86, 72, 28, 0.9], [108, 73, -18, 0.95], [64, 72, 34, 0.8]]
+  return (
+    <>
+      <Shadow cy={126} rx={66} />
+      <SteamLines />
+      <Bowl rimY={66} depth={50} pattern={<BlueRim cx={100} y={92} rx={52} count={8} />}>
+        <ellipse cx="100" cy="68" rx="56" ry="13" fill="#d9b98a" stroke={INK} strokeWidth="1.4" />
+        {strands.map(([x, y, r, s], i) => (
+          <MiTaiMuStrand key={i} x={x} y={y} r={r} s={s} />
+        ))}
+        <ChivesAndShallots chives={[[90, 68, 20], [120, 66, -30], [102, 74, 60]]} shallots={[[84, 64], [112, 70], [126, 64]]} />
+      </Bowl>
+    </>
+  )
+}
+
+function SideDishes() {
+  // 兩碟簡單的小菜（示意）：油豆腐與燙青菜
+  return (
+    <>
+      <Shadow cy={124} rx={80} />
+      <Plate cx={64} cy={98} rx={42} ry={14} />
+      <Plate cx={138} cy={102} rx={42} ry={14} />
+      {[[52, 90], [68, 86], [76, 94], [58, 98]].map(([x, y], i) => (
+        <g key={i}>
+          <rect x={x - 8} y={y - 8} width="16" height="13" rx="2.5" fill={i % 2 ? '#c98a3c' : '#d39648'} stroke={INK} strokeWidth="1.5" />
+          {i % 2 === 0 && <rect x={x - 6} y={y - 7} width="12" height="4" rx="1.5" fill="#f1e7cf" stroke={INK} strokeWidth="0.9" />}
+        </g>
+      ))}
+      {[[124, 96, -20], [136, 92, 10], [148, 98, 35], [132, 102, -40], [146, 104, 5], [140, 98, 70]].map(([x, y, r], i) => (
+        <ellipse key={i} cx={x} cy={y} rx="11" ry="4.4" transform={`rotate(${r} ${x} ${y})`} fill={['#3f7a33', '#4f8a3a', '#5c9a45'][i % 3]} stroke={INK} strokeWidth="1.2" />
+      ))}
+      <path d="M126 94 Q138 90 150 96" fill="none" stroke="#5a3420" strokeWidth="2.6" strokeLinecap="round" />
+    </>
+  )
+}
+
+function PorkCheek() {
+  // 嘴邊肉：淺盤上的薄片（粉褐色、外緣較深）、薑絲與醬油膏
+  const slices = [[70, 92, -18], [88, 86, -6], [106, 86, 8], [124, 92, 20], [96, 98, -2], [80, 100, 14], [114, 100, -12]]
+  return (
+    <>
+      <Shadow cy={124} rx={74} />
+      <Plate cy={100} />
+      {slices.map(([x, y, r], i) => (
+        <g key={i} transform={`rotate(${r} ${x} ${y})`}>
+          <ellipse cx={x} cy={y} rx="15" ry="7" fill={['#d9a58e', '#cf9a82', '#e0b09a'][i % 3]} stroke={INK} strokeWidth="1.5" />
+          <path d={`M${x - 12} ${y - 2} Q${x} ${y - 6} ${x + 12} ${y - 2}`} fill="none" stroke="#a86a52" strokeWidth="1.6" />
+        </g>
+      ))}
+      {[[90, 84, 30], [100, 82, -20], [110, 88, 50], [94, 92, -40], [104, 94, 15]].map(([x, y, r], i) => (
+        <rect key={i} x={x - 6} y={y - 0.9} width="12" height="1.8" rx="0.9" transform={`rotate(${r} ${x} ${y})`} fill="#e8cf7a" stroke={INK} strokeWidth="0.6" />
+      ))}
+      <path d="M82 94 Q98 88 116 94" fill="none" stroke="#5a3420" strokeWidth="2.6" strokeLinecap="round" />
+    </>
+  )
+}
+
+function FriedTofu() {
+  // 油豆腐：炸成金褐色的豆腐塊，切開的露出白色的內面
+  const cubes = [[74, 90], [100, 86], [126, 90], [88, 100], [114, 100]]
+  return (
+    <>
+      <Shadow cy={124} rx={74} />
+      <Plate cy={100} />
+      <ellipse cx="100" cy="100" rx="40" ry="9" fill="#8a5a32" opacity="0.6" />
+      {cubes.map(([x, y], i) => (
+        <g key={i}>
+          <path d={`M${x - 11} ${y - 6} l11 -5 l11 5 l0 11 l-11 5 l-11 -5 z`} fill={i % 2 ? '#bf7f34' : '#c98a3c'} stroke={INK} strokeWidth="1.5" strokeLinejoin="round" />
+          <path d={`M${x - 11} ${y - 6} l11 -5 l11 5 l-11 5 z`} fill={i % 2 ? '#d39648' : '#f1e7cf'} stroke={INK} strokeWidth="1.2" strokeLinejoin="round" />
+        </g>
+      ))}
+    </>
+  )
+}
+
+function Daikon() {
+  // 菜頭（滷白蘿蔔）：淡琥珀色的厚圓塊
+  return (
+    <>
+      <Shadow cy={124} rx={74} />
+      <Plate cy={100} />
+      {[[76, 92, '#e7cf9d'], [104, 88, '#dcc08a'], [128, 96, '#ead6a8'], [92, 102, '#e2c896']].map(([x, y, fill], i) => (
+        <g key={i}>
+          <path d={`M${x - 14} ${y - 4} L${x - 14} ${y + 6} A14 5 0 0 0 ${x + 14} ${y + 6} L${x + 14} ${y - 4}`} fill={fill} stroke={INK} strokeWidth="1.5" />
+          <ellipse cx={x} cy={y - 4} rx="14" ry="5" fill="#f2e2bc" stroke={INK} strokeWidth="1.4" />
+          <ellipse cx={x} cy={y - 4} rx="8" ry="2.6" fill="none" stroke="#d8bf8a" strokeWidth="1" />
+        </g>
+      ))}
+    </>
+  )
+}
+
 const ILLUSTRATIONS = {
   shiitake: Shiitake,
   'dried-shrimp': DriedShrimp,
@@ -870,6 +1010,12 @@ const ILLUSTRATIONS = {
   'fish-crisp-geng': FishCrispGeng,
   tempura: Tempura,
   'dry-shacha-squid': DryShachaSquid,
+  'temple-mi-tai-mu': TempleMiTaiMu,
+  'side-dishes': SideDishes,
+  'mi-tai-mu-soup': MiTaiMuSoup,
+  'pork-cheek': PorkCheek,
+  'fried-tofu': FriedTofu,
+  daikon: Daikon,
 }
 
 export function FoodIllustration({ id, label }) {
