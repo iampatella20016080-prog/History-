@@ -643,7 +643,7 @@ node tests/e2e/era-switching.e2e.mjs http://127.0.0.1:4173/
 
 - 黃玉階文史館：單元測試共 299 項通過（新增 `tests/huangYujie.test.js` 27 項；`tests/actionbar.test.js` 改為檢查北鄰是文史館）；文史館瀏覽器測試（`tests/e2e/huangYujie.e2e.mjs`）在 macOS 的 Chrome 155（SwiftShader 軟體繪圖）中，桌面・精緻 12／12、iPad 觸控模擬・流暢 12／12 通過（豆花店門前 ↔ 展間進出 5 次，桌面 862、觸控 972 個影格中鏡頭從未在方塊裡）。截圖在 `docs/huang-yujie/`。其他既有的瀏覽器測試這次沒有重跑。
 
-- 稻舍／迪化街329號店屋：單元測試共 325 項通過（新增 `tests/riceAndShine.test.js` 26 項；`actionbar`、`yongle`、`squidSoup`、`luguo`、`miTaiMu` 的測試改為排除 1930 起可以走進去的稻舍，`squidSoup` 改用新的店家 ID）；稻舍瀏覽器測試（`tests/e2e/riceAndShine.e2e.mjs`）在 macOS 的 Chrome（SwiftShader 軟體繪圖）中，桌面・精緻 14／14、iPad 觸控模擬・流暢 14／14 通過（街上 ↔ 二樓各連續進出 3 次、在店裡連續切換 10 次年代）；換年代的移位與室內繪製改了共用程式，回歸測試黃玉階文史館（桌面）12／12、爐鍋咖啡（桌面）30／30 通過。修正：二樓臨街那一段原本被立面的遮擋方塊擋住（鏡頭會進到方塊裡）、米斗與土礱太遠時點不到、在介紹視窗裡用手指拖曳米斗會被當成換章節。
+- 稻舍／迪化街329號店屋：單元測試共 350 項通過（合併 main 的廟口豆花攤、糕粿攤之後）（新增 `tests/riceAndShine.test.js` 26 項；`actionbar`、`yongle`、`squidSoup`、`luguo`、`miTaiMu` 的測試改為排除 1930 起可以走進去的稻舍，`squidSoup` 改用新的店家 ID）；稻舍瀏覽器測試（`tests/e2e/riceAndShine.e2e.mjs`）在 macOS 的 Chrome（SwiftShader 軟體繪圖）中，桌面・精緻 14／14、iPad 觸控模擬・流暢 14／14 通過（街上 ↔ 二樓各連續進出 3 次、在店裡連續切換 10 次年代）；換年代的移位與室內繪製改了共用程式，回歸測試黃玉階文史館（桌面）12／12、爐鍋咖啡（桌面）30／30 通過。修正：二樓臨街那一段原本被立面的遮擋方塊擋住（鏡頭會進到方塊裡）、米斗與土礱太遠時點不到、在介紹視窗裡用手指拖曳米斗會被當成換章節。
 
 **尚未在實體 iPad／iOS Safari 與桌面 Safari 上測試**（測試環境沒有 WebKit）：實際的觸控手感與靈敏度、Safari 的手勢攔截（雙指縮放整頁、雙擊放大、回彈）、safe-area 在實機上的位置、Safari 的 Web Worker（module worker）與 WebGL 相容性，以及實機上的畫面更新率；兩種畫質在實機上的流暢程度與切換時的短暫停頓也尚未實測。
 
