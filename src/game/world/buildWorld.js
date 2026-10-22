@@ -43,6 +43,9 @@ import { buildGrandRestaurant, buildTeaMansion, buildTemple } from '../builders/
 import { buildTempleSquidStall } from '../builders/templeSquidStall.js'
 import { buildLaoPanExterior, laoPanFurnitureBlockers } from '../builders/laoPanExterior.js'
 import { buildLaoPanInterior } from '../builders/laoPanInterior.js'
+import { buildTempleMiTaiMuStall } from '../builders/templeMiTaiMuStall.js'
+import { buildYongleMiTaiMuExterior, yongleMiTaiMuFurnitureBlockers } from '../builders/yongleMiTaiMuExterior.js'
+import { buildYongleMiTaiMuInterior } from '../builders/yongleMiTaiMuInterior.js'
 import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
 import { getEra } from '../../data/eras.js'
@@ -82,6 +85,16 @@ export const BUILDING_BUILDERS = {
     result.cameraOnly = [{ start, end: b.blockers.length }]
     return result
   },
+  // 1945–1980：慈聖宮廟口小吃群裡的米苔目攤（攤販與客人是情境人物，見 components/NpcLayer.jsx）
+  'temple-mi-tai-mu-stall': buildTempleMiTaiMuStall,
+  // 2000–現在：永樂米苔目的立面、招牌、騎樓、外帶區與店內的外殼；店內家具的遮擋方塊只給鏡頭用
+  'yong-le-mi-tai-mu': (b, config, detail) => {
+    const result = buildYongleMiTaiMuExterior(b, config, detail)
+    const start = b.blockers.length
+    yongleMiTaiMuFurnitureBlockers(b)
+    result.cameraOnly = [{ start, end: b.blockers.length }]
+    return result
+  },
 }
 
 /**
@@ -93,6 +106,7 @@ export const BUILDING_INTERIORS = {
   'action-bar': buildActionBarInterior,
   'luguo-cafe': buildLuguoCafeInterior,
   'lao-pan': buildLaoPanInterior,
+  'yong-le-mi-tai-mu': buildYongleMiTaiMuInterior,
 }
 
 const PROP_BUILDERS = {
@@ -242,6 +256,8 @@ export function* eraWorldSteps(eraId) {
   const followAreas = []
   // 店裡會動的小動物（例如老潘的黑白貓）：位置與朝向，由元件另外繪製與播放待機動畫
   const cats = []
+  // 店家與攤位裡的情境人物（例如米苔目攤的攤販與客人）：位置、面向與姿勢，由元件另外繪製與播放待機動作
+  const npcs = []
   let viewerBounds = null
   let hasTemple = false
 
@@ -289,6 +305,7 @@ export function* eraWorldSteps(eraId) {
     if (result.viewerRegions) viewerRegions.push(...result.viewerRegions)
     if (result.followAreas) followAreas.push(...result.followAreas)
     if (result.cats) cats.push(...result.cats)
+    if (result.npcs) npcs.push(...result.npcs)
     if (result.viewerBounds) viewerBounds = { ...(viewerBounds ?? {}), ...result.viewerBounds }
     if (archetype === 'temple') {
       hasTemple = true
@@ -370,6 +387,7 @@ export function* eraWorldSteps(eraId) {
     // 第三人稱鏡頭要貼近障礙物的範圍（窄巷；室內另外判斷）
     followAreas,
     cats,
+    npcs,
   }
 }
 

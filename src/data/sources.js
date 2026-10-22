@@ -591,6 +591,58 @@ SOURCES['fonfood-laopan'] = {
   context: '頁面的官方菜單欄「目前沒有資訊」；彙整的食記摘錄中出現「魚酥羮」「肉羮湯」「魷魚羮」等品名。',
 }
 
+/* ── 米苔目的兩個年代版本：廟口的米苔目攤（1945–1980）與永樂米苔目（2000–現在） ── */
+SOURCES['moe-bi-thai-bak'] = {
+  id: 'moe-bi-thai-bak',
+  citation: '教育部《臺灣台語常用詞辭典》，「目」（ba̍k）。',
+  publisher: '教育部',
+  title: '目',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/1854/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '「米篩目」（米苔目）的台語寫法、讀音與詞義。',
+  context: '「目」的第三個義項是「細孔」，用例：「米篩目」（bí-thai-ba̍k），「米篩的網目，也指篩出的米條食品」。',
+}
+SOURCES['tvbs-2013-temple-food'] = {
+  id: 'tvbs-2013-temple-food',
+  citation: '食尚玩家編輯部，〈美食雙雄廟口大飽走!大稻埕-霞海城隍廟.慈聖宮〉，《食尚玩家》，2013年4月26日。',
+  publisher: '食尚玩家（TVBS）',
+  title: '美食雙雄廟口大飽走!大稻埕-霞海城隍廟.慈聖宮',
+  url: 'https://supertaste.tvbs.com.tw/review/322447',
+  published: '2013年4月26日（網頁的店家資訊卡另有較新的地址）',
+  usage: '只支持該次的報導：舊址、位置的描述與當時「40年老店」的說法（不當成查證過的開業年份）。',
+  context: '「在永樂市場與霞海城隍廟間的巷子中，每到假日必排隊的40年老店「永樂米苔目」」；文中的地址是「台北市大同區永昌街7號」，頁面下方的店家資訊卡寫「台北市大同區民樂街111號」。',
+}
+SOURCES['tvbs-2013-apang'] = {
+  id: 'tvbs-2013-apang',
+  citation: '食尚玩家編輯部，〈一日北高 阿龐ㄟ國定呷飽日(上)〉，《食尚玩家》，2013年11月27日。',
+  publisher: '食尚玩家（TVBS）',
+  title: '一日北高 阿龐ㄟ國定呷飽日(上)',
+  url: 'https://supertaste.tvbs.com.tw/review/323392',
+  published: '2013年11月27日',
+  usage: '只支持該次節目整理的品項：米苔目、嘴邊肉、脆腸（不代表現在的菜單）。',
+  context: '標題「正宗古早味 手作米苔目」；店家「永樂米苔目」，標籤與描述「米苔目,嘴邊肉,脆腸」。',
+}
+SOURCES['bella-2021-yongle-market'] = {
+  id: 'bella-2021-yongle-market',
+  citation: 'Bella儂儂，〈大稻埕美食數不完！8間永樂市場美食，不只生魚片連雞捲都有，澎湃的道地好料都在這！〉，2021年10月2日（2024年7月16日更新）。',
+  publisher: 'Bella儂儂',
+  title: '大稻埕美食數不完！8間永樂市場美食',
+  url: 'https://www.bella.tw/articles/travel&foodies/31577',
+  published: '2021年10月2日（網頁顯示2024年7月16日更新）',
+  usage: '只支持該次的整理：民樂街的地址、湯頭與小菜的品項（不當成最新的價格或菜單）。',
+  context: '「帶點油蔥和韭菜香的米苔目，配上嘴邊肉、豬皮、油豆腐、菜頭…一堆小菜」；「吃完還能無限加大骨湯」；地址「臺北市大同區民樂街111號」。',
+}
+SOURCES['bella-2025-dadaocheng'] = {
+  id: 'bella-2025-dadaocheng',
+  citation: 'Bella儂儂，〈大稻埕美食地圖！8間「必吃老店」懶人包，從永樂市場吃到迪化街，一篇就夠〉，2025年8月10日。',
+  publisher: 'Bella儂儂',
+  title: '大稻埕美食地圖！8間「必吃老店」懶人包',
+  url: 'https://www.bella.tw/articles/travel&foodies/53084/dadaocheng-food-guide',
+  published: '2025年8月10日',
+  usage: '媒體對店史的說法（創立年份、搬遷）與當次提到的品項；創立年份本站未核實。',
+  context: '「從民國五十六年創立至今，已傳承三代」；「搬遷到民樂街後，永樂米苔目的環境更加寬敞明亮」；「湯頭以大骨熬製、加入油蔥提香」；「乾米苔目用的是經典甜辣醬＋醬油膏，再拌上韭菜蔥花」；黑白切有「腿庫皮、水煮三層肉、大腸頭、嘴邊肉」；地址「台北市大同區民樂街111號」。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

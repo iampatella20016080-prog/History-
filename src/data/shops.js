@@ -9,6 +9,16 @@ import {
   laoPanToWorld,
   templeStallToWorld,
 } from './squidSoupLayout.js'
+import {
+  MI_TAI_MU_STALL,
+  MI_TAI_MU_STALL_HOTSPOTS,
+  MI_TAI_MU_STALL_SITE,
+  MI_TAI_MU_THEME,
+  YONGLE_MTM,
+  YONGLE_MTM_HOTSPOTS,
+  miTaiMuStallToWorld,
+  yongleMtmToWorld,
+} from './miTaiMuLayout.js'
 
 /**
  * 店家資料
@@ -1220,6 +1230,231 @@ export const SHOPS = [
 
   /* ── 以下店家先作為街景中的可見建築（即將開放），詳細故事與文獻於後續版本補上 ── */
   {
+    id: 'temple-mi-tai-mu-stall',
+    name: '廟口米苔目攤',
+    status: 'open',
+    category: '廟口小吃・米苔目',
+    seal: '米',
+    // 與 2000–現在的永樂米苔目同一個飲食主題（只以主題串連，沒有傳承關係）
+    theme: MI_TAI_MU_THEME.id,
+    // 飲食文化的情境示意：不是特定的攤位，沒有店名、年份與店史
+    scenarioNote: '飲食文化情境示意',
+    yearNote: '飲食文化情境示意：這個攤位不對應任何實際的店家，沒有創立年份或店史。',
+    sourceIds: ['moe-bi-thai-bak', 'moe-biau-khau', 'wiki-ci-sheng-gong'],
+    summary:
+      '慈聖宮廟口小吃群裡的一攤米苔目：木攤台、帆布棚、煤球爐上的湯鍋與兩張小桌，攤販在攤台後招呼客人。這是飲食文化的情境示意，不是特定的店家。',
+
+    // ── 場景配置 ──────────────────────────────
+    // 只在「庶民生活」出現：慈聖宮廟埕東側的前緣（取代這個年代原本在那裡的一般小吃攤），攤台朝向迪化街。
+    // position 為兩張小桌之間的攤台正面；攤位、桌椅、人物與碰撞由 builders/templeMiTaiMuStall.js 產生。
+    position: miTaiMuStallToWorld(MI_TAI_MU_STALL_HOTSPOTS[0].point[0], 0),
+    facing: 'north',
+    // 從店家名錄前往：站在兩張小桌之間的街邊，面向攤台
+    interaction: { radius: 1.8, distance: 2.0 },
+    site: { ...MI_TAI_MU_STALL_SITE },
+    building: { archetype: 'temple-mi-tai-mu-stall', width: 2.6, depth: 3.2 },
+    buildingByEra: {
+      postwar: { condition: 'aged' },
+    },
+    eraNotes: {
+      postwar:
+        '廟口的米苔目攤只出現在「庶民生活」（1945–1980），是飲食文化的情境示意：攤位的樣子、位置、桌椅與人物依一般的廟口小吃攤設計，不代表某一家實際的攤位，也不是2000年之後永樂米苔目的前身。',
+    },
+    camera: { distance: 4.4, height: 2.0, side: 2.6, lookHeight: 1.1 },
+    hotspots: hotspotsToWorld(MI_TAI_MU_STALL_HOTSPOTS, miTaiMuStallToWorld),
+
+    // ── 介紹章節 ──────────────────────────────
+    chapters: [
+      {
+        id: 'temple-food',
+        type: 'text',
+        tab: '廟口的米苔目',
+        title: '廟口的米苔目',
+        lead: '米苔目是台灣常見的庶民小吃，在戰後至1980年代的大稻埕，也屬於廟口與街邊常見的日常飲食之一。',
+        paragraphs: [
+          '說明｜上面這一段是本站對米苔目作為庶民小吃的一般介紹。本站沒有找到記錄戰後大稻埕廟口米苔目攤的文獻或照片，所以不寫哪一年、哪一攤，也不寫攤販是誰。',
+          '史料｜教育部《臺灣台語常用詞辭典》在「目」（ba̍k，細孔）的用例裡收錄「米篩目」（bí-thai-ba̍k）：「米篩的網目，也指篩出的米條食品」。華語常寫作「米苔目」。',
+          '史料｜辭典裡的「廟口」是「廟門口、廟前廣場」，賣點心小吃的攤販稱為「點心擔」。維基百科〈大稻埕慈聖宮〉記載，慈聖宮「廟前則是一排老牌的小吃攤」。',
+          '情境設計｜場景中的攤位：淡綠色油漆、磨舊的木攤台與金屬工作面，淡藍色的帆布棚，煤球爐上的大湯鍋（掀開一半的木鍋蓋、少量蒸氣），一盆生的米苔目、疊碗、展示的一碗湯米苔目與兩碟小菜，以及兩張小方桌與木凳。攤販在攤台後招呼客人，兩位客人坐著吃，一位站在旁邊等。招牌只寫「米苔目」，沒有店名或商標。攤位與人物都是依一般的廟口小吃攤設計的示意。',
+          '同一個飲食主題｜切換到「2000–現在」，可以在迪化街北側走進永樂米苔目的店面。兩者只是同樣以米苔目為主題：場景沒有表示這個攤位是永樂米苔目的前身，也不表示永樂米苔目當時已經在這裡擺攤。',
+        ],
+        facts: [
+          { label: '位置', value: '慈聖宮廟埕東側的前緣、廟口小吃群裡（場景配置）' },
+          { label: '年代', value: '1945–1980「庶民生活」（攤位本身沒有對應的年份）' },
+          { label: '性質', value: '飲食文化情境示意，不是特定的店家' },
+          { label: '招牌', value: '只寫「米苔目」' },
+        ],
+        glossary: [
+          { term: '米篩目（米苔目）', definition: '米篩的網目，也指篩出的米條食品（教育部《臺灣台語常用詞辭典》）。' },
+          { term: '廟口', definition: '廟門口、廟前廣場（同上）。' },
+          { term: '點心擔', definition: '賣點心小吃的攤販（同上）。' },
+        ],
+        sourceIds: ['moe-bi-thai-bak', 'moe-biau-khau', 'moe-tiam-sim-tann', 'wiki-ci-sheng-gong'],
+      },
+      {
+        id: 'bowl',
+        type: 'foods',
+        tab: '一碗米苔目',
+        title: '一碗米苔目',
+        intro: '攤台上展示的一碗湯米苔目與兩碟小菜，強調庶民的日常飲食。材料與做法是一般的說明，不是某一家的配方。',
+        items: [
+          {
+            id: 'temple-mi-tai-mu',
+            name: '湯米苔目',
+            category: '米食｜湯',
+            description: '「米篩目」是篩出的米條食品（教育部辭典）：短短的、兩端略尖的白色米條，盛在湯裡，撒上韭菜與油蔥酥。',
+            note: '場景中的一碗是示意，不代表配方或份量；這個攤位不對應任何實際的店家。',
+          },
+          {
+            id: 'side-dishes',
+            name: '小菜（示意）',
+            category: '配菜',
+            description: '攤台上兩碟簡單的小菜：油豆腐與燙青菜。',
+            note: '本站沒有查到戰後廟口米苔目攤的菜色紀錄；這兩碟只是一般小吃攤的示意。',
+          },
+        ],
+        footnote: '展示的一碗與小菜是示意模型，不代表價格、份量或配方。',
+        sourceIds: ['moe-bi-thai-bak'],
+      },
+      {
+        id: 'sources',
+        type: 'sources',
+        tab: '資料來源',
+        title: '資料來源',
+        intro: '廟口米苔目攤的介紹整理自下列資料，點選即可開啟原始網頁；每一筆都標示出版時間與用途。',
+        sourceIds: ['moe-bi-thai-bak', 'moe-biau-khau', 'moe-tiam-sim-tann', 'wiki-ci-sheng-gong'],
+        disclaimer:
+          '廟口的米苔目攤是「飲食文化情境示意」：攤位的樣子、位置、桌椅與人物都是依一般的廟口小吃攤設計的，不代表某一家實際的攤位；未查證的年代、店史與傳承關係都沒有寫入。招牌只寫「米苔目」，沒有使用任何店名、商標或現代店面的照片。',
+      },
+    ],
+  },
+  {
+    id: 'yong-le-mi-tai-mu',
+    name: '永樂米苔目',
+    status: 'open',
+    category: '傳統小吃・米苔目',
+    seal: '米',
+    theme: MI_TAI_MU_THEME.id,
+    address: '臺北市大同區民樂街111號',
+    // 創立年份未核實：留空（招牌上的「50年老店」與媒體的說法見介紹，不當成查證過的年份）
+    yearNote: '創立年份未核實，資料留空。',
+    sourceIds: ['bella-2021-yongle-market', 'bella-2025-dadaocheng', 'tvbs-2013-temple-food', 'tvbs-2013-apang'],
+    hasInterior: true,
+    summary:
+      '永樂市場一帶的米苔目小吃店：白色小方磚的狹長街屋、紅色直條紋主招牌上的金色立體字；一樓狹長、明亮的用餐區可以走進去。',
+
+    // ── 場景配置 ──────────────────────────────
+    // 只在「老屋新生」出現：取代迪化街北側的一般地段 north-6（實際的店在民樂街，場景只保留商圈的關係）。
+    // 位置、入口、外帶區、座位、人物、資訊熱點與鏡頭都在 data/miTaiMuLayout.js
+    // （外觀見 builders/yongleMiTaiMuExterior.js，店內見 yongleMiTaiMuInterior.js，食品見 miTaiMuWares.js，人物見 components/NpcLayer.jsx）。
+    // position 為店門口（入口的店面線）；從店家名錄前往時站在騎樓下、面向店門，再自己走進去。
+    position: yongleMtmToWorld(YONGLE_MTM_HOTSPOTS[0].point[0], 0),
+    facing: 'south',
+    interaction: { radius: 1.1, distance: YONGLE_MTM_HOTSPOTS[0].point[1] },
+    travelYawOffset: -0.3,
+    site: { ...YONGLE_MTM.site },
+    building: { archetype: 'yong-le-mi-tai-mu', width: YONGLE_MTM.half * 2, depth: -YONGLE_MTM.back },
+    buildingByEra: {
+      revival: { condition: 'restored' },
+    },
+    eraNotes: {
+      revival:
+        '永樂米苔目只出現在「老屋新生」（2000–現在）。店面與店內依使用者提供的實地照片建模（尺寸為估算），照片沒有拍到的部分是示意；一樓可以走進去，樓上只做外觀。招牌上的「50年老店」只當作招牌文字，創立年份未核實，沒有把這家店放進其他年代。',
+    },
+    // 從店家名錄開啟介紹：在迪化街上看狹長的立面與主招牌
+    camera: { distance: 7.0, height: 2.4, side: -1.8, lookHeight: 2.9 },
+    hotspots: hotspotsToWorld(YONGLE_MTM_HOTSPOTS, yongleMtmToWorld),
+
+    // ── 介紹章節 ──────────────────────────────
+    chapters: [
+      {
+        id: 'shop',
+        type: 'text',
+        tab: '店家與店面',
+        title: '永樂米苔目',
+        lead: '到了現代，大稻埕的傳統庶民飲食不只留在記憶裡，也以具體店家的形式延續下來。永樂米苔目就是其中一種代表性的小吃場景。',
+        paragraphs: [
+          '位置｜永樂米苔目在臺北市大同區民樂街111號，永樂市場一帶（Bella儂儂2021年、2025年的美食整理）。2013年食尚玩家的報導寫的是舊址永昌街7號，「在永樂市場與霞海城隍廟間的巷子中」；2025年的整理寫到店家「搬遷到民樂街」。場景的街道是敘事式配置，店放在迪化街北側，只保留「永樂市場／迪化街商圈」的關係，不是精確的地籍位置。',
+          '店面（依照片）｜白色小方磚的狹長街屋，垂直感明顯；紅色橫式主招牌有一條一條直向的凸條，金色立體字寫「永樂米苔目」，右側直寫小字「50年老店」；左右兩側各有一面紅色的直立招牌。一樓入口內縮成騎樓：右邊是開放的入口，左邊是外帶區的櫃檯與大排煙罩，排煙管沿著騎樓天花接到地上的鼓風機，騎樓吊著兩盞藤編吊燈、停著機車。',
+          '年份｜招牌上寫著「50年老店」。媒體的說法有：2013年食尚玩家寫「40年老店」，2025年Bella儂儂寫「從民國五十六年創立至今，已傳承三代」。這些說法彼此大致相符，但本站沒有找到店家或文史資料可以核實，所以創立年份留空，只把「50年老店」當成招牌上的文字，也沒有把這家店放進1945–1980的年代。',
+          '同一個飲食主題｜切換到「1945–1980」，可以在慈聖宮的廟口小吃群看到一攤米苔目。那是飲食文化的情境示意，不是這家店的前身，場景也不表示兩者有傳承關係。',
+        ],
+        facts: [
+          { label: '地址', value: '臺北市大同區民樂街111號（2021、2025年的媒體整理）' },
+          { label: '舊址', value: '永昌街7號（2013年的報導）' },
+          { label: '創立年份', value: '未核實（招牌寫「50年老店」）' },
+          { label: '年代', value: '2000–現在「老屋新生」' },
+        ],
+        sourceIds: ['bella-2021-yongle-market', 'bella-2025-dadaocheng', 'tvbs-2013-temple-food'],
+      },
+      {
+        id: 'dining',
+        type: 'text',
+        tab: '店內的用餐空間',
+        title: '店內的用餐空間',
+        lead: '狹長的一樓從門口一路通到後方：明亮、熱鬧、翻桌很快的米苔目小吃店。',
+        paragraphs: [
+          '依照片｜淺色的亮面大地磚、白色天花與圓形嵌燈、牆上的壁扇；右牆是一大片菜單板與紅色的桌號牌，中間與靠右牆兩排淺色木紋的方桌，配黑色的圓凳；左邊沿牆是調味料與筷筒的長櫃，後方是木作櫃台與藍色的牆面。',
+          '情境人物｜店裡坐著幾位吃米苔目的客人，門口有人排隊、有人點外帶，外帶區與後方櫃台各有一位店員。他們是簡化的情境人物，不對應照片裡的任何人，也沒有名字或身分。',
+          '示意｜菜單板只畫菜色的圓形圖，不寫品名與價格；告示與桌號牌只做樣子。桌椅的數量與間距、後方的配置是簡化的示意，不是精確的平面；照片裡的路人、價目與告示的文字都沒有放進場景。',
+        ],
+        facts: [
+          { label: '空間', value: '狹長的一樓用餐區（依照片簡化）' },
+          { label: '座位', value: '方桌與黑色圓凳，中間一排、靠右牆一排' },
+          { label: '人物', value: '情境人物，不對應照片裡的任何人' },
+        ],
+        sourceIds: ['bella-2025-dadaocheng'],
+      },
+      {
+        id: 'foods',
+        type: 'foods',
+        tab: '一碗米苔目',
+        title: '一碗米苔目',
+        intro: '走道邊第一張桌子上：一碗湯米苔目與幾樣小菜。品項依食記與媒體的整理核對；這是展示用的示意，不代表完整或即時的菜單，也不寫價格。',
+        items: [
+          {
+            id: 'mi-tai-mu-soup',
+            name: '湯米苔目',
+            category: '米食｜湯',
+            description: '短而粗的米條盛在大骨湯裡，帶著油蔥與韭菜的香氣（Bella儂儂2021年、2025年的整理）。',
+            note: '2025年的整理也提到乾米苔目（甜辣醬、醬油膏與韭菜蔥花）；場景只展示湯的。',
+          },
+          {
+            id: 'pork-cheek',
+            name: '嘴邊肉',
+            category: '黑白切',
+            description: '豬嘴邊的肉切片；2013年食尚玩家與2021、2025年Bella儂儂的整理都提到。',
+            note: '場景中淋醬油膏、放薑絲是一般黑白切的示意，不代表店家的做法。',
+          },
+          {
+            id: 'fried-tofu',
+            name: '油豆腐',
+            category: '小菜',
+            description: '炸過的豆腐塊，2021年的整理提到的小菜之一。',
+          },
+          {
+            id: 'daikon',
+            name: '菜頭',
+            category: '小菜',
+            description: '白蘿蔔（台語「菜頭」）煮成的小菜，2021年的整理提到的小菜之一。',
+          },
+        ],
+        footnote: '展示的餐點是示意模型，不代表價格、份量或配方；店家的菜色以現場為準。',
+        sourceIds: ['bella-2021-yongle-market', 'bella-2025-dadaocheng', 'tvbs-2013-apang'],
+      },
+      {
+        id: 'sources',
+        type: 'sources',
+        tab: '資料來源',
+        title: '資料來源',
+        intro: '永樂米苔目的介紹整理自下列資料，點選即可開啟原始網頁；每一筆都標示出版時間與用途。店面與店內的 3D 模型另外依使用者提供的實地照片建模。',
+        sourceIds: ['bella-2021-yongle-market', 'bella-2025-dadaocheng', 'tvbs-2013-temple-food', 'tvbs-2013-apang', 'moe-bi-thai-bak'],
+        disclaimer:
+          '媒體與食記只支持當次的記錄，不當成最新的價格、營業時間或店史；創立年份、店史與傳承關係沒有可以核實的資料，都沒有寫成事實。照片裡的路人、隔壁店家的招牌與廣告沒有放進場景，店裡的人物是簡化的情境人物。',
+      },
+    ],
+  },
+  {
     id: 'lin-hua-tai',
     name: '林華泰茶行',
     status: 'coming-soon',
@@ -1420,8 +1655,9 @@ export const SHOPS = [
     buildingByEra: {
       banquet: { condition: 'mature', stalls: false },
       modern: { condition: 'mature', stalls: false },
-      // 戰後：廟埕西側的前緣另有魷魚羹攤（temple-squid-stall），西側榕樹在攤位上方留出空間
-      postwar: { condition: 'aged', stalls: true, clearing: TEMPLE_STALL.clearing },
+      // 戰後：廟埕西側的前緣另有魷魚羹攤（temple-squid-stall），西側榕樹在攤位上方留出空間；
+      // 東側的前緣是米苔目攤（temple-mi-tai-mu-stall，取代那裡原本的一般小吃攤），東側榕樹也讓出空間
+      postwar: { condition: 'aged', stalls: true, clearing: TEMPLE_STALL.clearing, eastClearing: MI_TAI_MU_STALL.clearing, frontStall: false },
       revival: { condition: 'restored', stalls: true },
     },
   },
@@ -1474,7 +1710,7 @@ export function getShop(id) {
 }
 
 /** 飲食主題（例如「魷魚羹飲食文化」：兩個年代各一個版本，只以主題串連） */
-const THEMES = { [SQUID_SOUP_THEME.id]: SQUID_SOUP_THEME }
+const THEMES = { [SQUID_SOUP_THEME.id]: SQUID_SOUP_THEME, [MI_TAI_MU_THEME.id]: MI_TAI_MU_THEME }
 
 export function getTheme(id) {
   return THEMES[id] ?? null

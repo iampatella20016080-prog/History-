@@ -23,6 +23,8 @@ import { DISPLAY_FONT, registerFontTexture } from './fonts.js'
  * - 小藝埕與爐鍋咖啡：relief／redRelief 洗石子立面上的浮雕字、artYard 旗幟、luguoWood 木製招牌、couplet 春聯
  * - 老潘魷魚羹：laopanName／laopanSub 褪色的黃色主招牌（紅色店名、深藍色品名）、laopanVertical 紅底裝飾框的直立招牌、
  *   awningRed 紅色雨棚垂邊上的白字、laopanMenu 店內的品名板（不寫價格）
+ * - 永樂米苔目：mitaimuGold 紅色直條紋主招牌上的金色立體字、mitaimuSmall 右側直寫的「50年老店」、
+ *   mitaimuVertical 紅色直立側招牌、takeawayRed「外帶區」紅牌、mitaimuMenu 店內菜單板的直寫店名、tableNumber 紅色的桌號牌
  *
  * 橫式招牌依舊日習慣由右至左書寫（modern 除外）；直式招牌由上而下。
  */
@@ -85,6 +87,13 @@ const STYLES = {
   laopanVertical: { bg: '#b92a20', bg2: '#a9231a', border: '#e9c45a', text: '#fbf0cf', shadow: 'rgba(60,10,5,0.35)', grain: 'rgba(255,220,200,0.05)', double: true },
   awningRed: { bg: '#c3342a', bg2: '#b52d24', border: null, text: '#fffaf2', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.05)', ltr: true, sizeH: 0.64, sizeW: 0.78 },
   laopanMenu: { bg: '#f6f3ea', bg2: '#eeeadf', border: '#b3261d', text: '#b3261d', shadow: 'rgba(0,0,0,0)', grain: 'rgba(0,0,0,0.02)', ltr: true, sizeH: 0.56, sizeW: 0.86 },
+  // 永樂米苔目：紅色直條紋的主招牌（底板是立體的凸條，貼圖只有金色立體字）、紅色直立側招牌、外帶區的紅牌、菜單板與桌號牌
+  mitaimuGold: { bg: null, text: 'gold', shadow: 'rgba(70,12,8,0.85)', outline: '#6e4a1c', outlineWidth: 0.05, letters: true, ltr: true, sizeH: 0.84, sizeW: 0.84 },
+  mitaimuSmall: { bg: null, text: 'gold', shadow: 'rgba(70,12,8,0.6)', outline: '#6e4a1c', outlineWidth: 0.04, letters: true, ltr: true },
+  mitaimuVertical: { bg: '#c42d27', bg2: '#b52620', border: '#f4e2b8', text: '#fff6e6', shadow: 'rgba(60,10,5,0.3)', grain: 'rgba(255,220,200,0.05)' },
+  takeawayRed: { bg: '#c22a25', bg2: '#b52520', border: null, text: '#fff8ec', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.04)', ltr: true, sizeH: 0.72, sizeW: 0.86 },
+  mitaimuMenu: { bg: '#f3ead6', bg2: '#ede2ca', border: null, text: '#8a2c22', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,90,50,0.05)' },
+  tableNumber: { bg: '#cf2a26', bg2: '#c42521', border: null, text: '#ffffff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', ltr: true, sizeH: 0.8, sizeW: 0.9 },
 }
 
 /** 電影膠卷的齒孔：沿著招牌的上下（橫式）或左右（直式）兩邊排一列圓角方孔 */

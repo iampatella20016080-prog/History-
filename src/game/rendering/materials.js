@@ -28,6 +28,8 @@ export const MATERIAL_TILE = {
   marketTile: 1.2,
   whiteTile: 1.2,
   creamTile: 1.2,
+  mosaicTile: 0.8,
+  glossTile: 1.2,
   terracotta: 1.2,
   steel: 0.8,
   perforated: 0.5,
@@ -92,6 +94,9 @@ export function getMaterials() {
     whiteTile: toon({ map: textures.whiteTile }),
     // 米色方形地磚（老潘魷魚羹的店內）
     creamTile: toon({ map: textures.creamTile }),
+    // 永樂米苔目：白色小方磚的立面、店內淺色亮面的大地磚
+    mosaicTile: toon({ map: textures.mosaicTile }),
+    glossTile: toon({ map: textures.glossTile, emissive: new Color('#ffffff'), emissiveMap: textures.glossTile, emissiveIntensity: 0.12 }),
     // 陶磚地板（爐鍋咖啡二樓、小藝埕的騎樓）
     terracotta: toon({ map: textures.terracotta }),
     steel: toon({ map: textures.steel }),

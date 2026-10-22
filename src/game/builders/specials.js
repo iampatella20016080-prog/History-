@@ -149,11 +149,14 @@ export function buildTemple(b, cfg) {
   const treeZ = -2.4
   for (const side of [-1, 1]) {
     const tx = side * (w / 2 - 2.4)
-    // 戰後的魷魚羹攤在西側榕樹下（cfg.clearing）：那一棵的氣根與低垂的樹冠讓出攤位的空間
-    const clearing = side > 0 ? cfg.clearing : null
+    // 戰後的魷魚羹攤在西側榕樹下（cfg.clearing）、米苔目攤在東側榕樹下（cfg.eastClearing）：
+    // 那一棵的氣根與低垂的樹冠讓出攤位的空間
+    const clearing = (side > 0 ? cfg.clearing : cfg.eastClearing) ?? null
     buildTree(b, [tx, 0, treeZ], { scale: 0.9, seed: 300 + side, banyan: true, clearing })
     if (cfg.stalls) {
-      bench(b, [tx + side * -1.6, 0.06, treeZ + 1.3], { rotationY: Math.PI / 2, length: 1.4 })
+      // 東側的板凳在米苔目攤的位置：有米苔目攤的年代移到榕樹靠矮牆的那一側
+      const benchX = side < 0 && cfg.eastClearing ? tx + side * 1.55 : tx + side * -1.6
+      bench(b, [benchX, 0.06, treeZ + 1.3], { rotationY: Math.PI / 2, length: 1.4 })
     }
   }
 
@@ -162,7 +165,9 @@ export function buildTemple(b, cfg) {
     const canopies = condition === 'restored' ? ['#e9e4d6', '#d8e0d4', '#efe2cc'] : ['#d9cdb4', '#c9b08a', '#d6c6a8', '#b9c3b0']
     foodStall(b, [-w / 2 + 2.2, 0.06, -4.3], { rotationY: Math.PI / 2 - 0.08, seed: 41, canopy: pick(rng, canopies) })
     foodStall(b, [w / 2 - 2.2, 0.06, -4.4], { rotationY: -Math.PI / 2 + 0.08, seed: 42, canopy: pick(rng, canopies) })
-    foodStall(b, [-1.8, 0.06, -0.4], { rotationY: Math.PI, seed: 43, canopy: pick(rng, canopies) })
+    // 東側前緣的一般小吃攤：有米苔目攤的年代（cfg.frontStall 為 false）由米苔目攤取代（亂數的使用順序不變）
+    const frontCanopy = pick(rng, canopies)
+    if (cfg.frontStall !== false) foodStall(b, [-1.8, 0.06, -0.4], { rotationY: Math.PI, seed: 43, canopy: frontCanopy })
     // 共用桌椅
     for (const [x, z] of [[1.2, -2.6], [2.4, -1.0]]) {
       b.box('wood', [0.9, 0.05, 0.6], [x, 0.78, z], { tint: '#9a7656' })
@@ -203,7 +208,7 @@ export function templeCollision(cfg, transform) {
   if (cfg.stalls) {
     box(-w / 2 + 1.6, -w / 2 + 2.8, -5.4, -3.2)
     box(w / 2 - 2.8, w / 2 - 1.6, -5.5, -3.3)
-    box(-2.9, -0.7, -1.0, 0.5)
+    if (cfg.frontStall !== false) box(-2.9, -0.7, -1.0, 0.5)
     box(0.6, 1.8, -3.3, -1.9)
     box(1.8, 3.0, -1.7, -0.3)
   }
