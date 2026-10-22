@@ -307,13 +307,26 @@ function distanceToClearing(c, px, pz) {
   return Math.hypot(Math.max(c.minX - px, 0, px - c.maxX), Math.max(c.minZ - pz, 0, pz - c.maxZ))
 }
 
+/** 樹冠的一團在留空範圍上方要抬高多少（範圍裡最大的那一個） */
+function clearingLift(clearings, bx, bz, by, r) {
+  let lift = 0
+  for (const c of clearings) {
+    const near = distanceToClearing(c, bx, bz)
+    if (near >= r) continue
+    const bottom = by - 0.72 * r * Math.sqrt(1 - (near / r) ** 2)
+    if (bottom < c.top) lift = Math.max(lift, c.top - bottom)
+  }
+  return lift
+}
+
 /**
- * clearing：樹下要留空的範圍（同一個本地座標的矩形與高度 top，例如榕樹下的攤位）：
+ * clearing：樹下要留空的範圍（同一個本地座標的矩形與高度 top，例如榕樹下的攤位；可以是一個或多個）：
  * 垂到範圍裡的氣根不產生，樹冠在範圍上方的底面抬高到 top 以上。亂數的使用順序不變，其他部分的形狀與原本相同。
  */
 export function buildTree(b, position, { scale = 1, seed = 1, banyan = false, clearing = null } = {}) {
   const rng = createRng(seed)
   const [x, y, z] = position
+  const clearings = clearing ? [clearing].flat().filter(Boolean) : []
   const trunkH = (banyan ? 2.6 : 3.2) * scale
   b.cylinder('wood', 0.28 * scale, (banyan ? 0.55 : 0.38) * scale, trunkH, 8, [x, y + trunkH / 2, z], {
     tint: '#8a7258',
@@ -328,13 +341,7 @@ export function buildTree(b, position, { scale = 1, seed = 1, banyan = false, cl
     const bx = x + Math.cos(a) * d
     const bz = z + Math.sin(a) * d
     let by = y + trunkH + range(rng, 0.6, 1.6) * scale
-    if (clearing) {
-      const near = distanceToClearing(clearing, bx, bz)
-      if (near < r) {
-        const bottom = by - 0.72 * r * Math.sqrt(1 - (near / r) ** 2)
-        if (bottom < clearing.top) by += clearing.top - bottom
-      }
-    }
+    by += clearingLift(clearings, bx, bz, by, r)
     b.add('plain', new IcosahedronGeometry(r, 1), {
       position: [bx, by, bz],
       scale: [1, 0.72, 1],
@@ -350,7 +357,7 @@ export function buildTree(b, position, { scale = 1, seed = 1, banyan = false, cl
       const h = range(rng, 1.6, 2.6)
       const rx = x + Math.cos(a) * d
       const rz = z + Math.sin(a) * d
-      if (clearing && distanceToClearing(clearing, rx, rz) < 0.12) continue
+      if (clearings.some((c) => distanceToClearing(c, rx, rz) < 0.12)) continue
       b.cylinder('wood', 0.025, 0.035, h, 4, [rx, y + trunkH + 0.5 - h / 2, rz], {
         tint: '#7c6650',
       })

@@ -44,6 +44,8 @@ import { buildTempleSquidStall } from '../builders/templeSquidStall.js'
 import { buildLaoPanExterior, laoPanFurnitureBlockers } from '../builders/laoPanExterior.js'
 import { buildLaoPanInterior } from '../builders/laoPanInterior.js'
 import { buildTempleMiTaiMuStall } from '../builders/templeMiTaiMuStall.js'
+import { buildTempleDouhuaStall } from '../builders/templeDouhuaStall.js'
+import { buildTempleKuehStall } from '../builders/templeKuehStall.js'
 import { buildYongleMiTaiMuExterior, yongleMiTaiMuFurnitureBlockers } from '../builders/yongleMiTaiMuExterior.js'
 import { buildYongleMiTaiMuInterior } from '../builders/yongleMiTaiMuInterior.js'
 import { buildHuangYujieExterior, museumFurnitureBlockers } from '../builders/huangYujieExterior.js'
@@ -91,6 +93,9 @@ export const BUILDING_BUILDERS = {
   },
   // 1945–1980：慈聖宮廟口小吃群裡的米苔目攤（攤販與客人是情境人物，見 components/NpcLayer.jsx）
   'temple-mi-tai-mu-stall': buildTempleMiTaiMuStall,
+  // 1945–1980：慈聖宮廟口的豆花攤（木框推車）與糕粿攤（矮木桌），各有一位攤販（情境人物）
+  'temple-douhua-stall': buildTempleDouhuaStall,
+  'temple-kueh-stall': buildTempleKuehStall,
   // 2000–現在：永樂米苔目的立面、招牌、騎樓、外帶區與店內的外殼；店內家具的遮擋方塊只給鏡頭用
   'yong-le-mi-tai-mu': (b, config, detail) => {
     const result = buildYongleMiTaiMuExterior(b, config, detail)

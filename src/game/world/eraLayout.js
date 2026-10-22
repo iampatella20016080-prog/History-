@@ -12,6 +12,8 @@ import { cafeObstacles } from '../builders/luguoCafeInterior.js'
 import { templeSquidStallCollision } from '../builders/templeSquidStall.js'
 import { laoPanCollision, laoPanFootprint } from '../builders/laoPanExterior.js'
 import { templeMiTaiMuStallCollision } from '../builders/templeMiTaiMuStall.js'
+import { templeDouhuaStallCollision } from '../builders/templeDouhuaStall.js'
+import { templeKuehStallCollision } from '../builders/templeKuehStall.js'
 import { yongleMiTaiMuCollision, yongleMiTaiMuFootprint } from '../builders/yongleMiTaiMuExterior.js'
 import { riceAndShineCollision } from '../builders/riceAndShine/riceAndShineExterior.js'
 
@@ -301,6 +303,9 @@ const SITE_COLLISION = {
   'lao-pan': laoPanCollision,
   // 廟口的米苔目攤：攤台、竹竿、桌椅與站著的人物（可行走範圍是原本的廟埕）
   'temple-mi-tai-mu-stall': templeMiTaiMuStallCollision,
+  // 廟口的豆花攤與糕粿攤：推車／矮桌、攤販操作的空間（到廟埕的矮牆）與木凳
+  'temple-douhua-stall': templeDouhuaStallCollision,
+  'temple-kueh-stall': templeKuehStallCollision,
   // 永樂米苔目：騎樓與一樓店內；機車、外帶區、桌椅、站著的人物與後方的櫃台
   'yong-le-mi-tai-mu': yongleMiTaiMuCollision,
   // 黃玉階文史館：騎樓、通往豆花店騎樓的拱門與一樓展間；柱、花槽、醬缸、展示牆、層架、長桌與茶席

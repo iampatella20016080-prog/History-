@@ -980,6 +980,153 @@ function Daikon() {
   )
 }
 
+/* ── 廟口的豆花攤與糕粿攤（1945–1980，飲食文化情境示意） ─────────── */
+
+/** 一片舀起的豆花：薄而不規則的米白色片狀 */
+function DouhuaFlake({ x, y, r = 0, s = 1 }) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${r}) scale(${s})`}>
+      <path d="M-17 1 Q-16 -6 -6 -8 Q4 -10 12 -6 Q19 -2 16 3 Q10 7 0 7 Q-11 7 -17 1 Z" fill="#f7f3e6" stroke={INK} strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M-9 -3 Q-2 -6 7 -4" stroke="#ffffff" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+    </g>
+  )
+}
+
+/** 有厚度的瓷湯匙（側面看得到匙面的厚度） */
+function ThickSpoon({ x = 150, y = 44 }) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(-34)`}>
+      <path d="M0 -2 L34 -4 L34 2 L0 3 Z" fill="#f4f0e4" stroke={INK} strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M-14 -6 Q-2 -8 4 -2 Q2 6 -10 6 Q-18 4 -14 -6 Z" fill="#f4f0e4" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M-12 -3 Q-4 -5 1 -1" stroke="#d9d3c3" strokeWidth="1.6" fill="none" />
+    </g>
+  )
+}
+
+function PlainDouhuaBowl({ peanuts = false }) {
+  const flakes = [[78, 64, -8, 1], [104, 60, 10, 0.95], [124, 66, -14, 0.85], [92, 70, 18, 0.9], [114, 72, -4, 0.8]]
+  const nuts = [[118, 62, 20], [126, 66, -30], [132, 61, 50], [122, 70, 10], [136, 68, -10], [128, 72, 40], [140, 64, 0]]
+  return (
+    <>
+      <Shadow cy={126} rx={66} />
+      <Bowl rimY={66} depth={48} pattern={<BlueRim cx={100} y={92} rx={52} count={8} />}>
+        <ellipse cx="100" cy="68" rx="56" ry="13" fill="#e2b46c" stroke={INK} strokeWidth="1.4" />
+        <ellipse cx="100" cy="70" rx="44" ry="8" fill="#d39c52" opacity="0.5" />
+        {(peanuts ? flakes.slice(0, 3) : flakes).map(([x, y, r, s], i) => (
+          <DouhuaFlake key={i} x={peanuts ? x - 10 : x} y={y} r={r} s={s} />
+        ))}
+        {peanuts &&
+          nuts.map(([x, y, r], i) => <ellipse key={i} cx={x} cy={y} rx="4.4" ry="3" transform={`rotate(${r} ${x} ${y})`} fill={i % 2 ? '#c8955c' : '#b98349'} stroke={INK} strokeWidth="1" />)}
+      </Bowl>
+      <ThickSpoon />
+    </>
+  )
+}
+
+function TemplePlainDouhua() {
+  // 原味糖水豆花：藍邊白瓷碗裡淡琥珀色的糖水，浮著一片一片舀起的米白色豆花
+  return <PlainDouhuaBowl />
+}
+
+function TemplePeanutDouhua() {
+  // 花生豆花：同樣的豆花與糖水，碗的一側是一小撮橢圓的花生粒
+  return <PlainDouhuaBowl peanuts />
+}
+
+/** 橢圓、一端尖的墊葉（中間一條葉脈） */
+function PointedLeaf({ cx, cy, rx = 38, ry = 14, r = 0 }) {
+  return (
+    <g transform={`translate(${cx} ${cy}) rotate(${r})`}>
+      <path d={`M${-rx} 0 Q${-rx * 0.4} ${-ry} ${rx * 0.4} ${-ry * 0.8} Q${rx} ${-ry * 0.2} ${rx * 1.08} 0 Q${rx * 0.6} ${ry * 0.9} 0 ${ry} Q${-rx * 0.7} ${ry * 0.9} ${-rx} 0 Z`} fill="#6f9a45" stroke={INK} strokeWidth="1.7" strokeLinejoin="round" />
+      <path d={`M${-rx * 0.85} 0 L${rx * 0.95} 0`} stroke="#4f7a30" strokeWidth="1.3" />
+    </g>
+  )
+}
+
+function TempleCaoAKue() {
+  // 草仔粿：深綠色、扁圓、表面略有起伏，墊著葉子（沒有切開）
+  return (
+    <>
+      <Shadow />
+      <PointedLeaf cx={66} cy={104} r={-6} />
+      <PointedLeaf cx={136} cy={100} r={8} />
+      {[[64, 96, 1], [134, 92, 0.95]].map(([x, y, s], i) => (
+        <g key={i} transform={`translate(${x} ${y}) scale(${s})`}>
+          <path d="M-30 4 Q-32 -14 -16 -20 Q-2 -25 12 -21 Q30 -16 30 2 Q20 12 0 12 Q-20 12 -30 4 Z" fill="#3e5f2b" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+          <path d="M-18 -10 Q-8 -17 6 -16" stroke="#6a8c4a" strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.8" />
+          <path d="M-8 -2 Q0 -6 10 -3" stroke="#2f4a20" strokeWidth="1.6" fill="none" strokeLinecap="round" opacity="0.7" />
+        </g>
+      ))}
+    </>
+  )
+}
+
+function TempleAngKuKue() {
+  // 紅龜粿：紅色扁橢圓，簡化的龜甲壓紋（中央六角形與外圈的龜殼紋），墊著葉子
+  return (
+    <>
+      <Shadow />
+      <PointedLeaf cx={100} cy={106} rx={60} ry={20} r={-3} />
+      <g transform="translate(100 96)">
+        <ellipse cx="-52" cy="0" rx="9" ry="6" fill="#c8342e" stroke={INK} strokeWidth="1.8" />
+        <ellipse cx="50" cy="0" rx="5" ry="3.5" fill="#c8342e" stroke={INK} strokeWidth="1.5" />
+        {[[-30, -17], [30, -17], [-30, 16], [30, 16]].map(([x, y], i) => (
+          <ellipse key={i} cx={x} cy={y} rx="7" ry="4.5" fill="#bb2e29" stroke={INK} strokeWidth="1.6" />
+        ))}
+        <ellipse rx="46" ry="21" fill="#d03c35" stroke={INK} strokeWidth="2.2" />
+        <g transform="scale(1.05 0.46)" fill="none" stroke="#a3241f" strokeWidth="2.6">
+          {SHELL.map((d, i) => (
+            <path key={i} d={d} />
+          ))}
+        </g>
+        <path d="M-30 -10 Q-12 -18 8 -17" stroke="#ee8a84" strokeWidth="3.5" fill="none" strokeLinecap="round" opacity="0.7" />
+      </g>
+    </>
+  )
+}
+
+function TempleOoKue() {
+  // 芋粿：灰白色的厚片（整條切開），切面帶少量紫灰色的芋頭顆粒
+  const bits = [[52, 84], [70, 78], [86, 90], [60, 96], [118, 98], [136, 92], [150, 102], [128, 106]]
+  return (
+    <>
+      <Shadow />
+      <rect x="22" y="104" width="160" height="12" rx="3" fill="#c9a173" stroke={INK} strokeWidth="2" />
+      {/* 整條 */}
+      <path d="M34 104 L34 72 L50 62 L104 62 L104 94 L88 104 Z" fill="#d9d3ca" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+      <path d="M34 72 L50 62 L104 62 L88 72 Z" fill="#e8e3da" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M88 72 L88 104" stroke={INK} strokeWidth="1.6" />
+      {/* 切下的厚片（平放） */}
+      <path d="M108 110 L108 98 L120 90 L170 90 L170 102 L158 110 Z" fill="#d6cfc6" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M108 98 L120 90 L170 90 L158 98 Z" fill="#e4dfd6" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+      {bits.map(([x, y], i) => (
+        <rect key={i} x={x - 2.6} y={y - 2.2} width="5.2" height="4.4" rx="1" fill="#85788f" stroke={INK} strokeWidth="0.6" transform={`rotate(${i * 29} ${x} ${y})`} />
+      ))}
+    </>
+  )
+}
+
+function TempleCaiTauKue() {
+  // 蘿蔔糕（菜頭粿）：米白色的長方塊，整塊與切下的三片（沒有煎）
+  return (
+    <>
+      <Shadow />
+      <rect x="20" y="104" width="162" height="12" rx="3" fill="#c09466" stroke={INK} strokeWidth="2" />
+      <path d="M30 104 L30 70 L48 60 L112 60 L112 94 L94 104 Z" fill="#eee5cf" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+      <path d="M30 70 L48 60 L112 60 L94 70 Z" fill="#f8f1e0" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M94 70 L94 104" stroke={INK} strokeWidth="1.6" />
+      {[[44, 80, 6], [58, 88, -4], [72, 78, 3], [50, 94, -2], [80, 92, 5]].map(([x, y, a], i) => (
+        <path key={i} d={`M${x} ${y} l10 ${a / 3}`} stroke="#d8caa6" strokeWidth="1.8" strokeLinecap="round" />
+      ))}
+      {[0, 1, 2].map((i) => (
+        <g key={i} transform={`translate(${126 + i * 16} ${104}) rotate(${-14 - i * 3})`}>
+          <rect x="-5" y="-34" width="10" height="34" rx="1.5" fill={i % 2 ? '#f1e8d3' : '#eee5cf'} stroke={INK} strokeWidth="1.8" />
+        </g>
+      ))}
+    </>
+  )
+}
+
 const ILLUSTRATIONS = {
   shiitake: Shiitake,
   'dried-shrimp': DriedShrimp,
@@ -1016,6 +1163,12 @@ const ILLUSTRATIONS = {
   'pork-cheek': PorkCheek,
   'fried-tofu': FriedTofu,
   daikon: Daikon,
+  'temple-plain-douhua': TemplePlainDouhua,
+  'temple-peanut-douhua': TemplePeanutDouhua,
+  'temple-cao-a-kue': TempleCaoAKue,
+  'temple-ang-ku-kue': TempleAngKuKue,
+  'temple-oo-kue': TempleOoKue,
+  'temple-cai-tau-kue': TempleCaiTauKue,
 }
 
 export function FoodIllustration({ id, label }) {

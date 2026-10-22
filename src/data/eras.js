@@ -196,7 +196,7 @@ export const ERAS = [
       items: ['foodStalls', 'bicycles', 'tricycle', 'baskets', 'stools'],
       boats: 'sampans',
     },
-    availableStores: ['lin-fu-zhen', 'ci-sheng-gong', 'temple-squid-stall', 'temple-mi-tai-mu-stall', 'you-ji', 'li-ting-xiang', 'lin-hua-tai', 'bolero', 'xin-fang-chun', 'rice-and-shine-329'],
+    availableStores: ['lin-fu-zhen', 'ci-sheng-gong', 'temple-squid-stall', 'temple-mi-tai-mu-stall', 'temple-douhua-stall', 'temple-kueh-stall', 'you-ji', 'li-ting-xiang', 'lin-hua-tai', 'bolero', 'xin-fang-chun', 'rice-and-shine-329'],
   },
   {
     id: 'revival',

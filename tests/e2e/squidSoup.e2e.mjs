@@ -323,6 +323,29 @@ async function runDevice(browser, device) {
       },
       { id, yOffset },
     )
+  /** 鏡頭停下來（例如關閉介紹後鏡頭從介紹的位置回到人物背後）：之後再計算要點的位置，點下去時鏡頭不會再移動 */
+  const cameraSettled = () =>
+    waitFor(
+      page,
+      () => {
+        const d = window.__DDC__
+        const c = d.camera.position
+        const now = { x: c.x, y: c.y, z: c.z, frame: d.frameCount }
+        const prev = window.__camSettle
+        if (!prev || prev.frame === now.frame) {
+          window.__camSettle = prev ?? now
+          return false
+        }
+        window.__camSettle = now
+        return Math.hypot(now.x - prev.x, now.y - prev.y, now.z - prev.z) < 0.002
+      },
+      null,
+      60000,
+    ).then(() =>
+      page.evaluate(() => {
+        window.__camSettle = null
+      }),
+    )
   const tapAt = async (point) => {
     if (touch) await page.touchscreen.tap(point.x, point.y)
     else await page.mouse.click(point.x, point.y)
@@ -439,6 +462,7 @@ async function runDevice(browser, device) {
   const stallLinks = await page.$$eval('.chapter a[href^="http"]', (items) => items.length)
   record(test, '資料來源：每一筆都有網址、出版時間與用途', stallLinks >= 8 && stallMeta === stallLinks, `${stallLinks} 筆、${stallMeta} 筆標示出版時間與用途`)
   await closeStory()
+  await cameraSettled()
   const bowlPoint = await screenPointOf('temple-squid-stall-bowl')
   if (bowlPoint?.inView) await tapAt(bowlPoint)
   const bowlStory = await storyOpen('廟口魷魚羹攤')
