@@ -367,6 +367,8 @@ describe('跟隨鏡頭貼著障礙物時不會進到障礙物裡', () => {
       const found = interiorAmount(p, revival.interiors)
       assert.equal(found?.zone.id, 'yong-le-market', `(${p.x}, ${p.z})`)
       if (found.amount > 0.001) ramp++
+      // 老潘店門前的一段街道（雨棚凸出到街上）是貼近障礙物的範圍，鏡頭停在雨棚前面，不比較
+      if (inFollowArea(p, revival.followAreas)) continue
       for (let i = 0; i < 12; i++) {
         const yaw = (i / 12) * Math.PI * 2
         const where = `(${p.x}, ${p.z}) yaw ${yaw.toFixed(2)}`

@@ -131,14 +131,16 @@ function tables(b, detail, tint) {
 }
 
 /**
- * 攤位的遮擋方塊（鏡頭與點選）：攤台、帆布棚、兩張桌子；
+ * 攤位的遮擋方塊（鏡頭與點選）：攤台、帆布棚的頂與垂邊、招牌、兩張桌子；
+ * 帆布棚只用棚頂、垂邊與招牌的範圍，從高處往下看時，點攤台上的那一碗不會被棚子的方塊擋住。
  * 展示的那一碗另外成為一個可以點選、聚焦的目標（點它開啟「一碗魷魚羹」）。
  */
 function registerBlockers(b) {
   const { half, depth } = S.counter
   const top = counterTop()
   b.addBlocker(-half - 0.04, half + 0.04, 0, top, -depth - 0.04, 0.04)
-  b.addBlocker(-S.canopy.half - 0.12, S.canopy.half + 0.12, S.canopy.height - 0.42, S.canopy.height + 0.2, S.canopy.back - 0.1, S.canopy.front + 0.18)
+  b.addBlocker(-S.canopy.half - 0.12, S.canopy.half + 0.12, S.canopy.height - 0.18, S.canopy.height + 0.2, S.canopy.back - 0.1, S.canopy.front + 0.18)
+  b.addBlocker(-0.5, 0.5, S.canopy.height - 0.53, S.canopy.height - 0.16, S.canopy.front + 0.08, S.canopy.front + 0.16)
   for (const table of S.tables) b.addBlocker(table.x - S.tableHalf, table.x + S.tableHalf, 0, G + 0.72, table.z - S.tableHalf, table.z + S.tableHalf)
   const start = b.blockers.length
   b.addBlocker(S.bowl.x - 0.13, S.bowl.x + 0.13, top, top + 0.16, S.bowl.z - 0.13, S.bowl.z + 0.13)

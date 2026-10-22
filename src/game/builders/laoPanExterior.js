@@ -6,7 +6,7 @@ import { bigPot, bowlStack, ladle, toppingTray } from './squidSoupWares.js'
 /**
  * 老潘魷魚羹（迪化街一段30號；只在 2000–現在「老屋新生」）：立面、招牌、雨棚與騎樓下的攤車。
  *
- * 依使用者提供的店面照片重建（尺寸為估算）：
+ * 依需求說明中對店面照片的文字描述重建（照片本身沒有在開發時取得；尺寸為估算）：
  * - 褪色的黃色長方形主招牌（立體鐵框，紅色店名、深藍色品名），右側紅底、裝飾框的直立招牌（雙面）
  * - 紅色帆布雨棚：波浪形的下緣，垂邊上寫著「冷氣開放」
  * - 老街屋：二樓灰色水泥牆與鐵窗、三樓紅磚與窗框、屋頂的水塔，少量外露的排水管與冷氣管
@@ -533,8 +533,9 @@ export function buildLaoPanExterior(b, cfg = {}, detail = b) {
       { ...zone(L.entrance.minX + 0.1, half - 0.5, 0.15, front - 0.1), maxY: 2.5, cameraMaxY: 3.1 },
       { ...zone(room.minX + 0.35, room.maxX - 0.35, room.minZ + 0.35, -0.1), maxY: 2.2, cameraMaxY: ceiling - 0.35 },
     ],
-    // 騎樓與店內：人物可以貼著攤車、桌椅與牆走，第三人稱鏡頭在這裡停在障礙物前面
-    followAreas: [zone(-half, half, room.minZ, front)],
+    // 騎樓與店內：人物可以貼著攤車、桌椅與牆走，第三人稱鏡頭在這裡停在障礙物前面；
+    // 店門前的一段街道也是：雨棚凸出到街上，人物背對店面走出來時，鏡頭停在雨棚前面，不會停在雨棚裡
+    followAreas: [zone(-half, half, room.minZ, front), zone(-half - 0.5, half + 0.5, front, front + 2.6)],
     // 黑白貓（components/LaoPanCat.jsx）：位置與朝向（世界座標）
     cats: [
       {
