@@ -132,13 +132,6 @@ function registerBlockers(b) {
   return { trays: { start, end: b.blockers.length } }
 }
 
-/** 攤位本地座標的矩形 → 世界座標的範圍（跟隨鏡頭用） */
-function followZone(b, minX, maxX, minZ, maxZ) {
-  const p = b.transformPoint(minX, 0, minZ)
-  const q = b.transformPoint(maxX, 0, maxZ)
-  return { minX: Math.min(p.x, q.x), maxX: Math.max(p.x, q.x), minZ: Math.min(p.z, q.z), maxZ: Math.max(p.z, q.z) }
-}
-
 function stallNpcs(b) {
   return KUEH_STALL_NPCS.map((npc, i) => {
     const p = b.transformPoint(npc.x, G, npc.z)
@@ -194,8 +187,6 @@ export function buildTempleKuehStall(b, cfg = {}, detail = b) {
         },
       },
     ],
-    // 攤位前（客人那一側）是「貼近障礙物」的跟隨範圍：背後的榕樹樹冠與攤位很近，鏡頭停在它們前面，不會退進樹冠或布棚裡
-    followAreas: [followZone(b, -1.2, 1.2, -0.2, 2.3)],
     npcs: stallNpcs(b),
   }
 }
