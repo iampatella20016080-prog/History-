@@ -579,9 +579,10 @@ describe('廟口的米苔目攤：位置與榕樹', () => {
     }
     assert.notEqual(roots(c), roots(null))
     const temple = getShop('ci-sheng-gong')
-    assert.deepEqual(temple.buildingByEra.postwar.eastClearing, c)
+    // 東側榕樹的空地：米苔目攤（前緣），以及榕樹後方的糕粿攤（見 tests/templeSnacks.test.js）
+    assert.deepEqual(temple.buildingByEra.postwar.eastClearing[0], c)
     assert.equal(temple.buildingByEra.postwar.frontStall, false)
-    assert.deepEqual(temple.buildingByEra.postwar.clearing, TEMPLE_STALL.clearing)
+    assert.deepEqual(temple.buildingByEra.postwar.clearing[0], TEMPLE_STALL.clearing)
     assert.equal(temple.buildingByEra.revival.eastClearing, undefined)
     assert.equal(temple.buildingByEra.revival.frontStall, undefined)
   })
