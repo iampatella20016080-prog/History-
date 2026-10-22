@@ -944,6 +944,38 @@ function terracottaTexture() {
   return toTexture(canvas)
 }
 
+/* ───────────────────────── 米色方形地磚（老潘魷魚羹的店內） ───────────────────────── */
+function creamTileTexture() {
+  const S = 512
+  const canvas = makeCanvas(S)
+  const g = canvas.getContext('2d')
+  const rng = createRng(5113)
+  // 磚縫（淺灰褐色）
+  g.fillStyle = '#c4b291'
+  g.fillRect(0, 0, S, S)
+  const n = 4
+  const t = S / n
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      const h = hash2(r, c, 29)
+      const v = 236 + Math.floor(h * 12)
+      g.fillStyle = `rgb(${v},${v - 16},${v - 50})`
+      g.fillRect(c * t + 3, r * t + 3, t - 6, t - 6)
+      g.fillStyle = 'rgba(255,252,240,0.22)'
+      g.fillRect(c * t + 6, r * t + 5, t - 14, 3)
+    }
+  }
+  // 使用多年的痕跡：走道上淡淡的灰斑與細小的斑點
+  for (let i = 0; i < 26; i++) {
+    const x = rng() * S
+    const y = rng() * S
+    const r = 20 + rng() * 54
+    wrapped(S, x, y, r, (px, py) => softBlot(g, px, py, r, '150,138,110', 0.03 + rng() * 0.04))
+  }
+  speckle(g, S, rng, 2200, '160,148,120', 0.1, 0.3, 1.4)
+  return toTexture(canvas)
+}
+
 /* ───────────────────────── 白色牆面磁磚 ───────────────────────── */
 function whiteTileTexture() {
   const S = 256
@@ -1044,6 +1076,7 @@ export function getTextures() {
     granite: graniteTexture(),
     marketTile: marketTileTexture(),
     whiteTile: whiteTileTexture(),
+    creamTile: creamTileTexture(),
     terracotta: terracottaTexture(),
     steel: steelTexture(),
     perforated: perforatedTexture(),

@@ -1,4 +1,14 @@
 import { ART_YARD, LUGUO_CAFE, LUGUO_HOTSPOTS, artYardToWorld } from './luguoCafeLayout.js'
+import {
+  LAO_PAN,
+  LAO_PAN_HOTSPOTS,
+  SQUID_SOUP_THEME,
+  TEMPLE_STALL,
+  TEMPLE_STALL_HOTSPOTS,
+  TEMPLE_STALL_SITE,
+  laoPanToWorld,
+  templeStallToWorld,
+} from './squidSoupLayout.js'
 
 /**
  * 店家資料
@@ -37,6 +47,29 @@ const LIN_FU_ZHEN_BASE = {
   lanterns: { text: '林' },
   // 店前展示的貨品（對應食物圖鑑的 id）
   display: ['shiitake', 'dried-shrimp', 'mullet-roe', 'dried-goods'],
+}
+
+/**
+ * 資訊熱點：配置資料的本地座標 → 世界座標（互動位置、提示框、介紹鏡頭）。
+ * clickOnly 的熱點不以距離觸發，只能點選那個物件開啟。
+ */
+function hotspotsToWorld(hotspots, toWorld) {
+  const at = ([x, y, z]) => {
+    const p = toWorld(x, z)
+    return [p.x, y, p.z]
+  }
+  return hotspots.map((hotspot) => ({
+    id: hotspot.id,
+    label: hotspot.label,
+    note: hotspot.note,
+    chapter: hotspot.chapter,
+    level: hotspot.level,
+    radius: hotspot.radius,
+    ...(hotspot.clickOnly ? { clickOnly: true } : {}),
+    point: toWorld(...hotspot.point),
+    prompt: at(hotspot.prompt),
+    camera: { position: at(hotspot.camera.position), target: at(hotspot.camera.target) },
+  }))
 }
 
 /** 爐鍋咖啡在二樓：互動點與從店家名錄前往的位置在 level 1（樓層 2） */
@@ -934,6 +967,257 @@ export const SHOPS = [
     ],
   },
 
+  /* ── 魷魚羹飲食文化：兩個年代各一個版本（位置、模型、碰撞、互動與故事各自獨立，見 data/squidSoupLayout.js） ── */
+  {
+    id: 'temple-squid-stall',
+    name: '廟口魷魚羹攤',
+    status: 'open',
+    category: '廟口小吃・魷魚羹',
+    seal: '羹',
+    // 與 2000–現在的老潘魷魚羹同一個飲食主題（只以主題串連，沒有傳承關係）
+    theme: SQUID_SOUP_THEME.id,
+    // 飲食文化的情境示意：不是特定的攤位，沒有店名、年份與店史
+    scenarioNote: '飲食文化情境示意',
+    yearNote: '飲食文化情境示意：這個攤位不對應任何實際的店家，沒有創立年份或店史。',
+    sourceIds: ['wiki-ci-sheng-gong', 'moe-jiu-hi-kenn', 'mirror-2025-squid'],
+    summary:
+      '慈聖宮廟埕旁、與其他小吃攤相鄰的魷魚羹攤：木框攤台、帆布棚、大湯鍋與兩張小桌。這是飲食文化的情境示意，不是特定的店家。',
+
+    // ── 場景配置 ──────────────────────────────
+    // 只在「庶民生活」出現：慈聖宮廟埕西側的前緣（廟門與中央通道不佔用），攤台朝向迪化街。
+    // position 為兩張小桌之間的攤台正面；攤位、桌椅與碰撞由 builders/templeSquidStall.js 產生。
+    position: templeStallToWorld(TEMPLE_STALL_HOTSPOTS[0].point[0], 0),
+    facing: 'north',
+    // 從店家名錄前往：站在兩張小桌之間的街邊，面向攤台
+    interaction: { radius: 2.0, distance: 2.2 },
+    site: { ...TEMPLE_STALL_SITE },
+    building: { archetype: 'temple-squid-stall', width: 2.6, depth: 3.2 },
+    buildingByEra: {
+      postwar: { condition: 'aged' },
+    },
+    eraNotes: {
+      postwar:
+        '廟口的魷魚羹攤只出現在「庶民生活」（1945–1980），是飲食文化的情境示意：攤位的樣子、位置與桌椅依一般的小吃攤設計，不代表某一家實際的攤位，也不是2000年之後老潘魷魚羹的前身。',
+    },
+    camera: { distance: 4.6, height: 2.1, side: -2.7, lookHeight: 1.15 },
+    hotspots: hotspotsToWorld(TEMPLE_STALL_HOTSPOTS, templeStallToWorld),
+
+    // ── 介紹章節 ──────────────────────────────
+    chapters: [
+      {
+        id: 'temple-food',
+        type: 'text',
+        tab: '廟口飲食',
+        title: '魷魚羹與廟口飲食',
+        lead: '慈聖宮的廟埕旁，一座木框攤台、一口大湯鍋與兩張小桌：這是「魷魚羹」與廟口飲食的情境示意。下面分開標示史料與情境設計。',
+        paragraphs: [
+          '史料｜教育部《臺灣台語常用詞辭典》收錄「鰇魚羹」（jiû-hî-kenn），釋義是「一種小吃，用魷魚作成的羹湯」；「羹」則是「芶芡而成的濃稠湯汁」。',
+          '史料｜辭典裡的「廟口」是「廟門口、廟前廣場」，用例寫著廟口的榕樹下經常有人泡茶、聊天；賣點心小吃的攤販稱為「點心擔」。維基百科〈大稻埕慈聖宮〉記載，慈聖宮在1910年因市區改正遷移、1914年重建完成，今址在保安街49巷17號，「廟前則是一排老牌的小吃攤」。',
+          '專欄的說法｜《鏡週刊》裴偉的專欄〈萬華大稻埕的魷魚美食〉（2025年）寫道：「魷魚羹在70年代於萬華、大稻埕一帶興起」，原因之一是「供貨源頭迪化街就在附近」。這是專欄作者的看法，不是學術考證；本站沒有找到更早的文獻可以核對，所以不寫這個年代的哪一年開始有魷魚羹攤。',
+          '情境設計｜場景中的攤位：木框攤台與金屬工作面、簡單的帆布棚、大湯鍋與長柄湯勺、疊放的碗、配料盤，以及兩張小桌與木凳；鍋口冒著少量蒸氣，攤台上展示一碗魷魚羹。招牌只寫「魷魚羹」，沒有店名或商標。攤位的樣子、擺放的位置都是依一般小吃攤設計的示意，不是某一家實際的攤位，也沒有店史或傳承關係。',
+          '同一個飲食主題｜切換到「2000–現在」，可以在永樂市場對面走進老潘魷魚羹。兩者只是同樣以魷魚羹為主題：場景沒有表示這個攤位是老潘的前身，也不表示老潘從廟口遷出。',
+        ],
+        facts: [
+          { label: '位置', value: '慈聖宮廟埕旁、其他小吃攤的旁邊（場景配置）' },
+          { label: '年代', value: '1945–1980「庶民生活」（攤位本身沒有對應的年份）' },
+          { label: '性質', value: '飲食文化情境示意，不是特定的店家' },
+          { label: '招牌', value: '只寫「魷魚羹」' },
+        ],
+        glossary: [
+          { term: '鰇魚羹', definition: '一種小吃，用魷魚作成的羹湯（教育部《臺灣台語常用詞辭典》）。' },
+          { term: '羹', definition: '芶芡而成的濃稠湯汁；異用字「焿」（同上）。' },
+          { term: '廟口', definition: '廟門口、廟前廣場（同上）。' },
+          { term: '點心擔', definition: '賣點心小吃的攤販（同上）。' },
+        ],
+        sourceIds: ['moe-jiu-hi-kenn', 'moe-kenn', 'moe-biau-khau', 'moe-tiam-sim-tann', 'wiki-ci-sheng-gong', 'mirror-2025-squid'],
+      },
+      {
+        id: 'bowl',
+        type: 'foods',
+        tab: '一碗魷魚羹',
+        title: '一碗魷魚羹',
+        intro: '攤台上展示的一碗魷魚羹與它的主要材料。材料與做法是一般的說明，不是某一家的配方。',
+        items: [
+          {
+            id: 'squid-geng',
+            name: '魷魚羹',
+            category: '羹湯｜魷魚',
+            description: '用魷魚作成的羹湯（教育部辭典）；湯汁勾芡而成，濃稠滑順。',
+            note: '《鏡週刊》的專欄提到，「會把發泡好的魷魚，切絲拌進魚漿中」。場景中的一碗是示意，不代表配方或份量。',
+          },
+          {
+            id: 'dried-squid',
+            name: '乾魷魚（鰇魚）',
+            category: '乾貨｜提鮮食材',
+            description: '魷魚「時常從腹腔剖開，去除內臟後曝曬成乾，做為料理的提鮮食材之一」（教育部辭典）。',
+            note: '《鏡週刊》的專欄寫到，迪化街一帶的南北貨裡，進口的大魷魚乾是重要的商品之一。',
+          },
+        ],
+        footnote: '展示的一碗是示意模型，不代表價格、份量或配方。',
+        sourceIds: ['moe-jiu-hi-kenn', 'moe-jiu-hi', 'moe-kenn', 'mirror-2025-squid', 'mirror-2026-squid'],
+      },
+      {
+        id: 'sources',
+        type: 'sources',
+        tab: '資料來源',
+        title: '資料來源',
+        intro: '廟口魷魚羹攤的介紹整理自下列資料，點選即可開啟原始網頁；每一筆都標示出版時間與用途。',
+        sourceIds: ['moe-jiu-hi-kenn', 'moe-jiu-hi', 'moe-kenn', 'moe-biau-khau', 'moe-tiam-sim-tann', 'wiki-ci-sheng-gong', 'mirror-2025-squid', 'mirror-2026-squid'],
+        disclaimer:
+          '廟口的魷魚羹攤是「飲食文化情境示意」：攤位的樣子、位置、桌椅都是依一般小吃攤設計的，不代表某一家實際的攤位；未查證的年代、店史與傳承關係都沒有寫入。招牌只寫「魷魚羹」，沒有使用任何店名、商標或現代店面的照片。',
+      },
+    ],
+  },
+  {
+    id: 'lao-pan-squid-soup',
+    name: '老潘魷魚羹',
+    status: 'open',
+    category: '傳統小吃・羹湯',
+    seal: '羹',
+    theme: SQUID_SOUP_THEME.id,
+    address: '臺北市大同區迪化街一段30號',
+    // 創立年份未核實：留空（也不因為是傳統小吃就放進 1945–1980 的年代）
+    yearNote: '創立年份未核實，資料留空。',
+    sourceIds: ['fb-pannoodles', 'puddings-2023-pannoodles', 'walkerland-2021-laopan', 'andrewplus-laopan'],
+    hasInterior: true,
+    summary:
+      '迪化街一段30號、永樂市場對面的羹湯小吃店：褪色的黃色招牌、紅色波浪邊的雨棚，騎樓下是不鏽鋼攤車；一樓的用餐區可以走進去。',
+
+    // ── 場景配置 ──────────────────────────────
+    // 只在「老屋新生」出現：取代迪化街南側街尾、永樂市場前廣場旁的一般地段（south-18）。
+    // 位置、入口、料理檯、座位、貓、資訊熱點與鏡頭都在 data/squidSoupLayout.js
+    // （外觀見 builders/laoPanExterior.js，店內見 laoPanInterior.js，食品見 squidSoupWares.js，貓見 components/LaoPanCat.jsx）。
+    // position 為店門口（入口的店面線）；從店家名錄前往時站在騎樓下、面向店門，再自己走進去。
+    position: laoPanToWorld(LAO_PAN_HOTSPOTS[0].point[0], 0),
+    facing: 'north',
+    interaction: { radius: 1.1, distance: LAO_PAN_HOTSPOTS[0].point[1] },
+    travelYawOffset: 0.35,
+    site: { ...LAO_PAN.site },
+    building: { archetype: 'lao-pan', width: LAO_PAN.half * 2, depth: -LAO_PAN.back },
+    buildingByEra: {
+      revival: { condition: 'restored' },
+    },
+    eraNotes: {
+      revival:
+        '老潘魷魚羹只出現在「老屋新生」（2000–現在）。店面依使用者提供的照片重建，未拍攝的部分是示意；一樓可以走進去，樓上只做外觀。創立年份未核實，沒有把它放進其他年代。',
+    },
+    // 從店家名錄開啟介紹：在迪化街上看騎樓、攤車與招牌（視線從雨棚下方穿過，看得到騎樓裡）
+    camera: { distance: 6.4, height: 2.4, side: -1.6, lookHeight: 2.15 },
+    hotspots: hotspotsToWorld(LAO_PAN_HOTSPOTS, laoPanToWorld),
+
+    // ── 介紹章節 ──────────────────────────────
+    chapters: [
+      {
+        id: 'shop',
+        type: 'text',
+        tab: '店家與位置',
+        title: '店家與位置｜永樂市場對面的老潘魷魚羹',
+        lead: '老潘魷魚羹在臺北市大同區迪化街一段30號；Facebook 粉絲專頁的名稱是「老潘魷魚羹 Pannoodles house」。',
+        paragraphs: [
+          '位置：2023年的實訪紀錄在標題寫著店在「大稻埕永樂市場對面」。場景裡，老潘在迪化街南側的街尾、永樂市場前廣場的旁邊，隔著街道與廣場面對市場；街道是敘事式的配置，只保留「市場外、街道對面」的相對關係，不是精確的地籍位置。',
+          '店面依使用者提供的照片重建：褪色的黃色長方形主招牌上是紅色與深藍色的字，右側是紅底、有裝飾框的直立招牌；紅色帆布雨棚有波浪形的下緣與「冷氣開放」字樣；老街屋的紅磚、灰色牆面、窗框與少量外露的管線。2021年的食記也寫到「招牌顏色已褪去」。主招牌上的品名依食記核對，照片上的舊價格沒有放進場景。',
+          '騎樓下、店門口是不鏽鋼攤車（2024年的食記寫到「攤車在外頭」）：玻璃展示罩、疊放的碗與兩口湯鍋。入口在攤車旁邊，一樓是狹長的用餐區：米色方形地磚、靠牆的桌子與紅色、深綠色的塑膠凳，中央留出走道；桌上有醋、胡椒粉與辣椒醬等調味料。',
+          '未拍到的部分是示意：店內深處的尺寸與配置、後場與樓上都沒有照片依據，場景以簡化的方式呈現，樓上只做外觀。使用者提供的一張室內照片標示為「內湖店」，那不是大稻埕這家店的室內，場景沒有依它重建平面。',
+          '店裡的黑白貓是依照片加入的情境角色：坐在座位區邊緣的桌腳旁，只會眨眼、轉頭與輕輕擺尾。本站不知道牠的名字，也不表示牠是店家飼養的貓。',
+          '創立年份：本站沒有找到可以核實的資料，因此留空，也不把這家店放進其他年代。',
+        ],
+        facts: [
+          { label: '地址', value: '臺北市大同區迪化街一段30號' },
+          { label: '位置', value: '永樂市場對面（場景為敘事式配置）' },
+          { label: '類型', value: '傳統小吃・羹湯' },
+          { label: '創立年份', value: '未核實（留空）' },
+          { label: '場景', value: '一樓用餐區可以走進去；樓上只做外觀' },
+        ],
+        sourceIds: ['fb-pannoodles', 'puddings-2023-pannoodles', 'walkerland-2021-laopan', 'andrewplus-laopan'],
+      },
+      {
+        id: 'market',
+        type: 'text',
+        tab: '市場周邊飲食',
+        title: '市場周邊飲食｜永樂市場、南北貨與一碗羹',
+        lead: '老潘對面的永樂市場起源於1908年，現在的市場大樓於1985年開業；市場與迪化街的南北貨，構成這一帶的日常飲食。',
+        paragraphs: [
+          '永樂市場：臺北市市場處記載，市場「民國前4年成立」，民國71年拆除舊市場，「改建綜合大樓安置原攤商，74年開業」；臺北市政府的市集資訊介紹，市場一樓是「生鮮蔬果日用品」。',
+          '南北貨與乾魷魚：魷魚「時常從腹腔剖開，去除內臟後曝曬成乾，做為料理的提鮮食材之一」（教育部辭典）。《鏡週刊》裴偉的專欄寫道，早期的大稻埕「成為北部南北貨的集散地」，進口的大魷魚乾「當然是其中的重要商品」；另一篇專欄認為魷魚羹在1970年代於萬華、大稻埕一帶興起，「供貨源頭迪化街就在附近也是原因」。這些是專欄作者的看法，不是學術考證。',
+          '羹與沙茶：「羹」是「芶芡而成的濃稠湯汁」；「沙茶」是「用扁魚、蒜酥、麻粉和各種香料調製而成的一種調味料」（教育部辭典）。2021年的食記寫到，老潘「整體就是以沙茶最為主要的調味」。',
+          '同一個飲食主題：切換到「1945–1980」，慈聖宮的廟口有一個魷魚羹攤的情境示意。那個攤位不是老潘的前身，老潘也不是從廟口遷出；兩者只是一起呈現魷魚羹這種小吃。',
+        ],
+        glossary: [
+          { term: '鰇魚羹', definition: '一種小吃，用魷魚作成的羹湯（教育部《臺灣台語常用詞辭典》）。' },
+          { term: '羹', definition: '芶芡而成的濃稠湯汁；異用字「焿」（同上）。' },
+          { term: '沙茶', definition: '用扁魚、蒜酥、麻粉和各種香料調製而成的一種調味料（同上）。' },
+        ],
+        sourceIds: ['tcma-yongle-market', 'taipei-market-info-yongle', 'moe-jiu-hi', 'moe-kenn', 'moe-sa-te', 'mirror-2026-squid', 'mirror-2025-squid', 'walkerland-2021-laopan'],
+      },
+      {
+        id: 'foods',
+        type: 'foods',
+        tab: '代表餐點',
+        title: '代表餐點｜四道展示餐點',
+        intro:
+          '入口旁第一張桌子上的四道展示餐點。品名依網路食記與實訪紀錄核對；這些是展示用的模型，不代表完整或即時的菜單，也不寫配方、份量與售價。',
+        items: [
+          {
+            id: 'shacha-squid-geng',
+            name: '沙茶魷魚羹',
+            category: '羹湯｜沙茶',
+            description: '用魷魚作成的羹湯（教育部辭典）。厚實的白碗裡是褐色的羹湯、看得出形狀的魷魚片與少量葉菜。',
+            note: '2023年的實訪紀錄在標題寫著「沙茶魷魚焿」；2024年的食記有「沙茶魷魚羹米粉」。',
+          },
+          {
+            id: 'fish-crisp-geng',
+            name: '魚酥羹',
+            category: '羹湯｜魚酥',
+            description: '魚酥是把魚漿加入麵粉、地瓜粉等，切成條狀或片狀，油炸成的酥脆食品（教育部辭典）；不規則的金黃魚酥片有一部分露出湯面。',
+            note: '品名「魚酥羮」見於美食網站彙整的食記摘錄；2021年的食記寫到「魚酥很新鮮的酥脆」。',
+          },
+          {
+            id: 'tempura',
+            name: '甜不辣',
+            category: '魚漿製品｜蘿蔔',
+            description: '今日臺灣一般所指的甜不辣，「是指條狀或扁平狀的炸魚漿」（教育部辭典）。盤子裡是不同形狀的魚漿製品、蘿蔔塊與醬汁。',
+            note: '2011到2024年的多篇食記都寫到老潘的甜不辣；盤中的樣子依使用者提供的照片做成示意。',
+          },
+          {
+            id: 'dry-shacha-squid',
+            name: '乾拌沙茶生魷魚',
+            category: '乾拌｜沙茶',
+            description: '不加湯的乾拌：魷魚片、豆芽、深色的沙茶醬與綠色的葉片（依照片的造型）。',
+            note: '2024年的食記寫到「乾拌沙茶生魷魚」是限量款。',
+          },
+        ],
+        footnote: '品名依2021–2024年的網路食記與2023年的實訪紀錄核對，只代表那些記錄；照片上的舊價格沒有使用。',
+        sourceIds: ['moe-jiu-hi-kenn', 'moe-hi-soo', 'moe-tian-bu-la', 'moe-sa-te', 'puddings-2023-pannoodles', 'andrewplus-laopan', 'walkerland-2021-laopan', 'fonfood-laopan'],
+      },
+      {
+        id: 'sources',
+        type: 'sources',
+        tab: '資料來源',
+        title: '資料來源',
+        intro: '老潘魷魚羹與魷魚羹飲食文化的介紹整理自下列資料，點選即可開啟原始網頁；每一筆都標示出版時間與用途。',
+        sourceIds: [
+          'fb-pannoodles',
+          'puddings-2023-pannoodles',
+          'walkerland-2021-laopan',
+          'andrewplus-laopan',
+          'fonfood-laopan',
+          'tcma-yongle-market',
+          'taipei-market-info-yongle',
+          'moe-jiu-hi-kenn',
+          'moe-jiu-hi',
+          'moe-kenn',
+          'moe-sa-te',
+          'moe-hi-soo',
+          'moe-tian-bu-la',
+          'mirror-2025-squid',
+          'mirror-2026-squid',
+        ],
+        disclaimer:
+          '店面依使用者提供的照片重建，未拍攝的部分（店內深處、後場、樓上）是示意；標示「內湖店」的室內照片沒有用來重建大稻埕店的平面。第三方網站的圖片未確認使用權，本站沒有直接使用。實訪紀錄與食記只代表當次的記錄，不當成最新的價格、營業時間或歷史文獻；創立年份未核實，留空。店裡的黑白貓是照片參考的情境角色，沒有名字，也不表示由店家飼養。',
+      },
+    ],
+  },
+
   /* ── 以下店家先作為街景中的可見建築（即將開放），詳細故事與文獻於後續版本補上 ── */
   {
     id: 'lin-hua-tai',
@@ -1136,7 +1420,8 @@ export const SHOPS = [
     buildingByEra: {
       banquet: { condition: 'mature', stalls: false },
       modern: { condition: 'mature', stalls: false },
-      postwar: { condition: 'aged', stalls: true },
+      // 戰後：廟埕西側的前緣另有魷魚羹攤（temple-squid-stall），西側榕樹在攤位上方留出空間
+      postwar: { condition: 'aged', stalls: true, clearing: TEMPLE_STALL.clearing },
       revival: { condition: 'restored', stalls: true },
     },
   },
@@ -1186,6 +1471,22 @@ export function shopYearText(shop) {
 
 export function getShop(id) {
   return SHOPS.find((shop) => shop.id === id) ?? null
+}
+
+/** 飲食主題（例如「魷魚羹飲食文化」：兩個年代各一個版本，只以主題串連） */
+const THEMES = { [SQUID_SOUP_THEME.id]: SQUID_SOUP_THEME }
+
+export function getTheme(id) {
+  return THEMES[id] ?? null
+}
+
+/** 同一個飲食主題在其他年代的版本（年代 id 與店家），不包含自己 */
+export function getThemeVersions(shop) {
+  const theme = getTheme(shop?.theme)
+  if (!theme) return []
+  return Object.entries(theme.versions)
+    .filter(([, id]) => id !== shop.id)
+    .map(([eraId, id]) => ({ eraId, shop: getShop(id) }))
 }
 
 /** 某個年代出現在街上的店家（依 eras.js 的 availableStores 排序） */

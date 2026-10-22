@@ -21,6 +21,8 @@ import { DISPLAY_FONT, registerFontTexture } from './fonts.js'
  * - 導演的豆花店：actionBlue／actionNavy 立面上白邊的藍色與深藍色立體字、filmBlue 電影膠卷邊的藍色突出招牌、
  *   boardWhite 店內的展示看板、chalk 黑板菜單、truckBlue 豆花車車身上的藍字
  * - 小藝埕與爐鍋咖啡：relief／redRelief 洗石子立面上的浮雕字、artYard 旗幟、luguoWood 木製招牌、couplet 春聯
+ * - 老潘魷魚羹：laopanName／laopanSub 褪色的黃色主招牌（紅色店名、深藍色品名）、laopanVertical 紅底裝飾框的直立招牌、
+ *   awningRed 紅色雨棚垂邊上的白字、laopanMenu 店內的品名板（不寫價格）
  *
  * 橫式招牌依舊日習慣由右至左書寫（modern 除外）；直式招牌由上而下。
  */
@@ -77,6 +79,12 @@ const STYLES = {
   // 爐鍋咖啡：大木櫃上的紅色春聯（直式、黑字）；淺色木板、黑框黑字的招牌
   couplet: { bg: '#c8342c', bg2: '#b62a24', border: null, text: '#1f1612', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,220,200,0.06)' },
   luguoWood: { bg: '#c99d64', bg2: '#bb8f58', border: '#2a1f18', text: '#1d1611', shadow: 'rgba(255,236,200,0.25)', grain: 'rgba(70,40,20,0.16)', ltr: true },
+  // 老潘魷魚羹：上下兩塊同色的黃底拼成一面主招牌（沒有框線，框是立體的鐵框），日曬褪色
+  laopanName: { bg: '#e0c25e', bg2: '#e0c25e', border: null, text: '#b5281e', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,90,20,0.07)', ltr: true, sizeH: 0.74, sizeW: 0.88, faded: true },
+  laopanSub: { bg: '#e0c25e', bg2: '#e0c25e', border: null, text: '#253c6c', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,90,20,0.07)', ltr: true, sizeH: 0.66, sizeW: 0.84, faded: true },
+  laopanVertical: { bg: '#b92a20', bg2: '#a9231a', border: '#e9c45a', text: '#fbf0cf', shadow: 'rgba(60,10,5,0.35)', grain: 'rgba(255,220,200,0.05)', double: true },
+  awningRed: { bg: '#c3342a', bg2: '#b52d24', border: null, text: '#fffaf2', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.05)', ltr: true, sizeH: 0.64, sizeW: 0.78 },
+  laopanMenu: { bg: '#f6f3ea', bg2: '#eeeadf', border: '#b3261d', text: '#b3261d', shadow: 'rgba(0,0,0,0)', grain: 'rgba(0,0,0,0.02)', ltr: true, sizeH: 0.56, sizeW: 0.86 },
 }
 
 /** 電影膠卷的齒孔：沿著招牌的上下（橫式）或左右（直式）兩邊排一列圓角方孔 */

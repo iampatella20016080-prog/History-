@@ -83,6 +83,8 @@ SOURCES['tcma-yongle-market'] = {
   publisher: '臺北市市場處',
   title: '臺北市公有永樂市場',
   url: 'https://www.tcma.gov.taipei/News_Content.aspx?n=1A4C7120ABFD0F9F&sms=26C5BF03E7963F4E&s=C58B40D5621B5A00',
+  published: '資料更新：民國113年8月7日（2024年）',
+  usage: '永樂市場的成立、改建與開業年份（臺北市市場處的官方網頁）。',
   context: '沿革：「民國前4年成立，稱為「公設永樂町食料品小賣市場」，民國71年原市場拆除，改建綜合大樓安置原攤商，74年開業。」地址為迪化街一段21號。',
 }
 SOURCES['taipei-market-info-yongle'] = {
@@ -91,6 +93,8 @@ SOURCES['taipei-market-info-yongle'] = {
   publisher: '臺北市政府',
   title: '臺北市公有永樂市場',
   url: 'https://www.gov.taipei/News_Content.aspx?n=9F394A83D9DF4A19&s=500622DD41A6B6A3',
+  published: '資料更新：民國108年2月18日（2019年）',
+  usage: '永樂市場各樓層的用途（臺北市政府的市集資訊）。',
   context: '介紹：「1樓生鮮蔬果日用品，2.3樓布匹窗簾飾布買賣縫製，是全台布業零售、批發中心。」',
 }
 SOURCES['ncl-yongle-market'] = {
@@ -422,6 +426,169 @@ SOURCES['foodnext-cold-brew'] = {
   title: '食力 2017年10月20日報導',
   url: 'https://www.foodnext.net/life/lifesafe/paper/4357992699',
   context: '冷萃：「注入冷水，於低溫環境中浸泡至少約12小時」；冰滴：「利用5度C以下的冰水混合物…滴入咖啡粉…一點一點滴漏出萃取液」。',
+}
+
+// 魷魚羹飲食文化（1945–1980 廟口的魷魚羹攤、2000–現在的老潘魷魚羹）
+// published：出版或更新時間；usage：這筆資料在本站支持哪些內容（實訪與食記只支持該次的記錄）
+SOURCES['moe-jiu-hi-kenn'] = {
+  id: 'moe-jiu-hi-kenn',
+  citation: '教育部《臺灣台語常用詞辭典》，「鰇魚羹」。',
+  publisher: '教育部',
+  title: '鰇魚羹',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/13049/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '魷魚羹的定義與台語讀音（jiû-hî-kenn）。',
+  context: '釋義：「一種小吃，用魷魚作成的羹湯。」',
+}
+SOURCES['moe-jiu-hi'] = {
+  id: 'moe-jiu-hi',
+  citation: '教育部《臺灣台語常用詞辭典》，「鰇魚」。',
+  publisher: '教育部',
+  title: '鰇魚',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/13048/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '魷魚曬成乾、做為提鮮食材的說明。',
+  context: '釋義：「魷魚。……時常從腹腔剖開，去除內臟後曝曬成乾，做為料理的提鮮食材之一。」',
+}
+SOURCES['moe-kenn'] = {
+  id: 'moe-kenn',
+  citation: '教育部《臺灣台語常用詞辭典》，「羹」。',
+  publisher: '教育部',
+  title: '羹',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/12816/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '「羹」的定義（異用字「焿」）。',
+  context: '釋義：「芶芡而成的濃稠湯汁。」用例「花枝羹」；異用字「焿」。',
+}
+SOURCES['moe-biau-khau'] = {
+  id: 'moe-biau-khau',
+  citation: '教育部《臺灣台語常用詞辭典》，「廟口」。',
+  publisher: '教育部',
+  title: '廟口',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/19448/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '「廟口」的定義與用例。',
+  context: '釋義：「廟門口、廟前廣場。」用例：「廟口的榕樹跤不時都有一寡人佇遐泡茶、開講。」（廟口的榕樹下經常都有一些人在那裡泡茶、聊天。）',
+}
+SOURCES['moe-tiam-sim-tann'] = {
+  id: 'moe-tiam-sim-tann',
+  citation: '教育部《臺灣台語常用詞辭典》，「點心擔」。',
+  publisher: '教育部',
+  title: '點心擔',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/12456/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '小吃攤的台語說法。',
+  context: '釋義：「賣點心小吃的攤販。」',
+}
+SOURCES['moe-sa-te'] = {
+  id: 'moe-sa-te',
+  citation: '教育部《臺灣台語常用詞辭典》，「沙茶」。',
+  publisher: '教育部',
+  title: '沙茶',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/3313/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '沙茶醬的一般說明（不是老潘的配方）。',
+  context: '釋義：「用扁魚、蒜酥、麻粉和各種香料調製而成的一種調味料。多用於吃火鍋時的沾醬。」',
+}
+SOURCES['moe-hi-soo'] = {
+  id: 'moe-hi-soo',
+  citation: '教育部《臺灣台語常用詞辭典》，「魚酥」。',
+  publisher: '教育部',
+  title: '魚酥',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/14303/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '魚酥的一般說明（不是老潘的配方）。',
+  context: '釋義之一：「一種臺灣常見的魚肉加工食品。將魚肉、魚骨打成漿，加入麵粉、地瓜粉和其他醬料混合，再切成條狀或片狀，油炸成酥脆的食品。」',
+}
+SOURCES['moe-tian-bu-la'] = {
+  id: 'moe-tian-bu-la',
+  citation: '教育部《重編國語辭典修訂本》，「甜不辣」。',
+  publisher: '教育部',
+  title: '甜不辣',
+  url: 'https://dict.revised.moe.edu.tw/dictView.jsp?ID=53563',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '甜不辣的一般說明（不是老潘的配方）。',
+  context: '釋義：「一種日式食品。為日語てんぷら的音譯。……今日臺灣一般所指的甜不辣，是指條狀或扁平狀的炸魚漿。」',
+}
+SOURCES['wiki-ci-sheng-gong'] = {
+  id: 'wiki-ci-sheng-gong',
+  citation: '維基百科，〈大稻埕慈聖宮〉。',
+  publisher: '維基百科',
+  title: '大稻埕慈聖宮',
+  url: 'https://zh.wikipedia.org/zh-tw/%E5%A4%A7%E7%A8%BB%E5%9F%95%E6%85%88%E8%81%96%E5%AE%AE',
+  published: '2026年9月25日修訂的版本',
+  usage: '慈聖宮的現址、1910年遷建，以及廟前的小吃攤。',
+  context: '「1910年，日本政府實施市區改正，廟宇遷移」，1914年重建完成；「今址位於保安街49巷17號」；「廟前則是一排老牌的小吃攤，如魩仔魚炒飯、原汁排骨湯、鯊魚煙（煙薰鯊魚肉）、毛蟹、汕頭包子、四神湯」。',
+}
+SOURCES['mirror-2025-squid'] = {
+  id: 'mirror-2025-squid',
+  citation: '裴偉，〈裴社長小吃手記6／萬華大稻埕的魷魚美食〉，《鏡週刊》，2025年8月。',
+  publisher: '鏡週刊',
+  title: '裴社長小吃手記6／萬華大稻埕的魷魚美食',
+  url: 'https://www.mirrormedia.mg/story/20250820food002',
+  published: '2025年8月（網頁顯示2025年8月28日最後更新）',
+  usage: '專欄作者對魷魚羹興起的說法（不是學術考證）。',
+  context: '「魷魚羹在70年代於萬華、大稻埕一帶興起，除了因為港口聚眾、喜歡這一味的人多，供貨源頭迪化街就在附近也是原因。」；「會把發泡好的魷魚，切絲拌進魚漿中，增加口感，慢慢促成如今魷魚羹的誕生。」',
+}
+SOURCES['mirror-2026-squid'] = {
+  id: 'mirror-2026-squid',
+  citation: '裴偉，〈裴社長小吃手記／老台北才懂的魷刃有魚〉，《鏡週刊》，2026年1月2日。',
+  publisher: '鏡週刊',
+  title: '裴社長小吃手記／老台北才懂的魷刃有魚',
+  url: 'https://www.mirrormedia.mg/story/20251216food001',
+  published: '2026年1月2日（網頁顯示的發布時間）',
+  usage: '專欄作者對迪化街南北貨與乾魷魚的說法（不是學術考證）。',
+  context: '「早期的大稻埕是航運港口，因為河港的條件，成為北部南北貨的集散地。」；「來自日本北海道、韓國，後來是阿根廷的大魷魚乾，當然是其中的重要商品。」',
+}
+SOURCES['fb-pannoodles'] = {
+  id: 'fb-pannoodles',
+  citation: '老潘魷魚羹 Pannoodles house，Facebook 粉絲專頁「關於」。',
+  publisher: 'Facebook',
+  title: '老潘魷魚羹 Pannoodles house',
+  url: 'https://www.facebook.com/pannoodles/about/',
+  published: '店家頁面（未標示日期；2026年10月查閱）',
+  usage: '店家頁面的名稱。頁面上沒有創立年份，本站不填寫。',
+  context: '頁面名稱：「老潘魷魚羹 Pannoodles house」。',
+}
+SOURCES['puddings-2023-pannoodles'] = {
+  id: 'puddings-2023-pannoodles',
+  citation: 'Pudding’s Life，〈台北迪化街美食│老潘魷魚羮》老店口味沙茶魷魚焿.甜不辣~大稻埕永樂市場對面〉，2023年實訪紀錄。',
+  publisher: 'Pudding’s Life',
+  title: '台北迪化街美食│老潘魷魚羮》老店口味沙茶魷魚焿.甜不辣~大稻埕永樂市場對面',
+  url: 'https://puddings.tw/pannoodles/',
+  published: '2023年（使用者提供的實訪年份；本次無法開啟頁面核對發表日期）',
+  usage: '只支持該次實訪的記錄：店在「大稻埕永樂市場對面」，品項有沙茶魷魚羹與甜不辣。不當成最新的價格、營業時間或歷史文獻。',
+  context: '依文章標題。本次開發時網站阻擋自動讀取，沒有逐句核對內文；文中的圖片未確認使用權，本站沒有使用。',
+}
+SOURCES['walkerland-2021-laopan'] = {
+  id: 'walkerland-2021-laopan',
+  citation: 'WalkerLand窩客島，〈【台北美食￭大同區】老潘魷魚羹 x 肉羹麵、魚酥麵&甜不辣〉，2021年2月19日。',
+  publisher: 'WalkerLand窩客島',
+  title: '老潘魷魚羹 x 肉羹麵、魚酥麵&甜不辣',
+  url: 'https://www.walkerland.com.tw/article/view/288147',
+  published: '2021年2月19日',
+  usage: '只支持該次的食記：地址、魚酥、甜不辣、沙茶調味與褪色的招牌。',
+  context: '地址「台北市大同區迪化街一段30號」；「整體就是以沙茶最為主要的調味」；「魚酥很新鮮的酥脆」；「招牌顏色已褪去」。',
+}
+SOURCES['andrewplus-laopan'] = {
+  id: 'andrewplus-laopan',
+  citation: '安魯魯的筆記本，〈老潘魷魚羹 迪化街美食〉。',
+  publisher: '安魯魯的筆記本',
+  title: '老潘魷魚羹 迪化街美食',
+  url: 'https://blog.andrewplus.com/pannoodles/',
+  published: '2024年1月26日發表（2026年9月19日更新）',
+  usage: '只支持該篇食記：門口的攤車、桌上的調味料、品名「乾拌沙茶生魷魚」「沙茶魷魚羹米粉」與「內用區有冷氣開放」。文章標題提到的經營年數沒有其他資料可以核實，本站不採用；文中的營業時間與價格也不採用。',
+  context: '地址「103台北市大同區迪化街一段30號」；「攤車在外頭」；「內用區有冷氣開放」；「桌子上的醋、胡椒粉、辣椒醬和餐具」；「「乾拌沙茶生魷魚」是限量款」；「沙茶魷魚羹米粉」。',
+}
+SOURCES['fonfood-laopan'] = {
+  id: 'fonfood-laopan',
+  citation: '瘋美食 FonFood，「老潘魷魚羹」店家頁面（網友食記摘錄）。',
+  publisher: '瘋美食 FonFood',
+  title: '老潘魷魚羹',
+  url: 'https://www.fonfood.com/store/204261',
+  published: '頁面彙整的食記多為2017年前後',
+  usage: '只用來核對品名「魚酥羮」「魷魚羮」（網友食記的摘錄，不是店家公告的菜單）。',
+  context: '頁面的官方菜單欄「目前沒有資訊」；彙整的食記摘錄中出現「魚酥羮」「肉羮湯」「魷魚羮」等品名。',
 }
 
 export function getSource(id) {

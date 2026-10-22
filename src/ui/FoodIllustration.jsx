@@ -678,6 +678,168 @@ function ColdBrew() {
   )
 }
 
+/* ── 魷魚羹飲食文化（廟口的魷魚羹攤、老潘魷魚羹） ── */
+
+/** 捲起的魷魚片（白色、邊緣帶粉紅） */
+function SquidCurl({ x, y, r = 0, s = 1 }) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${r}) scale(${s})`}>
+      <path d="M-11 2 Q-12 -9 0 -9 Q11 -9 11 1" fill="none" stroke={INK} strokeWidth="8.5" strokeLinecap="round" />
+      <path d="M-11 2 Q-12 -9 0 -9 Q11 -9 11 1" fill="none" stroke="#f6ebe0" strokeWidth="6" strokeLinecap="round" />
+      <path d="M-8 -5 l3 2 M-2 -8 l1 3 M5 -7 l-1 3" stroke="#d99f88" strokeWidth="1.3" strokeLinecap="round" />
+    </g>
+  )
+}
+
+function SoupLeaves({ points }) {
+  return points.map(([x, y, r], i) => (
+    <ellipse key={i} cx={x} cy={y} rx="6.5" ry="3" transform={`rotate(${r} ${x} ${y})`} fill={i % 2 ? '#4f8a3a' : '#6a9e48'} stroke={INK} strokeWidth="1.1" />
+  ))
+}
+
+function SteamLines({ x = 100, y = 30 }) {
+  return (
+    <path
+      d={`M${x - 18} ${y + 10} q-6 -10 0 -18 q6 -8 0 -16 M${x} ${y + 6} q-6 -10 0 -18 q6 -8 0 -16 M${x + 18} ${y + 10} q-6 -10 0 -18`}
+      fill="none"
+      stroke="#b9ab98"
+      strokeWidth="2"
+      strokeLinecap="round"
+      opacity="0.7"
+    />
+  )
+}
+
+function SquidGeng() {
+  // 廟口的魷魚羹：藍邊白瓷碗、褐色的羹湯、捲起的魷魚片、魚漿塊與少量葉菜
+  return (
+    <>
+      <Shadow cy={126} rx={66} />
+      <SteamLines />
+      <Bowl rimY={66} depth={50} pattern={<BlueRim cx={100} y={92} rx={52} count={8} />}>
+        <ellipse cx="100" cy="68" rx="56" ry="13" fill="#8d5c33" stroke={INK} strokeWidth="1.4" />
+        <ellipse cx="86" cy="66" rx="9" ry="4" fill="#eadfc9" stroke={INK} strokeWidth="1.2" />
+        <ellipse cx="121" cy="70" rx="8" ry="3.6" fill="#e6dac2" stroke={INK} strokeWidth="1.2" />
+        <SquidCurl x={70} y={68} r={-12} s={0.9} />
+        <SquidCurl x={102} y={64} r={8} s={1} />
+        <SquidCurl x={130} y={66} r={20} s={0.85} />
+        <SoupLeaves points={[[110, 70, -20], [92, 72, 30], [118, 62, 60]]} />
+      </Bowl>
+    </>
+  )
+}
+
+function DriedSquid() {
+  // 乾魷魚：剖開曬乾的扁平魷魚身與觸手
+  return (
+    <>
+      <Shadow cy={124} rx={74} />
+      <path d="M40 70 Q44 40 92 36 Q140 34 150 62 Q152 84 118 94 Q88 102 60 96 Q38 90 40 70 Z" fill="#d7a265" stroke={INK} strokeWidth="2.2" strokeLinejoin="round" />
+      <path d="M52 70 Q60 50 94 46 Q130 44 140 64" fill="none" stroke="#ecc590" strokeWidth="5" strokeLinecap="round" opacity="0.7" />
+      <path d="M95 44 Q97 70 94 96" fill="none" stroke="#a9733e" strokeWidth="1.6" opacity="0.6" />
+      {[[58, 98, 112], [70, 99, 120], [84, 100, 118], [100, 99, 122], [114, 97, 116], [128, 93, 110]].map(([x, y, y2], i) => (
+        <path key={i} d={`M${x} ${y} Q${x - 6 + (i % 3) * 5} ${(y + y2) / 2 + 4} ${x - 10 + i * 3} ${y2}`} fill="none" stroke="#c08a4f" strokeWidth="5" strokeLinecap="round" />
+      ))}
+      <path d="M40 70 Q30 64 28 52 Q38 56 44 62" fill="#c99556" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+    </>
+  )
+}
+
+function ShachaSquidGeng() {
+  // 沙茶魷魚羹：厚實的白碗、深褐色的羹湯與紅褐色的沙茶油光、魷魚片與葉菜
+  return (
+    <>
+      <Shadow cy={126} rx={66} />
+      <SteamLines />
+      <Bowl rimY={66} depth={50}>
+        <ellipse cx="100" cy="68" rx="56" ry="13" fill="#7a4a26" stroke={INK} strokeWidth="1.4" />
+        {[[78, 70, 5], [96, 66, 3.5], [124, 69, 4.5], [112, 73, 3]].map(([x, y, r], i) => (
+          <ellipse key={i} cx={x} cy={y} rx={r} ry={r * 0.45} fill="#a9582a" />
+        ))}
+        <SquidCurl x={74} y={66} r={-20} s={0.95} />
+        <SquidCurl x={104} y={64} r={10} s={1.05} />
+        <SquidCurl x={130} y={68} r={30} s={0.85} />
+        <SquidCurl x={90} y={72} r={170} s={0.75} />
+        <SoupLeaves points={[[116, 62, 50], [84, 62, -30]]} />
+      </Bowl>
+    </>
+  )
+}
+
+function FishCrispGeng() {
+  // 魚酥羹：不規則的金黃魚酥片，一部分露出湯面
+  const crisps = [
+    'M66 66 l14 -10 l10 4 l-6 12 z',
+    'M88 60 l16 -8 l8 8 l-12 8 z',
+    'M112 64 l12 -12 l12 6 l-8 12 z',
+    'M80 74 l12 -4 l6 6 l-14 4 z',
+    'M120 74 l10 -6 l8 4 l-10 6 z',
+  ]
+  return (
+    <>
+      <Shadow cy={126} rx={66} />
+      <SteamLines />
+      <Bowl rimY={66} depth={50}>
+        <ellipse cx="100" cy="68" rx="56" ry="13" fill="#9a6a3a" stroke={INK} strokeWidth="1.4" />
+        {crisps.map((d, i) => (
+          <path key={i} d={d} fill={i % 2 ? '#c98d38' : '#e3b25a'} stroke={INK} strokeWidth="1.5" strokeLinejoin="round" />
+        ))}
+        <SoupLeaves points={[[102, 72, 10], [72, 72, -20]]} />
+      </Bowl>
+    </>
+  )
+}
+
+function Tempura() {
+  // 甜不辣：盤裡不同形狀的魚漿製品、白蘿蔔塊與紅褐色的醬汁
+  return (
+    <>
+      <Shadow cy={124} rx={74} />
+      <Plate cy={100} />
+      <ellipse cx="100" cy="98" rx="50" ry="11" fill="#b5532f" opacity="0.85" />
+      <rect x="56" y="80" width="34" height="12" rx="3" transform="rotate(-10 73 86)" fill="#d8ae74" stroke={INK} strokeWidth="1.6" />
+      <rect x="104" y="84" width="34" height="11" rx="3" transform="rotate(12 121 89)" fill="#cf9f63" stroke={INK} strokeWidth="1.6" />
+      <g transform="rotate(-25 92 72)">
+        <rect x="76" y="66" width="32" height="12" rx="6" fill="#e0bb83" stroke={INK} strokeWidth="1.6" />
+        <ellipse cx="108" cy="72" rx="3" ry="6" fill="#9c6a3c" stroke={INK} strokeWidth="1.2" />
+      </g>
+      <ellipse cx="124" cy="76" rx="11" ry="6" fill="#d8ae74" stroke={INK} strokeWidth="1.6" />
+      <path d="M92 94 l14 -2 l-6 -12 z" fill="#cf9f63" stroke={INK} strokeWidth="1.5" strokeLinejoin="round" />
+      {[[66, 98], [138, 98], [110, 104]].map(([x, y], i) => (
+        <rect key={i} x={x - 6} y={y - 7} width="12" height="11" rx="1.5" fill="#efe7d0" stroke={INK} strokeWidth="1.4" />
+      ))}
+      <path d="M62 84 Q80 76 96 82 Q112 86 128 78" fill="none" stroke="#8f3a24" strokeWidth="3.4" strokeLinecap="round" />
+    </>
+  )
+}
+
+function DryShachaSquid() {
+  // 乾拌沙茶生魷魚：盤裡的魷魚片、豆芽、深色的沙茶醬與綠色葉片
+  const sprouts = [
+    [64, 92, 84, 88], [70, 98, 92, 96], [108, 98, 132, 94], [116, 92, 138, 90], [84, 100, 104, 102], [126, 100, 140, 98],
+  ]
+  return (
+    <>
+      <Shadow cy={124} rx={74} />
+      <Plate cy={100} />
+      {sprouts.map(([x1, y1, x2, y2], i) => (
+        <g key={i}>
+          <path d={`M${x1} ${y1} Q${(x1 + x2) / 2} ${y1 - 4} ${x2} ${y2}`} fill="none" stroke={INK} strokeWidth="4" strokeLinecap="round" />
+          <path d={`M${x1} ${y1} Q${(x1 + x2) / 2} ${y1 - 4} ${x2} ${y2}`} fill="none" stroke="#f3eed8" strokeWidth="2.4" strokeLinecap="round" />
+          <circle cx={x2} cy={y2} r="2.6" fill="#e8d77a" stroke={INK} strokeWidth="1" />
+        </g>
+      ))}
+      <SquidCurl x={82} y={86} r={-15} s={1.05} />
+      <SquidCurl x={112} y={84} r={18} s={1.1} />
+      <SquidCurl x={98} y={94} r={185} s={0.9} />
+      {[[92, 80, 9], [120, 92, 7], [76, 96, 6]].map(([x, y, r], i) => (
+        <ellipse key={i} cx={x} cy={y} rx={r} ry={r * 0.55} fill={i % 2 ? '#5a3820' : '#4a2e1a'} stroke={INK} strokeWidth="1.2" />
+      ))}
+      <SoupLeaves points={[[100, 78, -10], [108, 76, 40], [92, 76, 70]]} />
+    </>
+  )
+}
+
 const ILLUSTRATIONS = {
   shiitake: Shiitake,
   'dried-shrimp': DriedShrimp,
@@ -702,6 +864,12 @@ const ILLUSTRATIONS = {
   espresso: Espresso,
   'cold-drip': ColdDrip,
   'cold-brew': ColdBrew,
+  'squid-geng': SquidGeng,
+  'dried-squid': DriedSquid,
+  'shacha-squid-geng': ShachaSquidGeng,
+  'fish-crisp-geng': FishCrispGeng,
+  tempura: Tempura,
+  'dry-shacha-squid': DryShachaSquid,
 }
 
 export function FoodIllustration({ id, label }) {

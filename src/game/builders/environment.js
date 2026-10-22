@@ -302,7 +302,16 @@ export function buildTempleRoofs(b, position = [6, 0, 25], rotationY = Math.PI) 
 }
 
 /* ───────────── 樹木 ───────────── */
-export function buildTree(b, position, { scale = 1, seed = 1, banyan = false } = {}) {
+/** 點到矩形（水平面）的距離 */
+function distanceToClearing(c, px, pz) {
+  return Math.hypot(Math.max(c.minX - px, 0, px - c.maxX), Math.max(c.minZ - pz, 0, pz - c.maxZ))
+}
+
+/**
+ * clearing：樹下要留空的範圍（同一個本地座標的矩形與高度 top，例如榕樹下的攤位）：
+ * 垂到範圍裡的氣根不產生，樹冠在範圍上方的底面抬高到 top 以上。亂數的使用順序不變，其他部分的形狀與原本相同。
+ */
+export function buildTree(b, position, { scale = 1, seed = 1, banyan = false, clearing = null } = {}) {
   const rng = createRng(seed)
   const [x, y, z] = position
   const trunkH = (banyan ? 2.6 : 3.2) * scale
@@ -316,8 +325,18 @@ export function buildTree(b, position, { scale = 1, seed = 1, banyan = false } =
     const a = (i / blobs) * Math.PI * 2 + rng()
     const d = (i === 0 ? 0 : range(rng, 1.0, 2.0)) * scale * (banyan ? 1.4 : 1)
     const r = range(rng, 1.4, 2.1) * scale * (banyan ? 1.15 : 1)
+    const bx = x + Math.cos(a) * d
+    const bz = z + Math.sin(a) * d
+    let by = y + trunkH + range(rng, 0.6, 1.6) * scale
+    if (clearing) {
+      const near = distanceToClearing(clearing, bx, bz)
+      if (near < r) {
+        const bottom = by - 0.72 * r * Math.sqrt(1 - (near / r) ** 2)
+        if (bottom < clearing.top) by += clearing.top - bottom
+      }
+    }
     b.add('plain', new IcosahedronGeometry(r, 1), {
-      position: [x + Math.cos(a) * d, y + trunkH + range(rng, 0.6, 1.6) * scale, z + Math.sin(a) * d],
+      position: [bx, by, bz],
       scale: [1, 0.72, 1],
       rotation: [0, rng() * 6, 0],
       tint: pick(rng, greens),
@@ -329,7 +348,10 @@ export function buildTree(b, position, { scale = 1, seed = 1, banyan = false } =
       const a = rng() * Math.PI * 2
       const d = range(rng, 0.9, 2.6)
       const h = range(rng, 1.6, 2.6)
-      b.cylinder('wood', 0.025, 0.035, h, 4, [x + Math.cos(a) * d, y + trunkH + 0.5 - h / 2, z + Math.sin(a) * d], {
+      const rx = x + Math.cos(a) * d
+      const rz = z + Math.sin(a) * d
+      if (clearing && distanceToClearing(clearing, rx, rz) < 0.12) continue
+      b.cylinder('wood', 0.025, 0.035, h, 4, [rx, y + trunkH + 0.5 - h / 2, rz], {
         tint: '#7c6650',
       })
     }

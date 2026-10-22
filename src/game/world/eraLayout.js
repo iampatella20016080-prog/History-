@@ -8,6 +8,8 @@ import { yongleCollision, yongleFootprint } from '../builders/yongleMarket.js'
 import { actionBarCollision, actionBarFootprint } from '../builders/actionBar.js'
 import { luguoCollision, luguoFootprint } from '../builders/luguoCafe.js'
 import { cafeObstacles } from '../builders/luguoCafeInterior.js'
+import { templeSquidStallCollision } from '../builders/templeSquidStall.js'
+import { laoPanCollision, laoPanFootprint } from '../builders/laoPanExterior.js'
 
 /**
  * 某個年代的街區配置：建築（依地段演變）、街道道具、路燈、電線、燈籠串、碰撞與可行走範圍。
@@ -289,9 +291,13 @@ const SITE_COLLISION = {
     const collision = luguoCollision(config, transform)
     return { walkable: collision.walkable, obstacles: [...collision.obstacles, ...cafeObstacles(transform)] }
   },
+  // 廟口的魷魚羹攤：攤台、竹竿與桌椅（可行走範圍是原本的廟埕）
+  'temple-squid-stall': templeSquidStallCollision,
+  // 老潘魷魚羹：騎樓與一樓店內；攤車、工作區、桌椅、貓與冰箱
+  'lao-pan': laoPanCollision,
 }
 /** 佔地較大的店家建築（含巷子）：範圍內不產生遠景房屋與遠景的樹 */
-const SITE_FOOTPRINT = { 'yongle-market': yongleFootprint, 'action-bar': actionBarFootprint, 'luguo-cafe': luguoFootprint }
+const SITE_FOOTPRINT = { 'yongle-market': yongleFootprint, 'action-bar': actionBarFootprint, 'luguo-cafe': luguoFootprint, 'lao-pan': laoPanFootprint }
 
 function siteTransform({ x, z, rotationY = 0 }) {
   const cos = Math.cos(rotationY)
