@@ -23,22 +23,31 @@ function quadGeometry(items, rects, { segments = 1, sway = false } = {}) {
     if (!rect) return
     const [u0, v0, u1, v1] = rect
     const r = item.rotationY ?? 0
-    const nx = Math.sin(r)
-    const nz = Math.cos(r)
     const rx = Math.cos(r)
     const rz = -Math.sin(r)
+    // tilt：繞招牌的左右軸前傾（正值上緣往前，例如斜掛在騎樓下的匾額）；預設直立
+    const tilt = item.tilt ?? 0
+    const ct = Math.cos(tilt)
+    const st = Math.sin(tilt)
+    const nx = Math.sin(r) * ct
+    const ny = -st
+    const nz = Math.cos(r) * ct
+    // 招牌的「上」方向：直立時是 +y，前傾時往法線方向偏
+    const ux = Math.sin(r) * st
+    const uy = ct
+    const uz = Math.cos(r) * st
     const [cx, cy, cz] = item.position
     const hw = item.width / 2
     const hh = item.height / 2
     const phase = index * 1.37
     const corner = (sx, t) => {
       // sx: -1 左、1 右；t: 0 頂端、1 底端
-      const y = cy + hh - t * item.height
-      position[v * 3] = cx + rx * hw * sx
-      position[v * 3 + 1] = y
-      position[v * 3 + 2] = cz + rz * hw * sx
+      const up = hh - t * item.height
+      position[v * 3] = cx + rx * hw * sx + ux * up
+      position[v * 3 + 1] = cy + uy * up
+      position[v * 3 + 2] = cz + rz * hw * sx + uz * up
       normal[v * 3] = nx
-      normal[v * 3 + 1] = 0
+      normal[v * 3 + 1] = ny
       normal[v * 3 + 2] = nz
       uv[v * 2] = sx < 0 ? u0 : u1
       uv[v * 2 + 1] = v0 + (v1 - v0) * t

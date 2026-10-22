@@ -76,6 +76,13 @@ node tests/e2e/viewer.e2e.mjs http://127.0.0.1:5173/
 5. 建築裡的店家設定 `inside: '<建築店家 id>'`，產生器可以回傳 `subStores`、`interiors`、`viewerRegions`、`viewerBounds`。
 6. 設定 `status: 'open'` 並提供 `chapters`，就能探索這家店。
 
+**文化據點**（例如黃玉階文史館）：
+
+- 設定 `kind: 'heritage'`，店家名錄會顯示「文化據點」，不加食物圖鑑或點餐。
+- 配置在 `src/data/huangYujieLayout.js`；資料在 `huangYujieMuseum.js`，已查證史實、照片觀察、情境設計與待核資料分開存放。
+- 相鄰建築依 `src/data/actionBarLayout.js` 定位，不要讓模型重疊。
+- 展板用 `exhibit` 材質與 `rendering/exhibitAtlas.js` 的圖集。
+
 **同一種食物的跨年代版本**（例如魷魚羹、米苔目）：
 
 - 每個年代各是一家店，共用同一個 `theme` id。

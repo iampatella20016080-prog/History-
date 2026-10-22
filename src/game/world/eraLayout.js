@@ -6,6 +6,7 @@ import { templeCollision } from '../builders/specials.js'
 import { ziYangCollision } from '../builders/ziyang.js'
 import { yongleCollision, yongleFootprint } from '../builders/yongleMarket.js'
 import { actionBarCollision, actionBarFootprint } from '../builders/actionBar.js'
+import { huangYujieCollision, huangYujieFootprint } from '../builders/huangYujieExterior.js'
 import { luguoCollision, luguoFootprint } from '../builders/luguoCafe.js'
 import { cafeObstacles } from '../builders/luguoCafeInterior.js'
 import { templeSquidStallCollision } from '../builders/templeSquidStall.js'
@@ -301,9 +302,11 @@ const SITE_COLLISION = {
   'temple-mi-tai-mu-stall': templeMiTaiMuStallCollision,
   // 永樂米苔目：騎樓與一樓店內；機車、外帶區、桌椅、站著的人物與後方的櫃台
   'yong-le-mi-tai-mu': yongleMiTaiMuCollision,
+  // 黃玉階文史館：騎樓、通往豆花店騎樓的拱門與一樓展間；柱、花槽、醬缸、展示牆、層架、長桌與茶席
+  'huang-yujie-museum': huangYujieCollision,
 }
 /** 佔地較大的店家建築（含巷子）：範圍內不產生遠景房屋與遠景的樹 */
-const SITE_FOOTPRINT = { 'yongle-market': yongleFootprint, 'action-bar': actionBarFootprint, 'luguo-cafe': luguoFootprint, 'lao-pan': laoPanFootprint, 'yong-le-mi-tai-mu': yongleMiTaiMuFootprint }
+const SITE_FOOTPRINT = { 'yongle-market': yongleFootprint, 'action-bar': actionBarFootprint, 'luguo-cafe': luguoFootprint, 'lao-pan': laoPanFootprint, 'yong-le-mi-tai-mu': yongleMiTaiMuFootprint, 'huang-yujie-museum': huangYujieFootprint }
 
 function siteTransform({ x, z, rotationY = 0 }) {
   const cos = Math.cos(rotationY)

@@ -1,4 +1,5 @@
 import { CylinderGeometry, IcosahedronGeometry, Shape, TorusGeometry } from 'three'
+import { LANE, SHOP, shopToLane } from '../../data/actionBarLayout.js'
 import { pottedPlant, shade } from './props.js'
 
 /**
@@ -14,32 +15,8 @@ import { pottedPlant, shade } from './props.js'
  * 店的本地座標：原點在騎樓柱列外緣的中央，+z 朝巷子（西）、+x 沿著店面往巷底（南），室內在 -z。
  * 建築的尺寸依照片估算，並非測量。
  */
-export const LANE = {
-  half: 3.5, // 巷寬 7 m（兩側是李亭香與稻舍的山牆）
-  length: 25, // 迪化街立面線到巷底
-  rowDepth: 11, // 兩側街屋的深度
-  mouth: -1.7, // 巷口的路面接到迪化街的人行道
-}
-
-export const SHOP = {
-  origin: [3.5, 0, 18.8], // 巷子座標
-  rotationY: -Math.PI / 2,
-  half: 3.0, // 面寬 6 m
-  depth: 9.0,
-  arcade: 1.8, // 騎樓深度
-  wallT: 0.2,
-  groundH: 3.7, // 一樓樓高
-  slab: 0.25,
-  top: 7.0, // 二樓牆頂
-  parapet: 7.65,
-  ceiling: 3.35, // 店內天花
-  columns: [-1.05, 1.05],
-  door: [-0.95, 0.75],
-  window: [-2.5, -1.15],
-  sideDoor: [1.4, 2.3],
-  counterZ: -6.3, // 櫃台正面
-  backZ: -8.8, // 室內後牆內側
-}
+// 巷子與店的位置、尺寸集中在 data/actionBarLayout.js（北側相鄰的黃玉階文史館也從那裡定位）
+export { LANE, SHOP }
 
 const STONE = '#c9c6bd' // 洗石子
 const STONE_DARK = '#b3afa5'
@@ -47,14 +24,6 @@ const WOOD = '#9a6a43'
 const WOOD_DARK = '#6e4a2f'
 
 /* ── 小工具 ─────────────────────────────── */
-
-/** 店的本地座標 → 巷子座標 */
-function shopToLane(x, z) {
-  const [ox, , oz] = SHOP.origin
-  const c = Math.cos(SHOP.rotationY)
-  const s = Math.sin(SHOP.rotationY)
-  return [ox + x * c + z * s, oz - x * s + z * c]
-}
 
 /** 黑框的長方形窗：外框、橫豎窗櫺、深色玻璃與白色 X 膠帶 */
 function window2F(b, x, y, w, h, { tape = true } = {}) {
@@ -163,10 +132,9 @@ function shopShell(b) {
   // 騎樓地坪（灰色洗石子）與店內的深色地板（室內細部未載入時，從門口看進去是暗的）
   b.box('granite', [half * 2, 0.03, arcade], [0, 0.035, -arcade / 2], { tint: '#bdbab2' })
   b.box('dark', [half * 2 - 0.4, 0.02, depth - arcade - 0.4], [0, 0.03, front - (depth - arcade) / 2], { tint: '#3a2e26' })
-  // 騎樓兩側的端牆（洗石子方柱）
-  for (const s of [-1, 1]) {
-    b.box('granite', [0.5, floor2, arcade + 0.1], [s * (half - 0.25), floor2 / 2, -arcade / 2 + 0.05], { tint: STONE, grime: 0.12 })
-  }
+  // 騎樓兩側的端牆（洗石子方柱）；北側（-x）的端牆中間開了一道拱門，通往相鄰黃玉階文史館的騎樓
+  b.box('granite', [0.5, floor2, arcade + 0.1], [half - 0.25, floor2 / 2, -arcade / 2 + 0.05], { tint: STONE, grime: 0.12 })
+  partyArch(b, -(half - 0.25), 0.5, floor2, -arcade, 0.1)
   // 圓形石柱（柱礎、柱身、柱頭）
   for (const x of columns) {
     b.cylinder('granite', 0.38, 0.4, 0.22, 20, [x, 0.11, -0.4], { tint: STONE_DARK })
@@ -311,18 +279,60 @@ function shopShell(b) {
     b.box('dark', [0.46, 0.62, 0.03], [0, 1.15, 0.02], { tint: '#2c3431' })
     b.addSign({ text: '今日豆花', style: 'chalk', width: 0.42, height: 0.12, position: [0, 1.3, 0.04] })
   })
-  directorChair(b, -2.05, -0.95, 0.35)
-  b.box('wood', [0.4, 0.04, 0.4], [-1.6, 0.62, -1.25], { tint: '#b98d5f' })
-  for (const [x, z] of [
-    [-1.43, -1.08],
-    [-1.77, -1.08],
-    [-1.43, -1.42],
-    [-1.77, -1.42],
+  // 導演椅、小桌與盆栽放在騎樓外緣的路邊（依照片，在左邊圓柱旁；騎樓裡留出通往文史館拱門的走道）
+  const { x: tx, z: tz } = CHAIR_SET.table
+  directorChair(b, CHAIR_SET.chair.x, CHAIR_SET.chair.z, 0.35)
+  b.box('wood', [0.4, 0.04, 0.4], [tx, 0.62, tz], { tint: '#b98d5f' })
+  for (const [sx, sz] of [
+    [1, 1],
+    [-1, 1],
+    [1, -1],
+    [-1, -1],
   ]) {
-    b.box('wood', [0.03, 0.6, 0.03], [x, 0.3, z], { tint: WOOD_DARK })
+    b.box('wood', [0.03, 0.6, 0.03], [tx + sx * 0.17, 0.3, tz + sz * 0.17], { tint: WOOD_DARK })
   }
-  pottedPlant(b, [-1.6, 0.64, -1.25], { seed: 224, size: 0.5, potTint: '#5d6b4a' })
-  pottedPlant(b, [-2.55, 0, -1.55], { seed: 225, size: 0.9, potTint: '#8a8f86' })
+  pottedPlant(b, [tx, 0.64, tz], { seed: 224, size: 0.5, potTint: '#5d6b4a' })
+  pottedPlant(b, [CHAIR_SET.plant.x, 0, CHAIR_SET.plant.z], { seed: 225, size: 0.8, potTint: '#8a8f86' })
+}
+
+/** 騎樓外緣路邊的導演椅、小桌與大盆栽（店的本地座標；z > 0 在巷子的路面上） */
+const CHAIR_SET = {
+  chair: { x: -1.72, z: 0.42 },
+  table: { x: -2.22, z: 0.36 },
+  plant: { x: -2.72, z: 0.34 },
+  box: [-3.02, -1.42, 0.08, 0.78],
+}
+
+/**
+ * 兩棟騎樓之間的端牆與拱門（本地座標；牆沿著 z，從 z0 到 z1，中心在 x、厚度 thickness）：
+ * 外側與內側兩段牆墩、半圓拱與拱上的牆。拱門的位置與高度見 SHOP.passage（豆花店與文史館的本地 z 相同）。
+ */
+export function partyArch(b, x, thickness, height, z0, z1, { material = 'granite', tint = STONE, trim = STONE_DARK } = {}) {
+  const { minZ, maxZ, spring } = SHOP.passage
+  const r = (maxZ - minZ) / 2
+  const cz = (minZ + maxZ) / 2
+  const top = spring + r + 0.14
+  b.box(material, [thickness, height, z1 - maxZ], [x, height / 2, (maxZ + z1) / 2], { tint, grime: 0.12 })
+  b.box(material, [thickness, height, minZ - z0], [x, height / 2, (z0 + minZ) / 2], { tint, grime: 0.12 })
+  b.box(material, [thickness, height - top, maxZ - minZ], [x, (top + height) / 2, cz], { tint })
+  // 拱與牆之間的三角牆（形狀的 u 軸是 -z）
+  const arch = new Shape()
+  arch.moveTo(-maxZ, top)
+  arch.lineTo(-maxZ, spring)
+  arch.absarc(-cz, spring, r, Math.PI, 0, true)
+  arch.lineTo(-minZ, top)
+  arch.lineTo(-maxZ, top)
+  b.extrude(material, arch, thickness, { position: [x - thickness / 2, 0, 0], rotation: [0, Math.PI / 2, 0], tint, curveSegments: 12 })
+  // 拱圈的收邊（顏色深一點）
+  b.add(material, new TorusGeometry(r + 0.03, 0.035, 6, 16, Math.PI), { position: [x, spring, cz], rotation: [0, Math.PI / 2, 0], scale: [1, 1, thickness * 8], tint: trim })
+}
+
+/** 拱門端牆的鏡頭遮擋方塊（本地座標；x0 – x1 是牆的厚度範圍） */
+export function partyArchBlockers(b, x0, x1, height, z0, z1) {
+  const { minZ, maxZ, spring } = SHOP.passage
+  b.addBlocker(x0, x1, 0, height, maxZ, z1)
+  b.addBlocker(x0, x1, 0, height, z0, minZ)
+  b.addBlocker(x0, x1, spring + 0.2, height, minZ, maxZ)
 }
 
 /** 摺疊導演椅（木框、灰藍色帆布椅面與椅背） */
@@ -342,45 +352,6 @@ export function directorChair(b, x, z, rotationY = 0) {
 }
 
 /* ── 鄰棟 ─────────────────────────────── */
-
-/** 店北側的紅磚老屋（二樓兩個拱窗、一樓紅磚柱騎樓與玻璃店面；不使用實際店家的招牌） */
-function brickNeighbour(b) {
-  const w = 4.8
-  const d = 9
-  b.group([LANE.half, 0, 13.4], -Math.PI / 2, () => {
-    b.box('granite', [w, 0.03, 1.8], [0, 0.035, -0.9], { tint: '#bdb9b0' })
-    for (const x of [-w / 2 + 0.3, w / 2 - 0.3]) b.box('brick', [0.5, 3.6, 0.5], [x, 1.8, -0.3], { tint: '#c9775a', grime: 0.2 })
-    b.box('glassClear', [w - 1.2, 2.4, 0.04], [0, 1.3, -1.8], { tint: '#e6ecee' })
-    b.box('wood', [w - 1.0, 0.12, 0.1], [0, 2.56, -1.78], { tint: '#6b4a33' })
-    b.box('wood', [w - 1.0, 1.05, 0.2], [0, 3.1, -1.8], { tint: '#7a563a' })
-    b.box('dark', [w - 1.2, 2.4, 0.04], [0, 1.3, -2.2], { tint: '#40352c' })
-    // 二樓紅磚立面與兩個拱窗
-    b.box('brick', [w, 3.3, 0.3], [0, 5.35, -0.15], { tint: '#c06a4d', grime: 0.22 })
-    b.box('granite', [w, 0.35, 0.36], [0, 3.72, -0.1], { tint: '#d6d2c8' })
-    for (const x of [-1.05, 1.05]) {
-      b.box('dark', [1.2, 1.7, 0.06], [x, 5.3, 0.02], { tint: '#2b2f33' })
-      const arch = new Shape()
-      arch.absarc(0, 0, 0.62, 0, Math.PI, false)
-      arch.lineTo(-0.62, 0)
-      b.extrude('brick', arch, 0.08, { position: [x, 6.15, 0.0], tint: '#a9573e' })
-      b.add('dark', new CylinderGeometry(0.56, 0.56, 0.04, 16, 1, false, -Math.PI / 2, Math.PI), { position: [x, 6.15, 0.04], rotation: [Math.PI / 2, 0, 0], tint: '#2b2f33' })
-      for (const s of [-1, 1]) b.box('dark', [0.05, 1.7, 0.06], [x + s * 0.58, 5.3, 0.06], { tint: '#1f2224' })
-      b.box('dark', [0.04, 2.2, 0.05], [x, 5.5, 0.07], { tint: '#1f2224' })
-    }
-    // 窗下的磁磚花飾帶（簡化的花草圖樣）
-    b.box('plain', [w - 0.6, 0.55, 0.06], [0, 4.25, 0.02], { tint: '#f1ede2' })
-    for (let i = 0; i < 3; i++) {
-      b.add('plain', new IcosahedronGeometry(0.12, 0), { position: [-1.5 + i * 1.5, 4.25, 0.07], scale: [1.2, 0.8, 0.3], tint: ['#c45e4c', '#4f7f61', '#d7a44a'][i] })
-    }
-    b.box('brick', [w, 0.5, 0.36], [0, 7.25, -0.1], { tint: '#a9573e' })
-    for (const s of [-1, 1]) b.box('plaster', [0.2, 7.5, d - 0.3], [s * (w / 2 - 0.1), 3.75, -d / 2 - 0.15], { tint: '#c9b8a6' })
-    b.box('plaster', [w, 7.5, 0.2], [0, 3.75, -d + 0.1], { tint: '#c9b8a6' })
-    b.box('plaster', [w - 0.4, 0.2, d - 0.4], [0, 7.38, -d / 2], { tint: '#b9a896' })
-    // 一樓牆邊的綠色植物
-    pottedPlant(b, [-1.6, 0, -0.9], { seed: 31, size: 1.05, potTint: '#7d5a44' })
-    pottedPlant(b, [1.5, 0, -1.0], { seed: 32, size: 0.85, potTint: '#7d5a44' })
-  })
-}
 
 /** 店南側的白色鐵皮加蓋小屋（咖啡館，簡化） */
 function whiteShed(b) {
@@ -461,7 +432,8 @@ function tanBuilding(b) {
  * 不讓遠景房屋與地面的空隙露出來。巷子座標：[minX, maxX, minZ, maxZ, 高度, 色調]
  */
 const FILLERS = [
-  [12.5, 14, 12.5, 33, 6.6, '#d2c8b8'],
+  // 店後方（北側的文史館後牆到永樂市場之間只剩不到 0.1 公尺，不另外補）
+  [12.5, 14, 15.8, 33, 6.6, '#d2c8b8'],
   [5, 12.5, 25, 33, 7.4, '#cfc6b6'],
   [10.5, 12.5, 21.8, 25, 5.2, '#d8cfc0'],
   [-11.5, -5, 25, 33, 8.2, '#c9bfae'],
@@ -501,6 +473,12 @@ function laneEnd(b) {
 /* ── 導演的豆花車 ─────────────────────────── */
 
 const TRUCK = { x: -LANE.half + 1.0, z: 17.2, length: 4.4, width: 1.56 }
+
+/** 巷子東側、文史館花槽前停放的兩台機車（巷子座標的中心；車頭朝迪化街） */
+export const SCOOTERS = [
+  { x: LANE.half - 0.85, z: 12.4 },
+  { x: LANE.half - 0.85, z: 13.95 },
+]
 
 /**
  * 簡化的白色「導演的豆花車」：小貨車的車頭、白色貨箱、像小屋一樣的斜屋頂（邊緣有鏽痕），
@@ -598,8 +576,9 @@ function registerBlockers(b) {
     b.addBlocker(-half, door[0], 0, groundH, front - wallT, front)
     b.addBlocker(door[1], half, 0, groundH, front - wallT, front)
     b.addBlocker(door[0], door[1], 2.55, groundH, front - wallT, front)
-    // 騎樓兩側的端牆、柱
-    for (const s of [-1, 1]) b.addBlocker(s < 0 ? -half : half - 0.5, s < 0 ? -half + 0.5 : half, 0, groundH, front, 0.05)
+    // 騎樓兩側的端牆（北側的端牆中間是通往文史館騎樓的拱門）、柱
+    b.addBlocker(half - 0.5, half, 0, groundH, front, 0.05)
+    partyArchBlockers(b, -half, -half + 0.5, groundH, front, 0.05)
     for (const x of columns) b.addBlocker(x - 0.32, x + 0.32, 0, groundH, -0.72, -0.08)
     // 二樓以上（包含騎樓上方）、側牆、後牆、店內天花
     b.addBlocker(-half - 0.06, half + 0.06, groundH - 0.05, parapet, -depth, 0.3)
@@ -627,7 +606,6 @@ function registerBlockers(b) {
     b.addBlocker(...box)
     neighbours.push({ id, range: { start: first, end: b.blockers.length }, focus })
   }
-  add('action-bar-lane-brick', [lh, lh + 9, 0, 7.6, 11, 15.8], laneFacade(b, lh, 13.4, -1, 0, 4.8, 7.6))
   add('action-bar-lane-shed', [lh, lh + 7, 0, 3.8, 21.8, length], laneFacade(b, lh, 23.4, -1, 0, 3.2, 3.8))
   add('action-bar-lane-tan', [-lh - 5.4, -lh, 0, 11, 11, length], laneFacade(b, -lh, 18, 1, 0, 14, 11))
   add('action-bar-lane-end', [-5, 5, 0, 6.8, length, length + 7], laneFacade(b, 0, length, 0, -1, 7, 6.8))
@@ -681,15 +659,14 @@ export function actionBarCollision(config, transform) {
     fromShop(-S.half + S.wallT + 0.02, S.half - S.wallT - 0.02, S.counterZ + 0.05, -S.arcade - S.wallT - 0.02),
   ]
   const obstacles = [
-    // 豆花車與巷邊的機車
+    // 豆花車與巷邊（文史館的花槽前）的機車
     rect(TRUCK.x - TRUCK.width / 2 - 0.05, TRUCK.x + TRUCK.width / 2 + 0.05, TRUCK.z - 0.35, TRUCK.z + TRUCK.length + 0.05),
-    rect(half - 0.85, half - 0.05, 11.7, 13.2),
-    rect(half - 0.85, half - 0.05, 13.6, 15.1),
-    // 騎樓的圓柱、菜單架、黑板、導演椅與小桌、盆栽
+    ...SCOOTERS.map((s) => rect(s.x - 0.4, s.x + 0.4, s.z - 0.75, s.z + 0.75)),
+    // 騎樓的圓柱、菜單架、黑板；路邊的導演椅、小桌與盆栽
     ...S.columns.map((x) => fromShop(x - 0.33, x + 0.33, -0.73, -0.07)),
     fromShop(1.4, 2.1, -1.45, -0.85),
     fromShop(2.05, 2.55, -1.8, -1.3),
-    fromShop(-2.85, -1.38, -1.8, -0.65),
+    fromShop(...CHAIR_SET.box),
     // 巷底的兩盆盆栽與巷口路名牌的柱子
     rect(-3.3, -2.5, 24.1, 25),
     rect(3.0, 3.5, 24.15, 25),
@@ -719,15 +696,15 @@ export function actionBarFootprint(transform) {
 export function buildActionBar(b) {
   lane(b)
   b.group(SHOP.origin, SHOP.rotationY, () => shopShell(b))
-  brickNeighbour(b)
+  // 北側相鄰的紅磚街屋是黃玉階文史館（另一棟建築，見 huangYujieExterior.js）
   whiteShed(b)
   tanBuilding(b)
   laneEnd(b)
   fillerBlocks(b)
   beanFlowerTruck(b)
-  // 巷邊停放的機車
-  scooter(b, LANE.half - 0.45, 12.45, Math.PI, '#d6d9d9')
-  scooter(b, LANE.half - 0.45, 14.35, Math.PI, '#2f3236')
+  // 巷邊停放的機車（文史館的花槽前，依照片）
+  scooter(b, SCOOTERS[0].x, SCOOTERS[0].z, Math.PI, '#d6d9d9')
+  scooter(b, SCOOTERS[1].x, SCOOTERS[1].z, Math.PI, '#2f3236')
   interiorSigns(b)
   const { counter, neighbours } = registerBlockers(b)
 
