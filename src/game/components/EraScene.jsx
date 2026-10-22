@@ -8,6 +8,7 @@ import { interiorAmount } from '../viewerCamera.js'
 import { getLoadedInterior, getLoadedInteriorDetail, loadEraInterior } from '../world/worldManager.js'
 import { useGameStore } from '../../state/useGameStore.js'
 import { GlowLayer } from './GlowLayer.jsx'
+import { CatLayer } from './LaoPanCat.jsx'
 import { LanternLayer } from './LanternLayer.jsx'
 import { SignLayer } from './SignLayer.jsx'
 import { StaticBatches } from './StaticBatches.jsx'
@@ -117,6 +118,8 @@ export function EraScene({ world }) {
       <TextLanterns lanterns={world.textLanterns} />
       <GlowLayer glows={world.glows} pools={world.pools} />
       <SteamLayer steam={world.steam} />
+      {/* 店裡的小動物（老潘的黑白貓）：跟著這個年代的街景掛載與卸載 */}
+      <CatLayer cats={world.cats} />
     </group>
   )
 }

@@ -40,6 +40,9 @@ import { buildActionBarInterior } from '../builders/actionBarInterior.js'
 import { buildLuguoCafe } from '../builders/luguoCafe.js'
 import { buildLuguoCafeInterior, cafeFurnitureBlockers, cafeSigns } from '../builders/luguoCafeInterior.js'
 import { buildGrandRestaurant, buildTeaMansion, buildTemple } from '../builders/specials.js'
+import { buildTempleSquidStall } from '../builders/templeSquidStall.js'
+import { buildLaoPanExterior, laoPanFurnitureBlockers } from '../builders/laoPanExterior.js'
+import { buildLaoPanInterior } from '../builders/laoPanInterior.js'
 import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
 import { getEra } from '../../data/eras.js'
@@ -69,6 +72,16 @@ export const BUILDING_BUILDERS = {
     result.cameraOnly = [{ start, end: b.blockers.length }]
     return result
   },
+  // 1945–1980：慈聖宮廟埕旁的魷魚羹攤（細小的擺飾放在 detail，精緻模式才顯示）
+  'temple-squid-stall': buildTempleSquidStall,
+  // 2000–現在：老潘魷魚羹的立面、招牌、雨棚、攤車與店內的外殼；店內家具的遮擋方塊只給鏡頭用
+  'lao-pan': (b, config, detail) => {
+    const result = buildLaoPanExterior(b, config, detail)
+    const start = b.blockers.length
+    laoPanFurnitureBlockers(b)
+    result.cameraOnly = [{ start, end: b.blockers.length }]
+    return result
+  },
 }
 
 /**
@@ -79,6 +92,7 @@ export const BUILDING_INTERIORS = {
   'yongle-market': buildYongleInterior,
   'action-bar': buildActionBarInterior,
   'luguo-cafe': buildLuguoCafeInterior,
+  'lao-pan': buildLaoPanInterior,
 }
 
 const PROP_BUILDERS = {
@@ -226,6 +240,8 @@ export function* eraWorldSteps(eraId) {
   const interiors = []
   const viewerRegions = []
   const followAreas = []
+  // 店裡會動的小動物（例如老潘的黑白貓）：位置與朝向，由元件另外繪製與播放待機動畫
+  const cats = []
   let viewerBounds = null
   let hasTemple = false
 
@@ -237,8 +253,10 @@ export function* eraWorldSteps(eraId) {
     const archetype = config.archetype ?? 'minnan'
     const builder = BUILDING_BUILDERS[archetype] ?? buildShophouse
     b.push([building.x, 0, building.z], building.rotationY)
+    // 建築裡細小的擺飾（例如攤位桌上的筷筒）可以放在 detail：與建築同一個座標，精緻模式才顯示
+    detail.push([building.x, 0, building.z], building.rotationY)
     const firstBlocker = b.blockers.length
-    const result = builder(b, config) ?? {}
+    const result = builder(b, config, detail) ?? {}
     // 建築裡另外可以點選的店家（例如市場裡的攤位）或店裡的細部（detail，例如豆花櫃台）：
     // 它們的遮擋方塊另外成為一棟「建築」，可以點選與聚焦
     const subStores = result.subStores ?? []
@@ -270,6 +288,7 @@ export function* eraWorldSteps(eraId) {
     if (result.interiors) interiors.push(...result.interiors.map((zone) => ({ ...zone, building: building.id })))
     if (result.viewerRegions) viewerRegions.push(...result.viewerRegions)
     if (result.followAreas) followAreas.push(...result.followAreas)
+    if (result.cats) cats.push(...result.cats)
     if (result.viewerBounds) viewerBounds = { ...(viewerBounds ?? {}), ...result.viewerBounds }
     if (archetype === 'temple') {
       hasTemple = true
@@ -284,6 +303,7 @@ export function* eraWorldSteps(eraId) {
     for (const lantern of result.textLanterns ?? []) {
       textLanterns.push({ ...lantern, storeId: building.storeId ?? null })
     }
+    detail.pop()
     b.pop()
     yield
   }
@@ -349,6 +369,7 @@ export function* eraWorldSteps(eraId) {
     viewerBounds,
     // 第三人稱鏡頭要貼近障礙物的範圍（窄巷；室內另外判斷）
     followAreas,
+    cats,
   }
 }
 

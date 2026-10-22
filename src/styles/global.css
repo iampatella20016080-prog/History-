@@ -408,6 +408,16 @@ kbd {
   border-radius: 2px;
 }
 
+.menu-shop__note + .menu-shop__note {
+  margin-left: 6px;
+}
+
+/* 飲食主題（兩個年代各一個版本，例如「魷魚羹飲食文化」） */
+.menu-shop__note.is-theme {
+  color: var(--ink-soft);
+  border-color: rgba(60, 45, 30, 0.3);
+}
+
 .menu-shop__info {
   display: flex;
   flex-wrap: wrap;
@@ -1716,6 +1726,31 @@ kbd {
   color: var(--vermilion);
   border: 1px solid rgba(165, 64, 44, 0.45);
   border-radius: 2px;
+}
+
+/* 出版時間與用途（例如老潘魷魚羹的食記：只支持該次的記錄） */
+.source__meta {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+.source__meta > div {
+  display: grid;
+  grid-template-columns: 5.2em 1fr;
+  gap: 8px;
+}
+
+.source__meta dt {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.source__meta dd {
+  margin: 0;
 }
 
 .source__context {

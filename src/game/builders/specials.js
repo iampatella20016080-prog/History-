@@ -149,7 +149,9 @@ export function buildTemple(b, cfg) {
   const treeZ = -2.4
   for (const side of [-1, 1]) {
     const tx = side * (w / 2 - 2.4)
-    buildTree(b, [tx, 0, treeZ], { scale: 0.9, seed: 300 + side, banyan: true })
+    // 戰後的魷魚羹攤在西側榕樹下（cfg.clearing）：那一棵的氣根與低垂的樹冠讓出攤位的空間
+    const clearing = side > 0 ? cfg.clearing : null
+    buildTree(b, [tx, 0, treeZ], { scale: 0.9, seed: 300 + side, banyan: true, clearing })
     if (cfg.stalls) {
       bench(b, [tx + side * -1.6, 0.06, treeZ + 1.3], { rotationY: Math.PI / 2, length: 1.4 })
     }

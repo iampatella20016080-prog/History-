@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { shopYearText } from '../data/shops.js'
+import { getTheme, shopYearText } from '../data/shops.js'
 import { getSource } from '../data/sources.js'
 import { useGameStore } from '../state/useGameStore.js'
 
@@ -74,6 +74,8 @@ export function StoreDirectory({ era, shops }) {
                     )}
                   </div>
                   {shop.reconstruction && <span className="menu-shop__note">歷史情境重建</span>}
+                  {shop.scenarioNote && <span className="menu-shop__note">{shop.scenarioNote}</span>}
+                  {shop.theme && <span className="menu-shop__note is-theme">飲食主題：{getTheme(shop.theme)?.title}</span>}
                   <p className="menu-shop__summary">{shop.summary}</p>
                   {(shop.yearNote || shop.sourceIds?.length) && <ShopSources shop={shop} />}
                   <div className="menu-shop__actions">

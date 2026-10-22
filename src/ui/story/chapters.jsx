@@ -161,6 +161,22 @@ export function SourcesChapter({ chapter }) {
               </span>
               <span className="source__open">開啟原始網頁 ↗</span>
             </a>
+            {(source.published || source.usage) && (
+              <dl className="source__meta">
+                {source.published && (
+                  <div>
+                    <dt>出版時間</dt>
+                    <dd>{source.published}</dd>
+                  </div>
+                )}
+                {source.usage && (
+                  <div>
+                    <dt>用途</dt>
+                    <dd>{source.usage}</dd>
+                  </div>
+                )}
+              </dl>
+            )}
             {source.context && <p className="source__context">{source.context}</p>}
             {source.records?.length > 0 && (
               <div className="source__records">
