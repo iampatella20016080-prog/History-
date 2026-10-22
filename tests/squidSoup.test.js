@@ -251,8 +251,7 @@ describe('魷魚羹：兩個年代版本', () => {
       assert.ok(source, id)
       assert.match(source.url, /^https?:\/\//, id)
     }
-    const fresh = [...ids].filter((id) => !['tcma-yongle-market', 'taipei-market-info-yongle'].includes(id))
-    for (const id of fresh) {
+    for (const id of ids) {
       assert.ok(getSource(id).published, `${id} 出版時間`)
       assert.ok(getSource(id).usage, `${id} 用途`)
     }

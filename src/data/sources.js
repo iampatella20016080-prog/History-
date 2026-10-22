@@ -83,6 +83,8 @@ SOURCES['tcma-yongle-market'] = {
   publisher: '臺北市市場處',
   title: '臺北市公有永樂市場',
   url: 'https://www.tcma.gov.taipei/News_Content.aspx?n=1A4C7120ABFD0F9F&sms=26C5BF03E7963F4E&s=C58B40D5621B5A00',
+  published: '資料更新：民國113年8月7日（2024年）',
+  usage: '永樂市場的成立、改建與開業年份（臺北市市場處的官方網頁）。',
   context: '沿革：「民國前4年成立，稱為「公設永樂町食料品小賣市場」，民國71年原市場拆除，改建綜合大樓安置原攤商，74年開業。」地址為迪化街一段21號。',
 }
 SOURCES['taipei-market-info-yongle'] = {
@@ -91,6 +93,8 @@ SOURCES['taipei-market-info-yongle'] = {
   publisher: '臺北市政府',
   title: '臺北市公有永樂市場',
   url: 'https://www.gov.taipei/News_Content.aspx?n=9F394A83D9DF4A19&s=500622DD41A6B6A3',
+  published: '資料更新：民國108年2月18日（2019年）',
+  usage: '永樂市場各樓層的用途（臺北市政府的市集資訊）。',
   context: '介紹：「1樓生鮮蔬果日用品，2.3樓布匹窗簾飾布買賣縫製，是全台布業零售、批發中心。」',
 }
 SOURCES['ncl-yongle-market'] = {

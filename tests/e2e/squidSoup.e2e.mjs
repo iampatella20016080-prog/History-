@@ -546,7 +546,8 @@ async function runDevice(browser, device) {
   )
   await shot(page, `${device}-laopan-cat`)
 
-  // 建築觀賞模式在店內
+  // 建築觀賞模式在店內（先面向第一張桌子：觀賞模式的起始鏡頭在人物背後，看得到四道餐點）
+  await face(LP(1.38, -2.55))
   const beforeViewer = await state(page)
   await openSettings()
   await press(page.locator('[data-view-mode="viewer"]'))
@@ -556,6 +557,20 @@ async function runDevice(browser, device) {
   const viewerIn = await state(page)
   const roomCam = (s) => inRoom(s.cam) && s.cam.y > 0.2 && s.cam.y < LAO_PAN.ceiling && !s.camInside
   record(test, '在店裡進入觀賞模式：鏡頭在店內、地板與天花之間、不在牆裡', entered && roomCam(viewerIn), `鏡頭 (${round(viewerIn.cam.x)}, ${round(viewerIn.cam.y)}, ${round(viewerIn.cam.z)})`)
+  // 點四道餐點：近距離聚焦，不開啟介紹
+  const foodsPoint = await screenPointOf('lao-pan-foods')
+  if (foodsPoint?.inView) await tapAt(foodsPoint)
+  const focusedFoods = await viewerSettled()
+  const nearFoods = await state(page)
+  const foodTable = LP(1.38, -2.55)
+  const foodsDistance = Math.hypot(nearFoods.cam.x - foodTable.x, nearFoods.cam.z - foodTable.z)
+  record(
+    test,
+    touch ? '觀賞模式點四道餐點：鏡頭近距離聚焦食品、不開啟介紹' : '觀賞模式用滑鼠點四道餐點：鏡頭近距離聚焦食品、不開啟介紹',
+    Boolean(foodsPoint?.inView) && focusedFoods && nearFoods.mode === 'explore' && roomCam(nearFoods) && foodsDistance < 3.2,
+    `點在畫面內 ${Boolean(foodsPoint?.inView)}、穩定 ${focusedFoods}；鏡頭 (${round(nearFoods.cam.x)}, ${round(nearFoods.cam.y)}, ${round(nearFoods.cam.z)})、離桌子 ${round(foodsDistance)} m`,
+  )
+  await shot(page, `${device}-viewer-foods`)
   const size = page.viewportSize()
   if (touch) {
     const y = size.height * 0.45
@@ -570,14 +585,7 @@ async function runDevice(browser, device) {
   }
   const rotated = await viewerSettled()
   const turned = await state(page)
-  record(test, touch ? '觀賞模式在店內單指旋轉：鏡頭仍在店裡、不穿牆' : '觀賞模式在店內拖曳旋轉：鏡頭仍在店裡、不穿牆', rotated && Math.abs(turned.viewer.yaw - viewerIn.viewer.yaw) > 0.1 && roomCam(turned))
-  // 點四道餐點：近距離聚焦，不開啟介紹
-  const foodsPoint = await screenPointOf('lao-pan-foods')
-  if (foodsPoint?.inView) await tapAt(foodsPoint)
-  const focusedFoods = await viewerSettled()
-  const nearFoods = await state(page)
-  record(test, '觀賞模式點四道餐點：鏡頭近距離聚焦食品、不開啟介紹', Boolean(foodsPoint?.inView) && focusedFoods && nearFoods.mode === 'explore' && !nearFoods.camInside && nearFoods.cam.y < LAO_PAN.ceiling, `鏡頭 (${round(nearFoods.cam.x)}, ${round(nearFoods.cam.y)}, ${round(nearFoods.cam.z)})`)
-  await shot(page, `${device}-viewer-foods`)
+  record(test, touch ? '觀賞模式在店內單指旋轉：鏡頭仍在店裡、不穿牆' : '觀賞模式在店內拖曳旋轉：鏡頭仍在店裡、不穿牆', rotated && Math.abs(turned.viewer.yaw - nearFoods.viewer.yaw) > 0.1 && roomCam(turned))
   await press(page.locator('.hud-menu__toggle'))
   await press(page.locator('[data-focus-shop="lao-pan-squid-soup"]'))
   const focused = await viewerSettled()
