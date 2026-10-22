@@ -185,7 +185,7 @@ describe('導演的豆花店：從迪化街走進店裡（碰撞）', () => {
     // 店裡往左牆走：停在牆前
     const wall = walk(revival, fromShop(0, -4.2), { x: 0, z: -1 }, 40)
     assert.ok(wall.z > fromShop(-SHOP.half + SHOP.wallT, 0).z + PLAYER.radius - 0.01, `停在 z=${wall.z.toFixed(2)}`)
-    // 巷子東側的鄰棟立面
+    // 巷子東側北鄰的黃玉階文史館：門前的機車與花槽擋住，不能從巷子正面直接穿進騎樓
     const neighbour = walk(revival, { x: MOUTH.x, z: MOUTH.z + 13 }, { x: 1, z: 0 }, 40)
     assert.ok(neighbour.x < MOUTH.x + LANE.half, `停在 x=${neighbour.x.toFixed(2)}`)
     // 推開貼在前牆內側的門扇、巷底的盆栽、巷口路名牌的柱子、店裡的圓凳
@@ -241,10 +241,12 @@ describe('導演的豆花店：互動、介紹鏡頭與店家名錄', () => {
     const counter = records.find((item) => item.detail)
     assert.equal(facade.id, 'site-action-bar')
     assert.equal(counter.id, 'action-bar-douhua')
-    // 鄰棟與豆花車不屬於豆花店
-    for (const id of ['action-bar-lane-brick', 'action-bar-lane-tan', 'action-bar-truck']) {
+    // 鄰棟與豆花車不屬於豆花店；北側相鄰的紅磚街屋是另一棟建築：黃玉階文史館
+    for (const id of ['action-bar-lane-tan', 'action-bar-truck']) {
       assert.equal(revival.buildings.find((item) => item.id === id).storeId, null, id)
     }
+    assert.equal(revival.buildings.find((item) => item.id === 'site-huang-yujie-museum')?.storeId, 'huang-yujie-museum')
+    assert.ok(!revival.buildings.some((item) => item.id === 'action-bar-lane-brick'))
     // 巷子後方的平頂老屋不是另外的聚焦目標（點它們時聚焦豆花店的立面，而不是被拉進店裡）
     assert.ok(!revival.buildings.some((item) => /filler/.test(item.id)))
     const roof = { x: MOUTH.x + 13, y: 4, z: MOUTH.z + 28 }

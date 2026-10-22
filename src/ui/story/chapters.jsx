@@ -61,6 +61,13 @@ export function TextChapter({ chapter, onShowSources }) {
         </div>
       )}
 
+      {chapter.summary && (
+        <section className="chapter-summary">
+          <span className="chapter-summary__label">{chapter.summary.label ?? '網站延伸整理'}</span>
+          <p>{chapter.summary.text}</p>
+        </section>
+      )}
+
       {chapter.paragraphs?.map((paragraph, i) => (
         <p key={i} className="chapter__p">
           {paragraph}
@@ -68,6 +75,17 @@ export function TextChapter({ chapter, onShowSources }) {
       ))}
 
       <Figures figures={chapter.figures} />
+
+      {chapter.lists?.map((list) => (
+        <section key={list.title} className={`chapter-list is-${list.kind ?? 'plain'}`}>
+          <h4 className="chapter-list__title">{list.title}</h4>
+          <ul>
+            {list.items.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ))}
 
       {chapter.timeline && (
         <ol className="timeline">

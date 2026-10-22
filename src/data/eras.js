@@ -249,6 +249,8 @@ export const ERAS = [
       'yong-le-market',
       'hao-guo-yuan',
       'action-bar',
+      // 文化據點：導演的豆花店北鄰的紅磚街屋（只在這個年代，不替其他年代另外做歷史版本）
+      'huang-yujie-museum',
       'luguo-cafe',
       'lao-pan-squid-soup',
       'yong-le-mi-tai-mu',

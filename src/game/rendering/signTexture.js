@@ -94,6 +94,13 @@ const STYLES = {
   takeawayRed: { bg: '#c22a25', bg2: '#b52520', border: null, text: '#fff8ec', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.04)', ltr: true, sizeH: 0.72, sizeW: 0.86 },
   mitaimuMenu: { bg: '#f3ead6', bg2: '#ede2ca', border: null, text: '#8a2c22', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,90,50,0.05)' },
   tableNumber: { bg: '#cf2a26', bg2: '#c42521', border: null, text: '#ffffff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', ltr: true, sizeH: 0.8, sizeW: 0.9 },
+  // 黃玉階文史館：黑底（帶一點藍）金字的匾額（立面的「元珍」、室內的「學貫中西」，由右往左）、
+  // 騎樓斜掛的綠色「源珍」木匾（淺綠色的刻字）、陶缸上紅色菱形紙的黑字、騎樓的粉色直式布條、白色布旗
+  heritagePlaque: { bg: '#1d2331', bg2: '#262d3d', border: null, text: 'gold', shadow: 'rgba(0,0,0,0.65)', grain: 'rgba(170,190,220,0.06)', sizeH: 0.7, sizeW: 0.78 },
+  heritageGreen: { bg: '#2f5a47', bg2: '#284e3d', border: null, text: '#b5e0bd', shadow: 'rgba(8,26,18,0.7)', grain: 'rgba(255,255,255,0.05)', sizeH: 0.64, sizeW: 0.72 },
+  jarLabel: { bg: null, text: '#1c1612', fill: '#1c1612', outline: '#1c1612', outlineWidth: 0.02, shadow: 'rgba(0,0,0,0)', letters: true, sizeH: 0.82, sizeW: 0.86 },
+  pinkBanner: { bg: '#ecd2d6', bg2: '#e4c3c9', border: '#3c3236', text: '#2a2326', shadow: 'rgba(0,0,0,0)', grain: 'rgba(90,60,70,0.05)' },
+  flagCloth: { bg: '#f1eee6', bg2: '#e8e3d8', border: null, text: '#2a2420', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,110,95,0.08)', sizeH: 0.5, sizeW: 0.62 },
 }
 
 /** 電影膠卷的齒孔：沿著招牌的上下（橫式）或左右（直式）兩邊排一列圓角方孔 */
