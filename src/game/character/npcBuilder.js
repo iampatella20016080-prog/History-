@@ -95,6 +95,9 @@ export const NPC_LOOKS = {
   postwarDiner: { era: 'postwar', hair: 'short', top: { kind: 'shirt', color: '#e6e1d3', trim: '#cfc8b6' }, bottom: '#6a6862', shoes: ['#4a3225', '#2b1d16'] },
   postwarDinerWoman: { era: 'postwar', hair: 'bun', top: { kind: 'shirt', color: '#b46a5e', trim: '#9a5549' }, bottom: '#34405a', shoes: ['#2a2622', '#c9bfab'] },
   postwarCustomer: { era: 'postwar', hair: 'short', top: { kind: 'shirt', color: '#9fb2c4', trim: '#8597aa' }, bottom: '#4f5b70', shoes: ['#2a2622', '#c9bfab'] },
+  // 1945–1980：豆花攤與糕粿攤的攤販
+  postwarDouhuaVendor: { era: 'postwar', skin: '#d2a57c', hair: 'short', top: { kind: 'shirt', color: '#d9d6cb', trim: '#c4c0b2' }, bottom: '#3f4652', shoes: ['#2a2622', '#c9bfab'], extras: { apron: '#ece7da', towel: '#e6dfcf' } },
+  postwarKuehVendor: { era: 'postwar', skin: '#d8b08a', hair: 'bun', top: { kind: 'long', color: '#6f8796', trim: '#5c7280' }, bottom: '#2f3440', shoes: ['#2a2622', '#c9bfab'], extras: { apron: '#d9cdb6' } },
   // 2000–現在：永樂米苔目的客人與店員
   revivalDiner: { era: 'revival', hair: 'short', top: { kind: 'tee', color: '#2f3d5a' }, bottom: '#3a4560', shoes: ['#f1efe9', '#d8d4ca'] },
   revivalDinerWoman: { era: 'revival', hair: 'long', top: { kind: 'tee', color: '#ebe6dc', trim: '#2f3d5a' }, bottom: '#8a8f96', shoes: ['#f1efe9', '#d8d4ca'] },

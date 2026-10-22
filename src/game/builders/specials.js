@@ -49,6 +49,12 @@ export function buildTeaMansion(b, cfg) {
 }
 
 /* ═══════════ 慈聖宮：廟埕、榕樹與小吃攤 ═══════════ */
+/** 廟埕的共用桌椅（廟埕本地座標的中心；桌子與前後的凳子） */
+const SHARED_TABLES = [
+  [1.2, -2.6],
+  [2.4, -1.0],
+]
+
 export function buildTemple(b, cfg) {
   const rng = createRng(cfg.seed ?? 19)
   const condition = cfg.condition ?? 'mature'
@@ -149,8 +155,8 @@ export function buildTemple(b, cfg) {
   const treeZ = -2.4
   for (const side of [-1, 1]) {
     const tx = side * (w / 2 - 2.4)
-    // 戰後的魷魚羹攤在西側榕樹下（cfg.clearing）、米苔目攤在東側榕樹下（cfg.eastClearing）：
-    // 那一棵的氣根與低垂的樹冠讓出攤位的空間
+    // 戰後的魷魚羹攤與豆花攤在西側榕樹下（cfg.clearing）、米苔目攤與糕粿攤在東側榕樹下（cfg.eastClearing）：
+    // 那一棵的氣根與低垂的樹冠讓出攤位的空間（可以是一個或多個範圍）
     const clearing = (side > 0 ? cfg.clearing : cfg.eastClearing) ?? null
     buildTree(b, [tx, 0, treeZ], { scale: 0.9, seed: 300 + side, banyan: true, clearing })
     if (cfg.stalls) {
@@ -163,13 +169,17 @@ export function buildTemple(b, cfg) {
   // 戰後到現在：榕樹下的小吃攤
   if (cfg.stalls) {
     const canopies = condition === 'restored' ? ['#e9e4d6', '#d8e0d4', '#efe2cc'] : ['#d9cdb4', '#c9b08a', '#d6c6a8', '#b9c3b0']
-    foodStall(b, [-w / 2 + 2.2, 0.06, -4.3], { rotationY: Math.PI / 2 - 0.08, seed: 41, canopy: pick(rng, canopies) })
-    foodStall(b, [w / 2 - 2.2, 0.06, -4.4], { rotationY: -Math.PI / 2 + 0.08, seed: 42, canopy: pick(rng, canopies) })
+    // 兩側榕樹後方的一般小吃攤：有豆花攤與糕粿攤的年代（cfg.sideStalls 為 false）由這兩攤取代（亂數的使用順序不變）
+    const sideCanopies = [pick(rng, canopies), pick(rng, canopies)]
+    if (cfg.sideStalls !== false) {
+      foodStall(b, [-w / 2 + 2.2, 0.06, -4.3], { rotationY: Math.PI / 2 - 0.08, seed: 41, canopy: sideCanopies[0] })
+      foodStall(b, [w / 2 - 2.2, 0.06, -4.4], { rotationY: -Math.PI / 2 + 0.08, seed: 42, canopy: sideCanopies[1] })
+    }
     // 東側前緣的一般小吃攤：有米苔目攤的年代（cfg.frontStall 為 false）由米苔目攤取代（亂數的使用順序不變）
     const frontCanopy = pick(rng, canopies)
     if (cfg.frontStall !== false) foodStall(b, [-1.8, 0.06, -0.4], { rotationY: Math.PI, seed: 43, canopy: frontCanopy })
-    // 共用桌椅
-    for (const [x, z] of [[1.2, -2.6], [2.4, -1.0]]) {
+    // 共用桌椅（戰後由 cfg.sharedTables 集中到中央通道西側的用餐區）
+    for (const [x, z] of cfg.sharedTables ?? SHARED_TABLES) {
       b.box('wood', [0.9, 0.05, 0.6], [x, 0.78, z], { tint: '#9a7656' })
       for (const sx of [-1, 1]) b.box('wood', [0.05, 0.75, 0.5], [x + sx * 0.38, 0.4, z], { tint: '#6c4c34' })
       for (const sz of [-1, 1]) stool(b, [x, 0.06, z + sz * 0.6], { tint: pick(rng, ['#c96a4a', '#5f8fa3', '#e0b04c']) })
@@ -206,11 +216,12 @@ export function templeCollision(cfg, transform) {
     box(tx - 0.95, tx + 0.95, -2.4 - 0.95, -2.4 + 0.95) // 榕樹石座
   }
   if (cfg.stalls) {
-    box(-w / 2 + 1.6, -w / 2 + 2.8, -5.4, -3.2)
-    box(w / 2 - 2.8, w / 2 - 1.6, -5.5, -3.3)
+    if (cfg.sideStalls !== false) {
+      box(-w / 2 + 1.6, -w / 2 + 2.8, -5.4, -3.2)
+      box(w / 2 - 2.8, w / 2 - 1.6, -5.5, -3.3)
+    }
     if (cfg.frontStall !== false) box(-2.9, -0.7, -1.0, 0.5)
-    box(0.6, 1.8, -3.3, -1.9)
-    box(1.8, 3.0, -1.7, -0.3)
+    for (const [x, z] of cfg.sharedTables ?? SHARED_TABLES) box(x - 0.6, x + 0.6, z - 0.7, z + 0.7)
   }
   return { walk, obstacles }
 }
