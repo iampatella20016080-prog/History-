@@ -14,10 +14,9 @@ import {
 } from '../src/data/huangYujieLayout.js'
 import { HISTORIC_SHOP, MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN, VERIFIED_FACTS } from '../src/data/huangYujieMuseum.js'
 import { EXHIBIT_ATLAS, exhibitUV } from '../src/game/rendering/exhibitAtlas.js'
-import { resolvePlayerPosition } from '../src/game/collision.js'
+import { raycastBoxes, resolvePlayerPosition } from '../src/game/collision.js'
 import { CAMERA, PLAYER } from '../src/game/config.js'
 import { followAllowed, inFollowArea, indoorFollow, interiorAmount, orbitDirection, planBuildingFocus, segmentBlocked, viewerSpaceOf } from '../src/game/viewerCamera.js'
-import { raycastBoxes } from '../src/game/collision.js'
 import { buildEraInteriorSync, buildEraWorldSync } from '../src/game/world/buildWorld.js'
 import { getShopPlacement } from '../src/game/world/placement.js'
 

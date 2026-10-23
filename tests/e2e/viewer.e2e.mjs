@@ -32,6 +32,8 @@ const CYCLES = Number(process.env.CYCLES ?? 10)
 const SETTLE_TIMEOUT = Number(process.env.SETTLE_TIMEOUT ?? 120000)
 const TRANSITION_TIMEOUT = Number(process.env.TRANSITION_TIMEOUT ?? 240000)
 const WEBGL_WARNING = /WebGL|GL_INVALID|GL ERROR|CONTEXT_LOST/i
+// 瀏覽器自己的效能提示（例如軟體繪圖讀回畫面時的「GPU stall due to ReadPixels」）不是 WebGL 錯誤
+const GL_PERFORMANCE_NOTICE = /GL Driver Message \([^)]*\bPerformance\b/
 
 async function loadPlaywright() {
   const name = process.env.PLAYWRIGHT_MODULE ?? 'playwright'
@@ -189,7 +191,7 @@ async function runDevice(browser, device) {
   const errors = []
   page.on('pageerror', (error) => errors.push(error.message))
   page.on('console', (message) => {
-    if (message.type() === 'error' || (message.type() === 'warning' && WEBGL_WARNING.test(message.text()))) errors.push(message.text())
+    if (message.type() === 'error' || (message.type() === 'warning' && WEBGL_WARNING.test(message.text()) && !GL_PERFORMANCE_NOTICE.test(message.text()))) errors.push(message.text())
   })
   const press = (locator) => (touch ? locator.tap() : locator.click())
   const tapAt = (x, y) => (touch ? page.touchscreen.tap(x, y) : page.mouse.click(x, y))

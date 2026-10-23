@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
 import { createEraTransitionDirector } from '../src/game/eraTransition.js'
 import { useGameStore } from '../src/state/useGameStore.js'
+import { riceToWorld } from '../src/data/riceAndShineLayout.js'
+import { WIDE_SITE, szxToWorld } from '../src/data/shizixuanLayout.js'
 
 /** 時間軸上的年份 → 年代 id */
 export const YEAR = {
@@ -154,4 +156,33 @@ export function createHarness({ load = () => ({ frames: 3 }), renderer = true, m
       return displayed
     },
   }
+}
+
+/**
+ * 範圍是否在稻舍（迪化街329號店屋）的地段裡：這棟店屋從 1930 起可以走進去（室內、觀賞範圍、貼近障礙物的範圍），
+ * 其他店家的測試檢查「這個年代沒有室內」時排除它（稻舍本身在 riceAndShine.test.js 驗證）
+ */
+export function inRiceAndShineLot(rect) {
+  const a = riceToWorld(-2.85, 2.2)
+  const c = riceToWorld(2.85, -11.1)
+  const minX = Math.min(a.x, c.x)
+  const maxX = Math.max(a.x, c.x)
+  const minZ = Math.min(a.z, c.z)
+  const maxZ = Math.max(a.z, c.z)
+  return rect.minX >= minX - 1e-6 && rect.maxX <= maxX + 1e-6 && rect.minZ >= minZ - 1e-6 && rect.maxZ <= maxZ + 1e-6
+}
+
+/**
+ * 範圍是否在十字軒糕餅舖（延平北路二段68號）的地段裡：這家店從 1930 起可以走進去（室內、觀賞範圍、
+ * 貼近障礙物的範圍），1945、2000 取代 north-2 與 north-3 兩塊地段（面寬較大）；其他店家的測試檢查
+ * 「這個年代沒有室內」時排除它（十字軒本身在 shizixuan.test.js 驗證）
+ */
+export function inShizixuanLot(rect) {
+  const a = szxToWorld(WIDE_SITE, -4.8, 2.0)
+  const c = szxToWorld(WIDE_SITE, 4.8, -14.6)
+  const minX = Math.min(a.x, c.x)
+  const maxX = Math.max(a.x, c.x)
+  const minZ = Math.min(a.z, c.z)
+  const maxZ = Math.max(a.z, c.z)
+  return rect.minX >= minX - 1e-6 && rect.maxX <= maxX + 1e-6 && rect.minZ >= minZ - 1e-6 && rect.maxZ <= maxZ + 1e-6
 }

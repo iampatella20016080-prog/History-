@@ -22,6 +22,12 @@ import {
 import { HUANG_YUJIE_HOTSPOTS, MUSEUM, MUSEUM_SITE, museumToWorld } from './huangYujieLayout.js'
 import { MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN } from './huangYujieMuseum.js'
 import { ACTION_BAR_SITE } from './actionBarLayout.js'
+import { RICE_AND_SHINE_ID, riceAndShineEraConfig } from './riceAndShineEraConfig.js'
+import { RICE_HOTSPOTS, RS, riceToWorld } from './riceAndShineLayout.js'
+import { RICE_CHAPTERS, RICE_ERA_NOTES, RICE_RECORD } from './riceAndShineData.js'
+import { SHIZIXUAN_ID, shizixuanEraConfig } from './shizixuanEraConfig.js'
+import { EARLY, EARLY_SITE, MODERN, POSTWAR, SZX_HOTSPOTS, WIDE_SITE, szxToWorld } from './shizixuanLayout.js'
+import { SZX_CHAPTERS, SZX_ERA_NOTES, SZX_RECORD } from './shizixuanData.js'
 import {
   DOUHUA_STALL,
   DOUHUA_STALL_HOTSPOTS,
@@ -2096,38 +2102,103 @@ export const SHOPS = [
       revival: { condition: 'restored', stalls: true },
     },
   },
+  // 迪化街一段329號店屋：同一棟建築、同一個 ID，各年代的名稱、章節、熱點與狀態見 eras（由 getShop(id, eraId) 套用）
   {
-    id: 'dao-she',
-    name: '稻舍',
-    status: 'coming-soon',
-    category: '食堂',
+    id: RICE_AND_SHINE_ID,
+    name: '迪化街329號店屋',
+    status: 'open',
+    category: '米業店屋・歷史建築',
     seal: '稻米',
-    summary: '由迪化街北段的老米行整修而成的食堂與稻米文化空間。',
-    position: { x: 29.2, z: 4.5 },
+    address: RICE_RECORD.address,
+    summary: '大稻埕北街的米業店屋：同一棟建築從米行、碾米間、戰後的住家與倉庫，到老屋再生的稻舍。',
+    sourceIds: ['moc-329-shophouse', 'taiwannews-2022-rice-shine'],
+    hasInterior: true,
+    position: { ...RS.position },
     facing: 'north',
-    interaction: { radius: 3.2 },
-    building: {
-      archetype: 'minnan',
-      width: 5.6,
-      depth: 11,
-      floors: 2,
-      groundHeight: 3.3,
-      ground: 'brick',
-      upper: 'plaster',
-      plasterTint: '#eadcc0',
-      gable: 'horseback',
-      ridge: 'plain',
-      storefront: 'open',
-      goods: 'rice',
-      sign: { text: '米', style: 'wood' },
-    },
-    // 清末之後這裡是米行（以一般「米」字招牌示意），今日成為稻舍
+    interaction: { radius: 1.0, distance: 1.0 },
+    travelYawOffset: 0.35,
+    camera: { distance: 6.2, height: 2.2, side: -1.4, lookHeight: 3.2 },
+    building: { archetype: 'rice-and-shine', width: RS.half * 2, depth: RS.depth },
+    // 1853 不設定（這塊地是一般街屋）；1895 起才有米業的版本
     buildingByEra: {
-      banquet: { condition: 'mature' },
-      modern: { condition: 'mature' },
-      postwar: { condition: 'aged', sign: { text: '米', style: 'painted' } },
-      revival: { condition: 'restored', modernFront: true, sign: { text: '稻舍', style: 'modern' } },
+      banquet: { variant: 'earlyRiceTrade', condition: 'mature' },
+      modern: { variant: 'riceMill', condition: 'mature' },
+      postwar: { variant: 'postwarRiceHouse', condition: 'aged' },
+      revival: { variant: 'riceAndShineModern', condition: 'restored' },
     },
+    eraNotes: RICE_ERA_NOTES,
+    eras: Object.fromEntries(
+      Object.values(riceAndShineEraConfig)
+        .filter((item) => item.active)
+        .map((item) => [
+          item.era,
+          {
+            name: item.name,
+            eraLabel: item.label,
+            scenarioNote: item.era === 'revival' ? null : '歷史情境示意',
+            variant: item.variant,
+            category: item.era === 'revival' ? '米食料理・稻米文化・歷史建築' : item.era === 'banquet' ? '北街米業（米商・碾米）' : item.era === 'modern' ? '米行・碾米間' : '米行・住家與倉庫',
+            seal: item.era === 'revival' ? '稻舍' : '米',
+            summary: RICE_ERA_NOTES[item.era],
+            yearLabel: item.era === 'revival' ? '2020年登錄歷史建築' : '',
+            yearNote: '資料記載的建立年代是1907年，2020年4月28日登錄為臺北市歷史建築；唐益興米行1916年創立（2022年報導）。',
+            chapters: RICE_CHAPTERS[item.era],
+            hotspots: hotspotsToWorld(RICE_HOTSPOTS[item.variant], riceToWorld),
+            position: riceToWorld(RICE_HOTSPOTS[item.variant][0].point[0], 0),
+            interaction: { radius: 1.0, distance: RICE_HOTSPOTS[item.variant][0].point[1] },
+          },
+        ]),
+    ),
+  },
+  // 十字軒糕餅舖（延平北路二段68號）：同一個店家 ID、同一個地段，隨年代替換立面、招牌、擺設與室內（見 getShop(id, eraId)）
+  {
+    id: SHIZIXUAN_ID,
+    name: '十字軒糕餅舖',
+    status: 'open',
+    category: '糕餅鋪・歷史老店',
+    seal: '十字軒',
+    address: SZX_RECORD.address,
+    summary: '延平北路二段的糕餅老店：從窄身的糕餅店初創、戰後擴大為兩個店面寬的餅舖，到現在三層樓的十字軒糕餅舖。',
+    sourceIds: SZX_RECORD.sourceIds,
+    hasInterior: true,
+    site: { ...WIDE_SITE },
+    facing: 'south',
+    position: szxToWorld(WIDE_SITE, 0, 0),
+    interaction: { radius: 1.0, distance: 1.0 },
+    travelYawOffset: 0.3,
+    camera: { distance: 6.0, height: 2.0, side: 0, lookHeight: 2.4 },
+    building: { archetype: 'shizixuan', width: MODERN.half * 2, depth: MODERN.depth },
+    buildingByEra: {
+      modern: { variant: 'earlyShop', condition: 'mature', width: EARLY.half * 2, depth: EARLY.depth },
+      postwar: { variant: 'postwarShop', condition: 'aged', width: POSTWAR.half * 2, depth: POSTWAR.depth },
+      revival: { variant: 'modernShop', condition: 'restored', width: MODERN.half * 2, depth: MODERN.depth },
+    },
+    eraNotes: SZX_ERA_NOTES,
+    eras: Object.fromEntries(
+      Object.values(shizixuanEraConfig)
+        .filter((item) => item.active)
+        .map((item) => {
+          const site = item.variant === 'earlyShop' ? EARLY_SITE : WIDE_SITE
+          const toWorld = (x, z) => szxToWorld(site, x, z)
+          return [
+            item.era,
+            {
+              name: item.name,
+              eraLabel: item.label,
+              scenarioNote: item.era === 'revival' ? null : '歷史情境示意',
+              variant: item.variant,
+              category: item.era === 'revival' ? '糕餅鋪・歷史老店' : item.era === 'modern' ? '糕餅店（初創）' : '漢餅・祭祀糕點',
+              seal: item.era === 'revival' ? '十字軒' : '餅',
+              summary: SZX_ERA_NOTES[item.era],
+              chapters: SZX_CHAPTERS[item.era],
+              hotspots: hotspotsToWorld(SZX_HOTSPOTS[item.variant], toWorld),
+              site,
+              position: toWorld(SZX_HOTSPOTS[item.variant][0].point[0], 0),
+              interaction: { radius: 1.0, distance: 1.0 },
+            },
+          ]
+        }),
+    ),
   },
 ]
 
@@ -2140,8 +2211,24 @@ export function shopYearText(shop) {
   return shop?.year ? `${shop.year}年` : ''
 }
 
-export function getShop(id) {
-  return SHOPS.find((shop) => shop.id === id) ?? null
+/**
+ * 店家在某個年代的樣子：有 eras 的店家（例如迪化街329號店屋）在不同年代有不同的名稱、章節、熱點與狀態，
+ * 同一個 ID、同一棟建築。回傳的物件會快取，同一個年代每次都是同一個物件（互動位置的快取依物件區分）。
+ */
+const eraShopCache = new Map()
+export function shopForEra(shop, eraId) {
+  if (!shop?.eras || !eraId) return shop
+  const key = `${shop.id}@${eraId}`
+  if (!eraShopCache.has(key)) {
+    const override = shop.eras[eraId]
+    eraShopCache.set(key, override ? { ...shop, ...override, era: eraId } : shop)
+  }
+  return eraShopCache.get(key)
+}
+
+export function getShop(id, eraId = null) {
+  const shop = SHOPS.find((item) => item.id === id) ?? null
+  return eraId ? shopForEra(shop, eraId) : shop
 }
 
 /** 飲食主題（例如「魷魚羹飲食文化」：兩個年代各一個版本，只以主題串連） */
@@ -2176,7 +2263,7 @@ export function getThemeRelated(shop) {
 
 /** 某個年代出現在街上的店家（依 eras.js 的 availableStores 排序） */
 export function getShopsByEra(era) {
-  return (era?.availableStores ?? []).map(getShop).filter(Boolean)
+  return (era?.availableStores ?? []).map((id) => getShop(id, era.id)).filter(Boolean)
 }
 
 /** 店家在某個年代的建築設定（共用外觀＋該年代差異）；該年代沒有特殊建築時回傳 null */

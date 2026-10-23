@@ -4,6 +4,7 @@ import { Color } from 'three'
 import { QUALITY_MODES } from '../quality.js'
 import { createToonMaterial } from '../rendering/materials.js'
 import { useGameStore } from '../../state/useGameStore.js'
+import { hysteresisVisible } from '../visibility.js'
 
 /**
  * 老潘魷魚羹店裡的黑白貓（依需求說明中描述的照片加入的情境角色；沒有名字，也不表示由店家飼養）。
@@ -62,7 +63,7 @@ export function LaoPanCat({ cat }) {
     const group = root.current
     if (!group) return
     const [x, , z] = cat.position
-    const visible = Math.hypot(camera.position.x - x, camera.position.z - z) < SHOW_DISTANCE
+    const visible = hysteresisVisible(group.visible, Math.hypot(camera.position.x - x, camera.position.z - z), SHOW_DISTANCE)
     group.visible = visible
     if (!visible) return
     const t = clock.elapsedTime

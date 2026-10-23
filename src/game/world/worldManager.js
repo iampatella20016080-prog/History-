@@ -141,7 +141,7 @@ function hydrate(raw) {
   if (!era) throw new Error(`未知的年代：${raw.eraId}`)
   const shopModels = []
   for (const id of era.availableStores) {
-    const shop = getShop(id)
+    const shop = getShop(id, era.id)
     const store = raw.stores[id]
     if (!shop || !store) continue
     shopModels.push({

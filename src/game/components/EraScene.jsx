@@ -15,11 +15,27 @@ import { SignLayer } from './SignLayer.jsx'
 import { StaticBatches } from './StaticBatches.jsx'
 import { SteamLayer } from './SteamLayer.jsx'
 import { TextLanterns } from './StoreMarkers.jsx'
+import { hysteresisVisible } from '../visibility.js'
 
 /** 室內產生失敗時，隔多久再試一次（秒） */
 const INTERIOR_RETRY = 5
 
 /** 點到矩形範圍的水平距離（在範圍內為 0） */
+/** 室內範圍依建築分組（同一棟建築的範圍共用一份室內） */
+const groupCache = new WeakMap()
+function interiorGroups(interiors = []) {
+  if (groupCache.has(interiors)) return groupCache.get(interiors)
+  const groups = new Map()
+  for (const zone of interiors) {
+    const key = zone.building ?? zone.id
+    if (!groups.has(key)) groups.set(key, [])
+    groups.get(key).push(zone)
+  }
+  const list = [...groups.values()]
+  groupCache.set(interiors, list)
+  return list
+}
+
 function distanceToRect(r, x, z) {
   return Math.hypot(Math.max(r.minX - x, 0, x - r.maxX), Math.max(r.minZ - z, 0, z - r.maxZ))
 }
@@ -31,10 +47,12 @@ function distanceToRect(r, x, z) {
  * 跟著這個年代的街景快取與釋放；其他年代沒有室內，也就不會產生或繪製。
  * 不投射也不接收陰影，改用略為自發光的材質，看起來像被室內的燈均勻照亮。
  */
-function InteriorZone({ world, zone, detail }) {
+function InteriorZone({ world, zones, detail }) {
+  // 同一棟建築可以有好幾個室內範圍（例如稻舍的一樓與二樓）：室內只產生、繪製一份，距離與「在別棟裡」依所有範圍判斷
+  const zone = zones[0]
   const [batches, setBatches] = useState(() => getLoadedInterior(world, zone))
   // 店裡的人物（例如永樂米苔目的客人與店員）：跟著這間店的室內一起產生與顯示
-  const npcs = (world.npcs ?? []).filter((npc) => npc.zone === zone.id)
+  const npcs = (world.npcs ?? []).filter((npc) => zones.some((item) => item.id === npc.zone))
   const group = useRef()
   const status = useRef({ requested: false, retryAt: 0, visible: false, mounted: true })
 
@@ -51,13 +69,13 @@ function InteriorZone({ world, zone, detail }) {
     const p = playerState.position
     const { started, viewMode, travel } = useGameStore.getState()
     // 探索時鏡頭就在角色附近，看角色的位置；觀賞模式的鏡頭可以自由移動，也看鏡頭的位置
-    let nearest = distanceToRect(zone, p.x, p.z)
-    if (viewMode === 'viewer') nearest = Math.min(nearest, distanceToRect(zone, camera.position.x, camera.position.z))
+    let nearest = Math.min(...zones.map((item) => distanceToRect(item, p.x, p.z)))
+    if (viewMode === 'viewer') nearest = Math.min(nearest, ...zones.map((item) => distanceToRect(item, camera.position.x, camera.position.z)))
     const travelInside =
-      travel && world.shopModels.some((model) => model.shop.id === travel.shopId && (model.shop.inside === zone.id || model.shop.id === zone.id))
+      travel && world.shopModels.some((model) => model.shop.id === travel.shopId && zones.some((item) => model.shop.inside === item.id || model.shop.id === item.id))
     // 角色已經在另一棟建築的室內（例如在爐鍋咖啡的二樓、永樂市場裡）：這一棟的室內看不到，不繪製，也先不產生
     const here = viewMode === 'explore' ? interiorAmount(p, world.interiors, playerState.level) : null
-    const elsewhere = Boolean(here && here.amount >= 0.999 && here.zone.id !== zone.id)
+    const elsewhere = Boolean(here && here.amount >= 0.999 && !zones.some((item) => item.id === here.zone.id))
     if (started && !state.requested && !elsewhere && (nearest < zone.loadRadius || travelInside) && clock.elapsedTime >= state.retryAt) {
       state.requested = true
       loadEraInterior(world, zone)
@@ -70,11 +88,12 @@ function InteriorZone({ world, zone, detail }) {
           state.retryAt = clock.elapsedTime + INTERIOR_RETRY
         })
     }
-    state.visible = nearest < zone.showRadius && !elsewhere
+    // 遲滯：在顯示範圍的邊界附近來回走動時，室內不會一下出現、一下消失
+    state.visible = hysteresisVisible(state.visible, nearest, zone.showRadius) && !elsewhere
     if (group.current) group.current.visible = state.visible
     if (import.meta.env.DEV && window.__DDC__) {
       window.__DDC__.interiors ??= {}
-      window.__DDC__.interiors[zone.id] = { requested: state.requested, loaded: Boolean(group.current), visible: Boolean(group.current?.visible) }
+      for (const item of zones) window.__DDC__.interiors[item.id] = { requested: state.requested, loaded: Boolean(group.current), visible: Boolean(group.current?.visible) }
     }
   })
 
@@ -114,8 +133,8 @@ export function EraScene({ world }) {
       <group visible={detail}>
         <StaticBatches batches={world.detailBatches ?? []} dispose={false} />
       </group>
-      {(world.interiors ?? []).map((zone) => (
-        <InteriorZone key={zone.id} world={world} zone={zone} detail={detail} />
+      {interiorGroups(world.interiors).map((zones) => (
+        <InteriorZone key={zones[0].id} world={world} zones={zones} detail={detail} />
       ))}
       <SignLayer signs={world.signs} banners={world.banners} />
       <LanternLayer lanterns={world.lanterns} />

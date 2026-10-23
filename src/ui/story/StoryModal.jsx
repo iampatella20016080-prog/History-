@@ -32,7 +32,7 @@ export function StoryModal() {
   const { mounted, state } = usePresence(open, 380)
 
   const lastShop = useRef(null)
-  if (activeShopId) lastShop.current = getShop(activeShopId)
+  if (activeShopId) lastShop.current = getShop(activeShopId, eraId)
   const shop = lastShop.current
 
   const dialog = useRef(null)
