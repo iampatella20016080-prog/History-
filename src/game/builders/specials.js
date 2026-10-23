@@ -150,6 +150,8 @@ export function buildTemple(b, cfg) {
     b.box('plain', [0.1, 0.5, 0.1], [Math.cos(a) * 0.3, 0.25, burnerZ + Math.sin(a) * 0.3], { tint: '#5a4a30' })
   }
   b.addSteam(0, 1.15, burnerZ, 0.6)
+  // 戰後的廟埕後段有觀賞鏡頭（cfg.courtCamera）：天公爐也是遮擋方塊，聚焦兩側的攤位時鏡頭不會躲在爐子後面
+  if (cfg.courtCamera) b.addBlocker(-0.5, 0.5, 0, 1.1, burnerZ - 0.5, burnerZ + 0.5)
 
   // 兩棵大榕樹與環樹石座
   const treeZ = -2.4
@@ -189,7 +191,19 @@ export function buildTemple(b, cfg) {
   }
 
   b.addBlocker(-hallW / 2 - 0.4, hallW / 2 + 0.4, 0, 8, -courtD - hallD - 0.4, -courtD + 0.2)
-  return { courtDepth: courtD, treeZ, stalls: !!cfg.stalls }
+  const result = { courtDepth: courtD, treeZ, stalls: !!cfg.stalls }
+  // 戰後的廟埕後段（豆花攤、糕粿攤、用餐區與天公爐一帶，cfg.courtCamera）：
+  // 榕樹的樹冠與攤位很近，第三人稱鏡頭在這裡停在障礙物前面，不會退進樹冠裡；建築觀賞模式的注視點也可以移進廟埕
+  if (cfg.courtCamera) {
+    const zone = (minX, maxX, minZ, maxZ) => {
+      const p = b.transformPoint(minX, 0, minZ)
+      const q = b.transformPoint(maxX, 0, maxZ)
+      return { minX: Math.min(p.x, q.x), maxX: Math.max(p.x, q.x), minZ: Math.min(p.z, q.z), maxZ: Math.max(p.z, q.z) }
+    }
+    result.followAreas = [zone(-w / 2 + 0.3, w / 2 - 0.3, -courtD + 0.3, -0.8)]
+    result.viewerRegions = [{ ...zone(-w / 2 + 0.6, w / 2 - 0.6, -courtD + 0.6, 0.5), maxY: 2.0, cameraMaxY: 2.1 }]
+  }
+  return result
 }
 
 /** 廟埕在世界座標中的可行走範圍與障礙物（由 layout 使用） */

@@ -317,13 +317,17 @@ describe('跟隨鏡頭貼著障礙物時不會進到障礙物裡', () => {
     assert.ok(inFollowArea(fromShop(0, -SHOP.arcade / 2), revival.followAreas), '騎樓')
     assert.ok(!inFollowArea({ x: MOUTH.x, z: 0 }, revival.followAreas), '迪化街上不是')
     assert.ok(!inFollowArea({ x: 38, z: 0 }, revival.followAreas), '永樂市場的入口不是')
-    // 戰後有慈聖宮廟埕裡、豆花攤與糕粿攤前的兩塊（見 tests/templeSnacks.test.js）；1930 起稻舍（迪化街329號店屋）店裡也有，迪化街上沒有
+    // 其他年代：迪化街上沒有；戰後只有慈聖宮廟埕後段的一塊（豆花攤、糕粿攤與用餐區，見 tests/templeSnacks.test.js）；
+    // 1930 與 1945 另外有稻舍（迪化街329號店屋）店裡的一塊（見 tests/riceAndShine.test.js），1895 以前的稻舍走不進去
     for (const era of ERAS.filter((item) => item.id !== 'revival')) {
-      const areas = buildEraWorldSync(era.id).followAreas.filter((r) => !inRiceAndShineLot(r))
+      const all = buildEraWorldSync(era.id).followAreas
+      const rice = all.filter(inRiceAndShineLot)
+      const areas = all.filter((r) => !inRiceAndShineLot(r))
       if (era.id === 'postwar') {
-        assert.equal(areas.length, 2, era.id)
+        assert.equal(areas.length, 1, era.id)
         for (const r of areas) assert.ok(r.minX > -2 && r.maxX < 10 && r.minZ > 4.5 && r.maxZ < 10.7, `${era.id} 在廟埕裡`)
       } else assert.equal(areas.length, 0, era.id)
+      assert.equal(rice.length, era.id === 'modern' || era.id === 'postwar' ? 1 : 0, `${era.id} 稻舍`)
     }
   })
 

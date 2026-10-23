@@ -308,7 +308,8 @@ async function runDevice(browser, device) {
       const b = d.cameraScene.current.buildings.find((item) => item.id === id)?.parts[0]
       if (!b) return null
       const c = d.camera.position
-      return Math.hypot(c.x - (b.minX + b.maxX) / 2, c.y - (b.minY + b.maxY) / 2, c.z - (b.minZ + b.maxZ) / 2)
+      // 水平距離（與魷魚羹的測試相同的標準）：觀賞模式的最近距離是 2 m，注視點在食物前方一點
+      return Math.hypot(c.x - (b.minX + b.maxX) / 2, c.z - (b.minZ + b.maxZ) / 2)
     }, id)
   /** 鏡頭停下來（例如關閉介紹後鏡頭從介紹的位置回到人物背後）：之後再計算要點的位置，點下去時鏡頭不會再移動 */
   const cameraSettled = () =>
@@ -592,7 +593,7 @@ async function runDevice(browser, device) {
     const dist = await distanceTo(target)
     const story = await storyIsOpen()
     await shot(page, `${device}-0${name === 'douhua' ? 4 : 5}-${name}-closeup`)
-    focusChecks.push({ name, ok: focused && !atStall.camInside && Boolean(point?.inView) && close && !story && s.mode === 'explore' && !s.camInside && dist < 2.6, dist })
+    focusChecks.push({ name, ok: focused && !atStall.camInside && Boolean(point?.inView) && close && !story && s.mode === 'explore' && !s.camInside && dist < 3.2, dist })
   }
   record(test, touch ? '觀賞模式從名錄聚焦兩攤、點兩碗豆花與托盤：近距離聚焦食物、不開啟介紹、不在方塊裡' : '觀賞模式從名錄聚焦兩攤、用滑鼠點兩碗豆花與托盤：近距離聚焦食物、不開啟介紹、不在方塊裡', focusChecks.every((item) => item.ok), focusChecks.map((item) => `${item.name} ${item.ok} ${round(item.dist ?? -1)} m`).join('、'))
   await press(page.locator('.viewer-bar button', { hasText: '返回探索' }).first())

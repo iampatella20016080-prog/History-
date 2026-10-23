@@ -94,9 +94,12 @@ describe('永樂市場：只在「老屋新生」的街底', () => {
   test('其他年代沒有市場、室內與額外的觀賞範圍', () => {
     for (const era of ERAS.filter((item) => item.id !== 'revival')) {
       const world = buildEraWorldSync(era.id)
-      // 1930 起稻舍（迪化街329號店屋）可以走進去，其他的室內與觀賞範圍都沒有
-      assert.ok(world.interiors.every((item) => item.building === 'store-rice-and-shine-329'), era.id)
-      assert.ok(world.viewerRegions.every(inRiceAndShineLot), era.id)
+      // 1930 與 1945 只有稻舍（迪化街329號店屋）的室內與觀賞範圍（見 tests/riceAndShine.test.js），1895 以前走不進去；
+      // 戰後另外有慈聖宮廟埕後段的觀賞範圍（豆花攤與糕粿攤，見 tests/templeSnacks.test.js）；任何年代都沒有市場的
+      const walkIn = era.id === 'modern' || era.id === 'postwar'
+      assert.deepEqual(world.interiors.map((item) => item.id), walkIn ? ['rice-and-shine-329'] : [], era.id)
+      assert.equal(world.viewerRegions.filter(inRiceAndShineLot).length, walkIn ? 5 : 0, `${era.id} 稻舍`)
+      assert.equal(world.viewerRegions.filter((r) => !inRiceAndShineLot(r)).length, era.id === 'postwar' ? 1 : 0, era.id)
       assert.ok(!world.buildings.some((item) => item.storeId === 'yong-le-market' || item.storeId === 'hao-guo-yuan'), era.id)
       const market = world.buildings.find((item) => item.storeId === 'yong-le-market')
       assert.ok(!market)
