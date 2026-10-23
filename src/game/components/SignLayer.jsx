@@ -9,7 +9,13 @@ import { createSignAtlas, signKey } from '../rendering/signTexture.js'
  * 招牌與布幡：整個年代的招牌畫在同一張圖集上，合併成一個網格（一次繪製）。
  * 布幡另外成一個網格，頂點著色器讓布面隨風輕擺（幅度很小，輪廓線仍能對齊）。
  */
-function quadGeometry(items, rects, { segments = 1, sway = false } = {}) {
+/**
+ * 招牌文字貼在底板前面：沿著招牌的法線往前移 SIGN_LIFT，不和底板或牆面共面（Z-fighting）；
+ * 材質另外加 polygonOffset（只有招牌這類貼花用，其他模型不開）。布幡是懸空的布面，不需要。
+ */
+export const SIGN_LIFT = 0.006
+
+function quadGeometry(items, rects, { segments = 1, sway = false, lift = 0 } = {}) {
   const rows = segments
   const vertsPerItem = rows * 6
   const count = items.length * vertsPerItem
@@ -36,7 +42,9 @@ function quadGeometry(items, rects, { segments = 1, sway = false } = {}) {
     const ux = Math.sin(r) * st
     const uy = ct
     const uz = Math.cos(r) * st
-    const [cx, cy, cz] = item.position
+    const cx = item.position[0] + nx * lift
+    const cy = item.position[1] + ny * lift
+    const cz = item.position[2] + nz * lift
     const hw = item.width / 2
     const hh = item.height / 2
     const phase = index * 1.37
@@ -91,7 +99,7 @@ export function SignLayer({ signs, banners }) {
       emissiveMap: atlas.texture,
       emissiveIntensity: 0.06,
     })
-    const signGeometry = signs.length ? quadGeometry(signs, atlas.rects) : null
+    const signGeometry = signs.length ? quadGeometry(signs, atlas.rects, { lift: SIGN_LIFT }) : null
     let bannerGeometry = null
     let bannerMaterial = null
     if (banners.length) {
@@ -111,6 +119,10 @@ export function SignLayer({ signs, banners }) {
       }
       bannerMaterial.customProgramCacheKey = () => 'banner-sway'
     }
+    // 招牌是貼在底板上的貼花：深度往鏡頭方向偏一點（布幡複製的是這之前的設定，不受影響）
+    material.polygonOffset = true
+    material.polygonOffsetFactor = -1
+    material.polygonOffsetUnits = -1
     return { atlas, material, signGeometry, bannerGeometry, bannerMaterial }
   }, [signs, banners])
 
@@ -134,7 +146,7 @@ export function SignLayer({ signs, banners }) {
 
   return (
     <>
-      {layer.signGeometry && <mesh geometry={layer.signGeometry} material={layer.material} receiveShadow />}
+      {layer.signGeometry && <mesh name="signs" geometry={layer.signGeometry} material={layer.material} receiveShadow />}
       {layer.bannerGeometry && (
         <mesh geometry={layer.bannerGeometry} material={layer.bannerMaterial} receiveShadow castShadow />
       )}

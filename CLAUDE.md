@@ -36,7 +36,7 @@ node tests/e2e/viewer.e2e.mjs http://127.0.0.1:5173/
 
 讀取人物／鏡頭狀態的 e2e 需要開發版的 `window.__DDC__`（`src/main.jsx`）。`era-switching.e2e.mjs` 也可以對 `vite preview --port 4173` 的打包版執行。
 
-除錯用網址參數：`?era=<年代 id>`、`?quality=low|medium|high`、`?worker=0`（不用 Web Worker 產生街景）。
+除錯用網址參數：`?era=<年代 id>`、`?quality=low|medium|high`、`?worker=0`（不用 Web Worker 產生街景）、`?adaptive=0`（停用畫面更新率過低時的自動降解析度）。
 
 ## 架構
 
@@ -91,6 +91,7 @@ node tests/e2e/viewer.e2e.mjs http://127.0.0.1:5173/
 - 範例：
   - 建模：`builders/templeSquidStall.js`、`laoPanExterior.js`
   - 測試：`tests/squidSoup.test.js`、`tests/miTaiMu.test.js`
+- 只有同類食物、沒有品牌傳承關係的現代店家放在主題的 `related`（用 `getThemeRelated(shop)` 取得），例如廟口豆花攤 → 導演的豆花店（`src/data/templeSnackLayout.js`）。這類情境示意攤位不使用現代店家的店名、商標或裝潢。
 
 **同一棟建築的跨年代版本**（例如稻舍／迪化街329號店屋）：
 
@@ -116,7 +117,7 @@ node tests/e2e/viewer.e2e.mjs http://127.0.0.1:5173/
   - 觸控裝置預設低畫質
 - **歷史內容要有出處**：加到 `sources.js`。未查證的年份要標示，重建的場景標「歷史情境重建」。
 - 功能完成後要更新 README：功能段落、「自動化測試」、「測試狀態」。
-- 開發分支 `claude/dadaocheng-food-street-phase1-*`，透過 PR 合併到 `main`。
+- 開發分支 `claude/dadaocheng-food-street-phase1-*`，透過 PR 合併到 `main`，不直接推送到 `main`。收工前要跑 `npm test`。
 
 ## 注意
 

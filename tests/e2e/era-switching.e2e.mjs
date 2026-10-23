@@ -71,13 +71,15 @@ function record(test, step, ok, detail = '') {
 const rootData = (page) => page.evaluate(() => ({ ...document.documentElement.dataset }))
 
 const WEBGL_WARNING = /WebGL|GL_INVALID|GL ERROR|CONTEXT_LOST/i
+// 瀏覽器自己的效能提示（例如軟體繪圖讀回畫面時的「GPU stall due to ReadPixels」）不是 WebGL 錯誤
+const GL_PERFORMANCE_NOTICE = /GL Driver Message \([^)]*\bPerformance\b/
 
 async function openGame(context, query, { touch, quality = 'low' }) {
   const page = await context.newPage()
   const errors = []
   page.on('pageerror', (error) => errors.push(error.message))
   page.on('console', (message) => {
-    if (message.type() === 'error' || (message.type() === 'warning' && WEBGL_WARNING.test(message.text()))) errors.push(message.text())
+    if (message.type() === 'error' || (message.type() === 'warning' && WEBGL_WARNING.test(message.text()) && !GL_PERFORMANCE_NOTICE.test(message.text()))) errors.push(message.text())
   })
   const url = new URL(BASE_URL)
   if (quality) url.searchParams.set('quality', quality)

@@ -66,7 +66,8 @@ function shopfront(b) {
   for (const s of [-1, 1]) b.box('mosaicTile', [wallT, H, 0.3], [s * (half - wallT / 2), H / 2, -0.05], { tint: '#ffffff' })
   b.box('steel', [half * 2 - 0.4, 0.28, 0.3], [0, top + 0.14, 0.06], { tint: '#a7acad' })
   b.box('shutter', [half * 2 - 0.4, 0.1, 0.03], [0, top - 0.05, 0.2], { tint: '#cfd2d2' })
-  b.box('plaster', [half * 2 - 0.4, H - top - 0.28, 0.2], [0, (top + 0.28 + H) / 2, -0.02], { tint: '#e9e7e0' })
+  // 捲門箱上方到騎樓天花之間的牆（捲門箱已經頂到天花時不產生：負的高度會變成翻面的方塊）
+  if (H - top - 0.28 > 0.01) b.box('plaster', [half * 2 - 0.4, H - top - 0.28, 0.2], [0, (top + 0.28 + H) / 2, -0.02], { tint: '#e9e7e0' })
   // 排煙罩：外帶區上方的大不鏽鋼罩，下緣有一圈折邊
   const { takeaway: t } = L
   const hx = (t.minX + t.maxX) / 2

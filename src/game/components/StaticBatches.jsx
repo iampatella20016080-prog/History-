@@ -23,6 +23,8 @@ export function StaticBatches({ batches, materials: materialSet, castShadow = tr
   return batches.map(({ material, geometry }) => (
     <mesh
       key={material}
+      name={`batch-${material}`}
+      userData={{ material, staticBatch: true }}
       geometry={geometry}
       material={materials[material] ?? materials.plain}
       castShadow={castShadow && !NO_SHADOW_CAST.has(material)}

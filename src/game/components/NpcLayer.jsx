@@ -5,6 +5,7 @@ import { buildNpcGeometry, npcAnimation } from '../character/npcBuilder.js'
 import { QUALITY_MODES } from '../quality.js'
 import { getMaterials } from '../rendering/materials.js'
 import { useGameStore } from '../../state/useGameStore.js'
+import { hysteresisVisible } from '../visibility.js'
 
 /**
  * 店家與攤位裡的情境人物（攤販、吃米苔目的客人、排隊的人與店員；幾何見 character/npcBuilder.js）。
@@ -51,7 +52,8 @@ export function Npc({ npc }) {
     const group = root.current
     if (!group) return
     const [x, , z] = npc.position
-    const visible = Math.hypot(camera.position.x - x, camera.position.z - z) < SHOW_DISTANCE
+    // 遲滯：在顯示距離附近來回時不會閃爍
+    const visible = hysteresisVisible(group.visible, Math.hypot(camera.position.x - x, camera.position.z - z), SHOW_DISTANCE)
     group.visible = visible
     frame.current++
     const t = clock.elapsedTime
