@@ -21,6 +21,7 @@ import {
 } from '../src/game/viewerCamera.js'
 import { buildEraInteriorSync, buildEraWorldSync } from '../src/game/world/buildWorld.js'
 import { getShopPlacement } from '../src/game/world/placement.js'
+import { inRiceAndShineLot } from './helpers.js'
 
 /**
  * 導演的豆花店 Action! Bar：只在「老屋新生」出現的迪化街一段224巷、巷子裡的二層樓店面、
@@ -203,7 +204,7 @@ describe('導演的豆花店：從迪化街走進店裡（碰撞）', () => {
     const modern = buildEraWorldSync('modern')
     for (const start of [fromShop(0, -4.2), { x: MOUTH.x, z: MOUTH.z + 15 }]) {
       const p = { ...start }
-      resolvePlayerPosition(p, PLAYER.radius, modern.collision)
+      resolvePlayerPosition(p, PLAYER.radius, modern.collision, 0, { relocate: true })
       assert.ok(walkableAt(modern, p.x, p.z), `推到 (${p.x.toFixed(2)}, ${p.z.toFixed(2)})`)
       // 不會留在原本巷子或店的位置（那一帶在其他年代是街屋）
       assert.ok(p.z < MOUTH.z + 6, `推到 (${p.x.toFixed(2)}, ${p.z.toFixed(2)})`)
@@ -316,13 +317,17 @@ describe('跟隨鏡頭貼著障礙物時不會進到障礙物裡', () => {
     assert.ok(inFollowArea(fromShop(0, -SHOP.arcade / 2), revival.followAreas), '騎樓')
     assert.ok(!inFollowArea({ x: MOUTH.x, z: 0 }, revival.followAreas), '迪化街上不是')
     assert.ok(!inFollowArea({ x: 38, z: 0 }, revival.followAreas), '永樂市場的入口不是')
+    // 其他年代：迪化街上沒有；戰後只有慈聖宮廟埕後段的一塊（豆花攤、糕粿攤與用餐區，見 tests/templeSnacks.test.js）；
+    // 1930 與 1945 另外有稻舍（迪化街329號店屋）店裡的一塊（見 tests/riceAndShine.test.js），1895 以前的稻舍走不進去
     for (const era of ERAS.filter((item) => item.id !== 'revival')) {
-      const areas = buildEraWorldSync(era.id).followAreas
-      // 戰後只有慈聖宮廟埕的後段一塊（豆花攤、糕粿攤與用餐區，見 tests/templeSnacks.test.js），迪化街上沒有
+      const all = buildEraWorldSync(era.id).followAreas
+      const rice = all.filter(inRiceAndShineLot)
+      const areas = all.filter((r) => !inRiceAndShineLot(r))
       if (era.id === 'postwar') {
         assert.equal(areas.length, 1, era.id)
         for (const r of areas) assert.ok(r.minX > -2 && r.maxX < 10 && r.minZ > 4.5 && r.maxZ < 10.7, `${era.id} 在廟埕裡`)
       } else assert.equal(areas.length, 0, era.id)
+      assert.equal(rice.length, era.id === 'modern' || era.id === 'postwar' ? 1 : 0, `${era.id} 稻舍`)
     }
   })
 

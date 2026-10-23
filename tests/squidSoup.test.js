@@ -298,7 +298,7 @@ describe('老潘：店面、走進店裡與碰撞', () => {
     const mine = revival.buildings.filter((item) => /lao-pan/.test(item.id))
     const others = revival.buildings.filter((item) => !/lao-pan/.test(item.id))
     assert.ok(mine.length >= 4)
-    for (const id of ['yong-le-market', 'luguo-cafe', 'dao-she', 'action-bar']) assert.ok(others.some((item) => item.storeId === id), `${id} 仍在街上`)
+    for (const id of ['yong-le-market', 'luguo-cafe', 'rice-and-shine-329', 'action-bar']) assert.ok(others.some((item) => item.storeId === id), `${id} 仍在街上`)
     for (const a of mine) {
       for (const part of a.parts) {
         for (const o of others) {
@@ -374,7 +374,7 @@ describe('老潘：店面、走進店裡與碰撞', () => {
       const world = worlds[era.id]
       for (const [x, z] of spots) {
         const p = { ...LP(x, z) }
-        resolvePlayerPosition(p, PLAYER.radius, world.collision, 0)
+        resolvePlayerPosition(p, PLAYER.radius, world.collision, 0, { relocate: true })
         assert.ok(walkableAt(world, p.x, p.z), `${era.id} (${x}, ${z}) → (${p.x.toFixed(2)}, ${p.z.toFixed(2)})`)
         assert.equal(groundAt(p, world.collision, 0, null).y, 0)
         // 不在老潘的位置（那裡是一般街屋）

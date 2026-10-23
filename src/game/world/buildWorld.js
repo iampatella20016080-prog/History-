@@ -50,6 +50,10 @@ import { buildYongleMiTaiMuExterior, yongleMiTaiMuFurnitureBlockers } from '../b
 import { buildYongleMiTaiMuInterior } from '../builders/yongleMiTaiMuInterior.js'
 import { buildHuangYujieExterior, museumFurnitureBlockers } from '../builders/huangYujieExterior.js'
 import { buildHuangYujieInterior } from '../builders/huangYujieInterior.js'
+import { buildRiceAndShineExterior, riceFurnitureBlockers } from '../builders/riceAndShine/riceAndShineExterior.js'
+import { buildRiceAndShineInterior } from '../builders/riceAndShine/riceAndShineInterior.js'
+import { buildShizixuanExterior, szxFurnitureBlockers } from '../builders/shizixuan/shizixuanExterior.js'
+import { buildShizixuanInterior } from '../builders/shizixuan/shizixuanInterior.js'
 import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
 import { getEra } from '../../data/eras.js'
@@ -110,6 +114,22 @@ export const BUILDING_BUILDERS = {
     result.cameraOnly = [{ start, end: b.blockers.length }]
     return result
   },
+  // 迪化街一段329號店屋（稻舍 Rice & Shine）：同一棟建築依年代的 variant 換外觀、招牌、人物與室內；家具的遮擋方塊只給鏡頭用
+  'rice-and-shine': (b, config, detail) => {
+    const result = buildRiceAndShineExterior(b, config, detail)
+    const start = b.blockers.length
+    riceFurnitureBlockers(b, config)
+    result.cameraOnly = [{ start, end: b.blockers.length }]
+    return result
+  },
+  // 十字軒糕餅舖（延平北路二段68號）：同一棟建築依年代的 variant 換外觀、招牌與室內；家具的遮擋方塊只給鏡頭用
+  shizixuan: (b, config, detail) => {
+    const result = buildShizixuanExterior(b, config, detail)
+    const start = b.blockers.length
+    szxFurnitureBlockers(b, config)
+    result.cameraOnly = [{ start, end: b.blockers.length }]
+    return result
+  },
 }
 
 /**
@@ -123,6 +143,8 @@ export const BUILDING_INTERIORS = {
   'lao-pan': buildLaoPanInterior,
   'yong-le-mi-tai-mu': buildYongleMiTaiMuInterior,
   'huang-yujie-museum': buildHuangYujieInterior,
+  'rice-and-shine': buildRiceAndShineInterior,
+  shizixuan: buildShizixuanInterior,
 }
 
 const PROP_BUILDERS = {

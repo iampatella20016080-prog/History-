@@ -100,7 +100,56 @@ const STYLES = {
   heritageGreen: { bg: '#2f5a47', bg2: '#284e3d', border: null, text: '#b5e0bd', shadow: 'rgba(8,26,18,0.7)', grain: 'rgba(255,255,255,0.05)', sizeH: 0.64, sizeW: 0.72 },
   jarLabel: { bg: null, text: '#1c1612', fill: '#1c1612', outline: '#1c1612', outlineWidth: 0.02, shadow: 'rgba(0,0,0,0)', letters: true, sizeH: 0.82, sizeW: 0.86 },
   pinkBanner: { bg: '#ecd2d6', bg2: '#e4c3c9', border: '#3c3236', text: '#2a2326', shadow: 'rgba(0,0,0,0)', grain: 'rgba(90,60,70,0.05)' },
+  // 迪化街329號店屋（稻舍）：入口上方的金色立體字、黑底金字的吊牌、二樓飾板上深褐色的浮雕字（由左往右）
+  riceGold: { bg: null, text: 'gold', shadow: 'rgba(40,20,10,0.8)', outline: '#5a3a18', outlineWidth: 0.05, letters: true, ltr: true, sizeH: 0.8, sizeW: 0.86 },
+  riceBlack: { bg: '#1b1918', bg2: '#232120', border: null, text: '#e7c77e', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', ltr: true, sizeH: 0.7, sizeW: 0.9 },
+  riceRelief: { bg: null, text: '#4a2e22', fill: '#4a2e22', outline: '#2a1a12', outlineWidth: 0.03, shadow: 'rgba(60,40,30,0.35)', letters: true, ltr: true, sizeH: 0.8, sizeW: 0.62 },
   flagCloth: { bg: '#f1eee6', bg2: '#e8e3d8', border: null, text: '#2a2420', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,110,95,0.08)', sizeH: 0.5, sizeW: 0.62 },
+  // 十字軒糕餅舖（2000–現在）：紅底、每個字套金色圓框的店名（由左往右；直式招牌由上而下）、金色小字的英文、金色圓形徽章
+  szxCircle: { bg: '#c3242b', bg2: '#b51f26', border: null, text: 'gold', shadow: 'rgba(70,10,10,0.35)', grain: 'rgba(255,255,255,0.02)', ltr: true, circles: true, sizeH: 0.62, sizeW: 0.8 },
+  szxSmall: { bg: null, text: 'gold', shadow: 'rgba(70,10,10,0.5)', outline: '#7a1a18', outlineWidth: 0.03, letters: true, ltr: true, sizeH: 0.8, sizeW: 0.7 },
+  szxBadge: { bg: null, text: 'gold', shadow: 'rgba(70,10,10,0.5)', badge: true },
+}
+
+/** 十字軒的徽章：兩圈金色圓環、回紋方框與中央的「十」 */
+function drawBadge(g, cw, ch, text) {
+  g.clearRect(0, 0, cw, ch)
+  const cx = cw / 2
+  const cy = ch / 2
+  const r = Math.min(cw, ch) * 0.46
+  const gold = goldFill(g, cy - r, cy + r)
+  g.strokeStyle = gold
+  g.lineWidth = r * 0.07
+  g.beginPath()
+  g.arc(cx, cy, r, 0, Math.PI * 2)
+  g.stroke()
+  g.lineWidth = r * 0.035
+  g.beginPath()
+  g.arc(cx, cy, r * 0.84, 0, Math.PI * 2)
+  g.stroke()
+  // 回紋方框
+  const s = r * 0.55
+  g.lineWidth = r * 0.05
+  g.strokeRect(cx - s, cy - s, s * 2, s * 2)
+  for (const [sx, sy] of [
+    [-1, -1],
+    [1, -1],
+    [-1, 1],
+    [1, 1],
+  ]) {
+    g.beginPath()
+    g.moveTo(cx + sx * s, cy + sy * s * 0.45)
+    g.lineTo(cx + sx * s * 0.72, cy + sy * s * 0.45)
+    g.lineTo(cx + sx * s * 0.72, cy + sy * s * 0.72)
+    g.lineTo(cx + sx * s * 0.45, cy + sy * s * 0.72)
+    g.lineTo(cx + sx * s * 0.45, cy + sy * s)
+    g.stroke()
+  }
+  g.textAlign = 'center'
+  g.textBaseline = 'middle'
+  g.font = `700 ${r * 0.8}px ${DISPLAY_FONT}`
+  g.fillStyle = gold
+  g.fillText(text || '十', cx, cy + r * 0.04)
 }
 
 /** 電影膠卷的齒孔：沿著招牌的上下（橫式）或左右（直式）兩邊排一列圓角方孔 */
@@ -188,6 +237,10 @@ function drawDecoOrnaments(g, cw, ch, m, color) {
 /** 在 (0,0)–(cw,ch) 的區域內畫一面招牌 */
 function drawSign(g, cw, ch, text, style, vertical) {
   const s = resolveStyle(style, text)
+  if (s.badge) {
+    drawBadge(g, cw, ch, text)
+    return
+  }
   const rng = createRng(text.charCodeAt(0) * 31 + cw * 7 + ch)
   const m = Math.min(cw, ch) * 0.075
 
@@ -264,6 +317,17 @@ function drawSign(g, cw, ch, text, style, vertical) {
     const widthFactor = s.sizeW ?? (s.ltr ? 0.78 : 0.92)
     size = Math.min(ch * heightFactor, (inner / n) * widthFactor)
     display.forEach((char, i) => positions.push([char, pad + (inner * (i + 0.5)) / n, ch / 2 + size * 0.03]))
+  }
+  if (s.circles) {
+    // 每個字套一個金色圓框，字縮小到圓框裡
+    for (const [, x, y] of positions) {
+      g.strokeStyle = goldFill(g, y - size / 2, y + size / 2)
+      g.lineWidth = Math.max(2, size * 0.06)
+      g.beginPath()
+      g.arc(x, y - size * 0.03, size * 0.56, 0, Math.PI * 2)
+      g.stroke()
+    }
+    size *= 0.68
   }
   g.font = `${weight} ${size}px ${DISPLAY_FONT}`
   for (const [char, x, y] of positions) {

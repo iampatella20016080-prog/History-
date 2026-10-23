@@ -90,6 +90,12 @@ function frameOf(p, r = [0, 0, 0], parent = null) {
  * extras：apron 圍裙、towel 肩上的毛巾、backpack 背包、bucketHat 漁夫帽、cap 棒球帽、mask 口罩、strap 斜背包的背帶
  */
 export const NPC_LOOKS = {
+  // 1895–1930：北街的米商、扛米袋的搬運工與篩米的碾米工人；1930–1945：米行的帳房與碾米工人（迪化街329號店屋）
+  riceMerchant: { era: 'banquet', skin: '#e2b98f', hair: 'short', top: { kind: 'long', color: '#3c4a5e', trim: '#2f3a4b' }, bottom: '#2f2a28', shoes: ['#2a2622', '#2a2622'] },
+  ricePorter: { era: 'banquet', skin: '#c9996e', hair: 'short', top: { kind: 'singlet', color: '#e9e3d4' }, bottom: '#4a4a48', shoes: ['#6a5040', '#6a5040'], extras: { towel: '#e6dfcf', douli: '#d8bd7a', shoulderSack: '#d9c8a2' } },
+  riceMiller: { era: 'banquet', skin: '#d0a07a', hair: 'short', top: { kind: 'shirt', color: '#d8cdb5', trim: '#c4b89e' }, bottom: '#3d4652', shoes: ['#3a2c22', '#3a2c22'], extras: { apron: '#8a7a62', douli: '#cfb06b' } },
+  riceClerk: { era: 'modern', skin: '#e2b98f', hair: 'short', top: { kind: 'long', color: '#ece6d6', trim: '#d7cfbc' }, bottom: '#3b3734', shoes: ['#2a2622', '#2a2622'] },
+  riceMillerModern: { era: 'modern', skin: '#cf9f78', hair: 'short', top: { kind: 'singlet', color: '#efe9db' }, bottom: '#53514c', shoes: ['#3a2c22', '#3a2c22'], extras: { apron: '#6f6656', towel: '#e8e1d0' } },
   // 1945–1980：米苔目攤的攤販與客人
   postwarVendor: { era: 'postwar', skin: '#d6ad84', hair: 'short', top: { kind: 'singlet', color: '#efebe1' }, bottom: '#454b55', shoes: ['#2a2622', '#c9bfab'], extras: { apron: '#5f7186', towel: '#ece6d8' } },
   postwarDiner: { era: 'postwar', hair: 'short', top: { kind: 'shirt', color: '#e6e1d3', trim: '#cfc8b6' }, bottom: '#6a6862', shoes: ['#4a3225', '#2b1d16'] },
@@ -155,6 +161,15 @@ export const NPC_POSES = {
     anim: { elbow: [0.4, 0.95], period: 2.6, nod: 0.05, turn: 0.1 },
     holds: 'ladle',
   },
+  carry: {
+    seated: false,
+    lean: 0.1,
+    head: 0.08,
+    // 左手舉起扶著肩上的米袋，右手自然擺動
+    right: { shoulder: 0.12, spread: 0.12, twist: 0, elbow: 0.2 },
+    left: { shoulder: 2.55, spread: 0.32, twist: 0.1, elbow: 1.6 },
+    anim: { elbow: [0.15, 0.4], period: 2.0, nod: 0.03, turn: 0.1 },
+  },
   eat: {
     seated: true,
     lean: 0.16,
@@ -195,6 +210,10 @@ function headParts(parts, look, extras) {
     parts.add(extras.cap, new SphereGeometry(0.165, 14, 8, 0, Math.PI * 2, 0, Math.PI * 0.5), { p: [0, 0.2, -0.01] })
     parts.add(extras.cap, box(0.2, 0.018, 0.13), { p: [0, 0.205, 0.2], r: [-0.12, 0, 0] })
   }
+  if (extras.douli) {
+    // 斗笠：寬的竹編圓錐
+    parts.add(extras.douli, new ConeGeometry(0.34, 0.16, 18), { p: [0, 0.33, -0.01] })
+  }
   if (extras.bucketHat) {
     parts.add(extras.bucketHat, tube(0.15, 0.17, 0.13, 14), { p: [0, 0.28, -0.01] })
     parts.add(extras.bucketHat, tube(0.23, 0.25, 0.025, 16), { p: [0, 0.215, -0.01] })
@@ -227,6 +246,11 @@ function torsoParts(parts, look, extras, frame) {
     // 搭在右肩上的毛巾
     parts.add(extras.towel, box(0.1, 0.03, 0.3), { p: [-0.17, 0.64, 0], r: [0, 0, 0.35], frame })
     parts.add(extras.towel, box(0.1, 0.24, 0.025), { p: [-0.2, 0.5, 0.17], r: [-0.1, 0, 0.1], frame })
+  }
+  if (extras.shoulderSack) {
+    // 扛在左肩上的米袋
+    parts.add(extras.shoulderSack, sphere(0.2, 12, 8), { p: [0.2, 0.74, -0.02], s: [1.0, 0.75, 1.6], frame })
+    parts.add(new Color(extras.shoulderSack).multiplyScalar(0.82).getStyle(), tube(0.06, 0.08, 0.06, 8), { p: [0.2, 0.72, 0.3], r: [Math.PI / 2, 0, 0], frame })
   }
   if (extras.backpack) {
     parts.add(extras.backpack, box(0.3, 0.38, 0.14), { p: [0, 0.34, -0.29], frame })

@@ -15,6 +15,8 @@ import { templeMiTaiMuStallCollision } from '../builders/templeMiTaiMuStall.js'
 import { templeDouhuaStallCollision } from '../builders/templeDouhuaStall.js'
 import { templeKuehStallCollision } from '../builders/templeKuehStall.js'
 import { yongleMiTaiMuCollision, yongleMiTaiMuFootprint } from '../builders/yongleMiTaiMuExterior.js'
+import { riceAndShineCollision } from '../builders/riceAndShine/riceAndShineExterior.js'
+import { shizixuanCollision, shizixuanFootprint } from '../builders/shizixuan/shizixuanExterior.js'
 
 /**
  * 某個年代的街區配置：建築（依地段演變）、街道道具、路燈、電線、燈籠串、碰撞與可行走範圍。
@@ -309,9 +311,19 @@ const SITE_COLLISION = {
   'yong-le-mi-tai-mu': yongleMiTaiMuCollision,
   // 黃玉階文史館：騎樓、通往豆花店騎樓的拱門與一樓展間；柱、花槽、醬缸、展示牆、層架、長桌與茶席
   'huang-yujie-museum': huangYujieCollision,
+  // 十字軒糕餅舖：騎樓、入口與店內（依年代的 variant 決定前舖、後坊或結帳區與展示櫃）
+  shizixuan: shizixuanCollision,
 }
 /** 佔地較大的店家建築（含巷子）：範圍內不產生遠景房屋與遠景的樹 */
-const SITE_FOOTPRINT = { 'yongle-market': yongleFootprint, 'action-bar': actionBarFootprint, 'luguo-cafe': luguoFootprint, 'lao-pan': laoPanFootprint, 'yong-le-mi-tai-mu': yongleMiTaiMuFootprint, 'huang-yujie-museum': huangYujieFootprint }
+const SITE_FOOTPRINT = {
+  'yongle-market': yongleFootprint,
+  'action-bar': actionBarFootprint,
+  'luguo-cafe': luguoFootprint,
+  'lao-pan': laoPanFootprint,
+  'yong-le-mi-tai-mu': yongleMiTaiMuFootprint,
+  'huang-yujie-museum': huangYujieFootprint,
+  shizixuan: shizixuanFootprint,
+}
 
 function siteTransform({ x, z, rotationY = 0 }) {
   const cos = Math.cos(rotationY)
@@ -361,6 +373,15 @@ export function createEraLayout(era) {
           const { walk, obstacles } = templeCollision(config, transform)
           extraWalkable.push(walk)
           extraObstacles.push(...obstacles)
+        }
+        // 迪化街329號店屋（稻舍）：同一個地段，依年代的 variant 決定能不能走進去（騎樓、前進、天井、後進、樓梯與二樓）
+        if (config.archetype === 'rice-and-shine') {
+          const cos = Math.cos(lot.rotationY)
+          const sin = Math.sin(lot.rotationY)
+          const transform = (x, z) => ({ x: lot.x + x * cos + z * sin, z: lot.z - x * sin + z * cos })
+          const collision = riceAndShineCollision(config, transform)
+          extraWalkable.push(...collision.walkable)
+          extraObstacles.push(...collision.obstacles)
         }
         continue
       }

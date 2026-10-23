@@ -14,11 +14,16 @@ import { clamp } from './utils/math.js'
  *
  * 角色只跟目前樓層的範圍與障礙物碰撞，所以二樓的地板可以蓋在一樓的騎樓上方。
  */
-export function resolvePlayerPosition(position, radius, world, level = 0) {
+/**
+ * 把角色推出障礙物、留在可行走範圍裡。relocate：換了年代的街景、原本站的地方不能走時（移到最近的戶外位置）
+ */
+export function resolvePlayerPosition(position, radius, world, level = 0, { relocate = false } = {}) {
   const { walkable, obstacles } = collisionForLevel(world, level)
-  for (let pass = 0; pass < 2; pass++) {
+  // 移走角色時多處理幾次，讓推出障礙物與留在戶外的結果穩定下來（之後每個影格的碰撞不會再移動）
+  const passes = relocate ? 4 : 2
+  for (let pass = 0; pass < passes; pass++) {
     for (const box of obstacles) pushOutOfBox(position, radius, box)
-    constrainToWalkable(position, radius, walkable)
+    constrainToWalkable(position, radius, walkable, relocate)
   }
 }
 
@@ -136,9 +141,25 @@ function discInWalkable(x, z, radius, walkable) {
   return true
 }
 
-function constrainToWalkable(position, radius, walkable) {
+function constrainToWalkable(position, radius, walkable, relocate = false) {
   if (walkable.some((rect) => insideShrunk(position, radius, rect))) return
   if (discInWalkable(position.x, position.z, radius, walkable)) return
+  // 換年代時被移走（relocate）：不放進標示 inBuilding 的店屋範圍（騎樓與室內；例如原本站的巷子或隔壁的店
+  // 在新的年代是街屋，角色應該回到街上，而不是穿過牆被推進隔壁可以走的店屋裡）
+  if (relocate && walkable.some((rect) => rect.inBuilding)) {
+    const outdoor = nearestWalkable(position, radius, walkable.filter((rect) => !rect.inBuilding))
+    if (outdoor.dist < Infinity) {
+      position.x = outdoor.x
+      position.z = outdoor.z
+      return
+    }
+  }
+  const best = nearestWalkable(position, radius, walkable)
+  position.x = best.x
+  position.z = best.z
+}
+
+function nearestWalkable(position, radius, walkable) {
   let bestX = position.x
   let bestZ = position.z
   let bestDist = Infinity
@@ -159,8 +180,7 @@ function constrainToWalkable(position, radius, walkable) {
       bestZ = cz
     }
   }
-  position.x = bestX
-  position.z = bestZ
+  return { x: bestX, z: bestZ, dist: bestDist }
 }
 
 /**

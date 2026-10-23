@@ -74,6 +74,7 @@ export function StoreDirectory({ era, shops }) {
                     )}
                   </div>
                   {shop.kind === 'heritage' && <span className="menu-shop__note is-heritage">文化據點</span>}
+                  {shop.eraLabel && <span className="menu-shop__note is-era">{shop.eraLabel}</span>}
                   {shop.reconstruction && <span className="menu-shop__note">歷史情境重建</span>}
                   {shop.scenarioNote && <span className="menu-shop__note">{shop.scenarioNote}</span>}
                   {shop.theme && <span className="menu-shop__note is-theme">飲食主題：{getTheme(shop.theme)?.title}</span>}

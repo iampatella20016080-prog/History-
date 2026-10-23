@@ -702,7 +702,8 @@ describe('爐鍋咖啡：審查後的修正', () => {
   })
 
   test('觀賞模式的起始注視點：二樓每個可以站的位置都在二樓，一樓（含貼著店面）都在一樓', () => {
-    const cafe = revival.collision.walkable.filter((r) => (r.level ?? 0) === 1 && !r.ramp)
+    // 只看小藝埕的二樓（同一個年代還有稻舍的二樓，樓板高度不同，另外在 riceAndShine.test.js 驗證）
+    const cafe = revival.collision.walkable.filter((r) => (r.level ?? 0) === 1 && !r.ramp && r.floorY === H2)
     let checked = 0
     for (const r of cafe) {
       for (let x = r.minX + PLAYER.radius; x <= r.maxX - PLAYER.radius; x += 0.25) {
