@@ -58,22 +58,38 @@ export const POSTWAR = {
   cabinet: box(1.6, 4.0, -5.0, -2.2, 1.3),
 }
 
-/* ═══════════ 2000–現在：十字軒糕餅舖（延平北路二段68號） ═══════════ */
+/* ═══════════ 2000–現在：十字軒糕餅舖（延平北路二段68號，依實拍照片） ═══════════ */
 
+/**
+ * 三層樓、平屋頂、淡米黃小磁磚立面；樓上立面懸挑到騎樓外緣（z = arcade），一樓店面退在 z = 0。
+ * 兩個開間（中央一道柱）：左開間一樓是展示窗，右開間是入口。室內是一整間現代糕餅店。
+ */
 export const MODERN = {
-  half: 4.6, // 面寬 9.2 m（兩個騎樓開間）
+  half: 4.6, // 面寬 9.2 m（兩個開間）
   depth: 10.0,
   wallT: 0.2,
   arcade: 1.7,
-  ceiling: 3.1,
-  doorL: { minX: -3.5, maxX: -1.3, height: 2.6 },
-  doorR: { minX: 1.3, maxX: 3.5, height: 2.6 },
+  groundH: 3.4, // 二樓樓板頂
+  upperH: 3.0,
+  floors: 3,
+  parapet: 0.6,
+  arcadeCeiling: 2.55, // 騎樓天花（招牌盒在它上方）
+  ceiling: 3.0, // 一樓室內天花
+  pier: 0.6, // 中央柱寬
+  endPier: 0.42,
+  door: { minX: 0.8, maxX: 2.8, height: 2.7 },
+  sideLight: { minX: 3.0, maxX: 4.2, minY: 0.5, maxY: 2.9 },
+  showWindow: { minX: -4.15, maxX: -0.55, minY: 0.45, maxY: 2.9 },
   front: box(-4.2, 4.2, -9.6, -0.2),
-  checkout: box(-0.9, 0.9, -1.7, -0.6, 1.0),
-  caseL: box(-4.2, -2.5, -4.6, -1.0, 1.1),
-  caseR: box(2.5, 4.2, -4.6, -1.0, 1.1),
-  pastryWall: box(-4.2, 4.2, -6.5, -6.1, 2.4),
-  historyNook: box(-4.2, -2.3, -9.5, -6.7, 1.0),
+  /** 室內家具（依實拍：入口 → 中央島 → 兩側商品 → 櫃台 → 歷史與獎狀展示） */
+  windowCounter: box(-4.15, -0.75, -1.05, -0.35, 0.9),
+  island: box(-0.5, 1.6, -5.0, -3.0, 0.95),
+  rightShelf: box(3.65, 4.2, -8.4, -1.6, 2.3),
+  counter: box(-3.3, -2.2, -8.6, -5.6, 1.0),
+  glassCase: box(-2.15, -1.55, -8.4, -5.8, 1.05),
+  certShelf: box(-4.2, -3.85, -9.6, -4.6, 2.6),
+  productWall: box(-1.6, 4.2, -9.6, -9.1, 2.1),
+  ritualStand: box(-1.2, 3.2, -9.1, -8.7, 0.85),
 }
 
 /** 五個文化節點共用的展示位置（相對於各年代的展示架／展示櫃前緣，依序：滿月、收涎、婚嫁、祝壽、祭祀） */
@@ -92,12 +108,13 @@ export const CULTURE_SLOTS = {
     [-3.95, -4.6],
     [-3.95, -5.4],
   ],
+  // 後牆「生命禮俗」展板下方的展台上
   modernShop: [
-    [-4.0, -7.3],
-    [-3.3, -7.9],
-    [-2.6, -7.3],
-    [-3.3, -8.5],
-    [-3.3, -6.9],
+    [-0.75, -8.9],
+    [0.15, -8.9],
+    [1.05, -8.9],
+    [1.95, -8.9],
+    [2.85, -8.9],
   ],
 }
 
@@ -115,17 +132,20 @@ function cultureHotspots(variant) {
   const slots = CULTURE_SLOTS[variant]
   return CULTURE_META.map((meta, i) => {
     const [x, z] = slots[i]
-    const side = x < 0 ? 1 : -1
+    // 1930、1945 的節點在左牆的展示架上（從右側看）；2000 的節點在後牆的展台上（從前方看）
+    const facingBack = variant === 'modernShop'
+    const point = facingBack ? [x, z + 0.8] : [x + 0.5, z]
+    const camera = facingBack ? { position: [x + 0.25, 1.55, z + 1.7], target: [x, 1.0, z] } : { position: [x + 0.85, 1.55, z + 0.15], target: [x, 1.2, z] }
     return {
       id: `szx-${meta.id}`,
       label: meta.title,
       note: meta.note,
       chapter: meta.chapter,
-      point: [x, z],
+      point,
       level: 0,
       radius: 0.55,
-      prompt: [x + side * 0.4, 1.4, z],
-      camera: { position: [x + side * 0.85, 1.55, z + 0.15], target: [x, 1.2, z] },
+      prompt: facingBack ? [x, 1.45, z + 0.1] : [x + 0.4, 1.4, z],
+      camera,
     }
   })
 }
@@ -142,9 +162,9 @@ export const SZX_HOTSPOTS = {
     ...cultureHotspots('postwarShop'),
   ],
   modernShop: [
-    { id: 'szx-front', label: '十字軒糕餅舖', note: '延平北路的老字號', chapter: 'szx-intro', point: [0, -2.4], level: 0, radius: 1.1, prompt: [0, 2.8, -0.2], camera: { position: [0, 1.9, 4.8], target: [0, 1.9, -1.4] } },
-    { id: 'szx-checkout', label: '結帳櫃台', note: '紅色禮盒與包裝糕餅', chapter: 'szx-products', point: [0, -1.1], level: 0, radius: 0.75, prompt: [0.9, 1.7, -0.9], camera: { position: [-1.3, 1.6, 0.2], target: [0.3, 1.1, -1.1] } },
-    { id: 'szx-history', label: '老照片與獎狀', note: '歷史展示角', chapter: 'szx-history', point: [-3.3, -8.1], level: 0, radius: 0.85, prompt: [-2.2, 1.8, -7.6], camera: { position: [-1.4, 1.6, -6.4], target: [-3.3, 1.3, -8.1] } },
+    { id: 'szx-front', label: '十字軒糕餅舖', note: '延平北路的老字號', chapter: 'szx-intro', point: [1.8, 1.0], level: 0, radius: 1.1, prompt: [1.8, 2.3, 1.2], camera: { position: [0.8, 2.6, 6.8], target: [0, 4.6, 0.6] } },
+    { id: 'szx-checkout', label: '櫃台與糕餅托盤', note: '金元寶與壽桃', chapter: 'szx-products', point: [-0.9, -7.0], level: 0, radius: 0.75, prompt: [-1.9, 1.7, -7.0], camera: { position: [0.2, 1.65, -6.0], target: [-2.2, 1.0, -7.2] } },
+    { id: 'szx-history', label: '老照片與獎狀', note: '歷史展示牆', chapter: 'szx-history', point: [-1.1, -5.4], level: 0, radius: 0.8, prompt: [-3.0, 2.2, -5.2], camera: { position: [-0.75, 1.7, -5.3], target: [-4.1, 1.6, -6.4] } },
     ...cultureHotspots('modernShop'),
   ],
 }

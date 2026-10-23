@@ -2,6 +2,7 @@ import { Color, DoubleSide, MeshToonMaterial } from 'three'
 import { getTextures } from './textures.js'
 import { ensureExhibitTexture, getExhibitTexture } from './exhibitTexture.js'
 import { ensureRiceTexture, getRiceTexture } from './riceTexture.js'
+import { ensureSzxTexture, getSzxTexture } from './szxTexture.js'
 
 /**
  * 共用的卡通渲染材質。
@@ -57,6 +58,8 @@ export const MATERIAL_TILE = {
   exhibit: null,
   // 迪化街329號店屋（稻舍）的壁畫、展板與老照片圖集
   riceExhibit: null,
+  // 十字軒糕餅舖（2000–現在）的展板、獎狀、價卡與貼紙圖集
+  szxExhibit: null,
 }
 
 /** 發光材質的基礎亮度（乘上年代 glow 值） */
@@ -135,6 +138,7 @@ export function getMaterials() {
     // 黃玉階文史館的展板（圖集很大，第一次有網格用到時才繪製；其他年代不佔記憶體）
     exhibit: exhibitMaterial(toon),
     riceExhibit: lazyAtlasMaterial(toon, getRiceTexture, ensureRiceTexture),
+    szxExhibit: lazyAtlasMaterial(toon, getSzxTexture, ensureSzxTexture),
   }
   return cache
 }

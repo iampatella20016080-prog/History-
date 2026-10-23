@@ -238,7 +238,7 @@ describe('十字軒：熱點、章節與五個文化節點', () => {
 })
 
 describe('十字軒：不捏造「TEN CAKE」的年份；文獻與資料', () => {
-  test('1930、1945 的招牌與章節都沒有「TEN CAKE」；只有 2000–現在的立面與招牌有', () => {
+  test('1930、1945 的招牌與章節都沒有「TEN CAKE」；只有 2000–現在的招牌有「TEN CAKE」「SINCE 1930」', () => {
     for (const eraId of ['modern', 'postwar']) {
       const world = WORLDS[eraId]
       const signs = world.signs.filter((sign) => {
@@ -253,8 +253,11 @@ describe('十字軒：不捏造「TEN CAKE」的年份；文獻與資料', () =>
       }
     }
     const revival = WORLDS.revival
-    assert.ok(revival.signs.some((sign) => sign.text === 'TEN CAKE SINCE 1930'))
-    assert.ok(revival.signs.some((sign) => sign.text === '十字軒糕餅舖'))
+    // 照片：左開間的徽章下方是「TEN CAKE」與「SINCE 1930」兩行，右開間是圓框的「十字軒糕餅舖」
+    assert.ok(revival.signs.some((sign) => sign.text === 'TEN CAKE'))
+    assert.ok(revival.signs.some((sign) => sign.text === 'SINCE 1930'))
+    assert.ok(revival.signs.some((sign) => sign.text === '十字軒糕餅舖' && sign.style === 'szxCircle'))
+    for (const eraId of ['modern', 'postwar']) assert.ok(!WORLDS[eraId].signs.some((sign) => /TEN CAKE|SINCE 1930/.test(sign.text)), eraId)
   })
 
   test('地址與創辦人資料有出處；1930、1945 的描述沒有使用「十字軒糕餅舖」這個 2000 年代才有的品牌全名', () => {
