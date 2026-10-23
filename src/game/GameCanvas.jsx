@@ -4,6 +4,7 @@ import { CAMERA, PALETTE } from './config.js'
 import { World } from './World.jsx'
 import { setAtmosphere } from './atmosphere.js'
 import { QualityController } from './components/QualityController.jsx'
+import { FlickerDebug } from './components/FlickerDebug.jsx'
 import { getQualitySettings } from './quality.js'
 import { loadEraWorld, prefetchEraWorld, setDisplayedEra } from './world/worldManager.js'
 import { ERAS, getEra, getEraIndex } from '../data/eras.js'
@@ -97,6 +98,7 @@ export function GameCanvas() {
         }}
       >
         <QualityController />
+        <FlickerDebug />
         {world && <World world={world} promptLayer={promptLayer} onSwap={swapWorld} />}
       </Canvas>
       <div ref={promptLayer} className="prompt-layer" />

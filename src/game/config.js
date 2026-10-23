@@ -47,8 +47,10 @@ export const PLAYER = {
 
 export const CAMERA = {
   fov: 42,
+  // 深度精度主要由 near 決定（24 位元深度緩衝：20 m 處約 0.08 mm、100 m 處約 2 mm）；
+  // near 不再加大，是因為室內鏡頭離牆只有 0.45 m。far 只要涵蓋最遠的山（半徑 760 m）與雲（≤ 590 m）
   near: 0.3,
-  far: 1600,
+  far: 900,
   yaw: Math.PI / 2,
   pitch: 0.38,
   distance: 7.8,

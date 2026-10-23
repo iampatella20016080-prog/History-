@@ -15,6 +15,7 @@ import { SignLayer } from './SignLayer.jsx'
 import { StaticBatches } from './StaticBatches.jsx'
 import { SteamLayer } from './SteamLayer.jsx'
 import { TextLanterns } from './StoreMarkers.jsx'
+import { hysteresisVisible } from '../visibility.js'
 
 /** 室內產生失敗時，隔多久再試一次（秒） */
 const INTERIOR_RETRY = 5
@@ -87,7 +88,8 @@ function InteriorZone({ world, zones, detail }) {
           state.retryAt = clock.elapsedTime + INTERIOR_RETRY
         })
     }
-    state.visible = nearest < zone.showRadius && !elsewhere
+    // 遲滯：在顯示範圍的邊界附近來回走動時，室內不會一下出現、一下消失
+    state.visible = hysteresisVisible(state.visible, nearest, zone.showRadius) && !elsewhere
     if (group.current) group.current.visible = state.visible
     if (import.meta.env.DEV && window.__DDC__) {
       window.__DDC__.interiors ??= {}

@@ -114,9 +114,12 @@ export function getOutfitMaterial({ color, texture, double }) {
     if (texture) options.map = getTexture(texture)
     if (double) options.side = DoubleSide
     if (texture === 'totePrint') {
-      options.transparent = true
+      // 托特包外側的印刷是貼花：用 alphaTest 裁切（不開 transparent，避免和袋身互相排序閃爍），深度往前偏一點
       options.alphaTest = 0.4
       options.emissiveIntensity = 0.05
+      options.polygonOffset = true
+      options.polygonOffsetFactor = -1
+      options.polygonOffsetUnits = -1
     }
     materials.set(key, createToonMaterial(color, options))
   }

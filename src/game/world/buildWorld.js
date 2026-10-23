@@ -52,6 +52,7 @@ import { buildHuangYujieExterior, museumFurnitureBlockers } from '../builders/hu
 import { buildHuangYujieInterior } from '../builders/huangYujieInterior.js'
 import { buildRiceAndShineExterior, riceFurnitureBlockers } from '../builders/riceAndShine/riceAndShineExterior.js'
 import { buildRiceAndShineInterior } from '../builders/riceAndShine/riceAndShineInterior.js'
+import { COPLANAR_DELTA, resolveAllCoplanar } from '../builders/coplanar.js'
 import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
 import { getEra } from '../../data/eras.js'
@@ -377,6 +378,10 @@ export function* eraWorldSteps(eraId) {
   if (!hasTemple) buildTempleRoofs(b, DISTANT_TEMPLE.position, DISTANT_TEMPLE.rotationY)
   yield
 
+  // 共面的面（Z-fighting）：重複的方塊刪掉一層，重疊的較小方塊往外推幾公釐（見 builders/coplanar.js）
+  resolveAllCoplanar([b, detail])
+  yield
+
   // 依材質合併（每種材質一段，避免單一影格卡頓）
   const batches = []
   for (const material of [...b.groups.keys()]) {
@@ -430,6 +435,7 @@ export function* eraInteriorSteps(eraId, buildingId = null) {
   const b = new PartBuilder()
   // 細小的擺飾（例如爐鍋咖啡吧檯上的杯具與商品盒）另外合併：流暢模式下不顯示
   const detail = new PartBuilder()
+  const shells = []
   for (const building of layout.buildings) {
     const builder = BUILDING_INTERIORS[building.config.archetype]
     if (!builder || (buildingId && building.id !== buildingId)) continue
@@ -438,8 +444,27 @@ export function* eraInteriorSteps(eraId, buildingId = null) {
     builder(b, building.config, detail)
     detail.pop()
     b.pop()
+    // 同一棟建築的外殼（已經在街景裡）：只用來比較共面，室內的面和它重疊時往室內推
+    const shellBuilder = BUILDING_BUILDERS[building.config.archetype]
+    if (shellBuilder) {
+      const shell = new PartBuilder()
+      shell.push([building.x, 0, building.z], building.rotationY)
+      shellBuilder(shell, building.config, shell)
+      shells.push(shell)
+    }
     yield
   }
+  // 外殼在街景裡可能已經往外長了 COPLANAR_DELTA：室內的面長兩倍，和外殼原本與長過的位置都錯開
+  resolveAllCoplanar([b, detail], { fixed: shells, delta: COPLANAR_DELTA * 2 })
+  for (const shell of shells) {
+    for (const list of shell.groups.values()) {
+      for (const g of list) {
+        g.userData.discarded = true
+        g.dispose()
+      }
+    }
+  }
+  yield
   const batches = []
   for (const material of [...b.groups.keys()]) {
     batches.push(...b.buildMaterial(material))
