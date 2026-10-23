@@ -150,7 +150,7 @@ export const ERAS = [
       items: ['cafeSets', 'flowerPots', 'bicycles', 'vintageCar', 'teaChests'],
       boats: 'sampans',
     },
-    availableStores: ['lin-fu-zhen', 'bolero', 'xin-fang-chun', 'you-ji', 'li-ting-xiang', 'lin-hua-tai', 'rice-and-shine-329'],
+    availableStores: ['lin-fu-zhen', 'bolero', 'xin-fang-chun', 'you-ji', 'li-ting-xiang', 'lin-hua-tai', 'rice-and-shine-329', 'shizixuan'],
   },
   {
     id: 'postwar',
@@ -196,7 +196,7 @@ export const ERAS = [
       items: ['foodStalls', 'bicycles', 'tricycle', 'baskets', 'stools'],
       boats: 'sampans',
     },
-    availableStores: ['lin-fu-zhen', 'ci-sheng-gong', 'temple-squid-stall', 'temple-mi-tai-mu-stall', 'temple-douhua-stall', 'temple-kueh-stall', 'you-ji', 'li-ting-xiang', 'lin-hua-tai', 'bolero', 'xin-fang-chun', 'rice-and-shine-329'],
+    availableStores: ['lin-fu-zhen', 'ci-sheng-gong', 'temple-squid-stall', 'temple-mi-tai-mu-stall', 'temple-douhua-stall', 'temple-kueh-stall', 'you-ji', 'li-ting-xiang', 'lin-hua-tai', 'bolero', 'xin-fang-chun', 'rice-and-shine-329', 'shizixuan'],
   },
   {
     id: 'revival',
@@ -261,6 +261,7 @@ export const ERAS = [
       'lin-hua-tai',
       'bolero',
       'xin-fang-chun',
+      'shizixuan',
     ],
   },
 ]

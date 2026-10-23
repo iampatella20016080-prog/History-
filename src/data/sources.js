@@ -864,6 +864,59 @@ SOURCES['moe-oo-kue'] = {
   context: '釋義：「臺灣小吃的一種。以米漿和芋頭為主要材料，蒸熟後食用。」',
 }
 
+/* ── 十字軒糕餅舖（延平北路二段68號） ── */
+SOURCES['mirrormedia-2024-shizixuan'] = {
+  id: 'mirrormedia-2024-shizixuan',
+  citation: '呂明潔報導，《鏡週刊》，2024年8月1日。',
+  publisher: '鏡週刊',
+  title: '十字軒糕餅舖創業與傳承報導',
+  url: 'https://www.mirrormedia.mg/story/20240801bus001',
+  published: '2024年8月1日',
+  usage: '創辦人邱炳星的學藝與創業經過、家族傳承、全盛時期的經營規模，與壽桃、漢餅的銷售。',
+  context:
+    '記載創辦人邱炳星12歲到日本人開的麵包店學藝，先做西點麵包，後來接做婚嫁用的漢餅，再因鄰近霞海城隍廟做起壽桃生意；第二代邱獻德、第三代邱易為接手；全盛時期漢餅、西點、包子分開設廠，師傅近20位；壽桃是銷量最好的商品，全盛時期一天可賣超過一萬顆；文中提及「1920年代」創業，店招寫經營94年（以2024年計）。',
+}
+SOURCES['moe-man-yue'] = {
+  id: 'moe-man-yue',
+  citation: '教育部《重編國語辭典修訂本》，「滿月」。',
+  publisher: '教育部',
+  title: '滿月',
+  url: 'https://www.moedict.tw/a/%E6%BB%BF%E6%9C%88.json',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '「滿月」的定義：嬰兒出生滿一個月，也稱「彌月」。',
+  context: '釋義：初生的嬰兒滿一個月，稱為「滿月」，也稱為「彌月」。',
+}
+SOURCES['moe-shou-yan'] = {
+  id: 'moe-shou-yan',
+  citation: '教育部《臺灣台語常用詞辭典》，「收瀾」。',
+  publisher: '教育部',
+  title: '收瀾',
+  url: 'https://www.moedict.tw/t/%E6%94%B6%E7%80%9E.json',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '「收瀾」（收涎）的做法：嬰兒滿四個月時以紅絲線串口酥餅在脖子上，一一咬餅，祈求好養育。',
+  context: '釋義提到台灣習俗：嬰兒滿四個月時，用紅絲線串起口酥餅掛在脖子上，讓嬰兒逐一咬餅，並有「收瀾收離離，囡仔好育飼」的吉祥話。',
+}
+SOURCES['moe-xi-bing'] = {
+  id: 'moe-xi-bing',
+  citation: '教育部《重編國語辭典修訂本》，「喜餅」。',
+  publisher: '教育部',
+  title: '喜餅',
+  url: 'https://www.moedict.tw/a/%E5%96%9C%E9%A4%A0.json',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '「喜餅」的定義：訂婚時男方贈送女方的禮餅。',
+  context: '釋義：訂婚時，男方贈送女方的禮餅，分贈親友以示告知婚事。',
+}
+SOURCES['moe-shou-tao'] = {
+  id: 'moe-shou-tao',
+  citation: '教育部《重編國語辭典修訂本》，「壽桃」。',
+  publisher: '教育部',
+  title: '壽桃',
+  url: 'https://www.moedict.tw/a/%E5%A3%BD%E6%A1%83.json',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '「壽桃」的定義：祝壽時所用的鮮桃或麵製桃形食品。',
+  context: '釋義：祝壽時所用的鮮桃，或麵粉製成桃形、象徵長壽的食品。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

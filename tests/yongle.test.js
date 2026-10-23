@@ -21,7 +21,7 @@ import {
 } from '../src/game/viewerCamera.js'
 import { buildEraInteriorSync, buildEraWorldSync } from '../src/game/world/buildWorld.js'
 import { getShopPlacement } from '../src/game/world/placement.js'
-import { inRiceAndShineLot } from './helpers.js'
+import { inRiceAndShineLot, inShizixuanLot } from './helpers.js'
 
 /**
  * 永樂市場與好粿緣：只在「老屋新生」出現的街底市場大樓、可以走進去的一樓市場（碰撞、鏡頭、觀賞模式）、
@@ -94,17 +94,33 @@ describe('永樂市場：只在「老屋新生」的街底', () => {
   test('其他年代沒有市場、室內與額外的觀賞範圍', () => {
     for (const era of ERAS.filter((item) => item.id !== 'revival')) {
       const world = buildEraWorldSync(era.id)
-      // 1930 與 1945 只有稻舍（迪化街329號店屋）的室內與觀賞範圍（見 tests/riceAndShine.test.js），1895 以前走不進去；
-      // 戰後另外有慈聖宮廟埕後段的觀賞範圍（豆花攤與糕粿攤，見 tests/templeSnacks.test.js）；任何年代都沒有市場的
+      // 1930 與 1945 只有稻舍（迪化街329號店屋）與十字軒糕餅舖的室內與觀賞範圍（見 tests/riceAndShine.test.js、
+      // tests/shizixuan.test.js），1895 以前走不進去；戰後另外有慈聖宮廟埕後段的觀賞範圍（豆花攤與糕粿攤，見
+      // tests/templeSnacks.test.js）；任何年代都沒有市場的
       const walkIn = era.id === 'modern' || era.id === 'postwar'
-      assert.deepEqual(world.interiors.map((item) => item.id), walkIn ? ['rice-and-shine-329'] : [], era.id)
+      assert.deepEqual(
+        [...world.interiors.map((item) => item.id)].sort(),
+        walkIn ? ['rice-and-shine-329', 'shizixuan'].sort() : [],
+        era.id,
+      )
       assert.equal(world.viewerRegions.filter(inRiceAndShineLot).length, walkIn ? 5 : 0, `${era.id} 稻舍`)
-      assert.equal(world.viewerRegions.filter((r) => !inRiceAndShineLot(r)).length, era.id === 'postwar' ? 1 : 0, era.id)
+      assert.equal(world.viewerRegions.filter((r) => !inRiceAndShineLot(r) && !inShizixuanLot(r)).length, era.id === 'postwar' ? 1 : 0, era.id)
       assert.ok(!world.buildings.some((item) => item.storeId === 'yong-le-market' || item.storeId === 'hao-guo-yuan'), era.id)
       const market = world.buildings.find((item) => item.storeId === 'yong-le-market')
       assert.ok(!market)
-      const others = buildEraInteriorSync(era.id).batches.filter((batch) => !inRiceAndShineLot({ minX: batch.geometry.boundingBox.min.x, maxX: batch.geometry.boundingBox.max.x, minZ: batch.geometry.boundingBox.min.z, maxZ: batch.geometry.boundingBox.max.z }))
-      assert.equal(others.length, 0, era.id)
+      // 室內細部依材質合併，稻舍與十字軒同時有室內時，同一種材質的頂點會合併在同一個 batch 裡（外框跨兩個地段）；
+      // 所以逐一檢查每個頂點落在哪個店家的地段裡，而不是只看合併後的外框
+      const position = (geometry) => geometry.getAttribute('position')
+      const outsideVertices = buildEraInteriorSync(era.id).batches.flatMap((batch) => {
+        const attr = position(batch.geometry)
+        let count = 0
+        for (let i = 0; i < attr.count; i++) {
+          const point = { minX: attr.getX(i), maxX: attr.getX(i), minZ: attr.getZ(i), maxZ: attr.getZ(i) }
+          if (!inRiceAndShineLot(point) && !inShizixuanLot(point)) count++
+        }
+        return count ? [count] : []
+      })
+      assert.equal(outsideVertices.reduce((sum, n) => sum + n, 0), 0, era.id)
     }
   })
 

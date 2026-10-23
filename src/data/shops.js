@@ -25,6 +25,9 @@ import { ACTION_BAR_SITE } from './actionBarLayout.js'
 import { RICE_AND_SHINE_ID, riceAndShineEraConfig } from './riceAndShineEraConfig.js'
 import { RICE_HOTSPOTS, RS, riceToWorld } from './riceAndShineLayout.js'
 import { RICE_CHAPTERS, RICE_ERA_NOTES, RICE_RECORD } from './riceAndShineData.js'
+import { SHIZIXUAN_ID, shizixuanEraConfig } from './shizixuanEraConfig.js'
+import { EARLY, EARLY_SITE, MODERN, POSTWAR, SZX_HOTSPOTS, WIDE_SITE, szxToWorld } from './shizixuanLayout.js'
+import { SZX_CHAPTERS, SZX_ERA_NOTES, SZX_RECORD } from './shizixuanData.js'
 import {
   DOUHUA_STALL,
   DOUHUA_STALL_HOTSPOTS,
@@ -2145,6 +2148,56 @@ export const SHOPS = [
             interaction: { radius: 1.0, distance: RICE_HOTSPOTS[item.variant][0].point[1] },
           },
         ]),
+    ),
+  },
+  // 十字軒糕餅舖（延平北路二段68號）：同一個店家 ID、同一個地段，隨年代替換立面、招牌、擺設與室內（見 getShop(id, eraId)）
+  {
+    id: SHIZIXUAN_ID,
+    name: '十字軒糕餅舖',
+    status: 'open',
+    category: '糕餅鋪・歷史老店',
+    seal: '十字軒',
+    address: SZX_RECORD.address,
+    summary: '延平北路二段的糕餅老店：從窄身的糕餅店初創、戰後擴大為兩個店面寬的餅舖，到現在三層樓的十字軒糕餅舖。',
+    sourceIds: SZX_RECORD.sourceIds,
+    hasInterior: true,
+    site: { ...WIDE_SITE },
+    facing: 'south',
+    position: szxToWorld(WIDE_SITE, 0, 0),
+    interaction: { radius: 1.0, distance: 1.0 },
+    travelYawOffset: 0.3,
+    camera: { distance: 6.0, height: 2.0, side: 0, lookHeight: 2.4 },
+    building: { archetype: 'shizixuan', width: MODERN.half * 2, depth: MODERN.depth },
+    buildingByEra: {
+      modern: { variant: 'earlyShop', condition: 'mature', width: EARLY.half * 2, depth: EARLY.depth },
+      postwar: { variant: 'postwarShop', condition: 'aged', width: POSTWAR.half * 2, depth: POSTWAR.depth },
+      revival: { variant: 'modernShop', condition: 'restored', width: MODERN.half * 2, depth: MODERN.depth },
+    },
+    eraNotes: SZX_ERA_NOTES,
+    eras: Object.fromEntries(
+      Object.values(shizixuanEraConfig)
+        .filter((item) => item.active)
+        .map((item) => {
+          const site = item.variant === 'earlyShop' ? EARLY_SITE : WIDE_SITE
+          const toWorld = (x, z) => szxToWorld(site, x, z)
+          return [
+            item.era,
+            {
+              name: item.name,
+              eraLabel: item.label,
+              scenarioNote: item.era === 'revival' ? null : '歷史情境示意',
+              variant: item.variant,
+              category: item.era === 'revival' ? '糕餅鋪・歷史老店' : item.era === 'modern' ? '糕餅店（初創）' : '漢餅・祭祀糕點',
+              seal: item.era === 'revival' ? '十字軒' : '餅',
+              summary: SZX_ERA_NOTES[item.era],
+              chapters: SZX_CHAPTERS[item.era],
+              hotspots: hotspotsToWorld(SZX_HOTSPOTS[item.variant], toWorld),
+              site,
+              position: toWorld(SZX_HOTSPOTS[item.variant][0].point[0], 0),
+              interaction: { radius: 1.0, distance: 1.0 },
+            },
+          ]
+        }),
     ),
   },
 ]
