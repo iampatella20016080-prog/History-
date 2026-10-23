@@ -94,7 +94,8 @@ describe('永樂市場：只在「老屋新生」的街底', () => {
     for (const era of ERAS.filter((item) => item.id !== 'revival')) {
       const world = buildEraWorldSync(era.id)
       assert.equal(world.interiors.length, 0, era.id)
-      assert.equal(world.viewerRegions.length, 0, era.id)
+      // 戰後只有慈聖宮廟埕後段的觀賞範圍（豆花攤與糕粿攤，見 tests/templeSnacks.test.js），沒有市場的
+      assert.equal(world.viewerRegions.length, era.id === 'postwar' ? 1 : 0, era.id)
       assert.ok(!world.buildings.some((item) => item.storeId === 'yong-le-market' || item.storeId === 'hao-guo-yuan'), era.id)
       assert.equal(buildEraInteriorSync(era.id).batches.length, 0, era.id)
     }

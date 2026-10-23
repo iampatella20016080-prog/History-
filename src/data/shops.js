@@ -2090,6 +2090,8 @@ export const SHOPS = [
         sideStalls: false,
         // 共用桌椅集中在中央通道西側的用餐區（豆花攤的客人也坐這裡），天公爐與桌椅之間留出走到豆花攤的路
         sharedTables: TEMPLE_DINING.tables,
+        // 廟埕後段的跟隨鏡頭與觀賞模式的範圍（見 builders/specials.js）
+        courtCamera: true,
       },
       revival: { condition: 'restored', stalls: true },
     },

@@ -545,6 +545,30 @@ describe('互動、點選、鏡頭與觀賞模式', () => {
     }
   })
 
+  test('廟埕後段是貼近障礙物的跟隨範圍（只在戰後）：兩攤前、用餐區與天公爐前；廟埕前緣與迪化街不是', () => {
+    for (const p of [DH(...DOUHUA_STALL_HOTSPOTS[0].point), KU(...KUEH_STALL_HOTSPOTS[0].point), COURT(-0.3, -2.6), COURT(1.5, -3.6)]) assert.ok(inFollowArea(p, postwar.followAreas, 0), `${p.x.toFixed(2)}, ${p.z.toFixed(2)}`)
+    for (const p of [COURT(0, 1.2), { x: 4, z: 1.5 }]) assert.ok(!inFollowArea(p, postwar.followAreas, 0))
+    assert.equal(revival.followAreas.some((r) => inFollowArea(COURT(-0.3, -2.6), [r], 0)), false, '老屋新生的廟埕不變')
+    // 沿著中央通道往豆花攤走的每一步（四個方向）：跟隨鏡頭不在方塊裡
+    const p = { ...COURT(-0.3, -1.0) }
+    for (const target of [COURT(-0.3, -2.6), COURT(0.55, -3.2), COURT(1.5, -3.6), DH(...DOUHUA_STALL_HOTSPOTS[0].point), COURT(-1.2, -3.3), KU(...KUEH_STALL_HOTSPOTS[0].point)]) {
+      for (let n = 0; n < 80 && Math.hypot(target.x - p.x, target.z - p.z) > 0.15; n++) {
+        const d = Math.hypot(target.x - p.x, target.z - p.z)
+        p.x += ((target.x - p.x) / d) * 0.12
+        p.z += ((target.z - p.z) / d) * 0.12
+        resolvePlayerPosition(p, PLAYER.radius, postwar.collision, 0)
+        for (const yaw of [0, Math.PI / 2, Math.PI, -Math.PI / 2, Math.atan2(-(target.x - p.x), -(target.z - p.z))]) {
+          const t = { x: p.x, y: CAMERA.targetHeight, z: p.z }
+          const dir = orbitDirection(yaw, CAMERA.pitch)
+          const hit = raycastBoxes(t, dir, CAMERA.distance + 0.45, postwar.blockers)
+          const dist = Math.min(CAMERA.distance, followAllowed(hit, CAMERA.minDistance, inFollowArea(p, postwar.followAreas, 0)))
+          const cam = { x: t.x + dir.x * dist, y: t.y + dir.y * dist, z: t.z + dir.z * dist }
+          assert.ok(!postwar.blockers.some((box) => insideBox(cam, box)), `鏡頭在方塊裡：人物 (${p.x.toFixed(2)}, ${p.z.toFixed(2)})、yaw ${yaw.toFixed(2)}`)
+        }
+      }
+    }
+  })
+
   test('介紹鏡頭不在任何方塊裡、看得到注視點', () => {
     for (const item of [douhua, kueh]) {
       const placement = getShopPlacement(item)
@@ -566,6 +590,9 @@ describe('互動、點選、鏡頭與觀賞模式', () => {
       const cam = { x: plan.target.x + direction.x * plan.distance, y: plan.target.y + direction.y * plan.distance, z: plan.target.z + direction.z * plan.distance }
       assert.ok(!postwar.blockers.some((box) => insideBox(cam, box)), `${id}：(${cam.x.toFixed(2)}, ${cam.y.toFixed(2)}, ${cam.z.toFixed(2)})`)
       if (id.includes('bowls') || id.includes('trays')) assert.ok(plan.distance <= 2.2, `${id} 近距離 ${plan.distance.toFixed(2)}`)
+      // 鏡頭在廟埕裡（不是退到迪化街上從外面看）
+      const court = { a: COURT(5.7, 0.5), b: COURT(-5.7, -6.0) }
+      assert.ok(cam.z > Math.min(court.a.z, court.b.z) && cam.z < Math.max(court.a.z, court.b.z), `${id} 鏡頭在廟埕裡：z ${cam.z.toFixed(2)}`)
     }
   })
 })
