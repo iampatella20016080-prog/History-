@@ -291,6 +291,11 @@ function arrangeModernRows(buildings) {
 /** 形狀特殊的店家建築（以 shop.site 指定位置）額外的可行走範圍與障礙物 */
 const SITE_COLLISION = {
   ziyang: ziYangCollision,
+  // 以 site 指定位置的廟宇（例如霞海城隍廟）：廟埕可以走、天公爐與榕樹石座是障礙物
+  temple: (config, transform) => {
+    const { walk, obstacles } = templeCollision(config, transform)
+    return { walkable: [walk], obstacles }
+  },
   'yongle-market': yongleCollision,
   'action-bar': actionBarCollision,
   // 小藝埕：騎樓、32巷、樓梯（看不見的斜面）與二樓；二樓的家具障礙物來自店內的家具配置

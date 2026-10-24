@@ -326,7 +326,9 @@ describe('永樂米苔目：店面、走進店裡與碰撞', () => {
         resolvePlayerPosition(p, PLAYER.radius, world.collision, 0)
         assert.ok(walkableAt(world, p.x, p.z), `${era.id} (${x}, ${z}) → (${p.x.toFixed(2)}, ${p.z.toFixed(2)})`)
         assert.equal(groundAt(p, world.collision, 0, null).y, 0)
-        assert.ok(p.z > YONGLE_MTM.site.z + YONGLE_MTM.arcade - PLAYER.radius - 0.01, `${era.id} 在街上：z ${p.z.toFixed(2)}`)
+        // 港口商街這塊地是霞海城隍廟：站在廟埕（可行走範圍）也是合法的戶外位置
+        const inTempleCourt = era.id === 'qing-port' && p.x > 15.4 && p.x < 26.8 && p.z > -10.5
+        assert.ok(inTempleCourt || p.z > YONGLE_MTM.site.z + YONGLE_MTM.arcade - PLAYER.radius - 0.01, `${era.id} 在街上：z ${p.z.toFixed(2)}`)
       }
     }
   })

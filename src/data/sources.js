@@ -1363,6 +1363,110 @@ SOURCES['moe-kue-tshe'] = {
   context: '詞目「粿粞」，名詞：糯米磨成漿後裝袋壓去水分成固體狀，可用來搓湯圓或做年糕的材料。',
 }
 
+// 第 5 階段 B：霞海城隍廟（查證紀錄：docs/research/xia-hai-cheng-huang.md）
+// 內政部頁面無署名；nchdb 與廟方官網原頁未能開啟（憑證錯誤），引用時相關細節標「待核」
+SOURCES['moi-xiahai-temple'] = {
+  id: 'moi-xiahai-temple',
+  citation: '內政部臺灣宗教文化地圖，〈大稻埕霞海城隍廟〉（文化資產）。',
+  publisher: '內政部',
+  title: '大稻埕霞海城隍廟',
+  url: 'https://taiwangods.moi.gov.tw/html/cultural/3_0011.aspx?i=58',
+  published: '無署名（2026年10月查閱，WebFetch 摘要讀取）',
+  context: '源自泉州同安霞城；道光初年陳金絨迎奉金身來臺；早期在艋舺八甲庄建廟；咸豐三年（1853）頂下郊拚廟毀於火災、神像遷大稻埕；咸豐六年（1856）在現址籌建、咸豐九年（1859）完工；地址迪化街一段61號；1985年8月19日公告為古蹟（臺內民字第338095號）；民國60年（1971）一位老太太捐獻月下老人神像。',
+}
+SOURCES['moi-xiahai-folklore'] = {
+  id: 'moi-xiahai-folklore',
+  citation: '內政部臺灣宗教文化地圖，〈台北霞海城隍廟五月十三迎城隍〉（文化資產）。',
+  publisher: '內政部',
+  title: '台北霞海城隍廟五月十三迎城隍',
+  url: 'https://taiwangods.moi.gov.tw/html/cultural/3_0011.aspx?i=212',
+  published: '無署名（2026年10月查閱，WebFetch 摘要讀取；國家文化資產網原頁未能開啟）',
+  context: '臺北市2010年7月26日公告登錄民俗（北市文化二字第09930815902號函），起源年代清光緒5年（1879）；流程：農曆五月初六放軍、五月十一夜間暗訪、五月十三聖誕遶境、五月十八收軍；駕前謝將軍、范將軍白晝右手持扇、左手持手絹；北管軒社、金獅團等陣頭；過去每年舉行，現改為三年一次。',
+}
+SOURCES['moi-xiahai-landscape'] = {
+  id: 'moi-xiahai-landscape',
+  citation: '內政部臺灣宗教百景，〈台北霞海城隍廟．五月十三迎城隍〉。',
+  publisher: '內政部',
+  title: '台北霞海城隍廟．五月十三迎城隍',
+  url: 'https://taiwangods.moi.gov.tw/html/landscape/1_0011.aspx?i=13',
+  published: '無署名（2026年10月查閱，WebFetch 摘要讀取）',
+  context: '清道光元年（1821）一百多名泉州同安人搭船到艋舺，商人陳金絨供奉從同安帶來的霞海城隍神尊（1821年僅此一源）；1856年在現址籌建；慶典起源1879年；俗諺「五月十三人看人，迎神賽會甲天下」；民國60年（1971）增祀月下老人；現列臺北市定古蹟。',
+}
+SOURCES['nownews-2020-xiahai'] = {
+  id: 'nownews-2020-xiahai',
+  citation: '賴志昶，〈台北霞海城隍廟〉專訪報導，NOWnews，2020年12月29日發布、2021年12月23日更新。',
+  publisher: 'NOWnews 今日新聞',
+  title: '台北霞海城隍廟專訪報導',
+  url: 'https://www.nownews.com/news/5149427',
+  published: '2020年12月29日（2021年12月23日更新）',
+  context: '咸豐六年由海內會陳姓族人與地方善信發起建廟，三年後落成；因械鬥自艋舺遷往大稻埕，起初安奉在糕餅舖中（單一來源）。',
+}
+SOURCES['gvm-city-2025-temples'] = {
+  id: 'gvm-city-2025-temples',
+  citation: 'Somebody Sue（普通人），〈見證近代台灣風起雲湧……三大廟宇由來〉，遠見《城市學》專欄，2025年5月25日。',
+  publisher: '遠見《城市學》（媒體專欄，非學術文獻）',
+  title: '見證近代台灣風起雲湧……三大廟宇由來',
+  url: 'https://city.gvm.com.tw/article/121550',
+  published: '2025年5月25日',
+  context: '同安人早期在艋舺八甲庄（約今老松國小附近）建廟；頂下郊拚同安人落敗、廟付之一炬，神像被迫遷出；「霞海」名稱一說源自同安霞城城隍廟、另一說即「海內」之意（兩說並列）；1971年才開始供奉月老。',
+}
+SOURCES['pts-2024-xiahai'] = {
+  id: 'pts-2024-xiahai',
+  citation: '呂尚儒、莊浚佑，公視新聞網報導，2024年5月27日。',
+  publisher: '公視新聞網',
+  title: '霞海城隍廟迎城隍報導',
+  url: 'https://news.pts.org.tw/article/697098',
+  published: '2024年5月27日',
+  context: '俗諺「三月痟媽祖、五月迎城隍」「五月十三人看人」。',
+}
+SOURCES['mirror-2024-xiahai'] = {
+  id: 'mirror-2024-xiahai',
+  citation: '楊越涵，〈傳統慶典創新再現〉，鏡週刊（台北畫刊性質稿件），2024年5月15日。',
+  publisher: '鏡週刊',
+  title: '傳統慶典創新再現',
+  url: 'https://www.mirrormedia.mg/story/20240515cnt005',
+  published: '2024年5月15日',
+  context: '迎城隍可追溯至1879年，過去是北臺灣最大的遶境；農曆五月十一暗訪、五月十三遶境；現今由在地軒社自行發起夜間暗訪與迎城隍。',
+}
+
+// 第 5 階段 B：乾元藥行（查證紀錄：docs/research/qian-yuan-yao-hang.md）
+SOURCES['ith-qian-yuan'] = {
+  id: 'ith-qian-yuan',
+  citation: '中央研究院臺灣史研究所檔案館，〈追溯迪化街百年老店林復振商行與乾元藥行〉之「二、乾元藥行」，2013年。',
+  publisher: '中央研究院臺灣史研究所檔案館',
+  title: '乾元藥行（館藏選粹）',
+  url: 'https://archives.ith.sinica.edu.tw/collections_con.php?no=133',
+  published: '2013年（2026年10月查閱，WebFetch 摘要讀取）',
+  context: '創立於1896年（依1929年《臺灣日日新報》〈乾元藥行三十年開業記念披露〉報導）；創辦人張清河1917年過世；陳茂通（原為股東兼學徒）1917年接手、1936年8月病逝，曾任臺北本島人藥業組合長、藥郊聯合會會長；其後由股東朱樹勳、陳福經營；1960年陳金清富接手，家族後人延續至今；與長崎泰益號有生意往來；1928年向香港協元順訂購13件藥材；主要產品含平安散（治霍亂），1932年寄贈一千包到廈門。',
+}
+SOURCES['ith-dihua-stores-intro'] = {
+  id: 'ith-dihua-stores-intro',
+  citation: '陳秋瑾，〈追溯迪化街百年老店林復振商行與乾元藥行〉導言，中央研究院臺灣史研究所檔案館，2013年。',
+  publisher: '中央研究院臺灣史研究所檔案館',
+  title: '追溯迪化街百年老店林復振商行與乾元藥行（導言）',
+  url: 'https://archives.ith.sinica.edu.tw/collections_list_02.php?no=23',
+  published: '2013年',
+  context: '迪化街以中藥材、南北乾貨、布料商聚集著稱；1860年淡水開港後外商設洋行經營茶葉；19世紀末大稻埕成為臺灣北部貨物集散中心；日治時期仍是本島人南北雜貨批發重鎮。',
+}
+SOURCES['wiki-qian-yuan'] = {
+  id: 'wiki-qian-yuan',
+  citation: '維基百科，〈乾元蔘藥行〉，最後修訂2023年2月14日。',
+  publisher: '維基百科',
+  title: '乾元蔘藥行',
+  url: 'https://zh.wikipedia.org/wiki/%E4%B9%BE%E5%85%83%E8%94%98%E8%97%A5%E8%A1%8C',
+  published: '2023年2月14日最後修訂',
+  context: '創立年份記有1875年一說；創辦人張清河；立面頂端凸出山牆，以水平檐板取代常見的巴洛克花草紋飾，山牆下有牛眼窗，窗框飾人蔘圖案。',
+}
+SOURCES['trip-writers-2008-qianyuan'] = {
+  id: 'trip-writers-2008-qianyuan',
+  citation: '水瓶子，〈乾元蔘藥行百年風華盡在其中〉，水瓶子的城市慢步（個人部落格），2008年1月。',
+  publisher: '水瓶子的城市慢步（個人部落格）',
+  title: '乾元蔘藥行百年風華盡在其中',
+  url: 'http://trip.writers.idv.tw/2008/01/blog-post_13.html',
+  published: '2008年1月',
+  context: '寫「1875(1896?)年成立」；位置迪化街一段71號；店面縱深約60公尺、三進，進與進之間有天井，供煮藥、晾曬、倉庫與生活；曾因煮藥失火，前兩進木樓板燒毀後改建；水平直線屋簷與竹節式壁柱為日治常見樣式；陳鳳鎮1994年接手、陳建忠1998年接手、陳建國2011年另創「上乾元蔘藥行」（以上皆單一來源）。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }
