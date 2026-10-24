@@ -55,7 +55,7 @@ export const ERAS = [
       items: ['teaChests', 'sacks', 'baskets', 'jars', 'handcart', 'carryingPole'],
       boats: 'junks',
     },
-    availableStores: ['lin-fu-zhen', 'dodd-tea-house', 'lin-hua-tai'],
+    availableStores: ['lin-fu-zhen', 'dodd-tea-house', 'xia-hai-cheng-huang', 'lin-hua-tai'],
   },
   {
     id: 'banquet',
@@ -104,7 +104,7 @@ export const ERAS = [
       items: ['rickshaws', 'pottedPlants', 'teaHouseTables', 'vendorCart', 'teaChests'],
       boats: 'junks',
     },
-    availableStores: ['lin-fu-zhen', 'jiang-shan-lou', 'you-ji', 'li-ting-xiang', 'lin-hua-tai', 'rice-and-shine-329'],
+    availableStores: ['lin-fu-zhen', 'jiang-shan-lou', 'qian-yuan-yao-hang', 'you-ji', 'li-ting-xiang', 'lin-hua-tai', 'rice-and-shine-329'],
   },
   {
     id: 'modern',
