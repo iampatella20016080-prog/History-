@@ -109,6 +109,7 @@ export const MAP_PLACES = [
   { id: 'luguo', shopIds: ['luguo-cafe'], name: '爐鍋咖啡（小藝埕）', address: '迪化街一段32巷1號', x: 34, y: 75, precision: 'address', sourceIds: ['storm-2018-luguo'] },
   { id: 'yongle-mtm', shopIds: ['yong-le-mi-tai-mu'], name: '永樂米苔目', address: '民樂街111號', x: 47, y: 74, precision: 'address', sourceIds: ['bella-2021-yongle-market'] },
   { id: 'xinfangchun', shopIds: ['xin-fang-chun'], name: '新芳春茶行', address: '民生西路309號', x: 50, y: 68, precision: 'address', sourceIds: ['nchdb-xinfangchun'] },
+  { id: 'bolero', shopIds: ['bolero'], name: '波麗路', address: '民生西路314號', x: 52, y: 70, precision: 'address', sourceIds: ['boch-bolero'] },
   { id: 'shizixuan', shopIds: ['shizixuan'], name: '十字軒糕餅舖', address: '延平北路二段68號', x: 58, y: 64, precision: 'address', sourceIds: ['mirrormedia-2024-shizixuan'] },
   { id: 'wangtea', shopIds: ['you-ji'], name: '有記名茶', address: '重慶北路二段64巷26號', x: 80, y: 62, precision: 'address', sourceIds: ['wangtea-transformation'] },
   { id: 'linhuatai', shopIds: ['lin-hua-tai'], name: '林華泰茶行', address: '重慶北路二段193號', x: 80, y: 40, precision: 'address', sourceIds: ['linhuatai-site'] },

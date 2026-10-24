@@ -1365,7 +1365,70 @@ function AlmondTea() {
   )
 }
 
+function DuckRice() {
+  // 法國鴨子飯：白瓷盤上一堆白飯，旁邊鋪幾片帶皮的鴨肉，淋深褐色的醬汁，角落一小撮青豆
+  return (
+    <>
+      <Shadow cy={126} rx={78} />
+      <ellipse cx="100" cy="100" rx="78" ry="26" fill="#fbfaf6" stroke={INK} strokeWidth="2" />
+      <ellipse cx="100" cy="98" rx="66" ry="19" fill="#f1ede2" />
+      <path d="M44 100 Q50 78 72 76 Q92 76 96 98 Z" fill="#fffdf7" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M56 92 Q64 88 70 94 M62 84 Q70 80 78 86" stroke="#d9d0bb" strokeWidth="1.6" fill="none" />
+      {[0, 1, 2, 3].map((i) => (
+        <g key={i} transform={`translate(${98 + i * 13} ${86 + (i % 2) * 3}) rotate(-12)`}>
+          <rect x="0" y="0" width="12" height="22" rx="3" fill="#b06a46" stroke={INK} strokeWidth="1.6" />
+          <rect x="0" y="0" width="12" height="5" rx="2" fill="#e0b98a" stroke={INK} strokeWidth="1.2" />
+        </g>
+      ))}
+      <path d="M96 108 Q120 116 152 106 Q148 112 120 116 Q104 116 96 108 Z" fill="#5a3418" stroke={INK} strokeWidth="1.4" />
+      {[[62, 108], [70, 112], [78, 108]].map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r="3.6" fill="#6f9a45" stroke={INK} strokeWidth="1.2" />
+      ))}
+      <path d="M160 70 L164 96 M160 70 Q154 64 158 58 Q164 56 166 62 Q168 68 160 70 Z" stroke={INK} strokeWidth="1.8" fill="#dcdcd2" strokeLinejoin="round" />
+    </>
+  )
+}
+
+function CurryRice() {
+  // 咖哩飯：橢圓盤左半是白飯，右半淹著一灘土黃的咖哩醬，上面有紅蘿蔔塊與馬鈴薯塊，飯上撒一撮魚鬆
+  return (
+    <>
+      <Shadow cy={126} rx={78} />
+      <ellipse cx="100" cy="100" rx="78" ry="26" fill="#fbfaf6" stroke={INK} strokeWidth="2" />
+      <path d="M40 100 Q44 82 72 78 Q100 76 104 98 Q100 112 72 114 Q48 114 40 100 Z" fill="#fffdf7" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M58 94 Q68 90 76 96 M54 104 Q66 100 80 104" stroke="#d9d0bb" strokeWidth="1.5" fill="none" />
+      <path d="M96 96 Q104 80 132 80 Q166 82 168 100 Q166 114 132 116 Q106 116 96 102 Z" fill="#b8762e" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M104 100 Q120 108 150 104" stroke="#8d5520" strokeWidth="2" fill="none" />
+      <rect x="112" y="88" width="12" height="11" rx="2" fill="#e0712a" stroke={INK} strokeWidth="1.3" transform="rotate(-14 118 93)" />
+      <rect x="138" y="92" width="13" height="11" rx="2" fill="#efd79a" stroke={INK} strokeWidth="1.3" transform="rotate(10 144 97)" />
+      <path d="M62 78 Q70 70 80 76 Q86 82 78 86 Q68 88 62 78 Z" fill="#d8a56a" stroke={INK} strokeWidth="1.3" />
+      <path d="M66 78 Q70 74 74 80 M72 76 Q76 78 76 84" stroke="#a9733f" strokeWidth="1.2" fill="none" />
+    </>
+  )
+}
+
+function BoleroSteak() {
+  // 牛排：橢圓的金屬盤（鋼製餐具的示意）上一塊帶焦痕的牛排，旁邊幾根炸薯條與一小束豆子
+  return (
+    <>
+      <Shadow cy={126} rx={80} />
+      <ellipse cx="100" cy="100" rx="80" ry="26" fill="#c9ccc6" stroke={INK} strokeWidth="2" />
+      <ellipse cx="100" cy="98" rx="68" ry="19" fill="#dfe2dc" />
+      <path d="M58 88 Q70 72 104 74 Q130 76 128 98 Q124 112 94 112 Q62 112 58 88 Z" fill="#6b3a24" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M70 86 L112 102 M66 96 L106 108 M80 78 L120 92" stroke="#3a1d0f" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M98 80 Q110 78 118 84" stroke="#e8c79b" strokeWidth="2.4" strokeLinecap="round" fill="none" />
+      {[0, 1, 2, 3].map((i) => (
+        <rect key={i} x={134 + i * 7} y={84 - (i % 2) * 6} width="6" height="26" rx="2" fill="#e8b84a" stroke={INK} strokeWidth="1.3" transform={`rotate(${8 - i * 5} ${137 + i * 7} 97)`} />
+      ))}
+      <path d="M46 104 Q52 96 60 102 M44 110 Q50 102 58 108" stroke="#5e8a3c" strokeWidth="3" strokeLinecap="round" fill="none" />
+    </>
+  )
+}
+
 const ILLUSTRATIONS = {
+  'duck-rice': DuckRice,
+  'curry-rice': CurryRice,
+  'bolero-steak': BoleroSteak,
   'bird-nest-soup': BirdNestSoup,
   'golden-turkey': GoldenTurkey,
   'crystal-pigeon-egg': CrystalPigeonEgg,

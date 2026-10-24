@@ -81,7 +81,7 @@ describe('總覽：對照地圖', () => {
 
   test('沒有門牌的店家列在「地圖上沒有標示」，不會被亂標', () => {
     const unmapped = getUnmappedShops().map((shop) => shop.id)
-    for (const id of ['lin-fu-zhen', 'li-ting-xiang', 'jiang-shan-lou', 'bolero']) assert.ok(unmapped.includes(id), id)
+    for (const id of ['lin-fu-zhen', 'li-ting-xiang', 'jiang-shan-lou']) assert.ok(unmapped.includes(id), id)
     for (const id of unmapped) assert.ok(getShop(id))
     const mapped = new Set(MAP_PLACES.flatMap((place) => place.shopIds))
     for (const id of unmapped) assert.ok(!mapped.has(id))

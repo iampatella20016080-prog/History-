@@ -440,6 +440,63 @@ SOURCES['boch-bolero'] = {
   url: 'http://nchdb.boch.gov.tw/assets/advanceSearch/historicalBuilding/20060517000001',
   context: '「本店位於本市民生西路314號，初建於1920年代，後於1934年餐廳開業後進行裝修」；「「波麗路」為臺北市1930年代最著名的西餐廳，是「沙龍文化」的先鋒，為生活西化重要見證。」',
 }
+/* ── 波麗路（第 4 階段，查證紀錄 docs/research/bolero.md） ── */
+SOURCES['mirror-2025-bolero'] = {
+  id: 'mirror-2025-bolero',
+  citation: '林亦君（文）、何宗昇（攝），〈波麗路西餐廳〉，鏡週刊，2025年5月4日更新。',
+  publisher: '鏡週刊',
+  title: '波麗路西餐廳',
+  url: 'https://www.mirrormedia.mg/story/20250504food001',
+  context: '1934年（昭和9年）廖水來自立門戶，原在楊承基的「維特咖啡」任主廚；店名取自樂曲〈BOLERO〉；畫家張萬傳、楊三郎、陳德旺、洪瑞麟、郭雪湖常出入，呂泉生、林衡道亦常來；菜單有法國鴨子飯、牛肉咖哩飯，牛排先醃再煎。同文門牌寫134號與314號、「歷史建築」與「市定古蹟」並見，本站不採用134號與市定古蹟。',
+}
+SOURCES['foodnext-2020-bolero'] = {
+  id: 'foodnext-2020-bolero',
+  citation: '魚夫，〈波麗路〉，食力 foodNEXT，2020年7月5日。',
+  publisher: '食力 foodNEXT',
+  title: '波麗路',
+  url: 'https://www.foodnext.net/life/culture/paper/5098473425',
+  context: '1934年開幕，民生西路314號；招牌法國鴨子飯、附魚鬆的咖哩飯；年輕人相親的場所；廖水來設計多層鋼製圓飯盒（文中寫「據說」）。',
+}
+SOURCES['gvm-city-2024-bolero'] = {
+  id: 'gvm-city-2024-bolero',
+  citation: '魚夫，〈波麗路與維特咖啡〉，遠見城市，2024年11月21日。',
+  publisher: '遠見城市',
+  title: '波麗路與維特咖啡',
+  url: 'https://city.gvm.com.tw/article/117285',
+  context: '波麗路位於日治時期的太平町三丁目（約今民生西路與延平北路口）；維特咖啡1931年開於太平町三丁目；畫家陳清汾自巴黎返臺與廖水來聊天，激發鴨子飯的研發；「相親定終身」。文中創辦人名字「廖水來」「廖永來」並用。',
+}
+SOURCES['gvm-2011-bolero'] = {
+  id: 'gvm-2011-bolero',
+  citation: '王思涵，〈波麗路：保留1934年的菜色與空間〉，《遠見雜誌》2011年8月號（網頁2011年7月29日）。',
+  publisher: '遠見雜誌',
+  title: '波麗路：保留1934年的菜色與空間',
+  url: 'https://www.gvm.com.tw/article/15728',
+  context: '廖水來赴日學西餐，朋友鼓勵租小店面開業；後來買下該建物，1976年於隔壁開第二店，本店一直在原址；1961年法國鴨子飯一份25元；初開裝潢有進口磁磚、沙發椅、吊扇、冷氣、78轉電唱機播放古典樂，服務員穿黑西裝打領結。',
+}
+SOURCES['setn-2020-vite-cafe'] = {
+  id: 'setn-2020-vite-cafe',
+  citation: '鍾志鵬，〈維特咖啡〉，三立新聞網，2020年10月22日。',
+  publisher: '三立新聞網',
+  title: '維特咖啡',
+  url: 'https://www.setn.com/news/835067',
+  context: '維特咖啡1931年開設，經營者楊承基（楊三郎之兄），位於太平町三丁目路口二樓（今延平北路與南京西路口），1932年引進女給。單一來源。',
+}
+SOURCES['newtalk-2024-shanshuiting'] = {
+  id: 'newtalk-2024-shanshuiting',
+  citation: '林衡哲，〈王井泉與山水亭〉，新頭殼 Newtalk，2024年4月26日。',
+  publisher: '新頭殼 Newtalk',
+  title: '王井泉與山水亭',
+  url: 'https://newtalk.tw/news/view/2024-04-26/917548',
+  context: '王井泉在大稻埕經營山水亭臺菜餐廳，常客有林茂生、陳逸松、張文環、呂赫若、吳新榮等，陳逸松出資協助創辦《臺灣文學》。未載創立年、門牌與菜色；回憶性質的評論稿，單一來源。',
+}
+SOURCES['wiki-bolero'] = {
+  id: 'wiki-bolero',
+  citation: '維基百科，〈波麗路西餐廳〉（無腳註，只作對照）。',
+  publisher: '維基百科',
+  title: '波麗路西餐廳',
+  url: 'https://zh.wikipedia.org/wiki/%E6%B3%A2%E9%BA%97%E8%B7%AF%E8%A5%BF%E9%A4%90%E5%BB%B3',
+  context: '1934年創立，民生西路314號；店名取自拉威爾〈Boléro〉；1947年畫家顏雲連重新設計改建；1976年兄弟分家另一店在308號；2006年5月17日公告為歷史建築。改建與分家只有這一個來源，本站不採用。',
+}
 SOURCES['moe-coffee'] = {
   id: 'moe-coffee',
   citation: '教育部《國語辭典簡編本》，「咖啡」。',
