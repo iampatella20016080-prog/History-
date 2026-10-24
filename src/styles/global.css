@@ -2880,3 +2880,200 @@ kbd {
     animation: none;
   }
 }
+
+/* ── 年表與對照地圖（總覽） ── */
+.overview-layer .story-backdrop {
+  cursor: pointer;
+  pointer-events: auto;
+}
+.overview-layer .story {
+  width: min(820px, 72vw);
+}
+.overview .story__body {
+  padding-bottom: 28px;
+}
+.overview-era {
+  margin-top: 22px;
+}
+.overview-era__title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+}
+.overview-era__title.is-between {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+.overview-era__chapter {
+  font-family: var(--font-latin, inherit);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.overview-events {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.overview-event {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.overview-event__year {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--accent, #a8382c);
+}
+.overview-event.is-event .overview-event__year {
+  color: var(--ink-faint);
+}
+.overview-event.is-soon .overview-event__name {
+  color: var(--ink-soft);
+}
+.overview-event__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.overview-event__name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+.overview-event__meta,
+.overview-event__text {
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+}
+.overview-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.overview-chip {
+  font-size: 0.72rem;
+  padding: 1px 7px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--ink-soft);
+}
+.overview-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.78rem;
+}
+.overview-sources a {
+  color: var(--ink-faint);
+  text-decoration: underline dotted;
+}
+.overview-undated {
+  margin: 0;
+  padding-left: 1.2em;
+  font-size: 0.95rem;
+}
+.overview-undated li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 3px 0;
+}
+.overview-map {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  margin: 10px 0 6px;
+  background: var(--paper-light);
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  font-family: inherit;
+}
+.overview-map__street {
+  fill: none;
+  stroke: var(--ink-faint);
+  stroke-width: 0.9;
+  stroke-linecap: round;
+}
+.overview-map__street.is-river {
+  stroke: #7fa7c2;
+  stroke-width: 3;
+  opacity: 0.6;
+}
+.overview-map__label {
+  font-size: 2.3px;
+  fill: var(--ink-faint);
+  letter-spacing: 0.05em;
+}
+.overview-map__place {
+  cursor: pointer;
+}
+.overview-map__place circle {
+  fill: var(--accent, #a8382c);
+  stroke: var(--paper);
+  stroke-width: 0.5;
+}
+.overview-map__place.is-approx circle {
+  fill: var(--paper);
+  stroke: var(--accent, #a8382c);
+  stroke-dasharray: 0.8 0.5;
+}
+.overview-map__place text {
+  font-size: 2.5px;
+  fill: var(--ink);
+  paint-order: stroke;
+  stroke: var(--paper-light);
+  stroke-width: 0.8;
+}
+.overview-map__place.is-selected circle {
+  r: 2.3;
+}
+.overview-map__place.is-selected text {
+  font-weight: 700;
+}
+.overview-place {
+  min-height: 64px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--paper-light);
+}
+.overview-place__name {
+  margin: 0 0 4px;
+  font-size: 1rem;
+}
+.overview-place__address {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  color: var(--ink-soft);
+}
+.overview-place__shops {
+  margin: 0 0 6px;
+  padding-left: 1.2em;
+  font-size: 0.92rem;
+}
+.overview-place__hint {
+  margin: 0;
+  color: var(--ink-faint);
+}
+@media (max-width: 720px) {
+  .overview-event {
+    grid-template-columns: 48px 1fr;
+  }
+  .overview-map__label {
+    font-size: 2.8px;
+  }
+}

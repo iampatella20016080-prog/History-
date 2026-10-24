@@ -6,6 +6,7 @@ import { ChapterCard } from './ChapterCard.jsx'
 import { EraNotice } from './EraNotice.jsx'
 import { MusicNotice } from './MusicSettings.jsx'
 import { SettingsMenu } from './SettingsMenu.jsx'
+import { OverviewPanel } from './OverviewPanel.jsx'
 import { StoreDirectory } from './StoreDirectory.jsx'
 import { Joystick } from './TouchControls.jsx'
 
@@ -179,6 +180,7 @@ export function Hud() {
       <div className="hud-actions">
         <SettingsMenu />
         <StoreDirectory era={era} shops={shops} />
+        <OverviewPanel />
       </div>
       {started && <MusicNotice />}
       <ControlsHint touch={touch} viewer={viewer} />
