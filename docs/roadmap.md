@@ -17,7 +17,7 @@
 - ☑ 有記名茶（1890）：補章節、開放探索。建築已在街上。
 - ☑ 新芳春茶行（1934）：補章節、開放探索。建築已在街上。
 - ☑ 茶葉外銷的起點：寶順洋行與李春生（「港口商街」的文化據點 `dodd-tea-house`；文獻在 `docs/research/tea-export-origins.md`）。
-- ☐ 主題 `tea`：五個年代各自的茶業章節互相連結（`getThemeVersions`）。
+- ☑ 主題 `tea`（`TEA_THEME`）：四家店標同一主題，五個年代各有代表店家，`getThemeMembers` 列出其他成員與年代；名錄顯示「飲食主題：大稻埕的茶」。
 - ☑ 測試：`tests/tea.test.js`；README。
 
 ## 第 2 階段｜總覽頁（申請書要用）

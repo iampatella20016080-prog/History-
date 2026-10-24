@@ -1886,6 +1886,7 @@ export const SHOPS = [
   {
     id: 'dodd-tea-house',
     name: '寶順洋行與李春生',
+    theme: 'tea',
     // 文化據點（茶葉外銷的起點）：不是餐廳，沒有食物圖鑑；只出現在「港口商街」
     kind: 'heritage',
     status: 'open',
@@ -2015,6 +2016,7 @@ export const SHOPS = [
   {
     id: 'lin-hua-tai',
     name: '林華泰茶行',
+    theme: 'tea',
     status: 'open',
     year: 1883,
     category: '茶行',
@@ -2200,6 +2202,7 @@ export const SHOPS = [
   {
     id: 'you-ji',
     name: '有記名茶',
+    theme: 'tea',
     status: 'open',
     year: 1890,
     yearLabel: '1890年（廈門創立，1907年來臺）',
@@ -2435,6 +2438,7 @@ export const SHOPS = [
   {
     id: 'xin-fang-chun',
     name: '新芳春茶行',
+    theme: 'tea',
     status: 'open',
     year: 1934,
     yearLabel: '1934年落成（茶行創立年份有多種說法）',
@@ -2782,7 +2786,26 @@ export function getShop(id, eraId = null) {
 }
 
 /** 飲食主題（例如「魷魚羹飲食文化」：兩個年代各一個版本，只以主題串連） */
+/**
+ * 茶的主線：貫穿五個年代的主題。versions 是每個年代的代表店家（清末的外銷起點、日治的包種茶外銷、
+ * 1930 年代的茶工廠、戰後的批發茶行、現在的古蹟茶葉故事館）；members 列出所有屬於這條主線的店家，
+ * 同一家店可以出現在好幾個年代（例如林華泰在五個年代都有）。
+ */
+export const TEA_THEME = {
+  id: 'tea',
+  title: '大稻埕的茶',
+  versions: {
+    'qing-port': 'dodd-tea-house',
+    banquet: 'you-ji',
+    modern: 'xin-fang-chun',
+    postwar: 'lin-hua-tai',
+    revival: 'xin-fang-chun',
+  },
+  members: ['dodd-tea-house', 'lin-hua-tai', 'you-ji', 'xin-fang-chun'],
+}
+
 const THEMES = {
+  [TEA_THEME.id]: TEA_THEME,
   [SQUID_SOUP_THEME.id]: SQUID_SOUP_THEME,
   [MI_TAI_MU_THEME.id]: MI_TAI_MU_THEME,
   [DOUHUA_THEME.id]: DOUHUA_THEME,
@@ -2809,6 +2832,19 @@ export function getThemeVersions(shop) {
 export function getThemeRelated(shop) {
   const theme = getTheme(shop?.theme)
   return (theme?.related ?? []).map(({ eraId, shopId, relation }) => ({ eraId, shop: getShop(shopId), relation }))
+}
+
+/**
+ * 同一條主線的其他成員店家（例如茶的主線：寶順洋行、林華泰、有記、新芳春），不包含自己；
+ * 每一家附上它出現的年代（buildingByEra 的年代順序）。沒有 members 的主題回傳空陣列。
+ */
+export function getThemeMembers(shop) {
+  const theme = getTheme(shop?.theme)
+  if (!theme?.members) return []
+  return theme.members
+    .filter((id) => id !== shop.id)
+    .map((id) => ({ shop: getShop(id), eraIds: Object.keys(getShop(id)?.buildingByEra ?? {}) }))
+    .filter((item) => item.shop)
 }
 
 /** 某個年代出現在街上的店家（依 eras.js 的 availableStores 排序） */
