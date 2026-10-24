@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { getEra } from '../data/eras.js'
 import { getShopsByEra } from '../data/shops.js'
 import { useGameStore } from '../state/useGameStore.js'
+import { useT } from '../i18n/useT.js'
+import { LicensesPanel } from './LicensesPanel.jsx'
 import { ChapterCard } from './ChapterCard.jsx'
 import { EraNotice } from './EraNotice.jsx'
 import { MusicNotice } from './MusicSettings.jsx'
@@ -10,43 +12,46 @@ import { OverviewPanel } from './OverviewPanel.jsx'
 import { StoreDirectory } from './StoreDirectory.jsx'
 import { Joystick } from './TouchControls.jsx'
 
+/** 操作說明：每項是 [按鍵, 說明字串的鍵] */
 const HINTS = {
   explore: {
     touch: [
-      ['搖桿', '左下角移動，推得越遠走得越快'],
-      ['單指拖曳', '旋轉視角'],
-      ['雙指', '捏合縮放'],
-      ['點店面', '靠近已開放的店家後點一下，閱讀故事'],
-      ['齒輪', '右上角切換年代、觀看模式、畫質與音樂'],
+      ['@hud.key.joystick', 'hud.hint.joystick'],
+      ['@hud.key.drag1', 'hud.hint.drag1'],
+      ['@hud.key.pinch', 'hud.hint.pinch'],
+      ['@hud.key.tapShop', 'hud.hint.tap'],
+      ['@hud.key.gear', 'hud.hint.gear'],
     ],
     mouse: [
-      [['W', 'A', 'S', 'D'], '或方向鍵　移動'],
-      [['Shift'], '快走'],
-      [['拖曳'], '旋轉視角　滾輪 縮放'],
-      [['E'], '靠近已開放的店家時閱讀故事　Esc 返回'],
-      [['1', '5'], '切換年代（或右上角齒輪）'],
+      [['W', 'A', 'S', 'D'], 'hud.hint.wasd'],
+      [['Shift'], 'hud.hint.shift'],
+      [['@hud.key.drag'], 'hud.hint.mouseDrag'],
+      [['E'], 'hud.hint.e'],
+      [['1', '5'], 'hud.hint.era'],
     ],
   },
   viewer: {
     touch: [
-      ['單指拖曳', '旋轉鏡頭'],
-      ['雙指拖曳', '平移鏡頭'],
-      ['雙指捏合', '縮放（拉到最近時往前推進）'],
-      ['點建築', '平滑聚焦整個立面'],
+      ['@hud.key.drag1', 'hud.hint.viewerDrag'],
+      ['@hud.key.twoDrag', 'hud.hint.viewerPan'],
+      ['@hud.key.twoPinch', 'hud.hint.viewerZoom'],
+      ['@hud.key.tapBuilding', 'hud.hint.viewerFocus'],
     ],
     mouse: [
-      [['左鍵拖曳'], '旋轉鏡頭'],
-      [['右鍵拖曳'], '平移鏡頭'],
-      [['滾輪'], '縮放（拉到最近時往前推進）'],
-      [['W', 'A', 'S', 'D'], '沿街移動鏡頭'],
-      [['點建築'], '平滑聚焦整個立面'],
+      [['@hud.key.leftDrag'], 'hud.hint.viewerDrag'],
+      [['@hud.key.rightDrag'], 'hud.hint.viewerPan'],
+      [['@hud.key.wheel'], 'hud.hint.viewerZoom'],
+      [['W', 'A', 'S', 'D'], 'hud.hint.viewerMove'],
+      [['@hud.key.tapBuilding'], 'hud.hint.viewerFocus'],
     ],
   },
 }
 
 function ControlsHint({ touch, viewer }) {
+  const t = useT()
   const [collapsed, setCollapsed] = useState(touch)
   useEffect(() => setCollapsed(touch), [touch])
+  const keyLabel = (key) => (key.startsWith('@') ? t(key.slice(1)) : key)
   const items = HINTS[viewer ? 'viewer' : 'explore'][touch ? 'touch' : 'mouse']
   return (
     <div className={`hud-controls paper${collapsed ? ' is-collapsed' : ''}${touch ? ' is-touch' : ''}`}>
@@ -56,7 +61,7 @@ function ControlsHint({ touch, viewer }) {
         aria-expanded={!collapsed}
         onClick={() => setCollapsed((value) => !value)}
       >
-        {viewer ? '觀賞操作' : '操作說明'} {collapsed ? '＋' : '－'}
+        {viewer ? t('hud.hint.viewer') : t('hud.hint.explore')} {collapsed ? '＋' : '－'}
       </button>
       {!collapsed && (
         <ul className="hud-controls__list">
@@ -64,16 +69,16 @@ function ControlsHint({ touch, viewer }) {
             <li key={text}>
               <span className="keys">
                 {touch ? (
-                  <kbd>{keys}</kbd>
+                  <kbd>{keyLabel(keys)}</kbd>
                 ) : keys.length === 2 && keys[0] === '1' ? (
                   <>
                     <kbd>1</kbd>–<kbd>5</kbd>
                   </>
                 ) : (
-                  keys.map((key) => <kbd key={key}>{key}</kbd>)
+                  keys.map((key) => <kbd key={key}>{keyLabel(key)}</kbd>)
                 )}
               </span>
-              {text}
+              {t(text)}
             </li>
           ))}
         </ul>
@@ -160,7 +165,11 @@ export function Hud() {
   const touch = useGameStore((state) => state.inputMode === 'touch')
   const viewer = useGameStore((state) => state.viewMode === 'viewer')
   const uiHidden = useGameStore((state) => state.uiHidden)
+  const lang = useGameStore((state) => state.lang)
   const era = getEra(eraId)
+  useEffect(() => {
+    document.documentElement.lang = lang
+  }, [lang])
   const shops = useMemo(() => getShopsByEra(era), [era])
 
   const className = [
@@ -182,6 +191,7 @@ export function Hud() {
         <StoreDirectory era={era} shops={shops} />
         <OverviewPanel />
       </div>
+      <LicensesPanel />
       {started && <MusicNotice />}
       <ControlsHint touch={touch} viewer={viewer} />
       <ObjectiveHint shops={shops} touch={touch} />

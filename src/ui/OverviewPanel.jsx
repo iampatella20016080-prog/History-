@@ -4,6 +4,7 @@ import { ERAS } from '../data/eras.js'
 import { MAP_PLACES, MAP_STREETS, getPlaceShops, getTimelineByEra, getUnmappedShops } from '../data/overview.js'
 import { getSource } from '../data/sources.js'
 import { useGameStore } from '../state/useGameStore.js'
+import { useT } from '../i18n/useT.js'
 
 const ERA_TITLE = Object.fromEntries(ERAS.map((era) => [era.id, era.title]))
 
@@ -17,6 +18,7 @@ export function OverviewPanel() {
   const mode = useGameStore((state) => state.mode)
   const transitioning = useGameStore((state) => state.transitioning)
   const toggleMenu = useGameStore((state) => state.toggleMenu)
+  const t = useT()
 
   useEffect(() => {
     if (!open) return undefined
@@ -44,7 +46,7 @@ export function OverviewPanel() {
           setOpen(true)
         }}
       >
-        年表與地圖
+        {t('overview.toggle')}
       </button>
       {/* 全頁視窗用 portal 掛到 body：hud-actions 有 transform，fixed 定位會被框在裡面 */}
       {open &&
@@ -54,23 +56,23 @@ export function OverviewPanel() {
           <section id="overview-panel" className="story paper overview" role="dialog" aria-modal="true" aria-labelledby="overview-title">
             <header className="story__header">
               <div className="story__seal" aria-hidden="true">
-                總覽
+                {t('overview.seal')}
               </div>
               <div className="story__titles">
-                <p className="story__eyebrow">大稻埕食光街｜1853–現在</p>
+                <p className="story__eyebrow">{t('overview.eyebrow')}</p>
                 <h2 id="overview-title" className="story__title">
-                  年表與對照地圖
+                  {t('overview.title')}
                 </h2>
-                <p className="story__meta">五個年代、所有店家的創立年份，以及店家的真實位置</p>
+                <p className="story__meta">{t('overview.meta')}</p>
               </div>
               <button type="button" className="story__close" onClick={() => setOpen(false)}>
-                <span aria-hidden="true">✕</span> <span className="story__close-label">關閉</span> <kbd>Esc</kbd>
+                <span aria-hidden="true">✕</span> <span className="story__close-label">{t('overview.close')}</span> <kbd>Esc</kbd>
               </button>
             </header>
-            <nav className="story__tabs" role="tablist" aria-label="總覽分頁">
+            <nav className="story__tabs" role="tablist" aria-label={t('overview.tabs')}>
               {[
-                ['timeline', '壹', '年表'],
-                ['map', '貳', '對照地圖'],
+                ['timeline', '壹', t('overview.tab.timeline')],
+                ['map', '貳', t('overview.tab.map')],
               ].map(([id, numeral, label]) => (
                 <button key={id} type="button" role="tab" aria-selected={tab === id} className={`story__tab${tab === id ? ' is-active' : ''}`} onClick={() => setTab(id)}>
                   <span className="story__tab-number">{numeral}</span>

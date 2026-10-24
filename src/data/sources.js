@@ -1341,6 +1341,28 @@ SOURCES['wolf-women-tea-2003'] = {
   context: '茶業給予婦女婚姻以外的選擇，大稻埕婦女的結婚比例低於臺北盆地邊緣。',
 }
 
+// 台語讀音（glossary 的 taiwanese 欄位）：只加辭典有詞條、已實際開啟詞條頁核對的詞
+SOURCES['moe-bi-thai-bak-entry'] = {
+  id: 'moe-bi-thai-bak-entry',
+  citation: '教育部《臺灣台語常用詞辭典》，「米篩目」。',
+  publisher: '教育部',
+  title: '米篩目',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/2798/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '「米篩目」（米苔目）的台羅讀音 bí-thai-ba̍k。',
+  context: '詞目「米篩目」，台羅 bí-thai-ba̍k；釋義為米苔目，一種臺灣傳統米食。',
+}
+SOURCES['moe-kue-tshe'] = {
+  id: 'moe-kue-tshe',
+  citation: '教育部《臺灣台語常用詞辭典》，「粿粞」。',
+  publisher: '教育部',
+  title: '粿粞',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/10732/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '「粿粞」的台羅讀音 kué-tshè（另有 ké-tshuè 的讀法）。',
+  context: '詞目「粿粞」，名詞：糯米磨成漿後裝袋壓去水分成固體狀，可用來搓湯圓或做年糕的材料。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

@@ -3,6 +3,8 @@ import { ERAS, getEra } from '../data/eras.js'
 import { getQualitySettings } from '../game/quality.js'
 import { useGameStore } from '../state/useGameStore.js'
 import { MusicSettings } from './MusicSettings.jsx'
+import { LANGS } from '../i18n/lang.js'
+import { useT } from '../i18n/useT.js'
 
 const MODE_ORDER = ['smooth', 'fine']
 
@@ -34,6 +36,7 @@ function EraSection({ touch }) {
   const worldReady = useGameStore((state) => state.worldReady)
   const mode = useGameStore((state) => state.mode)
   const requestEra = useGameStore((state) => state.requestEra)
+  const t = useT()
   const shownId = transition?.to ?? eraId
   const era = getEra(shownId)
   const locked = transitioning || !worldReady || mode !== 'explore'
@@ -41,8 +44,8 @@ function EraSection({ touch }) {
   return (
     <section className={`settings-section${transitioning ? ' is-transitioning' : ''}`} aria-labelledby="settings-era-heading">
       <p className="hud-menu__heading">
-        <span id="settings-era-heading">年代</span>
-        <span className="hud-menu__count">{transitioning ? '時空轉換中…' : touch ? '點一下切換' : '數字鍵 1–5 也可切換'}</span>
+        <span id="settings-era-heading">{t('settings.era')}</span>
+        <span className="hud-menu__count">{transitioning ? t('settings.eraSwitching') : touch ? t('settings.eraTouch') : t('settings.eraKeys')}</span>
       </p>
       <ol className="era-options">
         {ERAS.map((item, index) => {
@@ -79,16 +82,17 @@ function ViewModeSection() {
   const canEnter = useGameStore((state) => state.started && state.mode === 'explore')
   const setViewMode = useGameStore((state) => state.setViewMode)
   const setUiHidden = useGameStore((state) => state.setUiHidden)
+  const t = useT()
   const togglePanel = useGameStore((state) => state.toggleQualityPanel)
   const options = [
-    { id: 'explore', label: '探索', hint: '操控人物漫步街道、閱讀店家故事' },
-    { id: 'viewer', label: '建築觀賞', hint: '人物暫停，自由移動鏡頭欣賞建築' },
+    { id: 'explore', label: t('settings.view.explore'), hint: t('settings.view.exploreHint') },
+    { id: 'viewer', label: t('settings.view.viewer'), hint: t('settings.view.viewerHint') },
   ]
 
   return (
     <section className="settings-section" aria-labelledby="settings-view-heading">
       <p className="hud-menu__heading">
-        <span id="settings-view-heading">觀看模式</span>
+        <span id="settings-view-heading">{t('settings.view')}</span>
       </p>
       <div className="mode-options" role="radiogroup" aria-labelledby="settings-view-heading">
         {options.map((option) => {
@@ -114,7 +118,7 @@ function ViewModeSection() {
       </div>
       {viewMode === 'viewer' && (
         <button type="button" className="button-ghost settings-hide-ui" data-hide-ui onClick={() => setUiHidden(true)}>
-          隱藏介面，只留街景
+          {t('settings.hideUi')}
         </button>
       )}
     </section>
@@ -136,6 +140,10 @@ export function SettingsMenu() {
   const togglePanel = useGameStore((state) => state.toggleQualityPanel)
   const setQualityMode = useGameStore((state) => state.setQualityMode)
   const container = useRef(null)
+  const t = useT()
+  const lang = useGameStore((state) => state.lang)
+  const setLang = useGameStore((state) => state.setLang)
+  const setLicensesOpen = useGameStore((state) => state.setLicensesOpen)
 
   useEffect(() => {
     if (!open) return undefined
@@ -158,8 +166,8 @@ export function SettingsMenu() {
       <button
         type="button"
         className="hud-quality__toggle paper"
-        aria-label="設定（年代、觀看模式、畫質、背景音樂）"
-        title="設定（年代、觀看模式、畫質、背景音樂）"
+        aria-label={t('settings.label')}
+        title={t('settings.label')}
         aria-expanded={open}
         aria-controls="quality-panel"
         onClick={() => togglePanel()}
@@ -171,7 +179,7 @@ export function SettingsMenu() {
           <EraSection touch={touch} />
           <ViewModeSection />
           <p className="hud-menu__heading">
-            <span>畫質</span>
+            <span>{t('settings.quality')}</span>
           </p>
           <div className="quality-options" role="radiogroup" aria-label="畫質模式">
             {MODE_ORDER.map((id) => {
@@ -200,8 +208,33 @@ export function SettingsMenu() {
               )
             })}
           </div>
-          <p className="hud-menu__note">選擇會記在這台裝置上。兩種模式的店家、歷史資訊與互動完全相同。</p>
+          <p className="hud-menu__note">{t('settings.qualityNote')}</p>
           <MusicSettings />
+          <section className="settings-section" aria-labelledby="settings-lang-heading">
+            <p className="hud-menu__heading">
+              <span id="settings-lang-heading">{t('settings.language')}</span>
+            </p>
+            <div className="mode-options" role="radiogroup" aria-labelledby="settings-lang-heading">
+              {LANGS.map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  role="radio"
+                  aria-checked={lang === id}
+                  lang={id}
+                  data-lang-option={id}
+                  className={`mode-option${lang === id ? ' is-active' : ''}`}
+                  onClick={() => setLang(id)}
+                >
+                  <strong>{t(`lang.${id}`)}</strong>
+                </button>
+              ))}
+            </div>
+            <p className="hud-menu__note">{t('settings.languageNote')}</p>
+            <button type="button" className="button-ghost" data-licenses-toggle onClick={() => setLicensesOpen(true)}>
+              {t('settings.licenses')}
+            </button>
+          </section>
         </div>
       )}
     </div>

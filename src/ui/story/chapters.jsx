@@ -117,7 +117,14 @@ export function TextChapter({ chapter, onShowSources }) {
           <dl>
             {chapter.glossary.map((entry) => (
               <div key={entry.term} className="glossary__row">
-                <dt>{entry.term}</dt>
+                <dt>
+                  {entry.term}
+                  {entry.taiwanese && (
+                    <span className="glossary__tai" lang="nan-Latn-TW" title="教育部《臺灣台語常用詞辭典》台羅讀音">
+                      {entry.taiwanese}
+                    </span>
+                  )}
+                </dt>
                 <dd>{entry.definition}</dd>
               </div>
             ))}

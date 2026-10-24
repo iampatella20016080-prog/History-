@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { DEFAULT_ERA_ID, getEra } from '../data/eras.js'
 import { getShop } from '../data/shops.js'
 import { QUALITY_MODES, initialQualityMode, saveQualityMode } from '../game/quality.js'
+import { isLang, loadLang, saveLang } from '../i18n/lang.js'
 
 /** 網址可指定一開始的年代，例如 ?era=modern */
 function initialEra() {
@@ -77,6 +78,10 @@ export const useGameStore = create((set, get) => ({
   travel: null,
   inputMode: detectTouch() ? 'touch' : 'mouse',
   qualityMode: initialQualityMode(),
+  /** 介面語言：'zh-Hant'（預設）或 'en'，記在 localStorage */
+  lang: loadLang(),
+  /** 「授權與出處」視窗 */
+  licensesOpen: false,
   qualityOpen: false,
   viewMode: 'explore',
   uiHidden: false,
@@ -196,6 +201,13 @@ export const useGameStore = create((set, get) => ({
   dismissEraError: () => set({ eraError: null }),
 
   /** 切換畫質模式（流暢／精緻）並記住選擇 */
+  setLang: (lang) => {
+    if (!isLang(lang)) return
+    saveLang(lang)
+    if (typeof document !== 'undefined') document.documentElement.lang = lang
+    set({ lang })
+  },
+  setLicensesOpen: (open) => set((state) => ({ licensesOpen: open ?? !state.licensesOpen, qualityOpen: false, menuOpen: false })),
   setQualityMode: (mode) => {
     if (!QUALITY_MODES[mode]) return false
     saveQualityMode(mode)
