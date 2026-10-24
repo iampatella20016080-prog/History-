@@ -1127,7 +1127,165 @@ function TempleCaiTauKue() {
   )
 }
 
+/* ── 茶的主線：茶葉、器物與工法（林華泰、有記、新芳春） ── */
+
+function TeaLeafPile({ color = '#4f6b3a', dark = '#36512a', twist = true }) {
+  // 一小堆茶葉：條形（twist）或球形
+  const leaves = [
+    [66, 108, -30], [84, 112, 20], [102, 108, -10], [120, 112, 35], [138, 106, -25],
+    [74, 94, 15], [94, 92, -35], [114, 96, 10], [130, 92, 40],
+    [86, 78, -15], [106, 76, 25], [122, 80, -40], [98, 62, 10],
+  ]
+  return leaves.map(([x, y, r], i) =>
+    twist ? (
+      <path
+        key={i}
+        d="M-11 0 Q-4 -5 0 0 Q4 5 11 0"
+        transform={`translate(${x} ${y}) rotate(${r})`}
+        stroke={i % 3 === 0 ? dark : color}
+        strokeWidth="4.2"
+        strokeLinecap="round"
+        fill="none"
+      />
+    ) : (
+      <ellipse key={i} cx={x} cy={y} rx="7" ry="6" transform={`rotate(${r} ${x} ${y})`} fill={i % 3 === 0 ? dark : color} stroke={INK} strokeWidth="1.3" />
+    ),
+  )
+}
+
+function BaozhongTea() {
+  // 包種茶：方形的紙包打開一角，露出條形的青綠茶葉；旁邊一杯淡黃綠的茶湯
+  return (
+    <>
+      <Shadow cy={126} rx={72} />
+      <path d="M34 118 L30 66 L112 60 L118 114 Z" fill="#f3ead3" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M30 66 L62 52 L136 48 L112 60 Z" fill="#e8dcc0" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M112 60 L136 48 L140 100 L118 114 Z" fill="#dccfae" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      <rect x="54" y="80" width="40" height="22" fill="#c8342c" opacity="0.85" />
+      <text x="74" y="96" textAnchor="middle" fontSize="12" fill="#fff6e8" fontFamily="serif">包種</text>
+      <g transform="translate(-26 -4) scale(0.62)">
+        <TeaLeafPile color="#6f8f45" dark="#4f6b3a" />
+      </g>
+      <path d="M150 90 Q150 118 170 118 Q190 118 190 90 Z" fill="#fbfaf6" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <ellipse cx="170" cy="90" rx="20" ry="6" fill="#d9d27a" stroke={INK} strokeWidth="1.6" />
+      <path d="M160 78 Q156 70 162 64 M176 78 Q172 68 180 62" stroke="#c9c2b4" strokeWidth="2" fill="none" strokeLinecap="round" />
+    </>
+  )
+}
+
+function OolongTea() {
+  // 烏龍茶：半球形的深綠茶球堆在竹篩上，旁邊一只白瓷杯裝著金黃的茶湯
+  return (
+    <>
+      <Shadow cy={126} rx={74} />
+      <ellipse cx="92" cy="112" rx="68" ry="14" fill="#d9b77a" stroke={INK} strokeWidth="2" />
+      <ellipse cx="92" cy="110" rx="58" ry="9" fill="#e9cf98" />
+      <TeaLeafPile color="#3f5e35" dark="#2d4426" twist={false} />
+      <path d="M150 94 Q150 118 168 118 Q186 118 186 94 Z" fill="#fbfaf6" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <ellipse cx="168" cy="94" rx="18" ry="6" fill="#d8a541" stroke={INK} strokeWidth="1.6" />
+      <path d="M186 100 Q198 102 194 110" stroke={INK} strokeWidth="2" fill="none" />
+    </>
+  )
+}
+
+function Tieguanyin() {
+  // 鐵觀音：焙火較重的暗褐色茶球，配一把紫砂壺
+  return (
+    <>
+      <Shadow cy={126} rx={74} />
+      <TeaLeafPile color="#5a3e24" dark="#3e2a17" twist={false} />
+      <path d="M126 112 Q124 80 150 76 Q182 74 184 100 Q186 114 170 118 L140 118 Q128 118 126 112 Z" fill="#8a4b2d" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M184 96 Q198 92 196 80 Q194 72 188 70" stroke={INK} strokeWidth="2.4" fill="none" strokeLinecap="round" />
+      <path d="M130 90 Q112 84 116 100 Q118 108 130 106" stroke={INK} strokeWidth="2.2" fill="none" />
+      <ellipse cx="154" cy="76" rx="20" ry="5" fill="#a05b36" stroke={INK} strokeWidth="1.6" />
+      <circle cx="154" cy="70" r="4" fill="#8a4b2d" stroke={INK} strokeWidth="1.4" />
+    </>
+  )
+}
+
+function JasmineTea() {
+  // 茉莉花茶：條形的茶葉堆上散著幾朵白色茉莉花
+  const flowers = [
+    [72, 70], [118, 66], [96, 92], [140, 96], [60, 104],
+  ]
+  return (
+    <>
+      <Shadow cy={126} rx={72} />
+      <TeaLeafPile color="#5e7d3f" dark="#43602f" />
+      {flowers.map(([x, y], i) => (
+        <g key={i} transform={`translate(${x} ${y})`}>
+          {[0, 1, 2, 3, 4].map((k) => (
+            <ellipse key={k} cx="0" cy="-6" rx="3.4" ry="6" transform={`rotate(${k * 72})`} fill="#fbf8ef" stroke={INK} strokeWidth="1.1" />
+          ))}
+          <circle cx="0" cy="0" r="2.4" fill="#e8c860" stroke={INK} strokeWidth="0.8" />
+        </g>
+      ))}
+    </>
+  )
+}
+
+function RoastingBasket() {
+  // 焙籠：竹編的焙籠架在紅磚砌的焙窟上，窟裡是燒成白灰的炭火
+  return (
+    <>
+      <Shadow cy={128} rx={76} />
+      <rect x="30" y="92" width="140" height="30" fill="#b35a3c" stroke={INK} strokeWidth="2" />
+      {[0, 1, 2].map((row) =>
+        [0, 1, 2, 3, 4, 5].map((col) => (
+          <rect
+            key={`${row}-${col}`}
+            x={32 + col * 23 + (row % 2) * 11}
+            y={94 + row * 10}
+            width="21"
+            height="8"
+            fill="none"
+            stroke="#f0d8c8"
+            strokeWidth="0.8"
+            opacity="0.6"
+          />
+        )),
+      )}
+      <ellipse cx="100" cy="92" rx="36" ry="8" fill="#5a4a40" stroke={INK} strokeWidth="1.8" />
+      <ellipse cx="100" cy="92" rx="26" ry="5" fill="#e6e0d2" />
+      <path d="M86 90 Q92 84 98 90 Q104 84 112 90" stroke="#e07a3a" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M64 86 L72 40 L128 40 L136 86 Z" fill="#d9b77a" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      {[48, 58, 68, 78].map((y) => (
+        <path key={y} d={`M${68 + (y - 40) * 0.18} ${y} L${132 - (y - 40) * 0.18} ${y}`} stroke="#b08d52" strokeWidth="1.2" />
+      ))}
+      <ellipse cx="100" cy="40" rx="28" ry="6" fill="#e9cf98" stroke={INK} strokeWidth="1.8" />
+      <ellipse cx="100" cy="40" rx="20" ry="3.5" fill="#4f6b3a" />
+      <path d="M90 30 Q86 22 92 16 M108 30 Q104 20 112 14" stroke="#c9c2b4" strokeWidth="2" fill="none" strokeLinecap="round" />
+    </>
+  )
+}
+
+function TeaChest() {
+  // 外銷茶箱：木箱印著商號與嘜頭，旁邊一個貼著標籤的小茶罐
+  return (
+    <>
+      <Shadow cy={126} rx={72} />
+      <path d="M36 112 L36 62 L112 56 L112 106 Z" fill="#c69a60" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+      <path d="M36 62 L58 48 L134 42 L112 56 Z" fill="#dbb47a" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M112 56 L134 42 L134 92 L112 106 Z" fill="#a67d4a" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M36 80 L112 74 M36 96 L112 90" stroke="#8a6238" strokeWidth="1.4" />
+      <rect x="52" y="70" width="42" height="26" fill="#f3ead3" stroke={INK} strokeWidth="1.4" />
+      <text x="73" y="82" textAnchor="middle" fontSize="8" fill="#c8342c" fontFamily="serif">FORMOSA</text>
+      <text x="73" y="92" textAnchor="middle" fontSize="8" fill={INK} fontFamily="serif">TEA</text>
+      <rect x="146" y="72" width="30" height="42" rx="4" fill="#b85a3a" stroke={INK} strokeWidth="2" />
+      <rect x="146" y="68" width="30" height="8" rx="2" fill="#8a3f26" stroke={INK} strokeWidth="1.6" />
+      <rect x="151" y="84" width="20" height="18" fill="#f3ead3" stroke={INK} strokeWidth="1" />
+      <path d="M155 90 L167 90 M155 96 L167 96" stroke="#c8342c" strokeWidth="1.6" />
+    </>
+  )
+}
+
 const ILLUSTRATIONS = {
+  'baozhong-tea': BaozhongTea,
+  'oolong-tea': OolongTea,
+  tieguanyin: Tieguanyin,
+  'jasmine-tea': JasmineTea,
+  'roasting-basket': RoastingBasket,
+  'tea-chest': TeaChest,
   shiitake: Shiitake,
   'dried-shrimp': DriedShrimp,
   'mullet-roe': MulletRoe,

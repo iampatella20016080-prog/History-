@@ -917,6 +917,284 @@ SOURCES['moe-shou-tao'] = {
   context: '釋義：祝壽時所用的鮮桃，或麵粉製成桃形、象徵長壽的食品。',
 }
 
+/* ── 茶的主線：大稻埕茶業背景（查證紀錄見 docs/research/tea-export-origins.md） ── */
+SOURCES['tshs-zhang-tamsui-port'] = {
+  id: 'tshs-zhang-tamsui-port',
+  citation: '張建隆，〈淡水港史話：從早期淡水港到滬尾設關開埠〉，新北市立淡水古蹟博物館館學刊。',
+  publisher: '新北市立淡水古蹟博物館',
+  title: '淡水港史話：從早期淡水港到滬尾設關開埠',
+  url: 'https://www.tshs.ntpc.gov.tw/files/file_pool/1/0G258614562811657139/36%E5%BC%B5%E5%BB%BA%E9%9A%86%E3%80%88%E6%B7%A1%E6%B0%B4%E6%B8%AF%E5%8F%B2%E8%A9%B1%EF%BC%9A%E5%BE%9E%E6%97%A9%E6%9C%9F%E6%B7%A1%E6%B0%B4%E6%B8%AF%E5%88%B0%E6%BB%AC%E5%B0%BE%E8%A8%AD%E9%97%9C%E9%96%8B%E5%9F%A0%E3%80%89.pdf',
+  published: '館學刊論文（PDF，無出版日期；2026年10月查閱）',
+  context: '1858年天津條約後以淡水河口的滬尾為開埠地點；同治元年6月22日（1862年7月）滬尾正式開關徵稅；1861年12月怡和檔記有800擔茶自滬尾出口。',
+}
+SOURCES['ntcri-73-tea-road'] = {
+  id: 'ntcri-73-tea-road',
+  citation: '陳右人，〈臺灣茶都巡禮—茶的第一條文化路徑〉，《臺灣工藝》第73期，國立臺灣工藝研究發展中心，2019年6月。',
+  publisher: '國立臺灣工藝研究發展中心',
+  title: '臺灣茶都巡禮—茶的第一條文化路徑',
+  url: 'https://themefile.culture.tw/ntcri/quarterly/files/b325c31d-22be-4963-9590-769b90ab91e0.pdf',
+  published: '2019年6月',
+  context: '1860年淡水開港；陶德（John Dodd）1868年將茶廠遷到大稻埕；1865年定為臺茶出口元年；臺茶外銷量由1865年130餘公噸增至1885年近7,500公噸，1878年茶葉出口額超過蔗糖；重慶北路對街數家茶行均為林華泰系列；重慶北路二段的茶葉公園是閩客茶商與茶農交易的場所。',
+}
+SOURCES['chen-ciyu-li-family-2015'] = {
+  id: 'chen-ciyu-li-family-2015',
+  citation: '陳慈玉，〈買辦から資本家へ：日本統治期台北・大稲埕の李家〉，《立命館経済学》第63卷第5・6號，2015年3月。',
+  publisher: '立命館大学経済学会',
+  title: '買辦から資本家へ：日本統治期台北・大稲埕の李家',
+  url: 'https://ritsumei.repo.nii.ac.jp/record/1883/files/E63_56chen.pdf',
+  published: '2015年3月',
+  context: '李春生生平；陶德1866年自安溪移植茶樹、貸款農民；1896年1月日人調查大稻埕茶商252店、從業3,612人；日治時期對美輸出烏龍茶、對華南與南洋輸出包種茶。',
+}
+SOURCES['th-li-chunsheng-memoir'] = {
+  id: 'th-li-chunsheng-memoir',
+  citation: '國史館臺灣文獻館電子報，〈李春生之生平自敘〉，第238期。',
+  publisher: '國史館臺灣文獻館',
+  title: '李春生之生平自敘',
+  url: 'https://www.th.gov.tw/Epaper_Content/238/5615/',
+  published: '電子報（無日期；2026年10月查閱）',
+  context: '收錄1895年李春生履歷原文：「迨三十歲（1866年），復受英商寶順行（Dodd & Co.）重盟，東渡在台北」；1866年陶德派李春生自安溪採辦茶苗。',
+}
+SOURCES['culture-taipei-walk-dadaocheng-2018'] = {
+  id: 'culture-taipei-walk-dadaocheng-2018',
+  citation: '臺北市政府文化局，《文化臺北─走讀大稻埕》行旅手冊，2018年3月。',
+  publisher: '臺北市政府文化局',
+  title: '文化臺北─走讀大稻埕',
+  url: 'https://www-ws.gov.taipei/001/Upload/686/relfile/55437/8338380/6ff7fc16-9086-4ab7-9f54-6a69cc045c5f.pdf',
+  published: '2018年3月',
+  context: '1868年杜德與李春生改在大稻埕設精製廠，隔年送茶至紐約；粗茶自大稻埕碼頭卸下、人力載往茶行精製，再以 Formosa 之名出口；全盛時期超過250間茶行。',
+}
+SOURCES['tcmb-tea-trade'] = {
+  id: 'tcmb-tea-trade',
+  citation: '國家文化記憶庫，〈臺灣茶葉進出口脈絡〉。',
+  publisher: '文化部國家文化記憶庫',
+  title: '臺灣茶葉進出口脈絡',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_Object&id=501798',
+  published: '2020年6月登入',
+  context: '1869年臺灣烏龍茶開始直銷美國；1881年吳福元在大稻埕設源隆行專製包種茶；1889年劉銘傳命組「茶郊永和興」；臺茶至1980年前仍為重要外銷農產，之後因新台幣升值、工資上漲轉為內銷。',
+}
+SOURCES['curation-dadaocheng-tea'] = {
+  id: 'curation-dadaocheng-tea',
+  citation: '國家文化記憶庫線上策展，〈大稻埕茶葉與台灣的過去〉。',
+  publisher: '文化部國家文化記憶庫',
+  title: '大稻埕茶葉與台灣的過去',
+  url: 'https://curation.culture.tw/curation/public?id=3864',
+  published: '線上策展（無日期；2026年10月查閱）',
+  context: '1885至1893年間由大稻埕輸出的茶葉占臺灣外銷金額60%以上，1886年達74.9%；日治時期日商轉以日本、東南亞為主要市場；戰後出口泰國、馬來西亞、新加坡、印尼等僑鄉。',
+}
+SOURCES['tcmb-baozhong-tea'] = {
+  id: 'tcmb-baozhong-tea',
+  citation: '國家文化記憶庫，〈臺灣條形包種茶發展介紹〉。',
+  publisher: '文化部國家文化記憶庫',
+  title: '臺灣條形包種茶發展介紹',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?id=222639',
+  published: '線上典藏（無日期；2026年10月查閱）',
+  context: '1885年安溪人王水錦、魏靜時至南港研製，約1912年條形包種茶製法成功，為南港包種茶起源，後傳至文山區。',
+}
+SOURCES['tcmb-chaoyang-tea-park'] = {
+  id: 'tcmb-chaoyang-tea-park',
+  citation: '阮素芬，國家文化記憶庫，〈大稻埕最重要的茶葉交易市場-朝陽茶葉公園〉。',
+  publisher: '文化部國家文化記憶庫',
+  title: '大稻埕最重要的茶葉交易市場-朝陽茶葉公園',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_Place&id=463916',
+  published: '線上典藏（無日期；2026年10月查閱）',
+  context: '清代茶葉靠淡水河船運集散，茶廠集中淡水河與河頭溝（今西寧北路）之間，外銷激增後沿民生西路東擴；朝陽茶葉公園昔日為茶葉仲介（茶猴）聚集的交易中心。',
+}
+SOURCES['twcenter-muzha-tea-2001'] = {
+  id: 'twcenter-muzha-tea-2001',
+  citation: '溫振華，〈木柵茶史〉，吳三連台灣史料基金會，2001年7月9日。',
+  publisher: '吳三連台灣史料基金會',
+  title: '木柵茶史',
+  url: 'https://www.twcenter.org.tw/?p=1678',
+  published: '2001年7月9日',
+  context: '1860年淡水開放為通商口岸；1869年名茶由淡水出口運銷美國；日本統治後透過株式會社貸款茶農驅逐洋行資本。',
+}
+SOURCES['cna-tea-thailand-2025'] = {
+  id: 'cna-tea-thailand-2025',
+  citation: '呂欣憓，〈台灣茶葉飄香過海 串連台泰百年貿易史〉，中央社，2025年2月22日。',
+  publisher: '中央通訊社',
+  title: '台灣茶葉飄香過海 串連台泰百年貿易史',
+  url: 'https://www.cna.com.tw/news/ahel/202502220105.aspx',
+  published: '2025年2月22日',
+  context: '日治時期台灣茶商派人駐曼谷，包種茶出口曼谷量大；有記名茶有日治時期出口泰國的紀錄；曼谷老城區「三罐標有記茶行」由王家第四代經營。',
+}
+SOURCES['panorama-dadaocheng-1981'] = {
+  id: 'panorama-dadaocheng-1981',
+  citation: '王春謀，〈大稻埕〉，《台灣光華雜誌》，1981年3月。',
+  publisher: '台灣光華雜誌',
+  title: '大稻埕',
+  url: 'https://www.taiwan-panorama.com/Articles/Details?Guid=2bd283f2-8b5d-4264-91b4-33b742bfe082',
+  published: '1981年3月',
+  context: '淡水河淤積使艋舺碼頭水道變淺，大稻埕碼頭取代艋舺；1887年劉銘傳指定大稻埕為外商居留地；揀茶的婦女在堆塞街衢廊下的茶袋、茶箱中穿梭。',
+}
+
+/* ── 林華泰茶行（查證紀錄見 docs/research/lin-hua-tai.md） ── */
+SOURCES['linhuatai-site'] = {
+  id: 'linhuatai-site',
+  citation: '林華泰茶行官方網站，〈基本簡介〉、〈百年老店林華泰〉、〈下一個百年〉、〈林華泰的歷史 1/5–5/5〉，2016年1月。',
+  publisher: '林華泰茶行',
+  title: '林華泰茶行官方網站',
+  url: 'http://www.linhuatai-tw.com/zh/',
+  published: '2016年1月（各篇張貼日）',
+  context: '商標「THE OLDEST TEASHOP LIN HUATAI 1883」；自1883年起做毛茶再篩選、精製；現址重慶北路二段193號；「前店後廠」；茶葉以超大號圓鐵桶陳列、店裡近百個茶桶；第三代林大村1977年獲孝行楷模匾額。〈林華泰的歷史〉標明擷取自《林華泰茶行老三的故事》，是第四代林秀全的回憶，屬家族口述。',
+}
+SOURCES['ltn-linhuatai-2014'] = {
+  id: 'ltn-linhuatai-2014',
+  citation: '金仁晧，〈百年林華泰茶行鬧家變〉，自由時報，2014年11月16日。',
+  publisher: '自由時報',
+  title: '百年林華泰茶行鬧家變',
+  url: 'https://news.ltn.com.tw/news/life/paper/830512',
+  published: '2014年11月16日',
+  context: '第三代林大村2003年過世；第四代四兄弟林秀峰、林茂森、林秀全、林茂祥；2011年林茂森在原店隔壁另開林茂森茶行；林華泰曾獲台北市觀光傳播局推薦為「百年老店」。',
+}
+SOURCES['discover-taipei-tea-shops-2012'] = {
+  id: 'discover-taipei-tea-shops-2012',
+  citation: 'Discover Taipei（臺北市政府觀光傳播局），"Your Guide to Taipei\'s Heritage Tea Shops"，2012年5月24日（聯合報電子報轉載）。',
+  publisher: '臺北市政府觀光傳播局',
+  title: "Your Guide to Taipei's Heritage Tea Shops",
+  url: 'http://paper.udn.com/udnpaper/POH0056/216953/web/',
+  published: '2012年5月24日',
+  context: '林華泰1883年開業，是台北茶業最老字號之一；茶葉裝在大鐵桶裡、用老式秤量；全盛期大稻埕有200家茶業者；有記的奇種烏龍以文山包種炭焙而成；有記焙籠間40多個焙窟仍在使用。',
+}
+
+/* ── 有記名茶（查證紀錄見 docs/research/you-ji.md） ── */
+SOURCES['wangtea-story'] = {
+  id: 'wangtea-story',
+  citation: '有記名茶官方網站，〈有記名茶的故事〉。',
+  publisher: '有記名茶',
+  title: '有記名茶的故事',
+  url: 'https://wangtea.com.tw/long-story',
+  published: '官方網站（無日期；2026年10月查閱）',
+  context: '來自福建安溪產茶世家；1890年王敬輝在廈門開設「王有記茶莊」；1907年因台灣茶葉出口盛行來台，得淡水河水運之便；茶廠仍維持四十多個焙籠；小時候二樓是揀茶場，每天約四十多名女工揀茶；店內保留早年外銷泰國的英文、泰文商標與木箱。',
+}
+SOURCES['wangtea-transformation'] = {
+  id: 'wangtea-transformation',
+  citation: '有記名茶官方網站，〈轉型〉沿革年表。',
+  publisher: '有記名茶',
+  title: '轉型',
+  url: 'https://wangtea.com.tw/transformation-zh',
+  published: '官方網站（年表到2022年；2026年10月查閱）',
+  context: '1907年孝謹公渡海來台；1948年以前建廠於建昌街11號（今貴德街）；1949年遷廠重慶北路二段64巷26號，為台北市登記第五家工廠；1975年設第一個內銷門市；2004年二樓改為藝文空間「清源堂」；2008年起清源堂每週六下午定期南管演奏。',
+}
+SOURCES['wangtea-store'] = {
+  id: 'wangtea-store',
+  citation: '有記名茶官方網站，〈台北大稻埕門市〉。',
+  publisher: '有記名茶',
+  title: '台北大稻埕門市',
+  url: 'https://wangtea.com.tw/wangtea-dadaocheng-factory-zh',
+  published: '官方網站（無日期；2026年10月查閱）',
+  context: '一樓後方仍為精製茶廠，前半部2004年起整理為門市；二樓原為「揀茶樓」；仍在使用傳統木炭烘焙茶葉；現售文山包種茶、高山烏龍茶、奇種烏龍茶、鐵觀音、東方美人、綠茶、紅茶；早年主要外銷泰國、日本、歐美。',
+}
+SOURCES['tcmb-wangtea'] = {
+  id: 'tcmb-wangtea',
+  citation: '阮素芬，國家文化記憶庫，〈有記名茶〉（國立臺灣工藝研究發展中心建檔）。',
+  publisher: '文化部國家文化記憶庫',
+  title: '有記名茶',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_Place&id=463821',
+  published: '線上典藏（無日期；2026年10月查閱）',
+  context: '1890年廈門「王有記茶莊」；1907年王孝謹來臺，在民生西路口附近設茶行經營出口、建昌街11號設精製茶廠；因泰國外銷業務激增，1949年遷現址；2004年整修廠房並保留整套茶葉精製的乾燥烘焙系統；1980年代後外銷逐漸萎縮，轉為自創品牌內銷。',
+}
+SOURCES['ntcri-80-wangtea-lab'] = {
+  id: 'ntcri-80-wangtea-lab',
+  citation: '賴佩君，〈持續烘、沖、拼？WANGTEA LAB將百年品牌基因玩出新風味〉，《臺灣工藝》第80期，國立臺灣工藝研究發展中心，頁46–51。',
+  publisher: '國立臺灣工藝研究發展中心',
+  title: '持續烘、沖、拼？WANGTEA LAB將百年品牌基因玩出新風味',
+  url: 'https://themefile.culture.tw/ntcri/quarterly/files/5885213d-f33f-46cd-aaf1-3212819c251f.pdf',
+  published: '《臺灣工藝》第80期（期刊日期未標示）',
+  context: '炭焙工法：焙窟深58公分，以炭化稻殼點火燒成白灰為熱源，上置焙籠，日夜烘焙20天；「烘焙、沖泡、拼配」為三大關鍵；焙籠間昔日曾替對街洗衣店烘衣；竹編茶箱印有外銷的嘜頭。',
+}
+SOURCES['businesstoday-wangtea-2018'] = {
+  id: 'businesstoday-wangtea-2018',
+  citation: '邱璟綾，〈百工職人 大稻埕百年茶行 有記名茶〉，今周刊，2018年6月27日。',
+  publisher: '今周刊',
+  title: '百工職人 大稻埕百年茶行 有記名茶',
+  url: 'https://www.businesstoday.com.tw/article/category/80392/post/201806260047/',
+  published: '2018年6月27日',
+  context: '精製流程：分級、揀梗、焙火、拼配、風選；焙窟以紅磚搭出成排的坑，以木炭和稻殼焙烤成炭灰；全盛時期大稻埕有超過200間茶行。',
+}
+
+/* ── 新芳春茶行（查證紀錄見 docs/research/xin-fang-chun.md） ── */
+SOURCES['nchdb-xinfangchun'] = {
+  id: 'nchdb-xinfangchun',
+  citation: '文化部文化資產局國家文化資產網，〈新芳春茶行〉（直轄市定古蹟，2009年9月29日公告，北市文化二字第09830231500號）。',
+  publisher: '文化部文化資產局',
+  title: '新芳春茶行',
+  url: 'https://nchdb.boch.gov.tw/assets/advanceSearch/monument/20090929000001',
+  published: '2009年9月29日公告',
+  context: '官方登錄：建物約創建於1930年代，是大稻埕茶外銷南洋的地點之一；三樓店屋、連續三崁街屋、水平帶狀女兒牆、三角形山頭與花草泥塑；結合茶行、烘焙茶工廠、倉庫、主人住宅四種機能，為當時臺北最大的茶工廠；正立面泥塑出自大稻埕名匠郭三川；族群以安溪人為主；是否收費：否。',
+}
+SOURCES['tcmb-xinfangchun'] = {
+  id: 'tcmb-xinfangchun',
+  citation: '阮素芬，國家文化記憶庫，〈新芳春茶行〉（國立臺灣工藝研究發展中心建檔）。',
+  publisher: '文化部國家文化記憶庫',
+  title: '新芳春茶行',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_Place&id=475691',
+  published: '線上典藏（無日期；2026年10月查閱）',
+  context: '1918年王連河之父王芳群由泉州安溪舉家遷臺；1932年改組為「合資會社新芳春茶行」，1950年改組為「新芳春茶行兩合公司」；現址建築落成於1934年；王連河經營時期是包種茶外銷南洋（尤其泰國與安南）的重要茶葉公司之一；1974年王國忠接手；1970年代末受競爭業務萎縮，1990年代以後幾乎停滯；2005年3月登錄歷史建築、2009年9月指定市定古蹟；王國忠將洋樓捐贈臺北市政府。',
+}
+SOURCES['ntcri-77-xinfangchun'] = {
+  id: 'ntcri-77-xinfangchun',
+  citation: '賴佩君，〈活的茶葉故事館—新芳春茶行見證大稻埕茶業貿易風華〉，《臺灣工藝》第77期，國立臺灣工藝研究發展中心，頁52–57。',
+  publisher: '國立臺灣工藝研究發展中心',
+  title: '活的茶葉故事館—新芳春茶行見證大稻埕茶業貿易風華',
+  url: 'https://themefile.culture.tw/ntcri/quarterly/files/d9a435c1-9d4e-4e5a-bddb-46a880f4fbc5.pdf',
+  published: '《臺灣工藝》第77期（期刊日期未標示）',
+  context: '三開間、三進、三層：一樓正廳是茶行、帳房與銷售空間，後進是精製茶的倉庫與加工廠；二樓是揀茶間、辦公室與會客廳；三樓是王家起居與公媽廳；一樓後進紅磚焙籠間保留數十個焙籠坑與竹籠；保留乾燥機、風選機；以包種茶外銷安南、暹羅、井裡汶；大稻埕外銷南洋的主力茶幾乎都是坪林的文山包種茶；總樓地板面積492坪。',
+}
+SOURCES['ntcri-77-xinfangchun-restoration'] = {
+  id: 'ntcri-77-xinfangchun-restoration',
+  citation: '賴佩君，〈新芳春茶行修復〉，《臺灣工藝》第77期，國立臺灣工藝研究發展中心，頁58–59。',
+  publisher: '國立臺灣工藝研究發展中心',
+  title: '新芳春茶行修復',
+  url: 'https://themefile.culture.tw/ntcri/quarterly/files/3daec8d1-84dd-4a4d-9610-34fd6e7c592c.pdf',
+  published: '《臺灣工藝》第77期（期刊日期未標示）',
+  context: '融合中西特色的日治時期洋樓，穿心廊及日月雙井；門楣山牆的勳章與忍冬草泥塑出自郭三川；2011–2015年由興富發建設修復，恢復九成原貌。',
+}
+SOURCES['ltn-xinfangchun-2015'] = {
+  id: 'ltn-xinfangchun-2015',
+  citation: '游蓓茹，〈新芳春茶行古蹟修復落成〉，自由時報，2015年12月19日。',
+  publisher: '自由時報',
+  title: '新芳春茶行古蹟修復落成',
+  url: 'https://news.ltn.com.tw/news/local/paper/941958',
+  published: '2015年12月19日',
+  context: '來自福建安溪的大稻埕茶商王連河自建，1934年興建，當時台北最大茶工廠；門牌原為民生西路303–309號，只留309號古蹟；2005年指定歷史建築、2009年改指定市定古蹟；2007年屋主陸續搬出；建商出資八千萬元、歷經四年修復；2015年12月18日落成典禮。',
+}
+SOURCES['pts-xinfangchun-2016'] = {
+  id: 'pts-xinfangchun-2016',
+  citation: '公視新聞，〈新芳春茶行開放參觀〉，2016年9月20日。',
+  publisher: '公共電視',
+  title: '新芳春茶行開放參觀',
+  url: 'https://news.pts.org.tw/article/335377',
+  published: '2016年9月20日',
+  context: '混合閩南長屋型態與西洋立面外觀的洋樓；第三代王國忠將茶行產權捐贈北市府；展區保存近3000件文物；2016年9月20日起對外開放。',
+}
+SOURCES['zsdo-xinfangchun-2020'] = {
+  id: 'zsdo-xinfangchun-2020',
+  citation: '臺北市中山區公所，〈新芳春茶行〉，資料更新2020年12月25日。',
+  publisher: '臺北市中山區公所',
+  title: '新芳春茶行',
+  url: 'https://zsdo.gov.taipei/News_Content.aspx?n=C2C1165AA5DF44C1&sms=C04230CB75259A56&s=85FB122CDF820142',
+  published: '2020年12月25日更新',
+  context: '2011至2015年修復，原屋主捐贈臺北市政府；文化局2016年5月接管、2016年9月20日推出特展；2018年委由台灣文創發展基金會經營，主軸為「活的茶葉故事館」、「茶文創發展平台」、「以茶會友」。',
+}
+SOURCES['travel-taipei-xinfangchun'] = {
+  id: 'travel-taipei-xinfangchun',
+  citation: '臺北旅遊網（臺北市政府觀光傳播局），"Sin Hong Choon"，2026年10月24日更新。',
+  publisher: '臺北市政府觀光傳播局',
+  title: 'Sin Hong Choon',
+  url: 'https://www.travel.taipei/en/attraction/details/2430',
+  published: '2026年10月24日更新',
+  context: '1934年興建；免票進場；開放時間週三至週日10:00–18:00，週一、二休館。',
+}
+SOURCES['epochtimes-xinfangchun-2022'] = {
+  id: 'epochtimes-xinfangchun-2022',
+  citation: '鄧玫玲，〈沏一壺茶 聽古宅訴說茶行老故事〉，大紀元時報，2022年5月2日。',
+  publisher: '大紀元時報',
+  title: '沏一壺茶 聽古宅訴說茶行老故事',
+  url: 'https://www.epochtimes.com.tw/n373347/',
+  published: '2022年5月2日',
+  context: '前身「芳春茶行」為王芳群與王珍春合資；向文山、南港茶農收購包種茶精製，銷往泰國；焙籠間曾布滿一百個坑穴，一天24小時高溫烘焙；二樓是女工揀茶的場所；1960年代後受進口茶競爭逐漸收起事業；大門對聯「芳尋顧渚 春採蒙山」。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }
