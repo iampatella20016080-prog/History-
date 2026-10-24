@@ -1884,8 +1884,139 @@ export const SHOPS = [
     ],
   },
   {
+    id: 'dodd-tea-house',
+    name: '寶順洋行與李春生',
+    theme: 'tea',
+    // 文化據點（茶葉外銷的起點）：不是餐廳，沒有食物圖鑑；只出現在「港口商街」
+    kind: 'heritage',
+    status: 'open',
+    year: 1866,
+    yearLabel: '1860年代（陶德來臺、設洋行的年份各資料記載不一）',
+    yearNote: '陶德（John Dodd）來臺的年份有1860、1864、1865三種記載；寶順洋行（Dodd & Co.）設立的年份有1865、1866、1869三種記載。李春生1895年的自敘寫「迨三十歲（1866年），復受英商寶順行重盟，東渡在台北」。',
+    sourceIds: ['chen-ciyu-li-family-2015', 'th-li-chunsheng-memoir', 'ntcri-73-tea-road'],
+    category: '文化據點｜洋行・茶葉外銷',
+    seal: '洋行',
+    summary: '英商陶德的寶順洋行與買辦李春生把臺灣烏龍茶賣到紐約：自安溪引進茶苗、在大稻埕設精製茶廠，1869年「Formosa Oolong」打開美國市場，大稻埕從此成為茶葉外銷的中心。',
+    note: '寶順洋行與李春生的茶行都在淡水河邊的建昌街、千秋街（今貴德街）一帶，不在迪化街；街上這棟兩層的洋樓是情境示意，依文獻「臺北第一條洋樓街」的描述設計，並非精確復原。',
+    // 用 site 取代北側林復振與有記之間的一般地段 north-5（只在港口商街），不另外預留店面地段：
+    // 預留會改變五個年代共用的地段編號與其他建築的種子
+    position: { x: 5.15, z: -4.5 },
+    facing: 'south',
+    interaction: { radius: 3.4 },
+    site: { x:  5.15, z: -4.5, rotationY: 0, replaces: ['north-5'] },
+    building: {
+      archetype: 'baroque',
+      width: 6.9,
+      depth: 11,
+      floors: 2,
+      plasterTint: '#f1e9d8',
+      trimTint: '#fbf7ee',
+      storefront: 'half',
+      sign: { text: 'Dodd & Co. 寶順洋行', style: 'wood' },
+      parapet: 'scroll',
+    },
+    buildingByEra: {
+      'qing-port': { condition: 'new' },
+    },
+    eraNotes: {
+      'qing-port':
+        '只出現在「港口商街」。1860年代淡水開港後，英商陶德在臺灣北部收茶、引進安溪茶苗，1868年把精製茶廠設在大稻埕，1869年把烏龍茶運往紐約。廈門人李春生是他的買辦，後來自營茶業，被稱為「臺灣茶業之父」。這棟洋樓是情境示意：洋行與李春生的事業都在河邊的建昌街、千秋街。',
+    },
+    camera: { distance: 6.6, height: 4.2, side: 5, lookHeight: 3.2 },
+    chapters: [
+      {
+        id: 'dodd',
+        type: 'text',
+        tab: '洋行與茶',
+        title: '陶德與寶順洋行',
+        lead: '一位英國商人看見臺灣茶的潛力：引進茶苗、貸款茶農、在大稻埕設廠精製，再把烏龍茶賣到紐約。',
+        paragraphs: [
+          '淡水開港後，英國商人陶德（John Dodd）來到臺灣北部。學者陳慈玉記載他1865年來臺、翌年設立寶順洋行（Dodd & Co.）試購茶葉；國史館的編者說明則寫寶順行1869年創設於大稻埕，到1890年3月陶德離臺返國為止。各資料的年份不一，本站並列。',
+          '1866年，陶德自福建安溪移植烏龍茶的茶樹，貸款給農民、教授製法（陳慈玉）；李春生的自敘也寫到陶德派他到安溪採辦茶苗。1867年輸往澳門的臺灣茶獲得好評。1868年，精製茶廠設在大稻埕——臺北市政府文化局的手冊寫陶德與李春生放棄艋舺的據點、改在大稻埕設廠，《臺北畫刊》則寫「艋舺人仍保守地排拒洋人的時候，大稻埕卻開設了洋行」。',
+          '1869年，寶順洋行把烏龍茶運往美國紐約，大受歡迎。臺北市政府的英文報導寫兩艘大帆船載了將近十三萬公斤的茶；運量在各資料裡的數字不一，本站只寫「約十三萬公斤」。這批茶以「Formosa Oolong」為名，奠定臺茶外銷的基礎。1872年以後，寶順、德記、怡記、和記、水陸五家洋行在北臺灣競爭茶葉外銷。',
+        ],
+        timeline: [
+          { place: '1862', text: '滬尾正式設關開埠（通稱1860年淡水開港）。' },
+          { place: '1866', text: '陶德自安溪引進茶苗，貸款給茶農種植。' },
+          { place: '1868', text: '精製茶廠設在大稻埕。' },
+          { place: '1869', text: '烏龍茶運往紐約，「Formosa Oolong」打開美國市場。' },
+          { place: '1872 後', text: '五家洋行在北臺灣競爭茶葉外銷。' },
+          { place: '1890', text: '陶德離臺返國。' },
+        ],
+        glossary: [
+          { term: '洋行', definition: '外國商人在開港口岸設立的貿易商號。' },
+          { term: '買辦', definition: '洋行雇用的本地商人，替洋行與本地的茶農、茶販交易；李春生就是寶順洋行的買辦。' },
+          { term: '精製', definition: '茶農初製的毛茶運到茶廠再篩選、烘焙、分級，才能裝箱外銷。以前要運到福州、廈門精製，大稻埕設廠後就地完成。' },
+        ],
+        sourceIds: ['chen-ciyu-li-family-2015', 'th-li-chunsheng-memoir', 'culture-taipei-walk-dadaocheng-2018', 'taipei-pictorial-480-dihua', 'taipei-gov-tea-tasting-2017', 'tshs-tamsui-customs-lesson', 'tshs-zhang-tamsui-port'],
+      },
+      {
+        id: 'li',
+        type: 'text',
+        tab: '買辦李春生',
+        title: '買辦李春生',
+        lead: '廈門來的基督徒商人，先當洋行的買辦，再自營茶業，被稱為「臺灣茶業之父」。',
+        paragraphs: [
+          '李春生1838年生於福建廈門，父親是船員。他1851年在廈門受洗，是長老教會的信徒；自敘寫「自幼奉耶穌教，年十五學商業，兼習英國語文」。1857年起受雇於廈門的英商怡記洋行（Elles & Co.），從事洋貨與茶的貿易。',
+          '1866年（自敘「迨三十歲」；陳慈玉記為1865年），他受英商寶順行之聘來到臺北，擔任買辦。他和陶德到大溪調查樟腦時發現野生茶樹，提議自安溪移植茶樹獎勵農民栽種（陳慈玉）。寶順行結束後，他續任英商和記行的買辦，自敘寫他在臺灣住了二十九年。',
+          '李春生後來自營茶商，烏龍茶經廈門輸往美國而致富，並改良烏龍茶的製法與品牌（陳慈玉）。1896年1月日本人的調查，大稻埕的茶商有252店，李春生的「李節記」資本四萬円、店員二十三人，資本額排第三，僅次於林本源的建祥號與黃爾仰的聯成行。國史館稱他是「清季台灣北部最有名富紳」。2002年臺北市文獻會的座談會上，與會者認為他打出了「福爾摩莎烏龍茶」的品牌。',
+        ],
+        facts: [
+          { label: '生卒', value: '1838年1月12日，福建廈門；1924年9月7日' },
+          { label: '信仰', value: '1851年在廈門受洗，長老教會' },
+          { label: '洋行', value: '1857年廈門怡記洋行；1866年臺北寶順洋行買辦；後任和記洋行買辦' },
+          { label: '茶行', value: '李節記（1896年資本額居大稻埕茶商第三）' },
+          { label: '稱號', value: '臺灣茶業之父（杜聰明的定位）' },
+        ],
+        sourceIds: ['chen-ciyu-li-family-2015', 'th-li-chunsheng-memoir', 'culture-taipei-2002-events', 'culture-taipei-walk-dadaocheng-2018'],
+      },
+      {
+        id: 'street',
+        type: 'text',
+        tab: '建昌街與揀茶女',
+        title: '洋樓街、教會與揀茶女',
+        lead: '李春生和林維源在河邊蓋起臺北第一條洋樓街；茶行的騎樓下，揀茶的婦女在茶袋與茶箱之間穿梭。',
+        paragraphs: [
+          '1878年，李春生與林維源捐出巨款並督造臺北城；1887年他資助劉銘傳的鐵路並參與監督，竣工後獲「五品同知」。1889年，劉銘傳把大稻埕沿岸的河灘地交給林維源開發，林維源邀李春生合作成立建昌公司，在建昌街與千秋街蓋店屋出租給洋商，這一帶成為臺北第一條洋樓街，也就是戰後的貴德街；寶順、怡和、德記等洋行與數十家茶行聚集在這條「茶街」。',
+          '李春生獨資捐建甘州街的大稻埕教會；1935年，孫輩在貴德街44號建李春生紀念教會紀念他（國史館寫教堂為他捐建，與其他來源不同，本站採後代所建）。',
+          '茶業也改變了大稻埕婦女的生活。1981年的《光華》雜誌描述，揀茶的婦女熙來攘往，在堆塞街衢廊下的茶袋、茶箱中穿梭；《臺灣史研究》的論文指出，茶業給予婦女婚姻以外的選擇，大稻埕婦女的結婚比例因此低於臺北盆地的邊緣。揀茶女的人數沒有查到統計，本站不寫數字。',
+        ],
+        facts: [
+          { label: '1878', value: '與林維源捐款並督造臺北城' },
+          { label: '1889', value: '建昌公司：建昌街、千秋街（今貴德街）的洋樓街' },
+          { label: '教會', value: '大稻埕教會（甘州街，李春生捐建）；李春生紀念教會（貴德街44號，1935年5月5日設立）' },
+        ],
+        sourceIds: ['chen-ciyu-li-family-2015', 'th-li-chunsheng-memoir', 'culture-taipei-walk-dadaocheng-2018', 'taipei-pictorial-480-dihua', 'pct-li-chunsheng-church', 'panorama-dadaocheng-1981', 'wolf-women-tea-2003'],
+      },
+      {
+        id: 'sources',
+        type: 'sources',
+        tab: '文獻與歷史依據',
+        title: '文獻與歷史依據',
+        intro: '本據點的介紹整理自下列資料，點選即可開啟原始網頁。查證紀錄（含年份的矛盾與查無）見專案的 docs/research/tea-export-origins.md。',
+        sourceIds: [
+          'chen-ciyu-li-family-2015',
+          'th-li-chunsheng-memoir',
+          'tshs-zhang-tamsui-port',
+          'tshs-tamsui-customs-lesson',
+          'ntcri-73-tea-road',
+          'culture-taipei-walk-dadaocheng-2018',
+          'taipei-pictorial-480-dihua',
+          'taipei-gov-tea-tasting-2017',
+          'culture-taipei-2002-events',
+          'pct-li-chunsheng-church',
+          'panorama-dadaocheng-1981',
+          'wolf-women-tea-2003',
+        ],
+        disclaimer:
+          '陶德來臺、設洋行與1869年運量的數字各資料不一，本站並列或只寫約數；「首富」一詞只見於單一來源，本站不用。本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建；這棟洋樓是情境示意，寶順洋行與李春生的事業在河邊的建昌街、千秋街。',
+      },
+    ],
+  },
+  {
     id: 'lin-hua-tai',
     name: '林華泰茶行',
+    theme: 'tea',
     status: 'open',
     year: 1883,
     category: '茶行',
@@ -2071,6 +2202,7 @@ export const SHOPS = [
   {
     id: 'you-ji',
     name: '有記名茶',
+    theme: 'tea',
     status: 'open',
     year: 1890,
     yearLabel: '1890年（廈門創立，1907年來臺）',
@@ -2306,6 +2438,7 @@ export const SHOPS = [
   {
     id: 'xin-fang-chun',
     name: '新芳春茶行',
+    theme: 'tea',
     status: 'open',
     year: 1934,
     yearLabel: '1934年落成（茶行創立年份有多種說法）',
@@ -2653,7 +2786,26 @@ export function getShop(id, eraId = null) {
 }
 
 /** 飲食主題（例如「魷魚羹飲食文化」：兩個年代各一個版本，只以主題串連） */
+/**
+ * 茶的主線：貫穿五個年代的主題。versions 是每個年代的代表店家（清末的外銷起點、日治的包種茶外銷、
+ * 1930 年代的茶工廠、戰後的批發茶行、現在的古蹟茶葉故事館）；members 列出所有屬於這條主線的店家，
+ * 同一家店可以出現在好幾個年代（例如林華泰在五個年代都有）。
+ */
+export const TEA_THEME = {
+  id: 'tea',
+  title: '大稻埕的茶',
+  versions: {
+    'qing-port': 'dodd-tea-house',
+    banquet: 'you-ji',
+    modern: 'xin-fang-chun',
+    postwar: 'lin-hua-tai',
+    revival: 'xin-fang-chun',
+  },
+  members: ['dodd-tea-house', 'lin-hua-tai', 'you-ji', 'xin-fang-chun'],
+}
+
 const THEMES = {
+  [TEA_THEME.id]: TEA_THEME,
   [SQUID_SOUP_THEME.id]: SQUID_SOUP_THEME,
   [MI_TAI_MU_THEME.id]: MI_TAI_MU_THEME,
   [DOUHUA_THEME.id]: DOUHUA_THEME,
@@ -2680,6 +2832,19 @@ export function getThemeVersions(shop) {
 export function getThemeRelated(shop) {
   const theme = getTheme(shop?.theme)
   return (theme?.related ?? []).map(({ eraId, shopId, relation }) => ({ eraId, shop: getShop(shopId), relation }))
+}
+
+/**
+ * 同一條主線的其他成員店家（例如茶的主線：寶順洋行、林華泰、有記、新芳春），不包含自己；
+ * 每一家附上它出現的年代（buildingByEra 的年代順序）。沒有 members 的主題回傳空陣列。
+ */
+export function getThemeMembers(shop) {
+  const theme = getTheme(shop?.theme)
+  if (!theme?.members) return []
+  return theme.members
+    .filter((id) => id !== shop.id)
+    .map((id) => ({ shop: getShop(id), eraIds: Object.keys(getShop(id)?.buildingByEra ?? {}) }))
+    .filter((item) => item.shop)
 }
 
 /** 某個年代出現在街上的店家（依 eras.js 的 availableStores 排序） */
