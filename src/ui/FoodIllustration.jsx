@@ -1279,7 +1279,97 @@ function TeaChest() {
   )
 }
 
+// 江山樓：1923 年皇太子午宴的大菜，只有菜名見於文獻，造型是依菜名與食材推想的示意
+function BirdNestSoup() {
+  // 雪白官燕：青花小盅裡淡色的清湯，湯面浮著幾縷半透明的燕窩絲
+  const strands = ['M70 70 Q84 62 98 70 Q112 78 126 70', 'M76 80 Q92 72 108 80 Q118 86 128 80', 'M66 76 Q78 84 92 78']
+  return (
+    <>
+      <Shadow cy={126} rx={64} />
+      <Bowl rimY={66} depth={46} fill="#f7f6f0" pattern={<path d="M48 90 Q100 104 152 90" stroke="#5a7fb0" strokeWidth="2" fill="none" opacity="0.7" />}>
+        <ellipse cx="100" cy="68" rx="56" ry="13" fill="#efe3c2" stroke={INK} strokeWidth="1.4" />
+        {strands.map((d, i) => (
+          <path key={i} d={d} stroke="#fbf8ee" strokeWidth="3" fill="none" strokeLinecap="round" />
+        ))}
+        {strands.map((d, i) => (
+          <path key={`o${i}`} d={d} stroke={INK} strokeWidth="0.8" fill="none" opacity="0.5" />
+        ))}
+      </Bowl>
+      <path d="M38 64 Q36 56 44 56 M162 64 Q164 56 156 56" stroke="#5a7fb0" strokeWidth="2.4" fill="none" strokeLinecap="round" />
+      <path d="M118 48 Q128 36 142 40" stroke="#c9c2b4" strokeWidth="2" fill="none" strokeLinecap="round" />
+    </>
+  )
+}
+
+function GoldenTurkey() {
+  // 金錢火雞：白瓷盤上排成一圈的圓形肉片，中央一撮香菜；「金錢」依菜名畫成圓片
+  const coins = [
+    [100, 62], [128, 70], [138, 92], [124, 110], [100, 116], [76, 110], [62, 92], [72, 70],
+  ]
+  return (
+    <>
+      <Shadow cy={128} rx={74} />
+      <ellipse cx="100" cy="92" rx="72" ry="34" fill="#f7f5ee" stroke={INK} strokeWidth="2.2" />
+      <ellipse cx="100" cy="92" rx="60" ry="26" fill="none" stroke="#c7b9a0" strokeWidth="1.2" />
+      {coins.map(([x, y], i) => (
+        <g key={i}>
+          <ellipse cx={x} cy={y} rx="13" ry="9" fill="#c9843c" stroke={INK} strokeWidth="1.6" />
+          <ellipse cx={x} cy={y - 1} rx="8" ry="5" fill="#e4a85c" />
+        </g>
+      ))}
+      <path d="M94 88 Q100 78 106 88 M92 94 Q100 100 108 94" stroke="#4f7a3a" strokeWidth="3" fill="none" strokeLinecap="round" />
+    </>
+  )
+}
+
+function CrystalPigeonEgg() {
+  // 水晶鴿蛋：淺盤上幾顆透亮的蛋，墊著綠色菜葉，淋了薄芡
+  const eggs = [
+    [78, 84], [106, 78], [130, 90], [96, 100],
+  ]
+  return (
+    <>
+      <Shadow cy={128} rx={70} />
+      <ellipse cx="100" cy="96" rx="68" ry="30" fill="#f7f5ee" stroke={INK} strokeWidth="2.2" />
+      <path d="M52 94 Q70 70 100 74 Q136 72 150 96 Q130 110 100 112 Q68 112 52 94 Z" fill="#7da35a" stroke={INK} strokeWidth="1.4" strokeLinejoin="round" opacity="0.9" />
+      {eggs.map(([x, y], i) => (
+        <g key={i}>
+          <ellipse cx={x} cy={y} rx="15" ry="11" fill="#f4efe0" stroke={INK} strokeWidth="1.6" opacity="0.95" />
+          <ellipse cx={x - 5} cy={y - 4} rx="5" ry="3" fill="#ffffff" opacity="0.8" />
+        </g>
+      ))}
+      <path d="M60 102 Q100 118 142 100" stroke="#e8dcb6" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.8" />
+    </>
+  )
+}
+
+function AlmondTea() {
+  // 杏仁茶：白瓷碗裡乳白的甜湯，上面撒幾粒杏仁碎，配一支瓷匙
+  const bits = [
+    [84, 76], [104, 72], [118, 80], [94, 84],
+  ]
+  return (
+    <>
+      <Shadow cy={126} rx={66} />
+      <Bowl rimY={66} depth={48}>
+        <ellipse cx="100" cy="68" rx="56" ry="13" fill="#f6efdc" stroke={INK} strokeWidth="1.4" />
+        {bits.map(([x, y], i) => (
+          <ellipse key={i} cx={x} cy={y} rx="4" ry="2.4" transform={`rotate(${i * 40} ${x} ${y})`} fill="#d8b272" stroke={INK} strokeWidth="0.9" />
+        ))}
+        <path d="M64 68 Q80 62 98 64" stroke="#ffffff" strokeWidth="3" fill="none" strokeLinecap="round" />
+      </Bowl>
+      <path d="M148 44 L176 22" stroke="#f7f5ee" strokeWidth="6" strokeLinecap="round" />
+      <path d="M148 44 L176 22" stroke={INK} strokeWidth="1.2" strokeLinecap="round" fill="none" />
+      <ellipse cx="144" cy="48" rx="10" ry="6" transform="rotate(-36 144 48)" fill="#f7f5ee" stroke={INK} strokeWidth="1.6" />
+    </>
+  )
+}
+
 const ILLUSTRATIONS = {
+  'bird-nest-soup': BirdNestSoup,
+  'golden-turkey': GoldenTurkey,
+  'crystal-pigeon-egg': CrystalPigeonEgg,
+  'almond-tea': AlmondTea,
   'baozhong-tea': BaozhongTea,
   'oolong-tea': OolongTea,
   tieguanyin: Tieguanyin,

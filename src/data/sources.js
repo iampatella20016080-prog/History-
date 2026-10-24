@@ -49,6 +49,39 @@ SOURCES['factpedia-jiang-shan-lou'] = {
   url: 'https://factpedia.org/wiki/%E6%B1%9F%E5%B1%B1%E6%A8%93',
   context: '記為1921年成立，同年11月20日開幕；描述為紅磚造四層樓連棟街屋（同頁詩作註解則記為1917年創立）。',
 }
+// 第 3 階段補的江山樓文獻（查證紀錄：docs/research/jiang-shan-lou.md）
+SOURCES['jaung-jiang-shan-lou-2015'] = {
+  id: 'jaung-jiang-shan-lou-2015',
+  citation: '莊永明，〈大稻埕名酒樓之三：江山樓〉，莊永明書坊，2015年8月31日。',
+  publisher: '莊永明書坊（個人部落格，作者為臺灣史作者；文末列有書名與日治報刊出處）',
+  title: '大稻埕名酒樓之三：江山樓',
+  url: 'http://jaungyoungming-club.blogspot.com/2015/08/blog-post_31.html',
+  context: '記1921年11月20日開業、披露宴三天；吳江山原為東薈芳合夥人，赴廈門、福州、上海考察後創立。紅磚四層連棟街屋，宴會廳14間約容500人，樓頂有庭園假山。位置日新街東市二丁目（後為日新町二丁目），近歸綏街、甘州街。1923年與東薈芳承辦皇太子臺灣料理午宴；1927年底吳江山連載〈臺灣料理之話〉；1935年吳江山病逝；1970年代拆除。',
+}
+SOURCES['nccu-thesis-jiang-shan-lou-2008'] = {
+  id: 'nccu-thesis-jiang-shan-lou-2008',
+  citation: '簡伃君，《江山樓及其在日治時期紳商社交生活中所扮演的角色（1921–1940）》，國立政治大學歷史學系碩士論文，2008年。',
+  publisher: '國立政治大學',
+  title: '江山樓及其在日治時期紳商社交生活中所扮演的角色（1921–1940）',
+  url: 'https://thesis.lib.nccu.edu.tw/detail/30cf32714ba6debfdd04e8e4822ae948/',
+  context: '摘要稱江山樓是推廣臺灣菜的重要餐廳，1920年代後代表臺灣最高烹飪水準，也是紳商社交的場所。本站只讀到摘要與參考文獻。',
+}
+SOURCES['cna-taiwanese-cuisine-2020'] = {
+  id: 'cna-taiwanese-cuisine-2020',
+  citation: '陳凱棠，〈台菜的身世〉（引曾品滄），中央社文化+，2020年12月7日。',
+  publisher: '中央通訊社',
+  title: '台菜的身世',
+  url: 'https://www.cna.com.tw/culture/article/20201207w001',
+  context: '1923年皇太子午宴十二道大菜用燕窩、鴿蛋、火雞、魚翅、螃蟹、白木耳、鱉、海參；江山樓後來印出列有192道菜的菜單。',
+}
+SOURCES['foodnext-chen-yuchen-2020'] = {
+  id: 'foodnext-chen-yuchen-2020',
+  citation: '陳玉箴，〈1923年皇太子的臺灣料理宴〉，食力 Foodnext，2020年10月18日。',
+  publisher: '食力 Foodnext（作者為國立臺灣師範大學副教授）',
+  title: '1923年皇太子的臺灣料理宴',
+  url: 'https://www.foodnext.net/life/culture/paper/5470493786',
+  context: '1923年4月24日中午在總督官邸大食堂辦臺灣料理午宴，總督府曾派人赴日試菜；十二道大菜，第七道炸春餅，以八寶飯與杏仁茶作結；稱吳江山為御宴主廚。',
+}
 
 // 滋養豆餡舖
 SOURCES['ziyang-about'] = {

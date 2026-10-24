@@ -43,8 +43,8 @@ describe('江山樓', () => {
     assert.ok(Math.abs(placard.position[0] - shop.position.x) < 6, '說明牌在江山樓前')
   })
 
-  test('維持「即將開放」，不開放內部探索', () => {
-    assert.equal(shop.status, 'coming-soon')
+  test('第 3 階段起開放探索（章節測試在 jiangShanLou.test.js）', () => {
+    assert.equal(shop.status, 'open')
   })
 
   test('創立年份標示兩種記載與來源，不自行認定單一年份', () => {
@@ -56,7 +56,8 @@ describe('江山樓', () => {
     for (const id of shop.sourceIds) {
       const source = getSource(id)
       assert.ok(source, `來源 ${id}`)
-      assert.match(source.url, /^https:\/\//)
+      // 莊永明書坊的部落格只有 http
+      assert.match(source.url, /^https?:\/\//)
     }
     assert.equal(shopYearText(getShop('lin-fu-zhen')), '1853年')
   })
