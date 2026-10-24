@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react'
 import { getTheme, shopYearText } from '../data/shops.js'
 import { getSource } from '../data/sources.js'
 import { useGameStore } from '../state/useGameStore.js'
+import { shopSummary } from '../i18n/lang.js'
+import { useT } from '../i18n/useT.js'
 
 /**
  * 右上角的「店家名錄」：列出目前年代街上的店家。
@@ -19,6 +21,8 @@ export function StoreDirectory({ era, shops }) {
   const mode = useGameStore((state) => state.mode)
   const transitioning = useGameStore((state) => state.transitioning)
   const container = useRef(null)
+  const lang = useGameStore((state) => state.lang)
+  const t = useT()
 
   useEffect(() => {
     if (!open) return undefined
@@ -46,14 +50,14 @@ export function StoreDirectory({ era, shops }) {
           <i />
           <i />
         </span>
-        店家名錄
+        {t('directory.toggle')}
       </button>
       {open && (
         <div id="shop-menu-panel" className="hud-menu__panel paper" data-scrollable>
           <p className="hud-menu__heading">
             <span>{era?.yearRange}｜{era?.title}</span>
             <span className="hud-menu__count">
-              {shops.length} 間店家・{openCount} 間可探索
+              {t('directory.count', { total: shops.length, open: openCount })}
             </span>
           </p>
           <ul className="hud-menu__list">
@@ -68,26 +72,26 @@ export function StoreDirectory({ era, shops }) {
                       {shop.category}
                     </span>
                     {isOpen ? (
-                      <span className="menu-shop__badge is-open">{visited[shop.id] ? '已探索' : '可探索'}</span>
+                      <span className="menu-shop__badge is-open">{visited[shop.id] ? t('directory.explored') : t('directory.explorable')}</span>
                     ) : (
-                      <span className="menu-shop__badge">即將開放</span>
+                      <span className="menu-shop__badge">{t('directory.soon')}</span>
                     )}
                   </div>
-                  {shop.kind === 'heritage' && <span className="menu-shop__note is-heritage">文化據點</span>}
+                  {shop.kind === 'heritage' && <span className="menu-shop__note is-heritage">{t('directory.heritage')}</span>}
                   {shop.eraLabel && <span className="menu-shop__note is-era">{shop.eraLabel}</span>}
-                  {shop.reconstruction && <span className="menu-shop__note">歷史情境重建</span>}
+                  {shop.reconstruction && <span className="menu-shop__note">{t('directory.reconstruction')}</span>}
                   {shop.scenarioNote && <span className="menu-shop__note">{shop.scenarioNote}</span>}
-                  {shop.theme && <span className="menu-shop__note is-theme">飲食主題：{getTheme(shop.theme)?.title}</span>}
-                  <p className="menu-shop__summary">{shop.summary}</p>
+                  {shop.theme && <span className="menu-shop__note is-theme">{t('directory.theme', { title: getTheme(shop.theme)?.title })}</span>}
+                  <ShopSummary shop={shop} lang={lang} t={t} />
                   {(shop.yearNote || shop.sourceIds?.length) && <ShopSources shop={shop} />}
                   <div className="menu-shop__actions">
                     {viewer ? (
                       <button type="button" className="button-ghost" data-focus-shop={shop.id} onClick={() => focusBuilding(shop.id)}>
-                        聚焦建築
+                        {t('directory.focus')}
                       </button>
                     ) : (
                       <button type="button" className="button-ghost" onClick={() => travelToShop(shop.id)}>
-                        前往店門口
+                        {t('directory.travel')}
                       </button>
                     )}
                     {isOpen && !viewer && (
@@ -99,7 +103,7 @@ export function StoreDirectory({ era, shops }) {
                           openShop(shop.id, null)
                         }}
                       >
-                        閱讀故事
+                        {t('directory.read')}
                       </button>
                     )}
                   </div>
@@ -107,7 +111,7 @@ export function StoreDirectory({ era, shops }) {
               )
             })}
           </ul>
-          <p className="hud-menu__note">店家在街上的位置為情境示意。其他店家的故事將在後續階段陸續開放。</p>
+          <p className="hud-menu__note">{t('directory.note')}</p>
         </div>
       )}
     </div>
@@ -116,10 +120,11 @@ export function StoreDirectory({ era, shops }) {
 
 /** 年份記載不一的說明與資料來源（可展開） */
 function ShopSources({ shop }) {
+  const t = useT()
   const sources = (shop.sourceIds ?? []).map(getSource).filter(Boolean)
   return (
     <details className="menu-shop__sources">
-      <summary>年份與資料來源</summary>
+      <summary>{t('directory.sources')}</summary>
       {shop.yearNote && <p>{shop.yearNote}</p>}
       {shop.note && <p>{shop.note}</p>}
       {sources.length > 0 && (
@@ -134,5 +139,16 @@ function ShopSources({ shop }) {
         </ul>
       )}
     </details>
+  )
+}
+
+/** 店家摘要：英文模式優先用 summaryEn；沒有英文時顯示中文並標「中文內容」 */
+function ShopSummary({ shop, lang, t }) {
+  const { text, fallback } = shopSummary(shop, lang)
+  return (
+    <p className="menu-shop__summary" lang={fallback ? 'zh-Hant' : undefined}>
+      {text}
+      {fallback && <span className="menu-shop__note is-zh">{t('directory.chineseContent')}</span>}
+    </p>
   )
 }

@@ -3077,3 +3077,31 @@ kbd {
     font-size: 2.8px;
   }
 }
+
+/* 授權與出處視窗、語言選項 */
+.licenses h3 {
+  margin: 1.2em 0 0.4em;
+}
+.licenses__group {
+  margin: 0.3em 0;
+}
+.licenses__group summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.licenses__group li {
+  overflow-wrap: anywhere;
+  margin: 0.4em 0;
+  font-size: 0.9em;
+}
+.menu-shop__note.is-zh {
+  margin-left: 0.5em;
+}
+
+.glossary__tai {
+  display: block;
+  font-size: 0.8em;
+  font-weight: 400;
+  font-style: italic;
+  opacity: 0.8;
+}
