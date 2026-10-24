@@ -55,7 +55,7 @@ export const ERAS = [
       items: ['teaChests', 'sacks', 'baskets', 'jars', 'handcart', 'carryingPole'],
       boats: 'junks',
     },
-    availableStores: ['lin-fu-zhen', 'lin-hua-tai'],
+    availableStores: ['lin-fu-zhen', 'dodd-tea-house', 'lin-hua-tai'],
   },
   {
     id: 'banquet',

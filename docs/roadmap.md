@@ -16,7 +16,7 @@
 - ☑ 林華泰茶行（1883）：補章節、開放探索。建築已在街上。
 - ☑ 有記名茶（1890）：補章節、開放探索。建築已在街上。
 - ☑ 新芳春茶行（1934）：補章節、開放探索。建築已在街上。
-- ☐ 茶葉外銷的起點：李春生與寶順洋行（清末年代的章節或文化據點；文獻已在 `docs/research/tea-export-origins.md`）。
+- ☑ 茶葉外銷的起點：寶順洋行與李春生（「港口商街」的文化據點 `dodd-tea-house`；文獻在 `docs/research/tea-export-origins.md`）。
 - ☐ 主題 `tea`：五個年代各自的茶業章節互相連結（`getThemeVersions`）。
 - ☑ 測試：`tests/tea.test.js`；README。
 

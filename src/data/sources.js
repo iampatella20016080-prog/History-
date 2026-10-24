@@ -1195,6 +1195,62 @@ SOURCES['epochtimes-xinfangchun-2022'] = {
   context: '前身「芳春茶行」為王芳群與王珍春合資；向文山、南港茶農收購包種茶精製，銷往泰國；焙籠間曾布滿一百個坑穴，一天24小時高溫烘焙；二樓是女工揀茶的場所；1960年代後受進口茶競爭逐漸收起事業；大門對聯「芳尋顧渚 春採蒙山」。',
 }
 
+/* ── 寶順洋行與李春生（文化據點；查證紀錄見 docs/research/tea-export-origins.md） ── */
+SOURCES['tshs-tamsui-customs-lesson'] = {
+  id: 'tshs-tamsui-customs-lesson',
+  citation: '新北市立淡水古蹟博物館，《行動展示教具 開港設關拚貿易-海關碼頭》教案。',
+  publisher: '新北市立淡水古蹟博物館',
+  title: '開港設關拚貿易-海關碼頭',
+  url: 'https://www.tshs.ntpc.gov.tw/files/file_pool/1/0N088508798468306680/%E9%96%8B%E6%B8%AF%E8%A8%AD%E9%97%9C%E6%8B%9A%E8%B2%BF%E6%98%93%E6%95%99%E6%A1%88.pdf',
+  published: '教案（PDF，無日期；2026年10月查閱）',
+  context: '1858天津條約與1860北京條約開放安平、打狗、滬尾、雞籠；1861年英國副領事郇和決定以滬尾為最主要通商口岸；1872年後北臺有寶順、德記、怡記、和記、水陸五大洋行競爭茶葉外銷（轉錄臺灣大百科《外商洋行》）。',
+}
+SOURCES['taipei-gov-tea-tasting-2017'] = {
+  id: 'taipei-gov-tea-tasting-2017',
+  citation: 'Wang Rui-fen, "Tea Tasting in Taipei -- Savor a Sip in Dadaocheng", Taipei City Government, 2017年8月30日。',
+  publisher: '臺北市政府',
+  title: 'Tea Tasting in Taipei -- Savor a Sip in Dadaocheng',
+  url: 'https://english.gov.taipei/News_Content.aspx?n=4FF938C7E036410F&s=3DB65D2882378503',
+  published: '2017年8月30日',
+  context: '1860年淡水開港；陶德雇用曾在廈門從事茶業的李春生為買辦；1869年兩艘大帆船載了將近13萬公斤的茶運往紐約；貴德街由李春生與林維源所建。',
+}
+SOURCES['taipei-pictorial-480-dihua'] = {
+  id: 'taipei-pictorial-480-dihua',
+  citation: '宋祖慈，〈臺北唯一老街 迪化街與大稻埕的歷史散步〉，《臺北畫刊》第480期。',
+  publisher: '臺北市政府觀光傳播局',
+  title: '臺北唯一老街 迪化街與大稻埕的歷史散步',
+  url: 'http://www-ws.gov.taipei/001/Upload/public/MMO/READ/480_05.pdf',
+  published: '《臺北畫刊》第480期（約2008年）',
+  context: '艋舺人仍保守地排拒洋人時，大稻埕開設了洋行；劉銘傳劃定千秋、建昌街（今貴德街）為外僑區，是臺北第一條洋樓街；貴德街是聚集數十家茶行的「茶街」；李春生紀念教堂由李家後人所建。',
+}
+SOURCES['pct-li-chunsheng-church'] = {
+  id: 'pct-li-chunsheng-church',
+  citation: '台灣基督長老教會教會資料，〈李春生紀念教會〉。',
+  publisher: '台灣基督長老教會',
+  title: '李春生紀念教會',
+  url: 'https://www.pct.org.tw/churchdata.aspx?strOrgNo=C03001',
+  published: '2025年度資料',
+  context: '李春生紀念教會：臺北市貴德街44號，設立日期1935年5月5日，隸屬台北中會。',
+}
+SOURCES['culture-taipei-2002-events'] = {
+  id: 'culture-taipei-2002-events',
+  citation: '臺北市政府文化局，〈2002年大事紀〉，資料更新2020年11月27日。',
+  publisher: '臺北市政府文化局',
+  title: '2002年大事紀',
+  url: 'https://culture.gov.taipei/News_Content.aspx?n=FD864505B018E5BC&s=509246DB9BE516F8',
+  published: '2020年11月27日更新',
+  context: '2002年7月12日文獻會在貴德街李春生紀念教會舉辦「李春生與大稻埕茶商發展」座談會，與會者認為李春生打出「福爾摩莎烏龍茶」品牌外銷國際，使臺灣經濟重心由南往北發展。',
+}
+SOURCES['wolf-women-tea-2003'] = {
+  id: 'wolf-women-tea-2003',
+  citation: 'Arthur P. Wolf, "Women and Tea in the Taipei Basin",《臺灣史研究》第10卷第2期，2003年（摘要）。',
+  publisher: '中央研究院臺灣史研究所',
+  title: 'Women and Tea in the Taipei Basin',
+  url: 'https://lawdata.com.tw/tw/detail.aspx?no=214265',
+  published: '2003年',
+  context: '茶業給予婦女婚姻以外的選擇，大稻埕婦女的結婚比例低於臺北盆地邊緣。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }
