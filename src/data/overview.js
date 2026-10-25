@@ -2,6 +2,8 @@ import { ERAS } from './eras.js'
 import { NIANHUO_TIMELINE_EVENT } from './dihuaNianhuoData.js'
 import { XIYUAN_TIMELINE_EVENT } from './xiyuanData.js'
 import { LI_CHUNSHENG_MAP_PLACE, LI_CHUNSHENG_TIMELINE_EVENTS } from './liChunShengData.js'
+import { JIANG_WEISHUI_MAP_PLACE, JIANG_WEISHUI_TIMELINE_EVENTS } from './jiangWeiShuiData.js'
+import { WANG_JINGQUAN_TIMELINE_EVENTS } from './wangJingQuanData.js'
 import { SHOPS, getShop, shopYearText } from './shops.js'
 
 /**
@@ -23,7 +25,11 @@ export const TIMELINE_EVENTS = [
   { year: 1896, text: '日本人調查：大稻埕茶商252店、從業3,612人。', sourceIds: ['chen-ciyu-li-family-2015'] },
   { year: 1914, text: '慈聖宮因市區改正遷至日新街（今保安街49巷）重建完成；遷建起於1909／1910、完工另有1916一說，年份待核。', sourceIds: ['sinica-gis-2025-cisheng', 'wiki-ci-sheng-gong'] },
   LI_CHUNSHENG_TIMELINE_EVENTS[1],
+  // 第 8 階段人物：蔣渭水（1916 大安醫院、1921 文協、2020 渭水驛站）、王井泉（1941《台灣文學》、1943 厚生演劇研究會）
+  JIANG_WEISHUI_TIMELINE_EVENTS[0],
+  JIANG_WEISHUI_TIMELINE_EVENTS[1],
   { year: 1935, text: '李春生紀念教會在貴德街設立。', sourceIds: ['pct-li-chunsheng-church'] },
+  ...WANG_JINGQUAN_TIMELINE_EVENTS,
   { year: 1971, text: '霞海城隍廟增祀月下老人。', sourceIds: ['moi-xiahai-temple', 'moi-xiahai-landscape'] },
   { year: 1976, text: '江山樓拆除。', sourceIds: ['wiki-jiang-shan-lou'] },
   { year: 1985, text: '永樂市場現在的大樓開業。', sourceIds: ['tcma-yongle-market'] },
@@ -31,6 +37,7 @@ export const TIMELINE_EVENTS = [
   { year: 2009, text: '新芳春茶行指定為直轄市定古蹟。', sourceIds: ['nchdb-xinfangchun'] },
   XIYUAN_TIMELINE_EVENT,
   { year: 2016, text: '新芳春茶行修復後開放參觀。', sourceIds: ['pts-xinfangchun-2016'] },
+  JIANG_WEISHUI_TIMELINE_EVENTS[2],
 ]
 
 /** 年份落在哪個年代（年代的起始年歸該年代；1980–2000 之間沒有年代） */
@@ -131,6 +138,7 @@ export const MAP_PLACES = [
   { id: 'qianyuan', shopIds: ['qian-yuan-yao-hang'], name: '乾元藥行', address: '迪化街一段71號（門牌僅見部落格與名錄摘要，未核實）', x: 38, y: 69, precision: 'approx', sourceIds: ['trip-writers-2008-qianyuan'] },
   { id: 'li-church', shopIds: ['dodd-tea-house'], name: '李春生紀念教會', address: '貴德街44號', x: 14, y: 78, precision: 'address', sourceIds: ['pct-li-chunsheng-church'] },
   LI_CHUNSHENG_MAP_PLACE,
+  JIANG_WEISHUI_MAP_PLACE,
   { id: 'dodd', shopIds: ['dodd-tea-house'], name: '洋行區（建昌街・千秋街）', address: '今貴德街一帶，洋行與茶行的確切門牌未載', x: 14, y: 46, precision: 'approx', sourceIds: ['chen-ciyu-li-family-2015'] },
 ]
 

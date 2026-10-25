@@ -45,9 +45,9 @@ describe('波麗路：店家資料', () => {
     }
   })
 
-  test('五個章節，最後一章是文獻；每一章都有出處，文獻章列出所有引用', () => {
-    assert.equal(shop.chapters.length, 5)
-    assert.deepEqual(shop.chapters.map((chapter) => chapter.type), ['text', 'text', 'text', 'foods', 'sources'])
+  test('六個章節（含第 8 階段的人物小節），最後一章是文獻；每一章都有出處，文獻章列出所有引用', () => {
+    assert.equal(shop.chapters.length, 6)
+    assert.deepEqual(shop.chapters.map((chapter) => chapter.type), ['text', 'text', 'text', 'foods', 'text', 'sources'])
     for (const chapter of shop.chapters) {
       assert.ok(chapter.sourceIds?.length, `${chapter.tab} 沒有出處`)
       for (const sourceId of chapter.sourceIds) {

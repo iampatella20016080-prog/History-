@@ -46,11 +46,11 @@ describe('江山樓：店家資料', () => {
     assert.equal(shop.reconstruction, true, '原址不在迪化街，要標情境重建')
   })
 
-  test('五個章節，最後一章是文獻；每一章都有出處', () => {
-    assert.equal(shop.chapters.length, 5)
+  test('六個章節（含第 8 階段的人物小節），最後一章是文獻；每一章都有出處', () => {
+    assert.equal(shop.chapters.length, 6)
     assert.deepEqual(
       shop.chapters.map((chapter) => chapter.type),
-      ['text', 'text', 'text', 'foods', 'sources'],
+      ['text', 'text', 'text', 'foods', 'text', 'sources'],
     )
     for (const chapter of shop.chapters) {
       assert.ok(chapter.sourceIds?.length, `${chapter.tab} 沒有出處`)
