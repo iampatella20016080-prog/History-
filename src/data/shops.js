@@ -24,6 +24,14 @@ import { HUANG_YUJIE_HOTSPOTS, MUSEUM, MUSEUM_SITE, museumToWorld } from './huan
 import { MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN } from './huangYujieMuseum.js'
 import { ACTION_BAR_SITE } from './actionBarLayout.js'
 import { CI_SHENG_ADDRESS, CI_SHENG_CHAPTERS, CI_SHENG_ERA_NOTES, ciShengHotspots } from './ciShengMiaokouData.js'
+import {
+  NIANHUO_CHAPTER,
+  NIANHUO_DISCLAIMER_TEXT,
+  NIANHUO_SOURCE_IDS,
+  NANBEI_BACKGROUND_CHAPTER,
+  XIA_ER_ZUI_CHAPTER,
+  XIA_ER_ZUI_DISCLAIMER,
+} from './dihuaNianhuoData.js'
 import { RICE_AND_SHINE_ID, riceAndShineEraConfig } from './riceAndShineEraConfig.js'
 import { RICE_HOTSPOTS, RS, riceToWorld } from './riceAndShineLayout.js'
 import { RICE_CHAPTERS, RICE_ERA_NOTES, RICE_RECORD } from './riceAndShineData.js'
@@ -475,15 +483,17 @@ export const SHOPS = [
         ],
         sourceIds: ['taipei-market-info-yongle', 'tcma-yongle-market'],
       },
+      NIANHUO_CHAPTER,
+      NANBEI_BACKGROUND_CHAPTER,
       {
         id: 'sources',
         type: 'sources',
         tab: '參考資料',
         title: '參考資料',
         intro: '永樂市場的介紹整理自下列資料，點選即可開啟原始網頁。',
-        sourceIds: ['tcma-yongle-market', 'taipei-market-info-yongle', 'ncl-yongle-market', 'udn-1995-yongle-market'],
+        sourceIds: ['tcma-yongle-market', 'taipei-market-info-yongle', 'ncl-yongle-market', 'udn-1995-yongle-market', ...NIANHUO_SOURCE_IDS],
         disclaimer:
-          '永樂市場大樓的 3D 外觀依實地照片建模，比例為估算；一樓市場的平面是簡化的概念配置，攤位數量、位置與陳設都不是精確復原。',
+          `永樂市場大樓的 3D 外觀依實地照片建模，比例為估算；一樓市場的平面是簡化的概念配置，攤位數量、位置與陳設都不是精確復原。${NIANHUO_DISCLAIMER_TEXT}`,
       },
     ],
   },
@@ -1874,15 +1884,16 @@ export const SHOPS = [
         footnote: '展示的餐點是示意模型，不代表價格、份量或配方；店家的菜色以現場為準。',
         sourceIds: ['bella-2021-yongle-market', 'bella-2025-dadaocheng', 'tvbs-2013-apang'],
       },
+      XIA_ER_ZUI_CHAPTER,
       {
         id: 'sources',
         type: 'sources',
         tab: '資料來源',
         title: '資料來源',
         intro: '永樂米苔目的介紹整理自下列資料，點選即可開啟原始網頁；每一筆都標示出版時間與用途。店面與店內的 3D 模型另外依使用者提供的實地照片建模。',
-        sourceIds: ['bella-2021-yongle-market', 'bella-2025-dadaocheng', 'tvbs-2013-temple-food', 'tvbs-2013-apang', 'moe-bi-thai-bak'],
+        sourceIds: ['bella-2021-yongle-market', 'bella-2025-dadaocheng', 'tvbs-2013-temple-food', 'tvbs-2013-apang', 'moe-bi-thai-bak', ...XIA_ER_ZUI_CHAPTER.sourceIds],
         disclaimer:
-          '媒體與食記只支持當次的記錄，不當成最新的價格、營業時間或店史；創立年份、店史與傳承關係沒有可以核實的資料，都沒有寫成事實。照片裡的路人、隔壁店家的招牌與廣告沒有放進場景，店裡的人物是簡化的情境人物。',
+          `媒體與食記只支持當次的記錄，不當成最新的價格、營業時間或店史；創立年份、店史與傳承關係沒有可以核實的資料，都沒有寫成事實。照片裡的路人、隔壁店家的招牌與廣告沒有放進場景，店裡的人物是簡化的情境人物。${XIA_ER_ZUI_DISCLAIMER}`,
       },
     ],
   },
@@ -3354,7 +3365,13 @@ export function getThemeVersions(shop) {
  */
 export function getThemeRelated(shop) {
   const theme = getTheme(shop?.theme)
-  return (theme?.related ?? []).map(({ eraId, shopId, relation }) => ({ eraId, shop: getShop(shopId), relation }))
+  return (theme?.related ?? []).map(({ eraId, shopId, place, relation }) => ({
+    eraId,
+    shop: shopId ? getShop(shopId) : null,
+    // 沒有店家條目、也沒有 3D 模型的現代店家（只有文字介紹）
+    place: place ?? null,
+    relation,
+  }))
 }
 
 /**

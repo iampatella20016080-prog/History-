@@ -1,4 +1,5 @@
 import { ERAS } from './eras.js'
+import { NIANHUO_TIMELINE_EVENT } from './dihuaNianhuoData.js'
 import { SHOPS, getShop, shopYearText } from './shops.js'
 
 /**
@@ -22,6 +23,7 @@ export const TIMELINE_EVENTS = [
   { year: 1971, text: '霞海城隍廟增祀月下老人。', sourceIds: ['moi-xiahai-temple', 'moi-xiahai-landscape'] },
   { year: 1976, text: '江山樓拆除。', sourceIds: ['wiki-jiang-shan-lou'] },
   { year: 1985, text: '永樂市場現在的大樓開業。', sourceIds: ['tcma-yongle-market'] },
+  NIANHUO_TIMELINE_EVENT,
   { year: 2009, text: '新芳春茶行指定為直轄市定古蹟。', sourceIds: ['nchdb-xinfangchun'] },
   { year: 2016, text: '新芳春茶行修復後開放參觀。', sourceIds: ['pts-xinfangchun-2016'] },
 ]

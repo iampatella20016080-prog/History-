@@ -10,6 +10,7 @@
  *
  * 尺寸依照片與一般小吃攤、街屋的比例估算，並非測量；照片沒有拍到的部分是簡化的示意。
  */
+import { XIA_ER_ZUI_RELATED } from './dihuaNianhuoData.js'
 import { TEMPLE_COURT, templeCourtToWorld } from './squidSoupLayout.js'
 
 export const MI_TAI_MU_THEME = {
@@ -17,6 +18,8 @@ export const MI_TAI_MU_THEME = {
   title: '米苔目飲食文化',
   /** 年代 id → 這個年代的版本（店家 id） */
   versions: { postwar: 'temple-mi-tai-mu-stall', revival: 'yong-le-mi-tai-mu' },
+  /** 同類食物的現代相關店家（只有文字介紹，沒有店家條目與模型）：呷二嘴，沒有品牌傳承關係 */
+  related: [XIA_ER_ZUI_RELATED],
 }
 
 /* ═══════════ 1945–1980：慈聖宮廟口的米苔目攤 ═══════════ */
