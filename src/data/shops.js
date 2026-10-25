@@ -7,6 +7,7 @@ import {
   TEMPLE_STALL_HOTSPOTS,
   TEMPLE_STALL_SITE,
   laoPanToWorld,
+  templeCourtToWorld,
   templeStallToWorld,
 } from './squidSoupLayout.js'
 import {
@@ -22,6 +23,7 @@ import {
 import { HUANG_YUJIE_HOTSPOTS, MUSEUM, MUSEUM_SITE, museumToWorld } from './huangYujieLayout.js'
 import { MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN } from './huangYujieMuseum.js'
 import { ACTION_BAR_SITE } from './actionBarLayout.js'
+import { CI_SHENG_ADDRESS, CI_SHENG_CHAPTERS, CI_SHENG_ERA_NOTES, ciShengHotspots } from './ciShengMiaokouData.js'
 import { RICE_AND_SHINE_ID, riceAndShineEraConfig } from './riceAndShineEraConfig.js'
 import { RICE_HOTSPOTS, RS, riceToWorld } from './riceAndShineLayout.js'
 import { RICE_CHAPTERS, RICE_ERA_NOTES, RICE_RECORD } from './riceAndShineData.js'
@@ -3095,16 +3097,54 @@ export const SHOPS = [
       },
     ],
   },
+  // 慈聖宮：同一座廟、同一個 ID，各年代的名稱、章節、熱點與類型見 eras（由 getShop(id, eraId) 套用）。
+  // 酒樓繁華、摩登大稻埕是文化據點（廟的沿革）；庶民生活是廟口的情境示意攤位與四種小吃；老屋新生只寫現況。
+  // 查證紀錄：docs/research/ci-sheng-gong-miaokou.md；章節內容在 ciShengMiaokouData.js。
   {
     id: 'ci-sheng-gong',
-    name: '慈聖宮廟口小吃',
-    status: 'coming-soon',
-    category: '廟口小吃',
-    seal: '小吃',
-    summary: '慈聖宮前榕樹下的小吃攤，是老台北熟悉的庶民味道。',
+    name: '慈聖宮',
+    kind: 'heritage',
+    status: 'open',
+    category: '文化據點｜媽祖廟・同安人信仰',
+    seal: '慈聖',
+    address: CI_SHENG_ADDRESS,
+    yearNote: '初建年份各說不一（1855／1864／1866／1869），日治市區改正遷建（1909／1910）、重建完成（1914／1916）兩說並列，一律待核；古蹟身分只有維基百科一個來源，不寫成事實。',
+    scenarioNote: '情境示意',
+    sourceIds: ['sinica-gis-2025-cisheng', 'wiki-ci-sheng-gong'],
+    summary: '同安人的媽祖廟：1853年頂下郊拚後遷到大稻埕，日治市區改正時再遷到今天保安街49巷的位置（年份各說不一，待核）。街上這座廟是情境示意。',
+    note: '街上這座廟是情境示意：規模、格局、榕樹與廟埕沿用本站的廟宇原型，相對位置不是精確復原。',
     position: { x: 4, z: 4.5 },
     facing: 'north',
     interaction: { radius: 5 },
+    chapters: CI_SHENG_CHAPTERS.heritage,
+    hotspots: hotspotsToWorld(ciShengHotspots('banquet'), templeCourtToWorld),
+    eraNotes: CI_SHENG_ERA_NOTES,
+    eras: {
+      postwar: {
+        name: '慈聖宮廟口小吃',
+        kind: null,
+        category: '廟口小吃｜排骨湯・肉粥・豬腳麵線・四神湯',
+        seal: '廟口',
+        scenarioNote: '歷史情境重建',
+        yearNote: '廟口攤販聚集的年代只有中研院 GIS 專題一句「民國50年間」的說明（待核）；各攤的店名、攤主、年份與傳承代數查無可靠出處，本站不寫。',
+        sourceIds: ['sinica-gis-2025-cisheng', 'tvbs-supertaste-cisheng', 'ettoday-2018-cisheng', 'tcma-cisheng-four-herb'],
+        summary: '慈聖宮廟埕前的小吃攤（歷史情境重建）：原汁排骨湯、肉粥、豬腳麵線、四神湯四種食物類型，依現在廟口的攤位整理做法特色，不對應任何實際的店家。',
+        chapters: CI_SHENG_CHAPTERS.postwar,
+        hotspots: hotspotsToWorld(ciShengHotspots('postwar'), templeCourtToWorld),
+      },
+      revival: {
+        name: '慈聖宮廟口',
+        kind: null,
+        category: '廟口小吃',
+        seal: '廟口',
+        scenarioNote: null,
+        yearNote: '現在廟口的各攤年份、攤主與傳承代數在不同來源裡互相矛盾，本站不寫具名店家。',
+        sourceIds: ['tvbs-supertaste-cisheng', 'ettoday-2018-cisheng', 'tcma-cisheng-four-herb'],
+        summary: '保安街49巷的慈聖宮廟口，現在仍有排骨湯、肉粥、豬腳麵線、四神湯這類小吃攤；本站不寫任何具名的店家。',
+        chapters: CI_SHENG_CHAPTERS.revival,
+        hotspots: hotspotsToWorld(ciShengHotspots('revival'), templeCourtToWorld),
+      },
+    },
     building: {
       archetype: 'temple',
       width: 12,
