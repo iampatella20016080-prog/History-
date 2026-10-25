@@ -2,12 +2,15 @@ import { useEffect, useRef } from 'react'
 import { ERAS } from '../data/eras.js'
 import { useGameStore } from '../state/useGameStore.js'
 import { useT } from '../i18n/useT.js'
+import { LANGS } from '../i18n/lang.js'
 
 /** 開場畫面：說明情境與操作方式（觸控與鍵盤各自說明），按下「開始探索」後進入街道 */
 export function IntroOverlay() {
   const started = useGameStore((state) => state.started)
   const start = useGameStore((state) => state.start)
   const touch = useGameStore((state) => state.inputMode === 'touch')
+  const lang = useGameStore((state) => state.lang)
+  const setLang = useGameStore((state) => state.setLang)
   const button = useRef(null)
   const t = useT()
 
@@ -18,6 +21,23 @@ export function IntroOverlay() {
   return (
     <div className={`intro${started ? ' is-hidden' : ''}`} aria-hidden={started}>
       <div className="intro__card paper" data-scrollable>
+        <div className="intro__lang" role="radiogroup" aria-label={t('lang.label')}>
+          {LANGS.map((id) => (
+            <button
+              key={id}
+              type="button"
+              role="radio"
+              aria-checked={lang === id}
+              lang={id}
+              data-lang-option={id}
+              className={`intro__lang-option${lang === id ? ' is-active' : ''}`}
+              tabIndex={started ? -1 : 0}
+              onClick={() => setLang(id)}
+            >
+              {t(`lang.${id}`)}
+            </button>
+          ))}
+        </div>
         <p className="intro__chapter">
           {t('intro.chapter', { from: ERAS[0].yearRange.split('–')[0] })}
         </p>
