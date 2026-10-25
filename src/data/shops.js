@@ -43,6 +43,25 @@ import {
 import { LI_CHUNSHENG_DISCLAIMER_TEXT, LI_CHUNSHENG_PERSON_CHAPTER, LI_CHUNSHENG_SOURCE_IDS } from './liChunShengData.js'
 import { JIANG_WEISHUI_DISCLAIMER_TEXT, JIANG_WEISHUI_PERSON_CHAPTER, JIANG_WEISHUI_SOURCE_IDS } from './jiangWeiShuiData.js'
 import { WANG_JINGQUAN_DISCLAIMER_TEXT, WANG_JINGQUAN_PERSON_CHAPTER, WANG_JINGQUAN_SOURCE_IDS } from './wangJingQuanData.js'
+import {
+  OPERATORS_POSTWAR_CHAPTER,
+  OPERATORS_POSTWAR_DISCLAIMER_TEXT,
+  OPERATORS_REVIVAL_CHAPTER,
+  OPERATORS_REVIVAL_DISCLAIMER_TEXT,
+  OPERATORS_REVIVAL_SOURCE_IDS,
+  withOperatorsChapter,
+} from './operatorsData.js'
+
+/**
+ * 第 8 階段 C：庶民生活的「群像：在地經營者」掛在林復振，只在 postwar 年代版本多一章（eras 覆蓋），
+ * 其他四個年代的章節不變。
+ */
+function withPostwarOperators(chapters) {
+  return {
+    chapters,
+    eras: { postwar: { chapters: withOperatorsChapter(chapters, OPERATORS_POSTWAR_CHAPTER, OPERATORS_POSTWAR_DISCLAIMER_TEXT) } },
+  }
+}
 import { RICE_AND_SHINE_ID, riceAndShineEraConfig } from './riceAndShineEraConfig.js'
 import { RICE_HOTSPOTS, RS, riceToWorld } from './riceAndShineLayout.js'
 import { RICE_CHAPTERS, RICE_ERA_NOTES, RICE_RECORD } from './riceAndShineData.js'
@@ -170,7 +189,8 @@ export const SHOPS = [
     camera: { distance: 7.6, height: 4.6, side: 11, lookHeight: 3.6 },
 
     // ── 介紹章節 ──────────────────────────────
-    chapters: [
+    // 庶民生活版本在文獻章前多一章「群像：在地經營者」（operatorsData.js）
+    ...withPostwarOperators([
       {
         id: 'formation',
         type: 'text',
@@ -269,7 +289,7 @@ export const SHOPS = [
         disclaimer:
           '本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建；建築外觀、招牌、擺設與店家位置僅供情境想像，並非精確復原。',
       },
-    ],
+    ]),
   },
 
   {
@@ -496,6 +516,8 @@ export const SHOPS = [
       },
       NIANHUO_CHAPTER,
       NANBEI_BACKGROUND_CHAPTER,
+      // 第 8 階段 C：老屋新生的「群像：在地經營者」（operatorsData.js），放在戲苑三章之前
+      OPERATORS_REVIVAL_CHAPTER,
       XIYUAN_VENUE_CHAPTER,
       XIYUAN_HISTORY_CHAPTER,
       XIKU_BACKGROUND_CHAPTER,
@@ -505,9 +527,11 @@ export const SHOPS = [
         tab: '參考資料',
         title: '參考資料',
         intro: '永樂市場的介紹整理自下列資料，點選即可開啟原始網頁。',
-        sourceIds: ['tcma-yongle-market', 'taipei-market-info-yongle', 'ncl-yongle-market', 'udn-1995-yongle-market', ...NIANHUO_SOURCE_IDS, ...XIYUAN_SOURCE_IDS],
+        sourceIds: [
+          ...new Set(['tcma-yongle-market', 'taipei-market-info-yongle', 'ncl-yongle-market', 'udn-1995-yongle-market', ...NIANHUO_SOURCE_IDS, ...OPERATORS_REVIVAL_SOURCE_IDS, ...XIYUAN_SOURCE_IDS]),
+        ],
         disclaimer:
-          `永樂市場大樓的 3D 外觀依實地照片建模，比例為估算；一樓市場的平面是簡化的概念配置，攤位數量、位置與陳設都不是精確復原。${NIANHUO_DISCLAIMER_TEXT}${XIYUAN_DISCLAIMER_TEXT}`,
+          `永樂市場大樓的 3D 外觀依實地照片建模，比例為估算；一樓市場的平面是簡化的概念配置，攤位數量、位置與陳設都不是精確復原。${NIANHUO_DISCLAIMER_TEXT}${OPERATORS_REVIVAL_DISCLAIMER_TEXT}${XIYUAN_DISCLAIMER_TEXT}`,
       },
     ],
   },
