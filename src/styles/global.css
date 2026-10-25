@@ -571,9 +571,28 @@ kbd {
   color: var(--vermilion);
   background: none;
   border: none;
+  cursor: pointer;
+}
+
+.hud-controls.is-collapsed .hud-controls__toggle {
+  padding: 4px 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud-controls__list {
+    animation: none;
+  }
+}
+
+@keyframes hud-controls-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
 }
 
 .hud-controls__list {
+  animation: hud-controls-in 0.3s ease;
   display: grid;
   gap: 6px;
   padding: 0;

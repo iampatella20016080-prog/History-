@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { getEra } from '../data/eras.js'
 import { getShopsByEra } from '../data/shops.js'
 import { useGameStore } from '../state/useGameStore.js'
@@ -11,6 +11,15 @@ import { SettingsMenu } from './SettingsMenu.jsx'
 import { OverviewPanel } from './OverviewPanel.jsx'
 import { StoreDirectory } from './StoreDirectory.jsx'
 import { Joystick } from './TouchControls.jsx'
+import {
+  CONTROLS_IDLE_MS,
+  controlsNeedsIdleTimer,
+  controlsOnIdle,
+  controlsOnMove,
+  controlsOnToggle,
+  loadControlsState,
+  saveControlsState,
+} from './controlsHint.js'
 
 /** 操作說明：每項是 [按鍵, 說明字串的鍵] */
 const HINTS = {
@@ -49,8 +58,42 @@ const HINTS = {
 
 function ControlsHint({ touch, viewer }) {
   const t = useT()
-  const [collapsed, setCollapsed] = useState(touch)
-  useEffect(() => setCollapsed(touch), [touch])
+  const [state, setState] = useState(() => loadControlsState(touch))
+  const { collapsed } = state
+  const touchRef = useRef(touch)
+  const apply = (update) =>
+    setState((prev) => {
+      const next = update(prev)
+      if (next !== prev) saveControlsState(next)
+      return next
+    })
+  useEffect(() => {
+    if (touchRef.current === touch) return
+    touchRef.current = touch
+    setState(loadControlsState(touch))
+  }, [touch])
+  // 第一次實際移動（鍵盤或拖曳視角）後自動收起；手動操作過就不動
+  useEffect(() => {
+    if (touch) return undefined
+    const onKey = (event) => {
+      if (/^(w|a|s|d|arrowup|arrowdown|arrowleft|arrowright)$/i.test(event.key)) apply((prev) => controlsOnMove(prev, false))
+    }
+    const onDrag = (event) => {
+      if (event.buttons) apply((prev) => controlsOnMove(prev, false))
+    }
+    window.addEventListener('keydown', onKey)
+    window.addEventListener('pointermove', onDrag)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('pointermove', onDrag)
+    }
+  }, [touch])
+  // 展開後約 12 秒無互動自動收起
+  useEffect(() => {
+    if (!controlsNeedsIdleTimer(state, touch)) return undefined
+    const timer = setTimeout(() => apply((prev) => controlsOnIdle(prev, touch)), CONTROLS_IDLE_MS)
+    return () => clearTimeout(timer)
+  }, [state, touch])
   const keyLabel = (key) => (key.startsWith('@') ? t(key.slice(1)) : key)
   const items = HINTS[viewer ? 'viewer' : 'explore'][touch ? 'touch' : 'mouse']
   return (
@@ -59,7 +102,7 @@ function ControlsHint({ touch, viewer }) {
         type="button"
         className="hud-controls__toggle"
         aria-expanded={!collapsed}
-        onClick={() => setCollapsed((value) => !value)}
+        onClick={() => apply(controlsOnToggle)}
       >
         {viewer ? t('hud.hint.viewer') : t('hud.hint.explore')} {collapsed ? '＋' : '－'}
       </button>
