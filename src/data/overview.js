@@ -17,6 +17,7 @@ export const TIMELINE_EVENTS = [
   { year: 1881, text: '同安茶商在大稻埕設源隆行，專製包種茶外銷。', sourceIds: ['tcmb-tea-trade'] },
   { year: 1889, text: '林維源與李春生成立建昌公司，建昌街、千秋街（今貴德街）成為洋樓街。', sourceIds: ['chen-ciyu-li-family-2015'] },
   { year: 1896, text: '日本人調查：大稻埕茶商252店、從業3,612人。', sourceIds: ['chen-ciyu-li-family-2015'] },
+  { year: 1914, text: '慈聖宮因市區改正遷至日新街（今保安街49巷）重建完成；遷建起於1909／1910、完工另有1916一說，年份待核。', sourceIds: ['sinica-gis-2025-cisheng', 'wiki-ci-sheng-gong'] },
   { year: 1935, text: '李春生紀念教會在貴德街設立。', sourceIds: ['pct-li-chunsheng-church'] },
   { year: 1971, text: '霞海城隍廟增祀月下老人。', sourceIds: ['moi-xiahai-temple', 'moi-xiahai-landscape'] },
   { year: 1976, text: '江山樓拆除。', sourceIds: ['wiki-jiang-shan-lou'] },
