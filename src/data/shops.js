@@ -41,6 +41,8 @@ import {
   XIYUAN_DISCLAIMER_TEXT,
 } from './xiyuanData.js'
 import { LI_CHUNSHENG_DISCLAIMER_TEXT, LI_CHUNSHENG_PERSON_CHAPTER, LI_CHUNSHENG_SOURCE_IDS } from './liChunShengData.js'
+import { JIANG_WEISHUI_DISCLAIMER_TEXT, JIANG_WEISHUI_PERSON_CHAPTER, JIANG_WEISHUI_SOURCE_IDS } from './jiangWeiShuiData.js'
+import { WANG_JINGQUAN_DISCLAIMER_TEXT, WANG_JINGQUAN_PERSON_CHAPTER, WANG_JINGQUAN_SOURCE_IDS } from './wangJingQuanData.js'
 import { RICE_AND_SHINE_ID, riceAndShineEraConfig } from './riceAndShineEraConfig.js'
 import { RICE_HOTSPOTS, RS, riceToWorld } from './riceAndShineLayout.js'
 import { RICE_CHAPTERS, RICE_ERA_NOTES, RICE_RECORD } from './riceAndShineData.js'
@@ -2806,12 +2808,14 @@ export const SHOPS = [
         footnote: '四道菜只有菜名與食材見於文獻，作法、盛器與顏色都是本站的示意；江山樓日常宴席的菜單沒有查到，不要把這四道當成店內常備的菜。',
         sourceIds: ['jaung-jiang-shan-lou-2015', 'foodnext-chen-yuchen-2020', 'cna-taiwanese-cuisine-2020'],
       },
+      // 第 8 階段：人物小節（純文字，資料在 jiangWeiShuiData.js）
+      JIANG_WEISHUI_PERSON_CHAPTER,
       {
         id: 'sources',
         type: 'sources',
         tab: '文獻與歷史依據',
         title: '文獻與歷史依據',
-        intro: '本店家介紹整理自下列資料，點選即可開啟原始網頁。查證紀錄見專案的 docs/research/jiang-shan-lou.md；其中東薈芳、春風得意樓、蓬萊閣的資料也在同一份紀錄裡。',
+        intro: '本店家介紹整理自下列資料，點選即可開啟原始網頁。查證紀錄見專案的 docs/research/jiang-shan-lou.md；其中東薈芳、春風得意樓、蓬萊閣的資料也在同一份紀錄裡；蔣渭水的查證見 docs/research/jiang-wei-shui.md。',
         sourceIds: [
           'jaung-jiang-shan-lou-2015',
           'nccu-thesis-jiang-shan-lou-2008',
@@ -2820,9 +2824,10 @@ export const SHOPS = [
           'nmth-jiang-shan-lou',
           'wiki-jiang-shan-lou',
           'factpedia-jiang-shan-lou',
+          ...JIANG_WEISHUI_SOURCE_IDS,
         ],
         disclaimer:
-          '江山樓的開業年份與拆除年份各資料記載不一，本站並列出處；皇太子午宴的記載都是研究者的二手整理，本站沒有讀到當年的報紙原件。江山樓原址在日新町（今歸綏街一帶），不在迪化街；本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建，建築外觀、招牌、擺設與店家位置僅供情境想像，並非精確復原。',
+          `江山樓的開業年份與拆除年份各資料記載不一，本站並列出處；皇太子午宴的記載都是研究者的二手整理，本站沒有讀到當年的報紙原件。江山樓原址在日新町（今歸綏街一帶），不在迪化街；本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建，建築外觀、招牌、擺設與店家位置僅供情境想像，並非精確復原。${JIANG_WEISHUI_DISCLAIMER_TEXT}`,
       },
     ],
   },
@@ -3035,15 +3040,15 @@ export const SHOPS = [
         paragraphs: [
           '日治時期的大稻埕以茶葉致富，1930年代的太平町已經是臺灣人聚居的鬧區。魚夫在遠見城市的文章寫到，1931年維特咖啡在太平町三丁目開業；三立新聞網的報導則寫它由楊三郎的兄長楊承基經營，開在今延平北路與南京西路口的二樓，1932年起引進「女給」（女服務生）。這些關於維特咖啡的記載本站只讀到媒體層級，所以只在這裡交代背景，不做成可探索的店家。',
           '鏡週刊寫到，廖水來原本在維特咖啡擔任主廚，1934年自立門戶開了波麗路。文化部國家文化資產網的歷史建築登錄稱波麗路是「臺北市1930年代最著名的西餐廳，是沙龍文化的先鋒，為生活西化重要見證」。這一年大稻埕的民生西路上也落成了新芳春茶行的三層洋樓；茶商的財富、西洋的飲食與音樂，在同一條街上並存。',
-          '同一時期以文人聚會聞名的山水亭（王井泉經營的臺菜餐廳，林衡哲在新頭殼的回憶文章提到陳逸松、張文環、呂赫若、吳新榮等常客），本站只讀到一篇回憶性的文章，創立年、門牌與菜色都查無，暫不做成店家，只在這裡提一句。',
+          '同一時期以文人聚會聞名的山水亭（王井泉經營的臺菜餐廳，常客有陳逸松、張文環、呂赫若、吳新榮等），開業年各資料不一（1937、1938、1939三說）、門牌查無，所以暫不做成店家、也不對應街景裡的任何一棟；王井泉與山水亭的事見「人物：王井泉」一章。',
         ],
         facts: [
           { label: '維特咖啡', value: '1931年開於太平町三丁目（遠見城市、三立新聞網）；1932年引進女給（三立，單一來源）' },
           { label: '波麗路', value: '1934年開業，民生西路314號；臺北市歷史建築' },
           { label: '新芳春茶行', value: '1934年落成，民生西路309號' },
-          { label: '山水亭', value: '王井泉經營的臺菜餐廳；年份、門牌查無' },
+          { label: '山水亭', value: '王井泉經營的臺菜餐廳，延平北路一帶街屋二樓；開業年三說、門牌查無（見「人物：王井泉」）' },
         ],
-        sourceIds: ['boch-bolero', 'mirror-2025-bolero', 'gvm-city-2024-bolero', 'setn-2020-vite-cafe', 'newtalk-2024-shanshuiting', 'nchdb-xinfangchun'],
+        sourceIds: ['boch-bolero', 'mirror-2025-bolero', 'gvm-city-2024-bolero', 'setn-2020-vite-cafe', 'newtalk-2024-shanshuiting', 'sinica-newsletter-1584-shanshuiting', 'nchdb-xinfangchun'],
       },
       {
         id: 'history',
@@ -3117,12 +3122,14 @@ export const SHOPS = [
         footnote: '三道菜只有菜名與簡短描述見於媒體報導，作法、份量與盛器都是本站的示意；本站不列價格（1961年的25元是歷史記載，不是現價）。',
         sourceIds: ['foodnext-2020-bolero', 'mirror-2025-bolero', 'gvm-2011-bolero', 'gvm-city-2024-bolero'],
       },
+      // 第 8 階段：人物小節（純文字，資料在 wangJingQuanData.js；專案沒有山水亭店家，所以掛在同年代、同一條街的波麗路）
+      WANG_JINGQUAN_PERSON_CHAPTER,
       {
         id: 'sources',
         type: 'sources',
         tab: '文獻與歷史依據',
         title: '文獻與歷史依據',
-        intro: '本店家介紹整理自下列資料，點選即可開啟原始網頁。查證紀錄見專案的 docs/research/bolero.md；維特咖啡與山水亭的資料也在同一份紀錄裡。',
+        intro: '本店家介紹整理自下列資料，點選即可開啟原始網頁。查證紀錄見專案的 docs/research/bolero.md；維特咖啡與山水亭的資料也在同一份紀錄裡，王井泉與山水亭的查證見 docs/research/wang-jing-quan.md。',
         sourceIds: [
           'boch-bolero',
           'gvm-2011-bolero',
@@ -3133,9 +3140,10 @@ export const SHOPS = [
           'newtalk-2024-shanshuiting',
           'nchdb-xinfangchun',
           'wiki-bolero',
+          ...WANG_JINGQUAN_SOURCE_IDS.filter((id) => !['newtalk-2024-shanshuiting', 'setn-2020-vite-cafe'].includes(id)),
         ],
         disclaimer:
-          '波麗路的店名由來、常客畫家與鴨子飯的研發經過各只有一個來源，本站標明出處並寫「相傳」或「文章提到」；三道代表菜開始販售的年份文獻未載。官方歷史建築登錄的頁面本次未能重新開啟，沿用先前的摘錄。本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建，建築外觀、招牌、擺設與店家位置僅供情境想像，並非精確復原。',
+          `波麗路的店名由來、常客畫家與鴨子飯的研發經過各只有一個來源，本站標明出處並寫「相傳」或「文章提到」；三道代表菜開始販售的年份文獻未載。官方歷史建築登錄的頁面本次未能重新開啟，沿用先前的摘錄。本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建，建築外觀、招牌、擺設與店家位置僅供情境想像，並非精確復原。${WANG_JINGQUAN_DISCLAIMER_TEXT}`,
       },
     ],
   },
