@@ -33,6 +33,13 @@ import {
   XIA_ER_ZUI_CHAPTER,
   XIA_ER_ZUI_DISCLAIMER,
 } from './dihuaNianhuoData.js'
+import {
+  XIYUAN_VENUE_CHAPTER,
+  XIYUAN_HISTORY_CHAPTER,
+  XIKU_BACKGROUND_CHAPTER,
+  XIYUAN_SOURCE_IDS,
+  XIYUAN_DISCLAIMER_TEXT,
+} from './xiyuanData.js'
 import { RICE_AND_SHINE_ID, riceAndShineEraConfig } from './riceAndShineEraConfig.js'
 import { RICE_HOTSPOTS, RS, riceToWorld } from './riceAndShineLayout.js'
 import { RICE_CHAPTERS, RICE_ERA_NOTES, RICE_RECORD } from './riceAndShineData.js'
@@ -486,15 +493,18 @@ export const SHOPS = [
       },
       NIANHUO_CHAPTER,
       NANBEI_BACKGROUND_CHAPTER,
+      XIYUAN_VENUE_CHAPTER,
+      XIYUAN_HISTORY_CHAPTER,
+      XIKU_BACKGROUND_CHAPTER,
       {
         id: 'sources',
         type: 'sources',
         tab: '參考資料',
         title: '參考資料',
         intro: '永樂市場的介紹整理自下列資料，點選即可開啟原始網頁。',
-        sourceIds: ['tcma-yongle-market', 'taipei-market-info-yongle', 'ncl-yongle-market', 'udn-1995-yongle-market', ...NIANHUO_SOURCE_IDS],
+        sourceIds: ['tcma-yongle-market', 'taipei-market-info-yongle', 'ncl-yongle-market', 'udn-1995-yongle-market', ...NIANHUO_SOURCE_IDS, ...XIYUAN_SOURCE_IDS],
         disclaimer:
-          `永樂市場大樓的 3D 外觀依實地照片建模，比例為估算；一樓市場的平面是簡化的概念配置，攤位數量、位置與陳設都不是精確復原。${NIANHUO_DISCLAIMER_TEXT}`,
+          `永樂市場大樓的 3D 外觀依實地照片建模，比例為估算；一樓市場的平面是簡化的概念配置，攤位數量、位置與陳設都不是精確復原。${NIANHUO_DISCLAIMER_TEXT}${XIYUAN_DISCLAIMER_TEXT}`,
       },
     ],
   },
