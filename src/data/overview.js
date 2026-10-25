@@ -1,6 +1,7 @@
 import { ERAS } from './eras.js'
 import { NIANHUO_TIMELINE_EVENT } from './dihuaNianhuoData.js'
 import { XIYUAN_TIMELINE_EVENT } from './xiyuanData.js'
+import { LI_CHUNSHENG_MAP_PLACE, LI_CHUNSHENG_TIMELINE_EVENTS } from './liChunShengData.js'
 import { SHOPS, getShop, shopYearText } from './shops.js'
 
 /**
@@ -13,6 +14,7 @@ import { SHOPS, getShop, shopYearText } from './shops.js'
 export const TIMELINE_EVENTS = [
   { year: 1853, text: '艋舺頂下郊拚，同安人隨林右藻移居大稻埕。', sourceIds: ['ith-lin-fu-zhen'] },
   { year: 1862, text: '滬尾正式設關開埠（1858年天津條約開放，通稱1860年淡水開港）。', sourceIds: ['tshs-zhang-tamsui-port'] },
+  LI_CHUNSHENG_TIMELINE_EVENTS[0],
   { year: 1868, text: '陶德把精製茶廠設在大稻埕。', sourceIds: ['ntcri-73-tea-road'] },
   { year: 1869, text: '臺灣烏龍茶運往紐約，「Formosa Oolong」打開美國市場。', sourceIds: ['tcmb-tea-trade', 'twcenter-muzha-tea-2001'] },
   { year: 1879, text: '霞海城隍廟「五月十三迎城隍」的起源年代（官方民俗登錄）。', sourceIds: ['moi-xiahai-folklore'] },
@@ -20,6 +22,7 @@ export const TIMELINE_EVENTS = [
   { year: 1889, text: '林維源與李春生成立建昌公司，建昌街、千秋街（今貴德街）成為洋樓街。', sourceIds: ['chen-ciyu-li-family-2015'] },
   { year: 1896, text: '日本人調查：大稻埕茶商252店、從業3,612人。', sourceIds: ['chen-ciyu-li-family-2015'] },
   { year: 1914, text: '慈聖宮因市區改正遷至日新街（今保安街49巷）重建完成；遷建起於1909／1910、完工另有1916一說，年份待核。', sourceIds: ['sinica-gis-2025-cisheng', 'wiki-ci-sheng-gong'] },
+  LI_CHUNSHENG_TIMELINE_EVENTS[1],
   { year: 1935, text: '李春生紀念教會在貴德街設立。', sourceIds: ['pct-li-chunsheng-church'] },
   { year: 1971, text: '霞海城隍廟增祀月下老人。', sourceIds: ['moi-xiahai-temple', 'moi-xiahai-landscape'] },
   { year: 1976, text: '江山樓拆除。', sourceIds: ['wiki-jiang-shan-lou'] },
@@ -127,6 +130,7 @@ export const MAP_PLACES = [
   { id: 'xiahai', shopIds: ['xia-hai-cheng-huang'], name: '霞海城隍廟', address: '迪化街一段61號', x: 38, y: 72, precision: 'address', sourceIds: ['moi-xiahai-temple'] },
   { id: 'qianyuan', shopIds: ['qian-yuan-yao-hang'], name: '乾元藥行', address: '迪化街一段71號（門牌僅見部落格與名錄摘要，未核實）', x: 38, y: 69, precision: 'approx', sourceIds: ['trip-writers-2008-qianyuan'] },
   { id: 'li-church', shopIds: ['dodd-tea-house'], name: '李春生紀念教會', address: '貴德街44號', x: 14, y: 78, precision: 'address', sourceIds: ['pct-li-chunsheng-church'] },
+  LI_CHUNSHENG_MAP_PLACE,
   { id: 'dodd', shopIds: ['dodd-tea-house'], name: '洋行區（建昌街・千秋街）', address: '今貴德街一帶，洋行與茶行的確切門牌未載', x: 14, y: 46, precision: 'approx', sourceIds: ['chen-ciyu-li-family-2015'] },
 ]
 
