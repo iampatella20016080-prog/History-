@@ -1511,6 +1511,71 @@ SOURCES['ettoday-2018-cisheng'] = {
   context: '媒體食記；各攤的傳承代數與其他食記互相矛盾，本站不寫代數，也不採店名。',
 }
 
+// 第 6 階段 C：迪化街年貨大街與呷二嘴（查證紀錄：docs/research/dihua-nianhuo.md、docs/research/xia-er-zui.md）
+// 檢核：年貨大街的起始年有市府新聞稿，構想由來與當年做法只見於重現 1995 年報導的二手文章，原報紙未直接查閱；
+// 更早的南北貨史是二手整理；遊客與交易額數字、主辦局處、各年日期查無可靠出處，不採。
+// 呷二嘴全為食記與部落格，1954 年各篇一致但皆無文件佐證，只當現況介紹。
+SOURCES['taipei-gov-2025-nianhuo'] = {
+  id: 'taipei-gov-2025-nianhuo',
+  citation: '臺北市政府工務局，〈南北貨與藥材飄香 細品迪化街歷史軌跡〉，臺北市政府全球資訊網新聞稿（稿件日期未見）。',
+  publisher: '臺北市政府全球資訊網',
+  title: '南北貨與藥材飄香 細品迪化街歷史軌跡',
+  url: 'https://www.gov.taipei/News_Content.aspx?n=F0DDAF49B89E9413&sms=72544237BBE4C5F6&s=75E1722AB7323206',
+  published: '官方新聞稿（稿件日期未見；2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '迪化街年貨大街「起源於1996年農曆春節前半個月舉辦」、「為臺北市政府首創」的官方說法。',
+  context: '官方稿，發布機關為工務局；沒有說明主辦局處、範圍與各年起訖日，也沒有獨立的南北貨史。「市府首創」與報導所寫「構想由民間提出」並列，不統一。',
+}
+SOURCES['udn-time-2023-nianhuo'] = {
+  id: 'udn-time-2023-nianhuo',
+  citation: '報時光（UDN Time），〈辦年貨必去！迪化街蛻變為「年貨大街」的歷史〉，2023年1月7日。',
+  publisher: '報時光（聯合報系）',
+  title: '辦年貨必去！迪化街蛻變為「年貨大街」的歷史',
+  url: 'https://time.udn.com/udntime/story/122835/6893431',
+  published: '2023年1月7日（2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '1996年緣起的報導：構想由民間「迪化街工作室」提出、約50家商戶支持、市府協辦；1996年的預定做法（徒步區、布置、民俗攤位）。',
+  context: '媒體文章，文中重現民生報1995年12月23日第22版報導（記者黃士榮）；原報紙本身未能直接查閱。1996年的日期與範圍是當年的「預定」，不是實際舉辦的紀錄。',
+}
+SOURCES['bios-2016-dihua-nianhuo'] = {
+  id: 'bios-2016-dihua-nianhuo',
+  citation: '莊祐端，〈大稻埕的那些小事（一）：迪化街過年前的那幾天〉，BIOS monthly，2016年2月3日。',
+  publisher: 'BIOS monthly',
+  title: '大稻埕的那些小事（一）：迪化街過年前的那幾天',
+  url: 'https://www.biosmonthly.com/article/7086',
+  published: '2016年2月3日（2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '南北貨在迪化街批發的概述，以及年前囤貨的習慣（節慶期間菜市場休市）；只當背景，與1996年的活動分開寫。',
+  context: '媒體文章，二手整理；沒有寫年貨大街的起源。文末參考文獻列〈大稻埕南北貨座談會紀錄〉（卞鳳奎，《臺北文獻》110期，1994年12月），該文內容本站未能取得，待補。',
+}
+SOURCES['ettoday-2026-xia-er-zui'] = {
+  id: 'ettoday-2026-xia-er-zui',
+  citation: 'DARREN 蘋果樹，〈大稻埕1954年創立米苔目老店！剉冰底下全是料 開賣就排隊〉，ETtoday 旅遊雲（頁面標示2026年8月12日）。',
+  publisher: 'ETtoday 旅遊雲',
+  title: '大稻埕1954年創立米苔目老店！剉冰底下全是料 開賣就排隊',
+  url: 'https://travel.ettoday.net/article/3214322.htm',
+  published: '頁面標示2026年8月12日（2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '呷二嘴的地址（大同區甘州街34號）與「1954年創立」的店家說法；從小攤販發展到店面。',
+  context: '媒體轉載的食記；創辦人與傳承皆未提。1954年沒有文件佐證。店內紅磚人行道與紅色大門是現代裝潢，不是史料。',
+}
+SOURCES['lordcat-2022-xia-er-zui'] = {
+  id: 'lordcat-2022-xia-er-zui',
+  citation: '貓大爺，〈呷二嘴：1954年創業…〉，個人部落格，2022年4月13日。',
+  publisher: '貓大爺（個人部落格）',
+  title: '呷二嘴',
+  url: 'https://lordcat.net/archives/2610',
+  published: '2022年4月13日（2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '呷二嘴「1954年成立、以前是路邊攤」的說法；夏季米苔目冰（米苔目、粉粿、紅豆、仙草自選）、冬季熱食。',
+  context: '個人部落格食記，單一來源；與其他食記的1954相同但很可能互相引用。創辦人與傳承未提。',
+}
+SOURCES['tenjo-2026-xia-er-zui'] = {
+  id: 'tenjo-2026-xia-er-zui',
+  citation: '周花花，〈呷二嘴〉，甲飽沒（個人部落格，頁面標示2026年7月18日）。',
+  publisher: '甲飽沒（個人部落格）',
+  title: '呷二嘴',
+  url: 'https://tenjo.tw/gaerzui/',
+  published: '頁面標示2026年7月18日（2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '「西元1954年創立」的店家說法（與上兩篇一致，皆無文件佐證）。',
+  context: '個人部落格食記；未提攤位位置與世代。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

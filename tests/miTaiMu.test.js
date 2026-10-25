@@ -213,7 +213,7 @@ describe('米苔目：兩個年代版本', () => {
     assert.equal(intro.lead, '到了現代，大稻埕的傳統庶民飲食不只留在記憶裡，也以具體店家的形式延續下來。永樂米苔目就是其中一種代表性的小吃場景。')
     // 「50年老店」只是招牌上的文字；媒體的說法標明未核實
     assert.ok(intro.paragraphs.some((p) => /50年老店/.test(p) && /未核實|沒有找到/.test(p) && /當成招牌上的文字/.test(p)))
-    assert.deepEqual(shop.chapters.map((chapter) => chapter.tab), ['店家與店面', '店內的用餐空間', '一碗米苔目', '資料來源'])
+    assert.deepEqual(shop.chapters.map((chapter) => chapter.tab), ['店家與店面', '店內的用餐空間', '一碗米苔目', '相關店家：呷二嘴', '資料來源'])
     const foods = shop.chapters.find((chapter) => chapter.id === 'foods')
     assert.deepEqual(foods.items.map((item) => item.name), ['湯米苔目', '嘴邊肉', '油豆腐', '菜頭'])
   })
