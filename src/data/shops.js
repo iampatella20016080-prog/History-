@@ -40,6 +40,7 @@ import {
   XIYUAN_SOURCE_IDS,
   XIYUAN_DISCLAIMER_TEXT,
 } from './xiyuanData.js'
+import { LI_CHUNSHENG_DISCLAIMER_TEXT, LI_CHUNSHENG_PERSON_CHAPTER, LI_CHUNSHENG_SOURCE_IDS } from './liChunShengData.js'
 import { RICE_AND_SHINE_ID, riceAndShineEraConfig } from './riceAndShineEraConfig.js'
 import { RICE_HOTSPOTS, RS, riceToWorld } from './riceAndShineLayout.js'
 import { RICE_CHAPTERS, RICE_ERA_NOTES, RICE_RECORD } from './riceAndShineData.js'
@@ -2019,12 +2020,14 @@ export const SHOPS = [
         ],
         sourceIds: ['chen-ciyu-li-family-2015', 'th-li-chunsheng-memoir', 'culture-taipei-walk-dadaocheng-2018', 'taipei-pictorial-480-dihua', 'pct-li-chunsheng-church', 'panorama-dadaocheng-1981', 'wolf-women-tea-2003'],
       },
+      // 第 8 階段：人物小節（純文字，資料在 liChunShengData.js）
+      LI_CHUNSHENG_PERSON_CHAPTER,
       {
         id: 'sources',
         type: 'sources',
         tab: '文獻與歷史依據',
         title: '文獻與歷史依據',
-        intro: '本據點的介紹整理自下列資料，點選即可開啟原始網頁。查證紀錄（含年份的矛盾與查無）見專案的 docs/research/tea-export-origins.md。',
+        intro: '本據點的介紹整理自下列資料，點選即可開啟原始網頁。查證紀錄（含年份的矛盾與查無）見專案的 docs/research/tea-export-origins.md 與 docs/research/li-chun-sheng.md。',
         sourceIds: [
           'chen-ciyu-li-family-2015',
           'th-li-chunsheng-memoir',
@@ -2038,9 +2041,10 @@ export const SHOPS = [
           'pct-li-chunsheng-church',
           'panorama-dadaocheng-1981',
           'wolf-women-tea-2003',
+          ...LI_CHUNSHENG_SOURCE_IDS.filter((id) => !['chen-ciyu-li-family-2015', 'th-li-chunsheng-memoir', 'culture-taipei-walk-dadaocheng-2018', 'taipei-pictorial-480-dihua', 'pct-li-chunsheng-church', 'culture-taipei-2002-events'].includes(id)),
         ],
         disclaimer:
-          '陶德來臺、設洋行與1869年運量的數字各資料不一，本站並列或只寫約數；「首富」一詞只見於單一來源，本站不用。本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建；這棟洋樓是情境示意，寶順洋行與李春生的事業在河邊的建昌街、千秋街。',
+          `陶德來臺、設洋行與1869年運量的數字各資料不一，本站並列或只寫約數；「首富」一詞只見於單一來源，本站不用。本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建；這棟洋樓是情境示意，寶順洋行與李春生的事業在河邊的建昌街、千秋街。${LI_CHUNSHENG_DISCLAIMER_TEXT}`,
       },
     ],
   },

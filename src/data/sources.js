@@ -1705,6 +1705,90 @@ SOURCES['wiki-yongle-za'] = {
   context: '百科條目，引《臺灣大百科全書》，本站未直接查閱原條目，年份與地點標待核。條目沒有提到永樂市場或戲苑，本站據此不把永樂座寫成戲苑的前身。',
 }
 
+// 第 8 階段：李春生的人物小節（查證紀錄：docs/research/li-chun-sheng.md；沿用 tea-export-origins.md 的既有出處）
+// 檢核：生平與事業以陳慈玉（學術）與國史館自敘（原件）為主；大稻埕教會的門牌與 1915 年禮拜堂有教會刊物與文化局日文頁互相支持；
+// 央廣、維基只作線索（四達商行、建昌 1886、1896 赴日細節、1901 長老都標待核）；住址、紀念教會文資身分與設計者查無，不寫。
+const LI_ACCESSED = '2026-10-25'
+
+SOURCES['cosmiccare-li-chunsheng-church'] = {
+  id: 'cosmiccare-li-chunsheng-church',
+  citation: '宇宙光全人關懷機構，〈台灣茶葉之父──李春生長老與大稻埕教會〉，《宇宙光》雜誌。',
+  title: '台灣茶葉之父──李春生長老與大稻埕教會',
+  publisher: '宇宙光全人關懷機構（教會刊物）',
+  url: 'https://www.cosmiccare.org/magazine/Detail/ee0fdf6f-0aa6-4fb8-9d6f-dd6e4138e7e5',
+  sourceDate: null,
+  accessedAt: LI_ACCESSED,
+  published: '頁面未標示日期（2026年10月查閱）',
+  supports: ['大稻埕教會在甘州街40號（慈聖宮旁）', '1915年遷建的禮拜堂由李春生出資、規劃並監造', '稱號「台灣茶葉之父」'],
+  usage: '教會與李春生的關係、禮拜堂的年份與門牌。教會刊物，可信度中；與文化局《走讀大稻埕》、文化局日文頁的「捐建」說法並列。',
+  context: '刊物文章：李春生長老出資規劃並監造1915年遷建的大稻埕教會禮拜堂（臺北市大同區甘州街40號，慈聖宮旁）；文章以「台灣茶葉之父」稱他。本站只採門牌、年份與「出資規劃監造」，不採文中的信仰評價。',
+}
+SOURCES['culture-taipei-jp-spots'] = {
+  id: 'culture-taipei-jp-spots',
+  citation: '臺北市政府文化局（日本語），〈文化スポットの物語り〉。',
+  title: '文化スポットの物語り',
+  publisher: '臺北市政府文化局',
+  url: 'https://culture.gov.taipei/cp.aspx?n=785E618AC02A877B&s=AB3BF427B273C5EC',
+  sourceDate: null,
+  accessedAt: LI_ACCESSED,
+  published: '官方網頁，頁面未標示日期（2026年10月查閱）',
+  supports: ['大稻埕教會（甘州街40號）由李春生捐建'],
+  usage: '大稻埕教會與李春生的關係、門牌。官方頁面，可信度中高；寫法是「捐建」，與《宇宙光》的「出資規劃監造」並列。',
+  context: '文化局日文版的文化據點介紹，記大稻埕教會位於甘州街40號、由李春生捐建。頁面沒有寫禮拜堂的年份細節，1915年依《宇宙光》。',
+}
+SOURCES['pts-2024-li-chunsheng'] = {
+  id: 'pts-2024-li-chunsheng',
+  citation: '公視台語台，〈紀念臺灣茶業之父李春生〉，2024年11月8日。',
+  title: '紀念臺灣茶業之父李春生',
+  publisher: '公共電視台語台',
+  url: 'https://news.pts.org.tw/article/723349',
+  sourceDate: '2024-11-08',
+  accessedAt: LI_ACCESSED,
+  published: '2024年11月8日',
+  supports: ['稱號「臺灣茶業之父」', '2024年為逝世百年（即1924年過世）'],
+  usage: '只用來支持稱號的通行與過世年份；新聞報導，可信度中。',
+  context: '2024年逝世百年的紀念報導，以「臺灣茶業之父」稱李春生。本站不採報導裡的紀念活動細節。',
+}
+SOURCES['ntu-li-chunsheng-works-2004'] = {
+  id: 'ntu-li-chunsheng-works-2004',
+  citation: '黃俊傑、李明輝、黎漢基編，《李春生著作集》，臺北：南天書局，2004年（臺大學術資料庫書目）。',
+  title: '李春生著作集',
+  publisher: '南天書局；書目見國立臺灣大學學術資料庫',
+  url: 'https://scholars.lib.ntu.edu.tw/handle/123456789/5582?locale=en',
+  sourceDate: '2004',
+  accessedAt: LI_ACCESSED,
+  published: '2004年（書目頁面無摘要）',
+  supports: ['《李春生著作集》的編者、出版社與年份'],
+  usage: '只用來支持著作集的存在與書目；各書原本的出版年不在此頁，本站不寫。',
+  context: '臺大學術資料庫條目，只有書名、編者、出版社與年份，沒有摘要與各篇出處。本站不據此寫任何思想評價。',
+}
+SOURCES['rti-li-chunsheng-tea'] = {
+  id: 'rti-li-chunsheng-tea',
+  citation: '中央廣播電臺，〈把烏龍茶打造成台灣第一個國際品牌的人～台灣烏龍茶之父李春生〉。',
+  title: '把烏龍茶打造成台灣第一個國際品牌的人～台灣烏龍茶之父李春生',
+  publisher: '中央廣播電臺',
+  url: 'https://www.rti.org.tw/news?uid=3&pid=130053&typeId=2',
+  sourceDate: null,
+  accessedAt: LI_ACCESSED,
+  published: '頁面未標示日期（2026年10月查閱）',
+  supports: ['1861年在廈門自立四達商行（單一來源，待核）', '1896年赴日、《東遊六十四日隨筆》書名', '著作書名（《主津新集》、〈台事〉等）', '續任和記洋行買辦'],
+  usage: '只作旁證。媒體，可信度低：寫 1865 年受雇為「總辦」（其他來源都寫買辦，本站不用「總辦」）、建昌公司 1886 年（多數來源 1889，本站標待核）、1869 年運量 2,131 擔（與其他資料不一，本站只寫約數）。',
+  context: '媒體人物介紹。本站採用的只有：四達商行（標待核）、1896 年赴日與遊記書名、著作書名；年份與職稱的矛盾都不採。',
+}
+SOURCES['wiki-li-chunsheng'] = {
+  id: 'wiki-li-chunsheng',
+  citation: '維基百科，〈李春生〉條目（中文；另有英文條目 Li Chunsheng）。',
+  title: '李春生',
+  publisher: '維基百科',
+  url: 'https://zh.wikipedia.org/zh-hk/%E6%9D%8E%E6%98%A5%E7%94%9F',
+  sourceDate: null,
+  accessedAt: LI_ACCESSED,
+  published: '線上條目（2026年10月查閱）',
+  supports: ['1868年移居大稻埕一說', '1901年被推為大稻埕教會長老一說', '卒日10月5日一說（與國史館的9月7日矛盾）', '1896年赴日的陪同與月份一說'],
+  usage: '只當線索，可信度低（條目內部對卒日與享年自相矛盾）。本站用它的地方都標待核：來臺年並列、1901年長老、1896年赴日細節；「第一位思想家」與1900年會面等說法只見此處，不採。',
+  context: '百科條目，生日與官方一致（1838年1月12日），卒日寫1924年10月5日、與國史館引賴永祥的9月7日不同，本站只寫年份。條目的「故居」照片沒有地址，本站不寫住址。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }
