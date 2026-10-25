@@ -1641,6 +1641,70 @@ SOURCES['walkerland-2021-litingxiang'] = {
   context: '部落格食記，可信度低；「百年建築」「融合日式與西式風格」是部落格用語，不是史料，本站不採建築年代。文中的綠豆糕禮盒是現代商品，不是早年的產品。',
 }
 
+// 第 7 階段 C：大稻埕戲苑（查證紀錄：docs/research/da-dao-cheng-xi-yuan.md）
+// 檢核：位置、樓層、演出類型與管理單位有官方劇場平臺；沿革只有百科與《PAR表演藝術》互相支持，沒有官方沿革頁，
+// 開幕年份以 2010／2011 並列、標待核；座位數三說並列；北投／臺北戲棚遷移、與歷史戲院的傳承查無，不採。
+SOURCES['eculture-taipei-xiyuan'] = {
+  id: 'eculture-taipei-xiyuan',
+  citation: '臺北市政府，〈大稻埕戲苑（9樓劇場）〉場館資料，臺北市政府劇場整合資訊平臺。',
+  publisher: '臺北市政府劇場整合資訊平臺（eculture.gov.taipei）',
+  title: '大稻埕戲苑（9樓劇場）',
+  url: 'https://eculture.gov.taipei/theatre/zh-tw/theatreInfo/25',
+  published: '官方場館資料（頁面日期未見；2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '戲苑座落永樂市場8、9樓；9樓劇場、8樓曲藝場與布袋戲常設展區；固定席位分類501–1000席；管理單位臺北市藝文推廣處；演出類型。',
+  context: '官方頁面，可信度高；頁面沒有沿革與啟用年份，也沒有完整地址。席位只給區間，與報導「五百人」、百科「506席」並列，本站寫「約500席」標待核。',
+}
+SOURCES['par-2011-xiyuan'] = {
+  id: 'par-2011-xiyuan',
+  citation: '廖俊逞，〈大稻埕戲苑 重現精采戲窟文化〉，《PAR表演藝術》第219期，2011年3月。',
+  publisher: '《PAR表演藝術》（國家兩廳院）',
+  title: '大稻埕戲苑 重現精采戲窟文化',
+  url: 'https://par.npac-ntch.org/tw/article/doc/D99EPH3P80',
+  published: '2011年3月（2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '由永樂市場內的「延平活動中心」改建；「前年」整修完成、「去年」試營運、「本月底」正式營運（即2009／2010／2011）；九樓約500人劇場、八樓約100席曲藝場（掌中戲為主）；館方「傳承、延續大稻埕古城的戲窟文化」的自述。',
+  context: '專業雜誌，可信度中高。年份以相對語（前年、去年）寫成，本站依刊出月份換算並與百科、2014年文章並列；「延續戲窟文化」只當館方自述，不寫成與歷史戲院的傳承。文中「附近廟宇保有野臺戲傳統」不是戲苑的沿革。',
+}
+SOURCES['par-2014-xiku'] = {
+  id: 'par-2014-xiku',
+  citation: '劉美芳，〈昔時聚百戲 戲窟再回春〉，《PAR表演藝術》第255期，2014年3月。',
+  publisher: '《PAR表演藝術》（國家兩廳院）',
+  title: '昔時聚百戲 戲窟再回春',
+  url: 'https://par.npac-ntch.org/tw/article/doc/DQ3OD3SS5O',
+  published: '2014年3月（2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '戲苑2011年開幕、2014年滿三週年；淡水戲館（1909年建、後改名臺灣新舞臺、1945年毀於空襲）、永樂座（舊址在市場對面）、第一劇場（1935年建於太平町，電影與新劇為主）的簡述。',
+  context: '專業雜誌，可信度中高。文章介紹三座歷史戲院，但沒有說戲苑承接其中任何一座；本站據此明寫戲苑並非它們的延續。',
+}
+SOURCES['tapo-xiyuan-events'] = {
+  id: 'tapo-xiyuan-events',
+  citation: '臺北市藝文推廣處，大稻埕戲苑活動列表。',
+  publisher: '臺北市藝文推廣處（tapo.gov.taipei）',
+  title: '大稻埕戲苑活動列表',
+  url: 'https://www.tapo.gov.taipei/News.aspx?n=34C47A41C78AB210&sms=9A0025CA3D7482D6',
+  published: '官方活動頁，隨時更新（2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '確認戲苑隸屬臺北市藝文推廣處；節目含布袋戲、歌仔戲、崑劇與偶戲展。',
+  context: '官方頁面，只見活動列表，沒有場館簡介與沿革；本站不採任何單一節目的名稱、日期或票價。',
+}
+SOURCES['wiki-dadaocheng-xiyuan'] = {
+  id: 'wiki-dadaocheng-xiyuan',
+  citation: '維基百科，〈大稻埕戲苑〉條目（繁體中文）。',
+  publisher: '維基百科',
+  title: '大稻埕戲苑',
+  url: 'https://zh.wikipedia.org/zh-tw/大稻埕戲苑',
+  published: '線上條目（頁面自標需重寫；2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '沿革節點：1987年2月社教館在「延平區行政中心9樓」成立延平活動中心；2009年3月配合「大稻埕古城重現專案」整建；2009年10月31日更名；2010年3月6日試營運；2015年11月6日改隸藝文推廣處；9樓506席、8樓約100席。',
+  context: '百科條目，可信度中低，只當線索；條目沒有說明延平區行政中心與永樂市場大樓的關係，2015年改隸日期只有此一來源，本站都標待核。1987、2009年的節點只寫在章節裡，不上年表。',
+}
+SOURCES['wiki-yongle-za'] = {
+  id: 'wiki-yongle-za',
+  citation: '維基百科，〈永樂座〉條目（繁體中文；引《臺灣大百科全書》等）。',
+  publisher: '維基百科',
+  title: '永樂座',
+  url: 'https://zh.wikipedia.org/zh-tw/永樂座',
+  published: '線上條目（2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '永樂座1921年起籌設（初名臺北大舞台）、1923年改名、1924年2月17日開幕，位於今迪化街一段46巷、大稻埕市場對面；1960年5月歇業。',
+  context: '百科條目，引《臺灣大百科全書》，本站未直接查閱原條目，年份與地點標待核。條目沒有提到永樂市場或戲苑，本站據此不把永樂座寫成戲苑的前身。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

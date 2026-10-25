@@ -1,5 +1,6 @@
 import { ERAS } from './eras.js'
 import { NIANHUO_TIMELINE_EVENT } from './dihuaNianhuoData.js'
+import { XIYUAN_TIMELINE_EVENT } from './xiyuanData.js'
 import { SHOPS, getShop, shopYearText } from './shops.js'
 
 /**
@@ -25,6 +26,7 @@ export const TIMELINE_EVENTS = [
   { year: 1985, text: '永樂市場現在的大樓開業。', sourceIds: ['tcma-yongle-market'] },
   NIANHUO_TIMELINE_EVENT,
   { year: 2009, text: '新芳春茶行指定為直轄市定古蹟。', sourceIds: ['nchdb-xinfangchun'] },
+  XIYUAN_TIMELINE_EVENT,
   { year: 2016, text: '新芳春茶行修復後開放參觀。', sourceIds: ['pts-xinfangchun-2016'] },
 ]
 
