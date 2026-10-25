@@ -23,6 +23,7 @@ import {
 import { HUANG_YUJIE_HOTSPOTS, MUSEUM, MUSEUM_SITE, museumToWorld } from './huangYujieLayout.js'
 import { MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN } from './huangYujieMuseum.js'
 import { ACTION_BAR_SITE } from './actionBarLayout.js'
+import { LI_TING_XIANG_ID, LI_TING_XIANG_SOURCE_IDS, LTX_CHAPTERS, LTX_ERA_NOTES, LTX_YEAR_NOTE } from './liTingXiangData.js'
 import { CI_SHENG_ADDRESS, CI_SHENG_CHAPTERS, CI_SHENG_ERA_NOTES, ciShengHotspots } from './ciShengMiaokouData.js'
 import {
   NIANHUO_CHAPTER,
@@ -1099,13 +1100,18 @@ export const SHOPS = [
           '2012年《今周刊》記載：「二○一一年右翼內棟作為「小藝埕」，內有…藝術設計品鋪、獨立書店、咖啡店及劇場。」大藝埕的官方網站寫道：「自 2011 年的「小藝埕」至今，世代群在大稻埕經營了 10 棟藝埕系列街屋」。2015年的《今周刊》以「這波大稻埕文藝復興風潮」形容這一帶的老屋再利用。',
           '2014年國立臺北大學的報告引用小藝埕官網，記載當時「一樓：「Bookstore 1920s」及「印花樂」 二樓：「爐鍋咖啡」 三樓：展示和聚會場所」；TVBS《食尚玩家》的介紹則寫「3樓是思劇場」。各樓層的店家會隨時間調整。',
           '老屋再利用保留了老建築的外觀：二樓臨巷的三組深棕色木格窗，上方還有小氣窗。場景中只呈現一樓的騎樓、店面與樓梯入口，以及二樓的爐鍋咖啡；其他樓層沒有室內，一樓轉角的店只用一般的「BOOK CAFE」字樣，不使用實際店家的商標。',
+          '營運模式（官方自述）：大藝埕的官方網站寫，世代群以「創業助成、街區營造、文化運動」三大主軸，把歷史街屋規劃為創業商場，至今約50組創業團隊進駐；官方的「HOUSES」頁稱小藝埕「位於迪化街入口的百年洋樓，是藝埕的第一棟街屋」，並列出小藝埕、民藝埕、眾藝埕、學藝埕、聯藝埕、青藝埕、合藝埕、同藝埕、鄉藝埕、婉藝埕十棟。這些是營運單位的自述，不是第三方的評估。本站讀到的來源都顯示這是民間向屋主承租的老屋再利用（《遠見雜誌》：2010年屋主點頭出租）；沒有查到它是政府的計畫，承租的年限與條件也沒有公開資料，不寫。',
+          '兩棟相鄰的藝埕：2012年《今周刊》同時寫到小藝埕與斜對面的民藝埕（迪化街一段67號）。民藝埕是迪化街的店屋，二樓是狹長的三進格局、有天井，歷經茂元中藥行、郭火焱事務所、侯雨利店鋪，後由蘇家擁有；官方頁稱它是霞海城隍廟旁的「百年三進式街屋」，報導寫2012年時有「近九十年的屋齡」。小藝埕則是街角的洋樓（屈臣氏大藥房舊址）。一棟洋樓、一棟三進街屋，正好是大稻埕老屋的兩種型態；民藝埕不在本站的場景裡，兩棟是不同的建築，不要混為一談。',
+          '從屈臣氏大藥房到小藝埕，有出處的只有幾個節點：日治時期批發西藥的洋樓（1928年，一說1917年）、1996年的大火、之後的修復、2010年屋主答應出租、2011年小藝埕開幕、2014年的資料記載二樓是爐鍋咖啡。這些節點之間有沒有因果——修復是否促成出租、屋主為何在2010年點頭——本站沒有查到，不推論；各樓層的業者也會隨時間調整，本站不列現在的入駐名單。',
         ],
         facts: [
           { label: '開幕', value: '2011年' },
           { label: '經營', value: '世代群（世代文化創業群）' },
           { label: '概念', value: '「大稻埕上賣小藝」' },
+          { label: '定位', value: '藝埕系列的第一棟，共十棟（官方自述）' },
+          { label: '地址', value: '報導寫迪化街一段32巷1號；官方編號AY34、旅遊文章另寫34號，未核對地政資料（待核）' },
         ],
-        sourceIds: ['gvm-2013-artyard', 'businesstoday-2012-watson', 'artyard-about', 'businesstoday-2015-dadaocheng', 'ntpu-2014-dadaocheng', 'supertaste-artyard'],
+        sourceIds: ['gvm-2013-artyard', 'businesstoday-2012-watson', 'artyard-about', 'artyard-houses', 'businesstoday-2015-dadaocheng', 'ntpu-2014-dadaocheng', 'supertaste-artyard', 'storm-2018-luguo'],
       },
       {
         id: 'luguo',
@@ -1187,6 +1193,7 @@ export const SHOPS = [
           'boch-opendata-historic',
           'gvm-2013-artyard',
           'artyard-about',
+          'artyard-houses',
           'businesstoday-2015-dadaocheng',
           'ntpu-2014-dadaocheng',
           'supertaste-artyard',
@@ -2608,17 +2615,26 @@ export const SHOPS = [
       },
     ],
   },
+  // 李亭香（第 7 階段 B）：只在「老屋新生」開放探索；日治、戰後的店址查無（最具體的說法是早年在蘆洲），
+  // 所以那三個年代不列名錄，同一地段的店屋保留為一般「餅舖」（情境示意），地段與建築不變。
+  // 章節在 liTingXiangData.js；查證紀錄 docs/research/li-ting-xiang.md。
   {
-    id: 'li-ting-xiang',
+    id: LI_TING_XIANG_ID,
     name: '李亭香',
-    status: 'coming-soon',
+    status: 'open',
     year: 1895,
-    category: '餅店',
+    yearLabel: '店家自述1895年創立（待核）',
+    yearNote: LTX_YEAR_NOTE,
+    sourceIds: LI_TING_XIANG_SOURCE_IDS,
+    category: '糕餅店',
     seal: '糕餅',
-    summary: '創立於1895年的糕餅老店，大稻埕的創始店至今仍在營業。',
+    summary: '迪化街上的糕餅店：店家自述1895年創立（待核），招牌是平西餅；現任經營者從面板工程師返家接班。只在老屋新生開放探索。',
     position: { x: 16.7, z: 4.5 },
     facing: 'north',
     interaction: { radius: 3.2 },
+    camera: { distance: 6.4, height: 2.4, side: 2.2, lookHeight: 2.6 },
+    chapters: LTX_CHAPTERS,
+    eraNotes: LTX_ERA_NOTES,
     building: {
       archetype: 'minnan',
       width: 5.4,
@@ -2635,10 +2651,11 @@ export const SHOPS = [
       goods: 'pastry',
       sign: { text: '李亭香', style: 'red' },
     },
+    // 日治、戰後的招牌只寫一般行業字「餅舖」（與背景街屋相同），不寫店名
     buildingByEra: {
-      banquet: { condition: 'new', sign: { text: '李亭香', style: 'gold' } },
-      modern: { condition: 'mature' },
-      postwar: { condition: 'aged', sign: { text: '李亭香', style: 'painted' } },
+      banquet: { condition: 'new', sign: { text: '餅舖', style: 'gold' } },
+      modern: { condition: 'mature', sign: { text: '餅舖', style: 'red' } },
+      postwar: { condition: 'aged', sign: { text: '餅舖', style: 'painted' } },
       revival: { condition: 'restored', sign: { text: '李亭香', style: 'modern' } },
     },
   },
