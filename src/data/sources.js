@@ -1576,6 +1576,71 @@ SOURCES['tenjo-2026-xia-er-zui'] = {
   context: '個人部落格食記；未提攤位位置與世代。',
 }
 
+// 第 7 階段 B：小藝埕補章節與李亭香（查證紀錄：docs/research/xiao-yi-cheng.md、docs/research/li-ting-xiang.md）
+// 檢核：小藝埕的營運模式與「第一棟藝埕」只有營運單位官方自述，標「官方自述」；民藝埕只有 2012 年一篇報導與官方簡介，不做 3D。
+// 李亭香全部是商業媒體與部落格，沒有官方或學術來源；多篇「1895」互相轉述，不構成獨立證據；創立地點與世代數來源矛盾，
+// 章節只寫現代與店家自述，不寫世代序號、不寫成「1895 年創於迪化街」，建築年代與登錄身分查無、不寫。
+SOURCES['artyard-houses'] = {
+  id: 'artyard-houses',
+  citation: '大藝埕 ArtYard 官方網站，〈HOUSES（文化街屋）〉。',
+  publisher: '世代群 Sedai Group',
+  title: '大藝埕 ArtYard：HOUSES',
+  url: 'https://www.artyard.tw/houses',
+  published: '官方網頁（未標示日期；2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '小藝埕是「位於迪化街入口的百年洋樓，是藝埕的第一棟街屋」、民藝埕「位於迪化街霞海城隍廟旁」的「百年三進式街屋」；藝埕系列共十棟的名單（小藝埕、民藝埕、眾藝埕、學藝埕、聯藝埕、青藝埕、合藝埕、同藝埕、鄉藝埕、婉藝埕）。',
+  context: '營運單位的官方自述，不是第三方史料。各棟未標地址（同藝埕除外）、未標開幕年份、未列入駐業者；頁面的編號有疑似重複（鄉藝埕、婉藝埕皆標 AY196），本站不以編號當門牌。',
+}
+SOURCES['businesstoday-2020-litingxiang'] = {
+  id: 'businesstoday-2020-litingxiang',
+  citation: '《今周刊》，2020年11月5日報導（李亭香餅店的傳承與轉型）。',
+  publisher: '今周刊',
+  title: '今周刊 2020年11月5日報導',
+  url: 'https://www.businesstoday.com.tw/article/category/80392/post/202011050029/',
+  published: '2020年11月5日（2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '店家自述的傳承敘述：第一代先在大稻埕的餅店學做餅，回家鄉蘆洲開店；店名由騎樓（亭仔腳）飄出餅香而來；平西餅是長銷商品（「27層餅皮」）；約40年前大稻埕沒落、家中一度兼賣香菸、罐頭等雜貨；現任經營者李佳陽曾任職友達光電、返家接班；2020年疫情後調整門市。',
+  context: '雜誌專題，自稱「126年歷史」，與其他媒體寫的1895年差一年，文中未寫確切創立年。創辦人與第二代的姓名、各代推出的平西餅口味、「蘆洲創立」都只見於這一篇（蘆洲另有一篇專欄相同，但未寫姓名），本站標待核或不寫。',
+}
+SOURCES['ettoday-2019-litingxiang'] = {
+  id: 'ettoday-2019-litingxiang',
+  citation: '〈「從面板到麵粉、放棄百萬年薪！」工程師接班百年餅店李亭香〉，ETtoday 財經雲，2019年2月5日。',
+  publisher: 'ETtoday 財經雲',
+  title: '「從面板到麵粉、放棄百萬年薪！」工程師接班百年餅店李亭香',
+  url: 'https://finance.ettoday.net/news/1373439',
+  published: '2019年2月5日（2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '「創立於1895年」的店家說法；李佳陽曾任面板工程師、返家接班，其父李榮華經營店務；曾有九家門市、報導時剩大稻埕店與兩家由堂兄弟在新北經營的店；平西餅之外曾賣杏仁霜、白脫糖到香菸；平安龜；2010年代於華山文創園區設糕餅文化館。',
+  context: '媒體報導。對李佳陽是第幾代的算法與《今周刊》、鏡週刊相差三代，本站不寫世代序號；「創始的大稻埕店」與《今周刊》的「蘆洲創店」矛盾，本站並列。',
+}
+SOURCES['mirror-2018-litingxiang'] = {
+  id: 'mirror-2018-litingxiang',
+  citation: '鏡週刊，李亭香報導，2018年10月19日發布（2023年9月12日更新）。',
+  publisher: '鏡週刊',
+  title: '鏡週刊 2018年10月19日報導',
+  url: 'https://www.mirrormedia.mg/story/20181003cnt001',
+  published: '2018年10月19日發布、2023年9月12日更新（2026年10月查閱，WebFetch 摘要讀取，全文未完整讀到）',
+  usage: '「創立於1895年」的店家說法；店在大稻埕迪化街；平西餅、平安龜；曾進駐永樂春風茶館一樓一角。',
+  context: '媒體報導，標題與全文未完整讀到；文中的世代算法與 ETtoday 不同（相差三代），本站不寫世代序號。',
+}
+SOURCES['sidoli-litingxiang'] = {
+  id: 'sidoli-litingxiang',
+  citation: '阿潼（品牌顧問），〈台北糕餅〉專欄，SIDOLI RADIO 小島裡（日期未標示）。',
+  publisher: 'SIDOLI RADIO 小島裡（個人專欄／Podcast 逐字稿）',
+  title: '台北糕餅',
+  url: 'https://sidoli.tw/stories/25',
+  published: '日期未標示（2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '店名由騎樓飄出餅香而來（與《今周刊》一致，標店家說法）；第一代先在大稻埕學做餅、創立於蘆洲（未寫姓名）。',
+  context: '個人專欄，可信度低。文中「第二代1951年拓點到大稻埕」只有這一篇，本站只在說明年代取捨時提到、標待核，不寫成史實；「糕餅送禮的意義」不採。',
+}
+SOURCES['walkerland-2021-litingxiang'] = {
+  id: 'walkerland-2021-litingxiang',
+  citation: '哈姆湘，〈李亭香〉食記，窩客島 WalkerLand，2021年12月27日。',
+  publisher: '窩客島 WalkerLand（部落格）',
+  title: '李亭香食記',
+  url: 'https://www.walkerland.com.tw/article/view/314959',
+  published: '2021年12月27日（2026年10月查閱，WebFetch 摘要讀取）',
+  usage: '「創立於1895年」的店家說法，文中明說來源不明；平西餅、金錢龜等現售商品。',
+  context: '部落格食記，可信度低；「百年建築」「融合日式與西式風格」是部落格用語，不是史料，本站不採建築年代。文中的綠豆糕禮盒是現代商品，不是早年的產品。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

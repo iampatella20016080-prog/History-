@@ -104,7 +104,8 @@ export const ERAS = [
       items: ['rickshaws', 'pottedPlants', 'teaHouseTables', 'vendorCart', 'teaChests'],
       boats: 'junks',
     },
-    availableStores: ['lin-fu-zhen', 'jiang-shan-lou', 'qian-yuan-yao-hang', 'ci-sheng-gong', 'you-ji', 'li-ting-xiang', 'lin-hua-tai', 'rice-and-shine-329'],
+    // 李亭香不在日治、戰後的名錄：店家早年可能在蘆洲（docs/research/li-ting-xiang.md），街上的店屋保留為一般餅舖
+    availableStores: ['lin-fu-zhen', 'jiang-shan-lou', 'qian-yuan-yao-hang', 'ci-sheng-gong', 'you-ji', 'lin-hua-tai', 'rice-and-shine-329'],
   },
   {
     id: 'modern',
@@ -150,7 +151,7 @@ export const ERAS = [
       items: ['cafeSets', 'flowerPots', 'bicycles', 'vintageCar', 'teaChests'],
       boats: 'sampans',
     },
-    availableStores: ['lin-fu-zhen', 'bolero', 'xin-fang-chun', 'ci-sheng-gong', 'you-ji', 'li-ting-xiang', 'lin-hua-tai', 'rice-and-shine-329', 'shizixuan'],
+    availableStores: ['lin-fu-zhen', 'bolero', 'xin-fang-chun', 'ci-sheng-gong', 'you-ji', 'lin-hua-tai', 'rice-and-shine-329', 'shizixuan'],
   },
   {
     id: 'postwar',
@@ -196,7 +197,7 @@ export const ERAS = [
       items: ['foodStalls', 'bicycles', 'tricycle', 'baskets', 'stools'],
       boats: 'sampans',
     },
-    availableStores: ['lin-fu-zhen', 'ci-sheng-gong', 'temple-squid-stall', 'temple-mi-tai-mu-stall', 'temple-douhua-stall', 'temple-kueh-stall', 'you-ji', 'li-ting-xiang', 'lin-hua-tai', 'bolero', 'xin-fang-chun', 'rice-and-shine-329', 'shizixuan'],
+    availableStores: ['lin-fu-zhen', 'ci-sheng-gong', 'temple-squid-stall', 'temple-mi-tai-mu-stall', 'temple-douhua-stall', 'temple-kueh-stall', 'you-ji', 'lin-hua-tai', 'bolero', 'xin-fang-chun', 'rice-and-shine-329', 'shizixuan'],
   },
   {
     id: 'revival',
