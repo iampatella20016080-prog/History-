@@ -18,6 +18,8 @@ import { templeDouhuaStallCollision } from '../builders/templeDouhuaStall.js'
 import { templeKuehStallCollision } from '../builders/templeKuehStall.js'
 import { yongleMiTaiMuCollision, yongleMiTaiMuFootprint } from '../builders/yongleMiTaiMuExterior.js'
 import { riceAndShineCollision } from '../builders/riceAndShine/riceAndShineExterior.js'
+import { doddCollision, doddFootprint } from '../builders/doddTeaHouse.js'
+import { linHuaTaiQingCollision } from '../builders/linHuaTaiQing.js'
 import { shizixuanCollision, shizixuanFootprint } from '../builders/shizixuan/shizixuanExterior.js'
 
 /**
@@ -296,6 +298,8 @@ function arrangeModernRows(buildings) {
 /** 形狀特殊的店家建築（以 shop.site 指定位置）額外的可行走範圍與障礙物 */
 const SITE_COLLISION = {
   ziyang: ziYangCollision,
+  // 寶順洋行（港口商街）：簷下步道、大門與精製茶廠的室內；揀茶桌、焙茶磚臺、裝箱檯是障礙物
+  'dodd-tea-house': doddCollision,
   // 以 site 指定位置的廟宇（例如霞海城隍廟）：廟埕可以走、天公爐與榕樹石座是障礙物
   temple: (config, transform) => {
     const { walk, obstacles } = templeCollision(config, transform)
@@ -326,6 +330,7 @@ const SITE_COLLISION = {
 }
 /** 佔地較大的店家建築（含巷子）：範圍內不產生遠景房屋與遠景的樹 */
 const SITE_FOOTPRINT = {
+  'dodd-tea-house': doddFootprint,
   'yongle-market': yongleFootprint,
   'action-bar': actionBarFootprint,
   'luguo-cafe': luguoFootprint,
@@ -383,6 +388,15 @@ export function createEraLayout(era) {
           const { walk, obstacles } = templeCollision(config, transform)
           extraWalkable.push(walk)
           extraObstacles.push(...obstacles)
+        }
+        // 林華泰茶行・港口商街版：一般地段，這個年代可以走進去（簷下步道、前店、隔間門與焙茶區）
+        if (config.archetype === 'lin-hua-tai-qing') {
+          const cos = Math.cos(lot.rotationY)
+          const sin = Math.sin(lot.rotationY)
+          const transform = (x, z) => ({ x: lot.x + x * cos + z * sin, z: lot.z - x * sin + z * cos })
+          const collision = linHuaTaiQingCollision(config, transform)
+          extraWalkable.push(...collision.walkable)
+          extraObstacles.push(...collision.obstacles)
         }
         // 迪化街329號店屋（稻舍）：同一個地段，依年代的 variant 決定能不能走進去（騎樓、前進、天井、後進、樓梯與二樓）
         if (config.archetype === 'rice-and-shine') {

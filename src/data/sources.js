@@ -2136,6 +2136,17 @@ SOURCES['taipeitimes-youbike2-2021'] = {
   context: 'YouBike 2.0 於2021年5月8日在臺北正式啟用（只讀到報導摘要）。',
 }
 
+SOURCES['nownews-tea-tally-2019'] = {
+  id: 'nownews-tea-tally-2019',
+  citation: '〈失落的茶產業殘跡　茶籌／茶牌見證大稻埕風華〉，NOWnews，2019年4月6日。',
+  publisher: 'NOWnews',
+  title: '茶籌／茶牌：揀茶計酬的憑證（口述與私人收藏）',
+  url: 'https://www.nownews.com/news/3298707',
+  published: '2019年4月6日',
+  usage: '耆老口述與私人收藏的報導，講的是日治以後的揀茶間；清末是否已用茶籌查無，博物館典藏也查無——網站標「口述來源、待核」，不作史實陳述。',
+  context: '報導記茶行以茶籌暫代薪資憑證、定期結算；收藏者藏品中有茶行的鐵片籌與紙籌。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

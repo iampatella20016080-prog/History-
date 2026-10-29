@@ -227,6 +227,137 @@ export const QING_PORT_TALK = [
       },
     ],
   },
+  // ── 寶順洋行室內（精製茶廠；人物是 zone npc，走進室內才見得到） ──
+  {
+    id: 'qing-picker',
+    npcId: 'dodd-picker-a',
+    role: '揀茶女',
+    roleEn: 'Tea-sorting woman',
+    doing: '坐在大竹篩前挑茶梗',
+    doingEn: 'Sorting stems out of the tea at a bamboo sieve',
+    lines: [
+      {
+        text: '莫擋著光——這篩毛茶挑完，才好領籌仔去記工。',
+        textEn: 'Mind the light, please—once this sieve is done I can take my tally for the work.',
+        label: 'fiction',
+      },
+      {
+        text: '揀茶是按件算錢的，手腳快的姑娘，天光做到日落能掙一角五分。',
+        textEn: 'We are paid by the piece—quick hands can make fifteen cents from dawn to dusk.',
+        label: 'sourced',
+        sourceIds: ['davidson-formosa-1903'],
+      },
+    ],
+    followUps: [
+      {
+        id: 'season',
+        question: '茶季的大稻埕是什麼樣子？',
+        questionEn: 'What is Twatutia like in the tea season?',
+        lines: [
+          {
+            text: '滿街都是揀茶的姊妹仔——大小茶棧百五十家，一天僱上萬人；小妹仔第一年出來揀茶，鬢邊都插玉蘭花哩。',
+            textEn: 'Sisters sorting tea fill every street—a hundred and fifty hongs hiring ten thousand a day; the young ones come out with magnolia in their hair.',
+            label: 'sourced',
+            sourceIds: ['davidson-formosa-1903', 'panorama-dadaocheng-1981'],
+          },
+          {
+            text: '自己會掙錢，親事就慢慢來——這話阮阿母不愛聽，嘿嘿。',
+            textEn: 'Earn your own keep and marriage can wait—mother hates it when I say that!',
+            label: 'sourced',
+            sourceIds: ['wolf-women-tea-2003'],
+          },
+        ],
+      },
+      {
+        id: 'tally',
+        question: '籌仔是什麼？',
+        questionEn: 'What are the tallies?',
+        lines: [
+          {
+            text: '做完一份工領一枚籌仔，月底憑籌結錢。這是老輩揀茶間傳的講法，籌仔長什麼樣、哪時開始用，誰也說不準。',
+            textEn: 'Finish a batch, take a tally; settle up at month’s end. So the old sorting-room story goes—what they looked like or when they began, nobody can say for sure.',
+            label: 'folklore',
+            sourceIds: ['nownews-tea-tally-2019'],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'qing-roaster',
+    npcId: 'dodd-roaster',
+    role: '焙茶工',
+    roleEn: 'Tea roaster',
+    doing: '守著焙坑的炭火',
+    doingEn: 'Tending the charcoal pits',
+    lines: [
+      {
+        text: '焙間熱得像大灶，莫站太近。炭火養好一回，一個多禮拜不熄。',
+        textEn: 'The roasting room is one great oven—keep back. A well-banked fire burns a week and more.',
+        label: 'sourced',
+        sourceIds: ['davidson-formosa-1903'],
+      },
+      {
+        text: '茶在焙籠裡焙八到十個鐘頭，差不多一個鐘頭翻一回——翻慢了就焦，翻快了焙不透。',
+        textEn: 'The tea sits in the baskets eight or ten hours, turned about once an hour—too slow and it scorches, too quick and it never dries.',
+        label: 'sourced',
+        sourceIds: ['davidson-formosa-1903'],
+      },
+    ],
+    followUps: [
+      {
+        id: 'boom',
+        question: '焙茶的工錢好嗎？',
+        questionEn: 'Does roasting pay well?',
+        lines: [
+          {
+            text: '搶茶最熱那幾年，連月薪六圓的焙茶工都丟下焙籠去做茶販——洋人說，連廚子的魂都被茶迷去了。',
+            textEn: 'In the maddest years even roasters on six dollars a month threw down their baskets to turn tea-dealer—the foreigners said the very cooks’ souls were bewitched by tea.',
+            label: 'sourced',
+            sourceIds: ['davidson-formosa-1903'],
+          },
+        ],
+      },
+    ],
+  },
+  // ── 林華泰茶行室內 ──
+  {
+    id: 'qing-apprentice',
+    npcId: 'lht-apprentice',
+    role: '茶行學徒',
+    roleEn: 'Tea shop apprentice',
+    doing: '在秤茶桌旁學看秤',
+    doingEn: 'Learning the scales at the weighing table',
+    lines: [
+      {
+        text: '掌櫃的教我看秤：秤錘滑到桿子平了，刻度就是斤兩——茶是論擔論斤算錢的。',
+        textEn: 'The keeper is teaching me the steelyard: slide the weight till the beam sits level, and the notch gives the weight—tea is priced by picul and catty.',
+        label: 'sourced',
+        sourceIds: ['davidson-formosa-1903'],
+      },
+      {
+        text: '阮店裡光緒九年起就做毛茶的篩選、精製，茶農的茶挑來，再焙過才出得了手。',
+        textEn: 'Since 1883 this shop has sifted and refined the farmers’ rough tea—it must be roasted again before it can be sold.',
+        label: 'sourced',
+        sourceIds: ['linhuatai-site'],
+      },
+    ],
+    followUps: [
+      {
+        id: 'wuyi',
+        question: '臺灣的茶比得過唐山的嗎？',
+        questionEn: 'Can Taiwan tea match the mainland’s?',
+        lines: [
+          {
+            text: '廳志的老先生寫「茶味薄不如武彝」——可洋行一年比一年收得多，你說呢？',
+            textEn: 'The gazetteer sniffed that our tea is “thinner than Wuyi”—yet the foreign hongs buy more every year. You tell me!',
+            label: 'sourced',
+            sourceIds: ['danshui-ting-zhi-1871'],
+          },
+        ],
+      },
+    ],
+  },
 ]
 
 /** 這個年代有對話的路人（npcId → 對話） */

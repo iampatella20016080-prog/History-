@@ -71,7 +71,8 @@ function InspectPrompt({ item }) {
 }
 
 export function StreetPrompts({ npcs, eraId, promptLayer }) {
-  const talkables = npcs.filter((npc) => !npc.zone && talkForNpc(eraId, npc.id))
+  // 街上與室內有對話的人物都有提示（提示只在走近時浮現，室內的人物走近時室內一定已經載入）
+  const talkables = npcs.filter((npc) => talkForNpc(eraId, npc.id))
   const inspectables = inspectablesOfEra(eraId)
   return (
     <>

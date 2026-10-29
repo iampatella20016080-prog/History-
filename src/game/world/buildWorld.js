@@ -60,6 +60,10 @@ import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
 import { buildQingWharf } from '../builders/qingWharf.js'
 import { sceneBox, sceneNpcs, scenesForEra } from '../../data/streetPropsLayout.js'
+import { buildDoddTeaHouse } from '../builders/doddTeaHouse.js'
+import { buildDoddTeaHouseInterior } from '../builders/doddTeaHouseInterior.js'
+import { buildLinHuaTaiQing } from '../builders/linHuaTaiQing.js'
+import { buildLinHuaTaiQingInterior } from '../builders/linHuaTaiQingInterior.js'
 import { getEra } from '../../data/eras.js'
 import { createEraLayout } from './eraLayout.js'
 
@@ -68,6 +72,9 @@ import { createEraLayout } from './eraLayout.js'
  */
 export const BUILDING_BUILDERS = {
   minnan: buildShophouse,
+  // 港口商街的寶順洋行（精製茶廠）與林華泰茶行（前店＋焙茶區）：可以走進去（第 10 階段）
+  'dodd-tea-house': buildDoddTeaHouse,
+  'lin-hua-tai-qing': buildLinHuaTaiQing,
   baroque: buildArcadeBuilding,
   deco: buildArcadeBuilding,
   postwar: buildArcadeBuilding,
@@ -141,6 +148,8 @@ export const BUILDING_BUILDERS = {
  * 室內的招牌、遮擋方塊與碰撞屬於街景資料，由上面的建築產生器產生。
  */
 export const BUILDING_INTERIORS = {
+  'dodd-tea-house': buildDoddTeaHouseInterior,
+  'lin-hua-tai-qing': buildLinHuaTaiQingInterior,
   'yongle-market': buildYongleInterior,
   'action-bar': buildActionBarInterior,
   'luguo-cafe': buildLuguoCafeInterior,

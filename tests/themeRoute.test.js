@@ -32,9 +32,10 @@ test('一箱茶的旅程：節點對應存在的對話、器物、店家與年�
       assert.equal(shop.status, 'open', `${node.id}：${node.shopId} 要是可探索的店家`)
     }
   }
-  // 對話節點：三位挑夫任何一位都算
+  // 對話節點：碼頭的三位挑夫任何一位都算（室內的人物不在這個節點裡）
   const talkNode = TEA_ROUTE.nodes.find((node) => node.kind === 'talk')
-  assert.equal(talkNode.journalIds.length, QING_PORT_TALK.length)
+  const porters = QING_PORT_TALK.filter((talk) => talk.npcId.startsWith('qing-wharf-'))
+  assert.equal(talkNode.journalIds.length, porters.length)
   // 外銷消息的節點對應寶順洋行「洋行與茶」章節的手記條目
   const dodd = getShop('dodd-tea-house')
   const journalChapter = dodd.chapters.find((chapter) => chapter.journal)

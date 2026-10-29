@@ -292,8 +292,9 @@ export function buildShophouse(b, cfg, detail = null) {
     })
   }
 
-  // 鏡頭遮擋：建築本體＋簷下屋頂（只取步道正上方，避免沿街邊行走時鏡頭被拉近）
-  b.addBlocker(-w / 2, w / 2, 0, ridgeY + 0.4, -D, 0)
+  // 鏡頭遮擋：建築本體＋簷下屋頂（只取步道正上方，避免沿街邊行走時鏡頭被拉近）；
+  // 可以走進去的店家（walkIn）不能是一整個實心方塊，改由該店家的建築產生器分成牆面與樓板
+  if (!cfg.walkIn) b.addBlocker(-w / 2, w / 2, 0, ridgeY + 0.4, -D, 0)
   b.addBlocker(-w / 2, w / 2, groundH - 0.65, groundH + 0.3, 0, walkD - 0.1)
 
   return {
@@ -341,6 +342,8 @@ function laundryPole(b, x, y, width, rng) {
 
 /* ── 店面：門板與室內 ───────────────────── */
 function buildStorefront(b, cfg, rng, { innerW, openingH, walkH, woodTint, darkWood, condition }) {
+  // 可以走進去的店家（例如港口商街的林華泰）：門面留空，室內由該店家的建築產生器自己建
+  if (cfg.walkIn) return
   const type = cfg.storefront ?? 'closed'
   const panelH = openingH - walkH - 0.08
   const panelY = walkH + 0.08 + panelH / 2

@@ -41,10 +41,10 @@ describe('寶順洋行與李春生：店家資料', () => {
     }
   })
 
-  test('六個章節：文字、器物（第 10 階段的茶箱）與文獻，沒有食物圖鑑；每一章都有出處', () => {
+  test('七個章節：文字、精製茶廠、器物（第 10 階段的茶箱）與文獻，沒有食物圖鑑；每一章都有出處', () => {
     assert.deepEqual(
       shop.chapters.map((chapter) => chapter.type),
-      ['text', 'text', 'text', 'text', 'object', 'sources'],
+      ['text', 'text', 'text', 'text', 'text', 'object', 'sources'],
     )
     for (const chapter of shop.chapters) {
       assert.ok(chapter.sourceIds?.length, chapter.tab)
