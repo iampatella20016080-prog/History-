@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { MathUtils, Raycaster, Vector2, Vector3 } from 'three'
 import { CAMERA, LAYERS } from '../config.js'
-import { raycastBoxes } from '../collision.js'
 import { moveInput } from '../input.js'
 import { cameraState, playerState, renderState } from '../runtime.js'
 import { clamp, damp, dampAngle, dampVector } from '../utils/math.js'
@@ -10,8 +9,9 @@ import {
   VIEWER,
   allowedDistance,
   clampViewerTarget,
+  clearYaw,
   facadeOf,
-  followAllowed,
+  followDistance,
   inFollowArea,
   indoorFollow,
   interiorAmount,
@@ -20,6 +20,7 @@ import {
   planBuildingFocus,
   segmentBlocked,
   segmentCrossesWall,
+  streetFacingYaw,
 } from '../viewerCamera.js'
 import { useGameStore } from '../../state/useGameStore.js'
 
@@ -60,7 +61,7 @@ function horizontalDistanceToSegment(p, a, b) {
  * - 鏡頭不穿牆、不低於地面、不離開街區；返回探索時平滑回到角色身後
  * - 可以走進去的建築（viewerSpace 的額外範圍）：注視點可以移進騎樓與一樓室內，高度不超過天花板
  */
-export function CameraRig({ blockers, buildings, shopModels, interiors = [], followAreas = [], viewerSpace }) {
+export function CameraRig({ eraId, blockers, buildings, shopModels, interiors = [], followAreas = [], viewerSpace }) {
   const camera = useThree((state) => state.camera)
   const gl = useThree((state) => state.gl)
   const size = useThree((state) => state.size)
@@ -86,6 +87,9 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], fol
       indoor: 0,
       indoorZone: null,
       initialized: false,
+      /** 目前的年代；換年代後等一個影格（人物先被移到可以走的地方）再把鏡頭轉向街道 */
+      eraId: null,
+      eraPending: 0,
       viewer: {
         /** off：第三人稱；active：觀賞中；returning：返回探索，鏡頭正移回角色身後 */
         phase: 'off',
@@ -353,6 +357,20 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], fol
     const v = rig.viewer
     const p = playerState.position
 
+    if (eraId !== rig.eraId) {
+      if (rig.eraId !== null) rig.eraPending = 2
+      rig.eraId = eraId
+    }
+    if (rig.eraPending > 0 && --rig.eraPending === 0 && started && v.phase === 'off' && mode === 'explore') {
+      // 換年代後：鏡頭沿著街道放在角色身後，不對著新年代的牆（例如原本的方向在新的年代被建築擋住）
+      rig.target.set(p.x, p.y + CAMERA.targetHeight, p.z)
+      const turn = streetFacingYaw(rig.target, cameraState.yaw, cameraState.pitch, cameraState.targetDistance, blockers)
+      if (Math.abs(turn.yaw - cameraState.yaw) > 1e-6) {
+        cameraState.targetYaw = cameraState.yaw = turn.yaw
+        cameraState.snap = true
+      }
+    }
+
     cameraState.yaw = dampAngle(cameraState.yaw, cameraState.targetYaw, 10, dt)
     cameraState.pitch = damp(cameraState.pitch, cameraState.targetPitch, 10, dt)
     cameraState.distance = damp(cameraState.distance, cameraState.targetDistance, 8, dt)
@@ -373,7 +391,9 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], fol
       const start = (found?.amount ?? 0) > 0.5 ? { ...VIEWER_INDOOR_START, ...found.zone.viewerStart } : VIEWER.start
       v.goalTarget.set(p.x, p.y + start.height, p.z)
       clampViewerTarget(v.goalTarget, blockers, viewerSpace)
-      v.goalYaw = v.yaw + Math.atan2(Math.sin(cameraState.yaw - v.yaw), Math.cos(cameraState.yaw - v.yaw))
+      // 起始方向避開遮擋：第三人稱的方向在起始距離被建築擋住時，改用旁邊沒被擋住的方向
+      const startYaw = clearYaw(v.goalTarget, cameraState.yaw, start.pitch, start.distance, blockers).yaw
+      v.goalYaw = v.yaw + Math.atan2(Math.sin(startYaw - v.yaw), Math.cos(startYaw - v.yaw))
       v.goalPitch = start.pitch
       v.goalDistance = start.distance
       v.lambda = 3
@@ -510,11 +530,10 @@ export function CameraRig({ blockers, buildings, shopModels, interiors = [], fol
       const cosPitch = Math.cos(pitch)
       rig.direction.set(Math.sin(cameraState.yaw) * cosPitch, Math.sin(pitch), Math.cos(cameraState.yaw) * cosPitch)
       if (cameraState.snap) rig.collisionDistance = wanted
-      const hit = raycastBoxes(rig.target, rig.direction, wanted + 0.45, blockers)
       // 室內與窄巷（遮擋方塊貼著實際的牆與車）：鏡頭停在障礙物前面；街道維持原本的最近距離。
       // 用角色現在的位置判斷（不用平滑後的 k），走出門口或換了年代時立刻回到街道的規則
       const tight = indoorGoal >= 0.999 || inFollowArea(p, followAreas, playerState.level)
-      let allowed = followAllowed(hit, minDistance, tight)
+      let allowed = followDistance(rig.target, rig.direction, wanted, minDistance, blockers, tight)
       if (k > 0.001 && rig.direction.y > 0.01) {
         // 室內的鏡頭高度上限（在吊牌與燈具下方）；越接近街道上限越高
         const maxHeight = shot.maxHeight + (1 - k) * 6
