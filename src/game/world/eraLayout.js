@@ -1,4 +1,5 @@
 import { PIER, PLAZA, STREET } from '../config.js'
+import { QING_WHARF_ERA, qingWharfBoxes } from '../../data/qingWharfLayout.js'
 import { getShop, getShopBuilding, getShopsByEra } from '../../data/shops.js'
 import { genericBuildingConfig } from './lineage.js'
 import { getLotPlan } from './lots.js'
@@ -38,6 +39,8 @@ const PROPS_BY_ERA = {
     { type: 'handcart', position: [-36.4, 0, -5.9], rotationY: 1.4, load: 'tea' },
     { type: 'ropeCoil', position: [-47.5, 0, 1.0] },
     { type: 'goodsPile', position: [-50.6, 0, -0.95], rotationY: -Math.PI / 2, kind: 'tea' },
+    // 清末碼頭的茶箱堆、挑夫與接駁小船（data/qingWharfLayout.js）是情境重建，廣場上立一塊說明牌
+    { type: 'placard', position: [-39.4, 0, -2.0], rotationY: 0, text: '清末碼頭｜歷史情境重建' },
   ],
   banquet: [
     // 江山樓前的說明牌（歷史情境重建）
@@ -417,6 +420,10 @@ export function createEraLayout(era) {
     if (footprint) backdropExclusions.push(footprint)
   }
 
+  // 清末碼頭：河岸廣場上的茶箱堆與挑夫（只在港口商街；data/qingWharfLayout.js）
+  const qingWharf = era.id === QING_WHARF_ERA
+  if (qingWharf) extraObstacles.push(...qingWharfBoxes().map(({ minX, maxX, minZ, maxZ }) => ({ minX, maxX, minZ, maxZ })))
+
   if (era.id === 'banquet') diversifyRows(buildings)
   if (era.id === 'modern') arrangeModernRows(buildings)
 
@@ -460,6 +467,7 @@ export function createEraLayout(era) {
     obstacles,
     trees,
     mooringPosts: MOORING_POSTS,
+    qingWharf,
     backdropExclusions,
   }
 }

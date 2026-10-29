@@ -57,6 +57,7 @@ import { buildShizixuanInterior } from '../builders/shizixuan/shizixuanInterior.
 import { COPLANAR_DELTA, resolveAllCoplanar } from '../builders/coplanar.js'
 import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
+import { buildQingWharf } from '../builders/qingWharf.js'
 import { getEra } from '../../data/eras.js'
 import { createEraLayout } from './eraLayout.js'
 
@@ -369,6 +370,7 @@ export function* eraWorldSteps(eraId) {
   for (const line of layout.wires) wire(b, line)
   for (const line of layout.lanternStrings) lanternString(b, line)
   buildMooringPosts(b, layout.mooringPosts)
+  if (layout.qingWharf) npcs.push(...buildQingWharf(b, detail).npcs)
   // 遠景裝飾（街屋後方的樹、遠方天際線、年代的節慶裝飾）另外合併，流暢模式下不顯示
   layout.trees.forEach((tree, i) =>
     // 河岸廣場的榕樹（collider）：落地的氣根只在樹幹的碰撞範圍裡（eraLayout 的半寬 0.55），精緻模式多一批短氣根

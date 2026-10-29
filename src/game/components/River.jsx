@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { CanvasTexture, Color, DoubleSide, MeshBasicMaterial, MeshToonMaterial, SRGBColorSpace } from 'three'
 import { LAYERS, RIVER } from '../config.js'
 import { getEra } from '../../data/eras.js'
+import { WHARF_BOATS } from '../../data/qingWharfLayout.js'
 import { atmosphere } from '../atmosphere.js'
 import { QUALITY_MODES } from '../quality.js'
 import { useGameStore } from '../../state/useGameStore.js'
@@ -22,6 +23,10 @@ const BOATS = {
     { type: 'junk', position: [-150, WL - 0.35, -46], rotationY: -0.25, length: 8, sails: 1, bob: 2.1, drift: -0.25, sailTint: '#a9805a' },
     { type: 'junk', position: [-60, WL - 0.3, 9], rotationY: -1.2, length: 6.2, sails: 1, bob: 0.9, furled: true, sailTint: '#9f7a58' },
   ],
+  // 清末碼頭：棧橋兩側的接駁小船與河道中下錨的戎克船載著茶箱（data/qingWharfLayout.js），遠處河面的兩艘與日治初期相同
+  get qingWharf() {
+    return [...WHARF_BOATS, ...BOATS.junks.slice(1, 3)]
+  },
   sampans: [
     { type: 'sampan', position: [-48.6, WL - 0.2, -3.0], rotationY: Math.PI, length: 5.4, canopy: true, bob: 0.6 },
     { type: 'sampan', position: [-50.8, WL - 0.2, 3.1], rotationY: Math.PI + 0.1, length: 4.8, canopy: false, bob: 1.4 },
@@ -39,9 +44,9 @@ function Boat({ boat }) {
   const group = useRef()
   const batches = useMemo(() => {
     const b = new PartBuilder()
-    if (boat.type === 'sampan') buildSampan(b, { length: boat.length, canopy: boat.canopy })
+    if (boat.type === 'sampan') buildSampan(b, { length: boat.length, beam: boat.beam, canopy: boat.canopy, cargo: boat.cargo })
     else if (boat.type === 'ferry') buildFerry(b, { length: boat.length })
-    else buildJunk(b, { length: boat.length, sails: boat.sails, furled: boat.furled, sailTint: boat.sailTint })
+    else buildJunk(b, { length: boat.length, beam: boat.beam, sails: boat.sails, furled: boat.furled, sailTint: boat.sailTint, cargo: boat.cargo })
     return b.build()
   }, [boat])
 
@@ -136,7 +141,7 @@ export function River({ eraId }) {
       </mesh>
       {boats.map((boat, i) =>
         // 流暢模式不畫遠處河面上的船
-        detail || boat.position[0] > -80 ? <Boat key={`${eraId}-${i}`} boat={boat} /> : null,
+        detail || (boat.position[0] > -80 && !boat.detailOnly) ? <Boat key={`${eraId}-${i}`} boat={boat} /> : null,
       )}
       <RiverMist detail={detail} />
     </group>

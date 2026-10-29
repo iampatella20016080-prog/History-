@@ -470,9 +470,19 @@ export function buildTree(
 }
 
 /* ───────────── 戎克船 ───────────── */
-export function buildJunk(b, { length = 9, beam = 2.6, sails = 2, sailTint = '#b98d5f', furled = false, sailAngle = 1.1 } = {}) {
+/** 船上的茶箱（清末碼頭接駁的貨；木箱加彩色外裱紙，不另加材質；尺寸同 data/qingWharfLayout.js 的 TEA_CHEST） */
+function deckTeaChests(b, spots, deckY) {
+  spots.forEach(([x, z, layer = 0, r = 0], i) => {
+    const y = deckY + layer * 0.36
+    b.box('wood', [0.48, 0.36, 0.36], [x, y + 0.18, z], { rotation: [0, r, 0], tint: ['#c9a77a', '#bf9c6f'][i % 2] })
+    b.plane('paper', 0.38, 0.25, [x, y + 0.18, z + 0.186], { rotation: [0, r, 0], tint: ['#e3b45a', '#d9876a', '#ece0c4'][i % 3] })
+  })
+}
+
+export function buildJunk(b, { length = 9, beam = 2.6, sails = 2, sailTint = '#b98d5f', furled = false, sailAngle = 1.1, cargo = null } = {}) {
   b.extrude('wood', junkHullShape(length), beam, { position: [0, 0, -beam / 2], tint: '#8d6c4d', grime: 0.3 })
   b.box('planks', [length - 1.3, 0.08, beam - 0.1], [0.1, 0.92, 0], { tint: '#bf9f7a' })
+  if (cargo === 'tea') deckTeaChests(b, [[1.4, -0.45], [1.4, 0.0], [1.95, -0.22], [1.65, -0.22, 1], [-0.6, 0.5], [-1.15, 0.5]], 0.96)
   for (const s of [-1, 1]) {
     b.box('wood', [length * 0.86, 0.14, 0.08], [0.05, 1.02, s * (beam / 2 + 0.02)], { tint: '#5d4533' })
     // 船眼
@@ -513,10 +523,12 @@ export function buildJunk(b, { length = 9, beam = 2.6, sails = 2, sailTint = '#b
 }
 
 /* ───────────── 舢舨（小型木船，1930 年代之後河面常見） ───────────── */
-export function buildSampan(b, { length = 5.2, beam = 1.5, canopy = true, tint = '#8a6a4c' } = {}) {
+export function buildSampan(b, { length = 5.2, beam = 1.5, canopy = true, tint = '#8a6a4c', cargo = null } = {}) {
   b.extrude('wood', junkHullShape(length), beam, { position: [0, 0, -beam / 2], scale: [1, 0.55, 1], tint, grime: 0.3 })
   b.box('planks', [length - 1.4, 0.06, beam - 0.12], [0.1, 0.5, 0], { tint: '#bf9f7a' })
   for (const s of [-1, 1]) b.box('wood', [length * 0.84, 0.1, 0.07], [0.05, 0.58, s * (beam / 2 + 0.01)], { tint: '#5d4533' })
+  // 駁船載著茶箱（棚子後方的船艙空著，船頭留給撐篙的人）
+  if (cargo === 'tea') deckTeaChests(b, [[0.75, -0.2], [0.75, 0.2], [1.3, 0.0], [1.0, 0.0, 1, 0.1]], 0.53)
   if (canopy) {
     const roof = new CylinderGeometry(beam * 0.48, beam * 0.48, length * 0.38, 10, 1, true, -Math.PI / 2, Math.PI)
     b.add('bamboo', roof, { position: [-length * 0.08, 0.62, 0], rotation: [0, 0, Math.PI / 2], tint: '#c9ae7c' })
