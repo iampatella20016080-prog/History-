@@ -2064,6 +2064,78 @@ SOURCES['ltn-shiding-baoge-2021'] = {
   context: '相褒歌源自採茶時的台語即興對唱，石碇相褒歌為新北市無形文化資產；林金城採集出版《石碇相褒歌》（2021）。',
 }
 
+/* ── 各年代的情境人物與道具（人力車、三輪車、腳踏車、攤車；查證紀錄見 docs/research/era-street-props.md） ── */
+SOURCES['wiki-rickshaw-zh'] = {
+  id: 'wiki-rickshaw-zh',
+  citation: '維基百科，〈人力車〉（臺灣段落引杜偉誌〈臺灣自行車發展軌跡——以國立臺灣歷史博物館蒐藏品為例〉，《歷史臺灣》3期，2012，頁52），CC BY-SA 4.0。',
+  publisher: '維基百科',
+  title: '人力車',
+  url: 'https://zh.wikipedia.org/zh-tw/%E4%BA%BA%E5%8A%9B%E8%BB%8A',
+  published: '線上條目（2026年10月查閱）',
+  usage: '只作旁證：人力車1887年自上海引進臺灣（待核，原論文未讀到）；戰後被三輪車取代。',
+  context: '「1887年第一批人力車從上海引進臺灣」；「第二次世界大戰結束後，人力車開始被三輪車取代。」',
+}
+SOURCES['masuda-2024-mobility'] = {
+  id: 'masuda-2024-mobility',
+  citation: '增田高志，《近代「台灣社會」的形成過程：以1920年代至1930年代人之移動所做的探討》，國立臺灣大學博士論文，2024。',
+  publisher: '國立臺灣大學',
+  title: '近代「台灣社會」的形成過程：以1920年代至1930年代人之移動所做的探討',
+  url: 'https://tdr.lib.ntu.edu.tw/handle/123456789/91785',
+  published: '2024年',
+  usage: '摩登年代放腳踏車與牽腳踏車的人：1930年代腳踏車已普及到本島人的日常生活（只讀到摘要）。',
+  context: '摘要：「腳踏車也急速普及到『本島人』的日常生活中」；1930年代後期本島人擁有的腳踏車逾35萬台，每百戶35台以上。',
+}
+SOURCES['gvm-2020-pedicab-ban'] = {
+  id: 'gvm-2020-pedicab-ban',
+  citation: '張哲生，〈1968年台北市政府禁行三輪車，輔導車夫轉業為計程車司機〉，遠見《城市學》，2020年2月1日。',
+  publisher: '遠見天下文化《城市學》',
+  title: '1968年台北市政府禁行三輪車，輔導車夫轉業為計程車司機',
+  url: 'https://city.gvm.com.tw/article/70721',
+  published: '2020年2月1日',
+  usage: '庶民生活年代放等客的三輪車：戰後臺北常見的交通工具，1959年起取締、1968年全面禁行並收購。',
+  context: '臺北市一地有一萬四千多輛三輪車（排班八千多、流動六千多）；1959年起取締違規三輪車；1968年臺北市全面禁止行駛三輪車，市府收購營業三輪車，車夫輔導轉業為計程車司機。',
+}
+SOURCES['lai-2024-taipei-traffic'] = {
+  id: 'lai-2024-taipei-traffic',
+  citation: '賴敏甄，《戰後臺北市道路交通秩序的形塑（1945－1960s）》，國立臺灣大學歷史學系碩士論文，2024。',
+  publisher: '國立臺灣大學',
+  title: '戰後臺北市道路交通秩序的形塑（1945－1960s）',
+  url: 'https://tdr.lib.ntu.edu.tw/handle/123456789/96109',
+  published: '2024年',
+  usage: '三輪車是戰後臺北既有的道路使用者，後來被排擠到路邊、離開道路（只讀到摘要）。',
+  context: '摘要：臺北市的三輪車與行人等既有道路使用者，因維持交通秩序與安全等理由，被排擠至道路邊緣，甚至被迫離開道路。',
+}
+SOURCES['cna-2021-old-taipei-pedicab'] = {
+  id: 'cna-2021-old-taipei-pedicab',
+  citation: '張大春，《我的老台北》（新經典文化，2020）書摘，中央社「好書」專欄，2021年1月1日。',
+  publisher: '中央通訊社',
+  title: '我的老台北（書摘）',
+  url: 'https://www.cna.com.tw/Proj_GoodBook/3035.aspx',
+  published: '2021年1月1日',
+  usage: '三輪車在臺北消失的另一個年份說法（1960年9月起逐漸消失），與1968年禁行的說法不同，待核。',
+  context: '「三輪車要到1960年九月才會逐漸消失在台北街頭」；外縣市拆三輪車推遲到八十年代。散文回憶，非史料。',
+}
+SOURCES['technews-bicycle-tax'] = {
+  id: 'technews-bicycle-tax',
+  citation: '吳佳蓉（中央社），〈消失的稅目，古早時代辦桌、騎腳踏車都要稅〉，TechNews 科技新報，2019年11月5日。',
+  publisher: 'TechNews 科技新報（中央社稿）',
+  title: '消失的稅目，古早時代辦桌、騎腳踏車都要稅',
+  url: 'https://technews.tw/?p=530364',
+  published: '2019年11月5日',
+  usage: '庶民生活年代放腳踏車：1940–1950年代騎腳踏車要繳使用牌照稅、掛車牌（財政部檔案展的報導，單一來源，待核）。',
+  context: '1940至1950年代騎腳踏車「必須要繳使用牌照稅並申掛車牌才能行駛」；民國60年（1971）停徵。',
+}
+SOURCES['taipeitimes-youbike2-2021'] = {
+  id: 'taipeitimes-youbike2-2021',
+  citation: 'Taipei Times, "Taipei launches upgraded YouBike system", 2021-05-09.',
+  publisher: 'Taipei Times',
+  title: 'Taipei launches upgraded YouBike system',
+  url: 'https://taipeitimes.com/News/taiwan/archives/2021/05/09/2003757094',
+  published: '2021年5月9日',
+  usage: '老屋新生年代的單車遊客：臺北市的公共自行車系統（大稻埕附近的站點查無，網站不畫站點與品牌）。',
+  context: 'YouBike 2.0 於2021年5月8日在臺北正式啟用（只讀到報導摘要）。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

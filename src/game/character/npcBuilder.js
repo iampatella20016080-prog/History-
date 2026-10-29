@@ -100,6 +100,17 @@ export const NPC_LOOKS = {
   qingPorter: { era: 'qing-port', skin: '#c08f64', hair: 'short', top: { kind: 'singlet', color: '#e6dccb' }, bottom: '#4b5560', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#ddd3bf', douli: '#d4b878', queue: true } },
   qingPorterPole: { era: 'qing-port', skin: '#b98a60', hair: 'short', top: { kind: 'singlet', color: '#ded3bf' }, bottom: '#56524a', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#ddd3bf', douli: '#cdb070', queue: true, teaPole: { pole: '#b49a5e', chest: '#c9a77a', paper: '#e0ad58', band: '#5a4634' } } },
   qingPorterJacket: { era: 'qing-port', skin: '#c99a70', hair: 'short', top: { kind: 'long', color: '#4f6275', trim: '#425364' }, bottom: '#3d3a36', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#e3d9c6', queue: true } },
+  // 街頭的情境人物（data/streetPropsLayout.js；歷史情境重建，不對應照片裡的任何人）：
+  // 1895–1945 等客的人力車夫（短衫、短褲或綁腿、草鞋、斗笠／鴨舌帽）、1930–1945 牽腳踏車的人
+  rickshawPuller: { era: 'banquet', skin: '#c49369', hair: 'short', top: { kind: 'long', color: '#4b5d70', trim: '#3e4e5f' }, bottom: '#3a3936', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#e3dbc9', douli: '#cdb070' } },
+  rickshawPullerModern: { era: 'modern', skin: '#c99a70', hair: 'short', top: { kind: 'long', color: '#3f4a55', trim: '#333d47' }, bottom: '#2f3238', shoes: ['#2a2622', '#2a2622'], extras: { cap: '#3a3a3c', towel: '#e6dfcf' } },
+  modernCyclist: { era: 'modern', skin: '#e0b48c', hair: 'short', top: { kind: 'shirt', color: '#e9e4d6', trim: '#d4cdbb' }, bottom: '#4a4740', shoes: ['#3a2a20', '#2a2622'], extras: { cap: '#5a5048' } },
+  // 1945–1980：三輪車夫、推攤車的小販、牽腳踏車的人
+  postwarPedicabDriver: { era: 'postwar', skin: '#c99a6e', hair: 'short', top: { kind: 'singlet', color: '#ece8dd' }, bottom: '#3e4450', shoes: ['#2a2622', '#c9bfab'], extras: { towel: '#e6dfcf', cap: '#4a5160' } },
+  postwarCartVendor: { era: 'postwar', skin: '#d2a57c', hair: 'short', top: { kind: 'shirt', color: '#cfd6d8', trim: '#b9c1c4' }, bottom: '#4a4f58', shoes: ['#2a2622', '#c9bfab'], extras: { apron: '#e8e2d2', towel: '#ece6d8' } },
+  postwarCyclist: { era: 'postwar', hair: 'short', top: { kind: 'shirt', color: '#f0ede4', trim: '#d9d4c6' }, bottom: '#56575c', shoes: ['#2a2622', '#c9bfab'] },
+  // 2000–：牽腳踏車的遊客
+  revivalCyclist: { era: 'revival', hair: 'bob', top: { kind: 'tee', color: '#d9a441' }, bottom: '#3a4560', shoes: ['#f1efe9', '#d8d4ca'], extras: { strap: '#3a3a3e' } },
   // 1945–1980：米苔目攤的攤販與客人
   postwarVendor: { era: 'postwar', skin: '#d6ad84', hair: 'short', top: { kind: 'singlet', color: '#efebe1' }, bottom: '#454b55', shoes: ['#2a2622', '#c9bfab'], extras: { apron: '#5f7186', towel: '#ece6d8' } },
   postwarDiner: { era: 'postwar', hair: 'short', top: { kind: 'shirt', color: '#e6e1d3', trim: '#cfc8b6' }, bottom: '#6a6862', shoes: ['#4a3225', '#2b1d16'] },
@@ -173,6 +184,24 @@ export const NPC_POSES = {
     right: { shoulder: 0.12, spread: 0.12, twist: 0, elbow: 0.2 },
     left: { shoulder: 2.55, spread: 0.32, twist: 0.1, elbow: 1.6 },
     anim: { elbow: [0.15, 0.4], period: 2.0, nod: 0.03, turn: 0.1 },
+  },
+  // 坐著休息：等客的車夫坐在車把（或車踏板）上，手放在膝上，偶爾抬手擦汗
+  rest: {
+    seated: true,
+    lean: 0.2,
+    head: 0.12,
+    right: { shoulder: 0.55, spread: 0.12, twist: -0.1, elbow: 0.6 },
+    left: { shoulder: 0.6, spread: 0.1, twist: -0.12, elbow: 0.55 },
+    anim: { elbow: [0.55, 1.6], period: 5.2, nod: 0.06, turn: 0.22 },
+  },
+  // 扶著車把站著：牽腳踏車或推攤車的人，兩手往前握著把手
+  handlebar: {
+    seated: false,
+    lean: 0.06,
+    head: 0.06,
+    right: { shoulder: 0.62, spread: 0.06, twist: 0, elbow: 0.45 },
+    left: { shoulder: 0.62, spread: 0.06, twist: 0, elbow: 0.45 },
+    anim: { elbow: [0.42, 0.52], period: 4.6, nod: 0.04, turn: 0.28 },
   },
   eat: {
     seated: true,
