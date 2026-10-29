@@ -50,6 +50,8 @@ function counter(b, tint) {
   b.cylinder('plain', 0.2, 0.22, 0.28, 12, [S.pot.x, top - 0.22, S.pot.z], { tint: '#7a5a44' })
   b.box('plain', [0.13, 0.08, 0.02], [S.pot.x, top - 0.26, 0.022], { tint: '#2a1d16' })
   b.box('bulb', [0.08, 0.03, 0.01], [S.pot.x, top - 0.28, 0.033], { tint: '#ff9a52' })
+  // 煤球爐的煙：從鍋邊和爐身之間冒出來
+  b.addSmoke(S.pot.x - 0.22, top + 0.02, S.pot.z, 0.45)
   // 攤台旁的水桶與一疊木柴
   b.cylinder('plain', 0.13, 0.11, 0.3, 12, [-half - 0.2, G + 0.15, back + 0.15], { tint: '#6f7f86' })
 }

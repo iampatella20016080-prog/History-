@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { CanvasTexture, Color, DoubleSide, MeshBasicMaterial, MeshToonMaterial, SRGBColorSpace } from 'three'
+import { BufferAttribute, CanvasTexture, Color, DoubleSide, Matrix4, MeshBasicMaterial, MeshToonMaterial, SRGBColorSpace } from 'three'
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { LAYERS, RIVER } from '../config.js'
 import { getEra } from '../../data/eras.js'
 import { WHARF_BOATS } from '../../data/qingWharfLayout.js'
 import { atmosphere } from '../atmosphere.js'
 import { QUALITY_MODES } from '../quality.js'
+import { motionSettings } from '../motion.js'
+import { createReflectionMaterial, patchWaterMaterial, reflectionUniforms, waterUniforms } from '../rendering/waterShader.js'
 import { useGameStore } from '../../state/useGameStore.js'
 import { PartBuilder } from '../builders/PartBuilder.js'
 import { buildFerry, buildJunk, buildSampan } from '../builders/environment.js'
@@ -40,8 +43,32 @@ const BOATS = {
   ],
 }
 
-function Boat({ boat }) {
+/** 對水面（y = 水位）鏡射的矩陣 */
+const MIRROR = new Matrix4().makeTranslation(0, WL, 0).multiply(new Matrix4().makeScale(1, -1, 1)).multiply(new Matrix4().makeTranslation(0, -WL, 0))
+
+let reflectionMaterial = null
+function getReflectionMaterial() {
+  reflectionMaterial ??= createReflectionMaterial()
+  return reflectionMaterial
+}
+
+/** 船的倒影幾何：整艘船合成一個網格（一次繪製），顏色用頂點色 */
+function reflectionGeometry(batches) {
+  const parts = batches.map(({ geometry }) => {
+    const g = geometry.index ? geometry.toNonIndexed() : geometry.clone()
+    for (const name of Object.keys(g.attributes)) if (name !== 'position' && name !== 'color') g.deleteAttribute(name)
+    if (!g.attributes.color) g.setAttribute('color', new BufferAttribute(new Float32Array(g.attributes.position.count * 3).fill(0.6), 3))
+    return g
+  })
+  const merged = mergeGeometries(parts)
+  parts.forEach((g) => g.dispose())
+  merged.computeBoundingSphere()
+  return merged
+}
+
+function Boat({ boat, reflection }) {
   const group = useRef()
+  const mirror = useRef()
   const batches = useMemo(() => {
     const b = new PartBuilder()
     if (boat.type === 'sampan') buildSampan(b, { length: boat.length, beam: boat.beam, canopy: boat.canopy, cargo: boat.cargo })
@@ -49,6 +76,8 @@ function Boat({ boat }) {
     else buildJunk(b, { length: boat.length, beam: boat.beam, sails: boat.sails, furled: boat.furled, sailTint: boat.sailTint, cargo: boat.cargo })
     return b.build()
   }, [boat])
+  const mirrored = useMemo(() => (reflection ? reflectionGeometry(batches) : null), [batches, reflection])
+  useEffect(() => () => mirrored?.dispose(), [mirrored])
 
   useFrame((state) => {
     const t = state.clock.elapsedTime
@@ -60,12 +89,33 @@ function Boat({ boat }) {
     if (boat.drift) {
       g.position.z = boat.position[2] + Math.sin(t * 0.02 + boat.bob) * 6 * Math.sign(boat.drift)
     }
+    // 倒影跟著船上下起伏與漂移：船的世界矩陣對水面鏡射（River 的群組在原點）
+    const m = mirror.current
+    if (m) {
+      g.updateMatrix()
+      m.matrix.multiplyMatrices(MIRROR, g.matrix)
+      m.matrixWorldNeedsUpdate = true
+    }
   })
 
   return (
-    <group ref={group} position={boat.position} rotation-y={boat.rotationY}>
-      <StaticBatches batches={batches} />
-    </group>
+    <>
+      <group ref={group} position={boat.position} rotation-y={boat.rotationY}>
+        <StaticBatches batches={batches} />
+      </group>
+      {mirrored && (
+        <mesh
+          ref={mirror}
+          name="boat-reflection"
+          geometry={mirrored}
+          material={getReflectionMaterial()}
+          matrixAutoUpdate={false}
+          frustumCulled={false}
+          renderOrder={2}
+          onUpdate={(mesh) => mesh.layers.set(LAYERS.NO_OUTLINE)}
+        />
+      )}
+    </>
   )
 }
 
@@ -112,26 +162,51 @@ function RiverMist({ detail }) {
   )
 }
 
-/** 淡水河：卡通水面（貼圖緩慢流動）、河面薄霧與各年代的船隻 */
+/**
+ * 淡水河：卡通水面（貼圖緩慢流動，加上波紋、反光與燈火倒影，見 rendering/waterShader.js）、
+ * 河面薄霧、各年代的船隻與船的倒影。
+ */
 export function River({ eraId }) {
   const material = useMemo(() => {
     const texture = getTextures().water.clone()
     texture.needsUpdate = true
     texture.repeat.set(160, 160)
-    return new MeshToonMaterial({
-      map: texture,
-      color: new Color('#ffffff'),
-      gradientMap: getMaterials().gradientMap,
-    })
+    return patchWaterMaterial(
+      new MeshToonMaterial({
+        map: texture,
+        color: new Color('#ffffff'),
+        gradientMap: getMaterials().gradientMap,
+      }),
+    )
   }, [])
 
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     material.map.offset.x -= delta * 0.004
     material.map.offset.y += delta * 0.0015
-    material.color.copy(atmosphere.current.water)
+    const a = atmosphere.current
+    material.color.copy(a.water)
+    const t = state.clock.elapsedTime
+    const motion = motionSettings(useGameStore.getState().qualityMode)
+    waterUniforms.uTime.value = t
+    waterUniforms.uOctaves.value = motion.rippleOctaves
+    waterUniforms.uSunDir.value.copy(a.sunDirection)
+    // 反光的顏色是天空裡太陽周圍的光暈色；太陽越低（傍晚）光帶越亮、越暖
+    waterUniforms.uSunColor.value.copy(a.sunGlow).lerp(a.sunColor, 0.4)
+    waterUniforms.uGlint.value = Math.min(1.2, 0.35 + a.sunIntensity * 0.18 + (1 - Math.min(a.elevation, 60) / 60) * 0.5)
+    waterUniforms.uSky.value.copy(a.skyHorizon)
+    // 燈火倒影只在入夜的年代（酒樓繁華最明顯、摩登較淡，白天的年代沒有）
+    const night = Math.min(1, Math.max(0, (a.glow * a.lanternGlow - 0.45) / 0.35))
+    waterUniforms.uNight.value = night * night * (3 - 2 * night)
+    waterUniforms.uEdgeX.value = RIVER.edgeX
+    reflectionUniforms.uTime.value = t
+    reflectionUniforms.uWaterLevel.value = WL
+    reflectionUniforms.uEdgeX.value = RIVER.edgeX
+    // 船身顏色的亮度跟著天光（白天白帆比較亮，入夜時整艘船都暗下來）
+    reflectionUniforms.uTone.value.setScalar(Math.min(1, 0.35 + a.hemiIntensity * 0.12 + a.sunIntensity * 0.15))
   })
 
   const detail = useGameStore((state) => QUALITY_MODES[state.qualityMode]?.detail !== false)
+  const allReflections = useGameStore((state) => motionSettings(state.qualityMode).reflections === 'all')
   const boats = BOATS[getEra(eraId)?.streetProps.boats] ?? BOATS.junks
   const width = 1100
   return (
@@ -141,7 +216,10 @@ export function River({ eraId }) {
       </mesh>
       {boats.map((boat, i) =>
         // 流暢模式不畫遠處河面上的船
-        detail || (boat.position[0] > -80 && !boat.detailOnly) ? <Boat key={`${eraId}-${i}`} boat={boat} /> : null,
+        // 倒影：精緻模式每艘船都有，流暢模式只有近處的船（和船本身的規則相同，兩種畫質都看得到）
+        detail || (boat.position[0] > -80 && !boat.detailOnly) ? (
+          <Boat key={`${eraId}-${i}`} boat={boat} reflection={allReflections || boat.position[0] > -80} />
+        ) : null,
       )}
       <RiverMist detail={detail} />
     </group>

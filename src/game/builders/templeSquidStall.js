@@ -55,6 +55,8 @@ function counter(b, tint) {
   // 湯鍋下的煤球爐（從前面的開口看得到）
   b.cylinder('plain', 0.2, 0.22, 0.26, 12, [S.pot.x, top - 0.2, S.pot.z], { tint: '#7a5a44' })
   b.box('plain', [0.12, 0.08, 0.02], [S.pot.x, top - 0.25, -0.008], { tint: '#2a1d16' })
+  // 煤球爐的煙：從鍋邊和爐身之間冒出來
+  b.addSmoke(S.pot.x + 0.22, top + 0.02, S.pot.z, 0.45)
 }
 
 /** 簡單的帆布棚：四根竹竿、前低後高的帆布、前緣的垂邊與招牌 */

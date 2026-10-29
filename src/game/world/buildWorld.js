@@ -442,6 +442,7 @@ export function* eraWorldSteps(eraId) {
     lanterns: b.lanterns,
     steam: b.steam,
     banners: b.banners,
+    leafTrees: b.leafTrees,
     textLanterns,
     stores,
     blockers,

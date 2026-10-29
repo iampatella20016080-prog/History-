@@ -1,0 +1,161 @@
+{
+  "qing-port": {
+    "timeOfDay": "午後斜陽",
+    "sun": {
+      "azimuth": 228,
+      "elevation": 44,
+      "color": "#ffeccc",
+      "intensity": 2.6
+    },
+    "hemi": {
+      "sky": "#e4ecea",
+      "ground": "#c9ae86",
+      "intensity": 1.7
+    },
+    "ambient": {
+      "color": "#fff3e2",
+      "intensity": 0.16
+    },
+    "sky": {
+      "top": "#b9cfd0",
+      "horizon": "#f0e2c6",
+      "bottom": "#e6dcc4",
+      "sunGlow": "#ffd9a0",
+      "stars": 0
+    },
+    "fog": {
+      "color": "#e9dcc0",
+      "near": 42,
+      "far": 400
+    },
+    "mountains": "#f2ecdc",
+    "water": "#c9dcd2",
+    "clouds": {
+      "color": "#fff8ec",
+      "emissive": "#d8cbb3"
+    },
+    "grade": {
+      "exposure": 1,
+      "saturation": 0.92,
+      "contrast": 1,
+      "tint": [
+        1.035,
+        1,
+        0.94
+      ],
+      "vignette": 0.17
+    },
+    "lines": {
+      "color": "#2b211a",
+      "strength": 0.82
+    },
+    "glow": 0.12,
+    "riverMist": 0.35
+  },
+  "postwar": {
+    "timeOfDay": "午後",
+    "sun": {
+      "azimuth": 214,
+      "elevation": 50,
+      "color": "#fff0d6",
+      "intensity": 2.55
+    },
+    "hemi": {
+      "sky": "#dfe6df",
+      "ground": "#b49f82",
+      "intensity": 1.6
+    },
+    "ambient": {
+      "color": "#fff1dc",
+      "intensity": 0.15
+    },
+    "sky": {
+      "top": "#a8c4cc",
+      "horizon": "#ece0c8",
+      "bottom": "#ddd2bc",
+      "sunGlow": "#ffe2b4",
+      "stars": 0
+    },
+    "fog": {
+      "color": "#e2d6bf",
+      "near": 40,
+      "far": 360
+    },
+    "mountains": "#e6e0d0",
+    "water": "#b8c9bd",
+    "clouds": {
+      "color": "#fbf4e6",
+      "emissive": "#cfc2a8"
+    },
+    "grade": {
+      "exposure": 1,
+      "saturation": 0.84,
+      "contrast": 1.03,
+      "tint": [
+        1.05,
+        1,
+        0.9
+      ],
+      "vignette": 0.24
+    },
+    "lines": {
+      "color": "#2d241c",
+      "strength": 0.82
+    },
+    "glow": 0.08,
+    "riverMist": 0.15
+  },
+  "revival": {
+    "timeOfDay": "明亮白日",
+    "sun": {
+      "azimuth": 200,
+      "elevation": 58,
+      "color": "#fff8ec",
+      "intensity": 2.45
+    },
+    "hemi": {
+      "sky": "#e8f0ee",
+      "ground": "#cdbfa2",
+      "intensity": 1.75
+    },
+    "ambient": {
+      "color": "#fffaf0",
+      "intensity": 0.18
+    },
+    "sky": {
+      "top": "#a9cbd8",
+      "horizon": "#f1ece0",
+      "bottom": "#e4ddcc",
+      "sunGlow": "#fff1d0",
+      "stars": 0
+    },
+    "fog": {
+      "color": "#e9e6da",
+      "near": 46,
+      "far": 420
+    },
+    "mountains": "#eef0e6",
+    "water": "#c3d7d2",
+    "clouds": {
+      "color": "#ffffff",
+      "emissive": "#d9d7cf"
+    },
+    "grade": {
+      "exposure": 1.02,
+      "saturation": 0.95,
+      "contrast": 1,
+      "tint": [
+        1,
+        1,
+        0.97
+      ],
+      "vignette": 0.14
+    },
+    "lines": {
+      "color": "#2f2822",
+      "strength": 0.74
+    },
+    "glow": 0.42,
+    "riverMist": 0.1
+  }
+}

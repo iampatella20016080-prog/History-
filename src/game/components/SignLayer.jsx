@@ -4,6 +4,7 @@ import { BufferAttribute, BufferGeometry, Color, DoubleSide, MeshToonMaterial } 
 import { atmosphere } from '../atmosphere.js'
 import { getMaterials } from '../rendering/materials.js'
 import { createSignAtlas, signKey } from '../rendering/signTexture.js'
+import { windUniforms } from '../rendering/wind.js'
 
 /**
  * 招牌與布幡：整個年代的招牌畫在同一張圖集上，合併成一個網格（一次繪製）。
@@ -108,13 +109,16 @@ export function SignLayer({ signs, banners }) {
       bannerMaterial.side = DoubleSide
       bannerMaterial.onBeforeCompile = (shader) => {
         shader.uniforms.uTime = swayUniforms.uTime
+        shader.uniforms.uWind = windUniforms.uWind
         shader.vertexShader = shader.vertexShader
-          .replace('#include <common>', '#include <common>\nattribute vec2 aSway;\nuniform float uTime;')
+          .replace('#include <common>', '#include <common>\nattribute vec2 aSway;\nuniform float uTime;\nuniform float uWind;')
           .replace(
             '#include <begin_vertex>',
             `#include <begin_vertex>
             float swing = aSway.x * aSway.x;
-            transformed += objectNormal * swing * (sin(uTime * 1.6 + aSway.y) * 0.05 + sin(uTime * 3.1 + aSway.y * 2.3) * 0.015);`,
+            // 幅度跟著整條街的風力（rendering/wind.js）：一陣風吹來時布幡擺得比較大
+            float gust = 0.6 + uWind * 0.9;
+            transformed += objectNormal * swing * gust * (sin(uTime * 1.6 + aSway.y) * 0.05 + sin(uTime * 3.1 + aSway.y * 2.3) * 0.015);`,
           )
       }
       bannerMaterial.customProgramCacheKey = () => 'banner-sway'

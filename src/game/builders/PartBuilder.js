@@ -113,6 +113,7 @@ export class PartBuilder {
     this.lanterns = [] // 會隨風擺動的燈籠（實例化渲染）
     this.steam = [] // 蒸氣
     this.banners = [] // 布幡
+    this.leafTrees = [] // 會落葉的榕樹（樹冠範圍）
   }
 
   /** 登記招牌：position 為本地座標，rotationY 為本地旋轉 */
@@ -140,6 +141,19 @@ export class PartBuilder {
   addSteam(x, y, z, strength = 1) {
     const p = this.transformPoint(x, y, z)
     this.steam.push({ position: [p.x, p.y, p.z], strength })
+  }
+
+  /** 爐灶與香爐的煙（和蒸氣一起畫，顏色較灰、升得較高、會被風吹斜） */
+  addSmoke(x, y, z, strength = 1) {
+    const p = this.transformPoint(x, y, z)
+    this.steam.push({ position: [p.x, p.y, p.z], strength, kind: 'smoke' })
+  }
+
+  /** 榕樹的落葉範圍：樹冠中心（本地座標）、樹冠下緣高度 top、半徑與地面高度 */
+  addLeafTree(x, z, { top, radius, ground = 0 }) {
+    const p = this.transformPoint(x, top, z)
+    const g = this.transformPoint(x, ground, z)
+    this.leafTrees.push({ position: [p.x, g.y, p.z], top: p.y, radius, ground: g.y })
   }
 
   addBanner(banner) {

@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Fog, Vector3 } from 'three'
-import { atmosphere } from '../atmosphere.js'
+import { atmosphere, MATERIAL_VALUE_KEYS } from '../atmosphere.js'
 import { playerState } from '../runtime.js'
 import { getQualitySettings } from '../quality.js'
 import { useGameStore } from '../../state/useGameStore.js'
-import { setGlowLevel } from '../rendering/materials.js'
+import { setGlowLevel, setMaterialValues } from '../rendering/materials.js'
 
 const SHADOW_SIZE = 30
 const LIGHT_DISTANCE = 60
@@ -67,6 +67,7 @@ export function Lighting() {
     ambient.current.color.copy(a.ambientColor)
     ambient.current.intensity = a.ambientIntensity
     setGlowLevel(a.glow, a.lanternGlow)
+    setMaterialValues(a, MATERIAL_VALUE_KEYS)
     // 冷色補光：只有設定的年代有強度（其他年代為 0）。燈光始終存在，
     // 避免切換年代時燈光數量改變、所有材質重新編譯著色器而卡頓
     const f = fill.current

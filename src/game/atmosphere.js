@@ -49,7 +49,36 @@ const NUMBER_KEYS = [
   ['tintB', (l) => l.grade.tint[2]],
   ['azimuth', (l) => l.sun.azimuth],
   ['elevation', (l) => l.sun.elevation],
+  // 分離色調（暗部、亮部各自往一個顏色偏）與暗部提亮；沒有設定的年代為中性值，調色結果不變
+  ['shadowR', (l) => gradeValues(l).shadowTint[0]],
+  ['shadowG', (l) => gradeValues(l).shadowTint[1]],
+  ['shadowB', (l) => gradeValues(l).shadowTint[2]],
+  ['highlightR', (l) => gradeValues(l).highlightTint[0]],
+  ['highlightG', (l) => gradeValues(l).highlightTint[1]],
+  ['highlightB', (l) => gradeValues(l).highlightTint[2]],
+  ['lift', (l) => gradeValues(l).lift],
 ]
+
+/**
+ * 依材質調整明度的街景材質（屋瓦、木作偏暗，灰泥偏亮）：拉開低光線年代裡各種材質的明暗差。
+ * 只乘在街景共用材質的顏色上，室內材質是另外複製的一份，不受影響。
+ */
+export const MATERIAL_VALUE_KEYS = ['plaster', 'stucco', 'brick', 'wood', 'planks', 'roof', 'tile', 'stone', 'granite', 'lattice']
+
+/** 年代的材質明度倍率（沒有設定的材質為 1） */
+export function materialValues(lighting) {
+  const values = {}
+  for (const key of MATERIAL_VALUE_KEYS) values[key] = lighting.materialValue?.[key] ?? 1
+  return values
+}
+
+/** 年代的分離色調與暗部提亮（沒有設定時為中性值） */
+export function gradeValues(lighting) {
+  const g = lighting.grade ?? {}
+  return { shadowTint: g.shadowTint ?? [1, 1, 1], highlightTint: g.highlightTint ?? [1, 1, 1], lift: g.lift ?? 0 }
+}
+
+for (const key of MATERIAL_VALUE_KEYS) NUMBER_KEYS.push([`value_${key}`, (l) => materialValues(l)[key]])
 
 function snapshot(lighting) {
   const state = {}
