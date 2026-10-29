@@ -21,7 +21,7 @@ import {
 } from '../src/game/viewerCamera.js'
 import { buildEraInteriorSync, buildEraWorldSync } from '../src/game/world/buildWorld.js'
 import { getShopPlacement } from '../src/game/world/placement.js'
-import { inRiceAndShineLot } from './helpers.js'
+import { inRiceAndShineLot, inTeaHouseLots } from './helpers.js'
 
 /**
  * 導演的豆花店 Action! Bar：只在「老屋新生」出現的迪化街一段224巷、巷子裡的二層樓店面、
@@ -322,7 +322,11 @@ describe('跟隨鏡頭貼著障礙物時不會進到障礙物裡', () => {
     for (const era of ERAS.filter((item) => item.id !== 'revival')) {
       const all = buildEraWorldSync(era.id).followAreas
       const rice = all.filter(inRiceAndShineLot)
-      const areas = all.filter((r) => !inRiceAndShineLot(r))
+      // 港口商街另外有寶順洋行與林華泰店裡與店前的範圍（第 10 階段，見 tests/teaInteriors.test.js）
+      const areas = all.filter((r) => !inRiceAndShineLot(r) && !inTeaHouseLots(r))
+      if (era.id === 'qing-port') {
+        assert.equal(all.filter(inTeaHouseLots).length, 4, era.id)
+      }
       if (era.id === 'postwar') {
         assert.equal(areas.length, 1, era.id)
         for (const r of areas) assert.ok(r.minX > -2 && r.maxX < 10 && r.minZ > 4.5 && r.maxZ < 10.7, `${era.id} 在廟埕裡`)

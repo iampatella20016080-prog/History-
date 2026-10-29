@@ -21,7 +21,7 @@ import {
 } from '../src/game/viewerCamera.js'
 import { buildEraInteriorSync, buildEraWorldSync } from '../src/game/world/buildWorld.js'
 import { getShopPlacement } from '../src/game/world/placement.js'
-import { inRiceAndShineLot, inShizixuanLot } from './helpers.js'
+import { inRiceAndShineLot, inShizixuanLot, inTeaHouseLots } from './helpers.js'
 
 /**
  * 永樂市場與好粿緣：只在「老屋新生」出現的街底市場大樓、可以走進去的一樓市場（碰撞、鏡頭、觀賞模式）、
@@ -95,16 +95,14 @@ describe('永樂市場：只在「老屋新生」的街底', () => {
     for (const era of ERAS.filter((item) => item.id !== 'revival')) {
       const world = buildEraWorldSync(era.id)
       // 1930 與 1945 只有稻舍（迪化街329號店屋）與十字軒糕餅舖的室內與觀賞範圍（見 tests/riceAndShine.test.js、
-      // tests/shizixuan.test.js），1895 以前走不進去；戰後另外有慈聖宮廟埕後段的觀賞範圍（豆花攤與糕粿攤，見
-      // tests/templeSnacks.test.js）；任何年代都沒有市場的
+      // tests/shizixuan.test.js）；港口商街有寶順洋行與林華泰（第 10 階段，見 tests/teaInteriors.test.js）；
+      // 戰後另外有慈聖宮廟埕後段的觀賞範圍（豆花攤與糕粿攤，見 tests/templeSnacks.test.js）；任何年代都沒有市場的
+      const expected = { 'qing-port': ['dodd-tea-house', 'lin-hua-tai'], modern: ['rice-and-shine-329', 'shizixuan'], postwar: ['rice-and-shine-329', 'shizixuan'] }[era.id] ?? []
+      assert.deepEqual([...world.interiors.map((item) => item.id)].sort(), expected.sort(), era.id)
       const walkIn = era.id === 'modern' || era.id === 'postwar'
-      assert.deepEqual(
-        [...world.interiors.map((item) => item.id)].sort(),
-        walkIn ? ['rice-and-shine-329', 'shizixuan'].sort() : [],
-        era.id,
-      )
       assert.equal(world.viewerRegions.filter(inRiceAndShineLot).length, walkIn ? 5 : 0, `${era.id} 稻舍`)
-      assert.equal(world.viewerRegions.filter((r) => !inRiceAndShineLot(r) && !inShizixuanLot(r)).length, era.id === 'postwar' ? 1 : 0, era.id)
+      // 港口商街：寶順洋行與林華泰各有騎樓與室內兩個觀賞範圍（第 10 階段）；戰後：慈聖宮廟埕後段
+      assert.equal(world.viewerRegions.filter((r) => !inRiceAndShineLot(r) && !inShizixuanLot(r) && !inTeaHouseLots(r)).length, era.id === 'postwar' ? 1 : 0, era.id)
       assert.ok(!world.buildings.some((item) => item.storeId === 'yong-le-market' || item.storeId === 'hao-guo-yuan'), era.id)
       const market = world.buildings.find((item) => item.storeId === 'yong-le-market')
       assert.ok(!market)
@@ -116,7 +114,7 @@ describe('永樂市場：只在「老屋新生」的街底', () => {
         let count = 0
         for (let i = 0; i < attr.count; i++) {
           const point = { minX: attr.getX(i), maxX: attr.getX(i), minZ: attr.getZ(i), maxZ: attr.getZ(i) }
-          if (!inRiceAndShineLot(point) && !inShizixuanLot(point)) count++
+          if (!inRiceAndShineLot(point) && !inShizixuanLot(point) && !inTeaHouseLots(point)) count++
         }
         return count ? [count] : []
       })

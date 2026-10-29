@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Color, Euler, MeshToonMaterial, Quaternion, Vector3 } from 'three'
-import { buildInspectObject, inspectPartRotation } from '../builders/inspectObjects.js'
+import { buildInspectObject, inspectPartTransform } from '../builders/inspectObjects.js'
 import { inspectRuntime, resetInspectRuntime } from '../inspectRuntime.js'
 import { inspectActionT, updateInspect } from '../objectInspect.js'
 import { getMaterials } from '../rendering/materials.js'
@@ -71,8 +71,9 @@ export function ObjectStage() {
     for (const part of object.parts) {
       const ref = partRefs.current[part.id]
       if (ref && part.animate) {
-        const rotation = inspectPartRotation(part, inspectActionT(state, part.animate.action))
-        ref.rotation.set(part.animate.axis === 'x' ? rotation : 0, part.animate.axis === 'y' ? rotation : 0, part.animate.axis === 'z' ? rotation : 0)
+        const { rotation, offset } = inspectPartTransform(part, inspectActionT(state, part.animate.action))
+        ref.rotation.set(rotation[0], rotation[1], rotation[2])
+        ref.position.set(offset[0], offset[1], offset[2])
       }
     }
   }, 0.5)

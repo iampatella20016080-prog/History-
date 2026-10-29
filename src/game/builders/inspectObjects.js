@@ -172,9 +172,118 @@ function buildRiceMeasure() {
   }
 }
 
+/**
+ * 茶籌（口述來源、待核；示意模型）：小木座上一枚鐵片籌與一枚紙籌，
+ * 動作 flip 把鐵籌翻面看背面的記號。
+ */
+function buildTeaTally() {
+  const base = new Parts()
+  // 木座與紙籌（長方的粗紙，上面一方紅印）
+  base.add('#8a6a4c', box(0.3, 0.025, 0.2), { p: [0, 0.0125, 0] })
+  base.add('#e3d5ae', box(0.07, 0.004, 0.13), { p: [0.08, 0.027, 0.01], r: [0, -0.18, 0] })
+  base.add('#b8463a', box(0.03, 0.004, 0.03), { p: [0.085, 0.03, -0.02], r: [0, -0.18, 0] })
+
+  // 鐵片籌（圓片、中央打孔、正面鑿字的刻痕、背面一道記號）：以直徑為軸翻面
+  const tally = new Parts()
+  const y = 0.045
+  tally.add('#5a544c', new CylinderGeometry(0.055, 0.055, 0.008, 18), { p: [-0.06, y, 0] })
+  tally.add('#3a352e', new CylinderGeometry(0.009, 0.009, 0.012, 8), { p: [-0.06, y, -0.035] })
+  tally.add('#8f887c', box(0.04, 0.003, 0.012), { p: [-0.06, y + 0.005, 0.005] })
+  tally.add('#8f887c', box(0.028, 0.003, 0.01), { p: [-0.06, y + 0.005, 0.025] })
+  tally.add('#7c746a', box(0.05, 0.003, 0.014), { p: [-0.06, y - 0.0055, 0.0], r: [Math.PI, 0, 0.3] })
+
+  return {
+    radius: 0.2,
+    centerY: 0.05,
+    parts: [
+      { id: 'base', geometry: base.build() },
+      { id: 'tally', geometry: tally.build(), pivot: [-0.06, y, 0], animate: { action: 'flip', axis: 'x', from: 0, to: Math.PI } },
+    ],
+  }
+}
+
+/**
+ * 桿秤（歷史情境重建）：秤桿吊在提繩上，秤鉤掛著茶簍，秤錘沿著秤桿滑動。
+ * 動作 weigh：秤錘往外滑、秤桿擺回水平（秤到平衡）。
+ */
+function buildTeaScale() {
+  const beamLen = 0.9
+  const beamY = 0.5
+  const frame = new Parts()
+  // 提繩（上方的吊點）
+  frame.add('#3a332c', box(0.008, 0.16, 0.008), { p: [-0.1, beamY + 0.08, 0] })
+  frame.add('#6b5436', box(0.06, 0.02, 0.06), { p: [-0.1, beamY + 0.17, 0] })
+
+  // 秤桿＋秤鉤＋茶簍（一端）：整組以吊點為軸，未秤時下垂、秤重時回水平
+  const beam = new Parts()
+  beam.add('#c9a05e', new CylinderGeometry(0.014, 0.02, beamLen, 10), { p: [beamLen / 2 - 0.22, beamY, 0], r: [0, 0, Math.PI / 2] })
+  for (let i = 1; i <= 6; i++) beam.add('#8a6a3c', new CylinderGeometry(0.016, 0.016, 0.004, 8), { p: [-0.22 + (beamLen / 6.5) * i, beamY, 0], r: [0, 0, Math.PI / 2] })
+  beam.add('#3a332c', box(0.01, 0.1, 0.01), { p: [-0.32, beamY - 0.05, 0] })
+  beam.add('#4a443c', new CylinderGeometry(0.012, 0.012, 0.05, 6), { p: [-0.32, beamY - 0.11, 0], r: [Math.PI / 2.4, 0, 0] })
+  // 茶簍（竹簍、簍裡的茶）
+  beam.add('#cdb27e', new CylinderGeometry(0.15, 0.11, 0.14, 12, 1, true), { p: [-0.32, beamY - 0.26, 0] })
+  beam.add('#b89c66', new CylinderGeometry(0.11, 0.11, 0.015, 12), { p: [-0.32, beamY - 0.33, 0] })
+  beam.add('#4a4034', new CylinderGeometry(0.13, 0.13, 0.03, 12), { p: [-0.32, beamY - 0.21, 0] })
+  beam.add('#3a332c', box(0.006, 0.12, 0.006), { p: [-0.38, beamY - 0.14, 0], r: [0, 0, 0.35] })
+  beam.add('#3a332c', box(0.006, 0.12, 0.006), { p: [-0.26, beamY - 0.14, 0], r: [0, 0, -0.35] })
+
+  // 秤錘（沿秤桿滑動）：鐵錘與吊繩
+  const weight = new Parts()
+  weight.add('#3a352e', box(0.008, 0.07, 0.008), { p: [0.1, beamY - 0.035, 0] })
+  weight.add('#4a443c', new CylinderGeometry(0.03, 0.038, 0.07, 10), { p: [0.1, beamY - 0.1, 0] })
+
+  return {
+    radius: 0.55,
+    centerY: 0.38,
+    parts: [
+      { id: 'frame', geometry: frame.build() },
+      { id: 'beam', geometry: beam.build(), pivot: [-0.1, beamY, 0], animate: { action: 'weigh', axis: 'z', from: -0.18, to: 0 } },
+      { id: 'weight', geometry: weight.build(), pivot: [0.1, beamY, 0], animate: { action: 'weigh', kind: 'slide', axis: 'x', from: 0, to: 0.32 } },
+    ],
+  }
+}
+
+/**
+ * 焙籠與焙坑（歷史情境重建，形制依 Davidson 1903）：
+ * 磚臺上的焙坑（覆灰的炭火透著暗紅），焙籠架在坑口；動作 lift 把焙籠抬起來看坑裡的炭火。
+ */
+function buildRoastingBasket() {
+  const pit = new Parts()
+  // 低磚臺一角與坑口
+  pit.add('#b07a5c', box(0.9, 0.3, 0.9), { p: [0, 0.15, 0] })
+  pit.add('#9c8a74', box(0.96, 0.04, 0.96), { p: [0, 0.32, 0] })
+  pit.add('#8a5f46', new CylinderGeometry(0.33, 0.33, 0.05, 16), { p: [0, 0.345, 0] })
+  pit.add('#8a8178', new CylinderGeometry(0.28, 0.28, 0.04, 16), { p: [0, 0.35, 0] })
+  pit.add('#d2622e', new CylinderGeometry(0.14, 0.14, 0.03, 12), { p: [0, 0.365, 0] })
+  pit.add('#f0a24e', new CylinderGeometry(0.06, 0.06, 0.02, 8), { p: [0.04, 0.375, -0.03] })
+
+  // 焙籠（上下開、腰部收窄、腰下有篩、篩上一層茶）：抬起時往上、往旁邊移
+  const basket = new Parts()
+  const y0 = 0.36
+  const H = 0.9
+  basket.add('#cdb27e', new CylinderGeometry(0.3, 0.24, H * 0.42, 14, 1, true), { p: [0, y0 + H * 0.21, 0] })
+  basket.add('#d4bc88', new CylinderGeometry(0.24, 0.3, H * 0.58, 14, 1, true), { p: [0, y0 + H * 0.42 + H * 0.29, 0] })
+  basket.add('#a8905e', new CylinderGeometry(0.235, 0.235, 0.03, 14), { p: [0, y0 + H * 0.42, 0] })
+  basket.add('#4a4034', new CylinderGeometry(0.21, 0.21, 0.05, 14), { p: [0, y0 + H * 0.42 + 0.04, 0] })
+  basket.add('#b89c66', new CylinderGeometry(0.31, 0.31, 0.03, 14, 1, true), { p: [0, y0 + H - 0.015, 0] })
+  basket.add('#b89c66', new CylinderGeometry(0.31, 0.31, 0.03, 14, 1, true), { p: [0, y0 + 0.015, 0] })
+
+  return {
+    radius: 0.75,
+    centerY: 0.65,
+    parts: [
+      { id: 'pit', geometry: pit.build() },
+      { id: 'basket', geometry: basket.build(), pivot: [0, y0, 0], animate: { action: 'lift', kind: 'slide', axis: 'y', from: 0, to: 0.5, drift: [0.55, 0, 0.1] } },
+    ],
+  }
+}
+
 const BUILDERS = {
   'tea-chest': buildTeaChest,
   'rice-measure': buildRiceMeasure,
+  'tea-tally': buildTeaTally,
+  'tea-scale': buildTeaScale,
+  'roasting-basket': buildRoastingBasket,
 }
 
 /** 同一件器物的幾何共用（快取到頁面關閉；幾何不大，不需要釋放） */
@@ -186,9 +295,29 @@ export function buildInspectObject(objectId) {
   return cache.get(objectId)
 }
 
-/** 會動零件目前的旋轉角（依動作進度 0–1，緩入緩出） */
+/** 會動零件目前的旋轉角（依動作進度 0–1，緩入緩出）；滑動的零件（kind: 'slide'）用 inspectPartTransform */
 export function inspectPartRotation(part, t) {
   if (!part.animate) return 0
   const eased = t * t * (3 - 2 * t)
   return part.animate.from + (part.animate.to - part.animate.from) * eased
+}
+
+/**
+ * 會動零件目前的位移與旋轉（依動作進度 0–1，緩入緩出）：
+ * - 預設繞樞軸旋轉（axis 軸，從 from 轉到 to）
+ * - kind: 'slide' 的零件沿 axis 軸滑動（例如秤錘、抬起的焙籠），drift 是額外的位移方向
+ */
+export function inspectPartTransform(part, t) {
+  const result = { rotation: [0, 0, 0], offset: [0, 0, 0] }
+  if (!part.animate) return result
+  const eased = t * t * (3 - 2 * t)
+  const value = part.animate.from + (part.animate.to - part.animate.from) * eased
+  const axisIndex = { x: 0, y: 1, z: 2 }[part.animate.axis] ?? 0
+  if (part.animate.kind === 'slide') {
+    result.offset[axisIndex] = value
+    for (const [i, d] of (part.animate.drift ?? []).entries()) result.offset[i] += d * eased
+  } else {
+    result.rotation[axisIndex] = value
+  }
+  return result
 }
