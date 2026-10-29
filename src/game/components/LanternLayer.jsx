@@ -13,11 +13,13 @@ import {
 } from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { atmosphere } from '../atmosphere.js'
+import { lanternSwing, windStrength } from '../motion.js'
 import { getMaterials } from '../rendering/materials.js'
 
 /**
  * 街上所有的燈籠（實例化繪製：一個年代只需一次繪製）。
- * 燈籠以頂端的掛點為軸心隨風輕擺；亮度依年代的 glow 值變化。
+ * 燈籠以頂端的掛點為軸心隨風輕擺（單擺，擺角與頻率見 motion.js 的 lanternSwing；
+ * 每個影格只更新實例矩陣，仍是一次繪製）；亮度依年代的 glow 值變化。
  */
 function colored(geometry, hex) {
   const g = geometry.index ? geometry.toNonIndexed() : geometry
@@ -97,11 +99,14 @@ export function LanternLayer({ lanterns }) {
     const instance = mesh.current
     if (!instance) return
     const t = state.clock.elapsedTime
+    const wind = windStrength(t)
     lanterns.forEach((lantern, i) => {
       const s = lantern.scale ?? 1
       const [x, y, z] = lantern.position
       _position.set(x, y + 0.42 * s, z)
-      _euler.set(Math.sin(t * 0.9 + i * 1.3) * 0.035, lantern.rotationY ?? 0, Math.sin(t * 1.3 + i * 1.7) * 0.06)
+      const [ax, az] = lanternSwing(t, i, s, wind)
+      // 擺角是世界座標的（順著風向）：ZXY 順序＝先轉燈籠本身的方向，再繞世界的 x、z 軸擺動
+      _euler.set(ax, lantern.rotationY ?? 0, az, 'ZXY')
       _quat.setFromEuler(_euler)
       _matrix.compose(_position, _quat, _scale.set(s, s, s))
       instance.setMatrixAt(i, _matrix)

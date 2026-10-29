@@ -465,6 +465,8 @@ export function buildTree(
     }
   })
   banyanRoots(b, detail, { x, y, z, scale, trunkH, seed, clearings, groundRadius, floorY })
+  // 落葉從下層樹冠的下緣飄下來（components/LeafLayer.jsx）；落在石座外的地面
+  b.addLeafTree?.(x, z, { top: y + trunkH + 0.2 * scale, radius: 2.4 * scale, ground: y })
   // 樹下石座
   b.cylinder('stone', 0.95, 1.05, 0.38, 10, [x, y + 0.19, z], { tint: '#c8c0ae' })
 }

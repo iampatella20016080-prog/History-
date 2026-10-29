@@ -1,0 +1,45 @@
+{
+  "stats": {
+    "qing-port/low": {
+      "calls": 251,
+      "meshes": 128
+    },
+    "banquet/low": {
+      "calls": 215,
+      "meshes": 100
+    },
+    "modern/low": {
+      "calls": 231,
+      "meshes": 106
+    },
+    "postwar/low": {
+      "calls": 253,
+      "meshes": 124
+    },
+    "revival/low": {
+      "calls": 235,
+      "meshes": 146
+    },
+    "qing-port/high": {
+      "calls": 273,
+      "meshes": 149
+    },
+    "banquet/high": {
+      "calls": 231,
+      "meshes": 117
+    },
+    "modern/high": {
+      "calls": 244,
+      "meshes": 115
+    },
+    "postwar/high": {
+      "calls": 282,
+      "meshes": 140
+    },
+    "revival/high": {
+      "calls": 269,
+      "meshes": 164
+    }
+  },
+  "errors": []
+}

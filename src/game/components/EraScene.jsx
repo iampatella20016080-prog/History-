@@ -10,6 +10,8 @@ import { useGameStore } from '../../state/useGameStore.js'
 import { GlowLayer } from './GlowLayer.jsx'
 import { CatLayer } from './LaoPanCat.jsx'
 import { LanternLayer } from './LanternLayer.jsx'
+import { LeafLayer } from './LeafLayer.jsx'
+import { updateWind } from '../rendering/wind.js'
 import { NpcLayer } from './NpcLayer.jsx'
 import { SignLayer } from './SignLayer.jsx'
 import { StaticBatches } from './StaticBatches.jsx'
@@ -113,6 +115,12 @@ function InteriorZone({ world, zones, detail }) {
   )
 }
 
+/** 整條街共用的風：每個影格更新一次（布幡、遮雨棚、煙、落葉讀同一組值） */
+function WindClock() {
+  useFrame((state) => updateWind(state.clock.elapsedTime))
+  return null
+}
+
 /**
  * 一個年代的街景：合併後的靜態網格、招牌與布幡、燈籠、燈火、蒸氣，以及可以走進去的建築的室內。
  * 靜態網格由 worldManager 快取與釋放；其餘衍生資源隨元件卸載而釋放。
@@ -141,6 +149,9 @@ export function EraScene({ world }) {
       <TextLanterns lanterns={world.textLanterns} />
       <GlowLayer glows={world.glows} pools={world.pools} />
       <SteamLayer steam={world.steam} />
+      {/* 榕樹下的落葉（一次繪製；流暢模式減量） */}
+      <LeafLayer trees={world.leafTrees ?? []} />
+      <WindClock />
       {/* 店裡的小動物（老潘的黑白貓）：跟著這個年代的街景掛載與卸載 */}
       <CatLayer cats={world.cats} />
       {/* 攤位與騎樓的情境人物（店裡的人物在室內群組裡）：跟著這個年代的街景掛載與卸載 */}

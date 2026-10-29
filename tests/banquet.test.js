@@ -117,7 +117,8 @@ describe('其他四個年代不受影響', () => {
         }
       }
       assert.equal(era.lighting.lanternGlow ?? 1, 1)
-      assert.equal(era.lighting.fill?.intensity ?? 0, 0)
+      // 冷色補光：第 9 階段調光後摩登也有（tests/lightingMotion.test.js），其他白天的年代仍然沒有
+      if (era.id !== 'modern') assert.equal(era.lighting.fill?.intensity ?? 0, 0)
       // 江山樓前的說明牌只在酒樓繁華（港口商街另有清末碼頭的說明牌）
       assert.ok(!layout.props.some((prop) => prop.type === 'placard' && /江山樓/.test(prop.text)))
     })

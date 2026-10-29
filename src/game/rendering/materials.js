@@ -3,6 +3,7 @@ import { getTextures } from './textures.js'
 import { ensureExhibitTexture, getExhibitTexture } from './exhibitTexture.js'
 import { ensureRiceTexture, getRiceTexture } from './riceTexture.js'
 import { ensureSzxTexture, getSzxTexture } from './szxTexture.js'
+import { windUniforms } from './wind.js'
 
 /**
  * 共用的卡通渲染材質。
@@ -114,7 +115,7 @@ export function getMaterials() {
     asphalt: toon({ map: textures.asphalt }),
     pavers: toon({ map: textures.pavers }),
     shutter: toon({ map: textures.shutter }),
-    awning: toon({ map: textures.stripes, side: DoubleSide }),
+    awning: swayingAwning(toon({ map: textures.stripes, side: DoubleSide })),
     burlap: toon({ map: textures.burlap }),
     bamboo: toon({ map: textures.bamboo }),
     paper: toon({ map: textures.teaLabel }),
@@ -141,6 +142,33 @@ export function getMaterials() {
     szxExhibit: lazyAtlasMaterial(toon, getSzxTexture, ensureSzxTexture),
   }
   return cache
+}
+
+/**
+ * 遮雨棚隨風：沿法線輕輕起伏（頂點著色器，不增加繪製呼叫）。前緣的垂邊（法線水平）擺得較大，
+ * 斜面（法線朝上）只有微微起伏；相位依世界座標，一排遮雨棚像被同一陣風吹過。
+ * 幅度只有幾公分，輪廓線（法線趟不跑這段）仍然對得上。
+ */
+function swayingAwning(material) {
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.uTime = windUniforms.uTime
+    shader.uniforms.uWind = windUniforms.uWind
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nuniform float uTime;\nuniform float uWind;')
+      .replace(
+        '#include <begin_vertex>',
+        `#include <begin_vertex>
+        {
+          vec3 wp = (modelMatrix * vec4(transformed, 1.0)).xyz;
+          float flap = 1.0 - abs(objectNormal.y);
+          float amp = mix(0.006, 0.03, flap) * (0.4 + uWind);
+          float wave = sin(uTime * 2.3 + wp.x * 1.3 + wp.z * 0.7) * 0.7 + sin(uTime * 4.1 + wp.x * 2.9) * 0.3;
+          transformed += objectNormal * amp * wave;
+        }`,
+      )
+  }
+  material.customProgramCacheKey = () => 'awning-sway'
+  return material
 }
 
 function lazyAtlasMaterial(toon, getTexture, ensure) {
@@ -178,6 +206,8 @@ export function getInteriorMaterials() {
     const copy = material.clone()
     // clone 不會複製 onBeforeCompile（展板圖集靠它在第一次使用時才繪製）
     if (material.onBeforeCompile) copy.onBeforeCompile = material.onBeforeCompile
+    // 街景材質的顏色會隨年代調整明度（setMaterialValues）；室內材質維持原本的白色
+    copy.color.set('#ffffff')
     copy.emissive = new Color('#ffffff')
     copy.emissiveMap = material.map ?? null
     copy.emissiveIntensity = material.map ? 0.2 : 0.14
@@ -197,6 +227,15 @@ export function setGlowLevel(glow, lanternGlow = 1) {
   materials.bulb.emissiveIntensity = 0.25 + glow * GLOW_BASE.bulb * lanternGlow
   materials.glassWarm.emissiveIntensity = 0.22 + glow * GLOW_BASE.glassWarm
   materials.glass.emissiveIntensity = glow * 0.18
+}
+
+/**
+ * 依年代調整街景材質的明度（atmosphere 的 value_<材質>，年代切換時平滑過渡）。
+ * 材質原本的顏色都是白色（色彩來自貼圖與頂點色），所以直接設成倍率。
+ */
+export function setMaterialValues(current, keys) {
+  const materials = getMaterials()
+  for (const key of keys) materials[key]?.color.setScalar(current[`value_${key}`] ?? 1)
 }
 
 /** 單色卡通材質（角色、標示物等不合併的物件使用） */

@@ -128,6 +128,9 @@ const FINAL_FRAGMENT = /* glsl */ `
   uniform float uSaturation;
   uniform float uContrast;
   uniform vec3 uTint;
+  uniform vec3 uShadowTint;
+  uniform vec3 uHighlightTint;
+  uniform float uLift;
   uniform float uVignette;
   uniform float uMist;
   uniform vec3 uMistColor;
@@ -192,6 +195,10 @@ const FINAL_FRAGMENT = /* glsl */ `
     color = mix(vec3(luma), color, uSaturation);
     color = (color - 0.5) * uContrast + 0.5;
     color *= uTint;
+    // 分離色調：暗部往冷色、亮部往暖色偏；暗部提亮（只有低光線的年代設定，其他年代為中性值，結果不變）
+    float l2 = dot(clamp(color, 0.0, 1.0), vec3(0.2126, 0.7152, 0.0722));
+    color *= mix(uShadowTint, uHighlightTint, smoothstep(0.06, 0.6, l2));
+    color += uLift * uShadowTint * (1.0 - smoothstep(0.0, 0.32, l2));
     return color;
   }
 
@@ -365,6 +372,9 @@ function createPipeline(gl, initialQuality) {
       uSaturation: { value: 0.9 },
       uContrast: { value: 1.0 },
       uTint: { value: new Vector3(1.025, 1.0, 0.955) },
+      uShadowTint: { value: new Vector3(1, 1, 1) },
+      uHighlightTint: { value: new Vector3(1, 1, 1) },
+      uLift: { value: 0 },
       uVignette: { value: 0.17 },
       uMist: { value: 0 },
       uMistColor: { value: new Color('#efe6d2') },
@@ -503,6 +513,9 @@ function createPipeline(gl, initialQuality) {
     u.uSaturation.value = a.saturation
     u.uContrast.value = a.contrast
     u.uTint.value.set(a.tintR, a.tintG, a.tintB)
+    u.uShadowTint.value.set(a.shadowR, a.shadowG, a.shadowB)
+    u.uHighlightTint.value.set(a.highlightR, a.highlightG, a.highlightB)
+    u.uLift.value = a.lift
     u.uVignette.value = a.vignette
     u.uMist.value = transitionState.mist
     // 霧色：年代霧氣顏色往紙張白偏移，入夜時也保持柔和的亮度
