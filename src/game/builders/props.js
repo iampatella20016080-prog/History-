@@ -685,6 +685,31 @@ export function cargoTricycle(b, position, { rotationY = 0, tint = '#3d5a6b' } =
   })
 }
 
+/* ── 三輪客車（戰後；歷史情境重建：前面是腳踏車的車頭與踏板，後面是兩輪的客座與折疊車篷） ── */
+export function pedicab(b, position, { rotationY = 0, tint = '#3b4f5e', hood = '#4a4440' } = {}) {
+  b.group(position, rotationY, () => {
+    // 前輪與車頭（車頭面向本地 +x）
+    b.add('plain', new TorusGeometry(0.33, 0.028, 4, 18), { position: [1.0, 0.35, 0], tint: '#262421' })
+    b.box('plain', [0.035, 0.5, 0.035], [0.96, 0.62, 0], { rotation: [0, 0, -0.2], tint })
+    b.box('plain', [0.04, 0.04, 0.52], [0.9, 0.9, 0], { tint: '#262421' })
+    b.box('plain', [0.9, 0.04, 0.04], [0.5, 0.6, 0], { rotation: [0, 0, 0.12], tint })
+    b.box('plain', [0.035, 0.38, 0.035], [0.22, 0.66, 0], { rotation: [0, 0, 0.25], tint })
+    b.box('plain', [0.22, 0.05, 0.1], [0.18, 0.86, 0], { tint: '#3a2a22' })
+    b.box('plain', [0.1, 0.1, 0.1], [0.35, 0.35, 0], { tint: '#555' })
+    // 後軸與兩個後輪
+    for (const side of [-1, 1]) b.add('plain', new TorusGeometry(0.33, 0.028, 4, 18), { position: [-0.55, 0.35, side * 0.5], tint: '#262421' })
+    b.box('plain', [0.05, 0.05, 1.0], [-0.55, 0.35, 0], { tint: '#3a332d' })
+    // 客座：車廂、座墊、靠背與腳踏板
+    b.box('plain', [0.75, 0.32, 0.86], [-0.5, 0.52, 0], { tint })
+    b.box('cloth', [0.5, 0.08, 0.8], [-0.45, 0.66, 0], { tint: '#8a3f36' })
+    b.box('plain', [0.08, 0.55, 0.86], [-0.86, 0.95, 0], { rotation: [0, 0, 0.15], tint })
+    b.box('plain', [0.22, 0.04, 0.6], [0.2, 0.36, 0], { tint: '#3a332d' })
+    // 折起來的車篷
+    b.box('cloth', [0.42, 0.42, 0.9], [-0.86, 1.3, 0], { rotation: [0, 0, -0.45], tint: hood })
+    for (const side of [-1, 1]) b.box('plain', [0.025, 0.5, 0.025], [-0.78, 1.0, side * 0.44], { rotation: [0, 0, -0.3], tint: '#3a332d' })
+  })
+}
+
 /* ── A 字立牌（當代咖啡館） ─────────────────── */
 export function aBoard(b, position, { rotationY = 0 } = {}) {
   b.group(position, rotationY, () => {

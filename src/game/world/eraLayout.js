@@ -1,5 +1,6 @@
 import { PIER, PLAZA, STREET } from '../config.js'
 import { QING_WHARF_ERA, qingWharfBoxes } from '../../data/qingWharfLayout.js'
+import { addedSceneProps, sceneBox, scenesForEra } from '../../data/streetPropsLayout.js'
 import { getShop, getShopBuilding, getShopsByEra } from '../../data/shops.js'
 import { genericBuildingConfig } from './lineage.js'
 import { getLotPlan } from './lots.js'
@@ -115,6 +116,7 @@ const FOOTPRINT = {
   flowerPot: [0.25, 0.25],
   bench: [0.85, 0.3],
   cargoTricycle: [1.25, 0.6],
+  pedicab: [1.35, 0.6],
   foodStall: [1.25, 1.1],
   planter: [0.5, 0.25],
   aBoard: [0.32, 0.25],
@@ -427,7 +429,14 @@ export function createEraLayout(era) {
   if (era.id === 'banquet') diversifyRows(buildings)
   if (era.id === 'modern') arrangeModernRows(buildings)
 
-  const props = PROPS_BY_ERA[era.id] ?? []
+  // 街頭情境（data/streetPropsLayout.js）新加的道具；情境依附的道具改用「道具＋人物」的整體範圍當障礙物
+  const scenes = scenesForEra(era.id)
+  const props = [...(PROPS_BY_ERA[era.id] ?? []), ...addedSceneProps(era.id)]
+  const isAnchor = (prop) => scenes.some(({ anchor }) => anchor.type === prop.type && anchor.position.every((v, i) => v === prop.position[i]))
+  for (const scene of scenes) {
+    const { minX, maxX, minZ, maxZ } = sceneBox(scene)
+    extraObstacles.push({ minX, maxX, minZ, maxZ })
+  }
   const lamps = streetLamps(era)
   const wires = era.streetProps.wires ? utilityWires(lamps) : []
   const strings = era.streetProps.lanternStrings ? lanternStrings() : []
@@ -441,7 +450,7 @@ export function createEraLayout(era) {
     ...extraWalkable,
   ]
 
-  const obstacles = [...props.map(propObstacle), ...extraObstacles]
+  const obstacles = [...props.filter((prop) => !isAnchor(prop)).map(propObstacle), ...extraObstacles]
   for (const lamp of lamps) {
     const [x, , z] = lamp.position
     obstacles.push({ minX: x - 0.22, maxX: x + 0.22, minZ: z - 0.22, maxZ: z + 0.22 })

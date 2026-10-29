@@ -30,6 +30,7 @@ import {
   streetLamp,
   vendorCart,
   vintageCar,
+  pedicab,
 } from '../builders/props.js'
 import { buildShophouse } from '../builders/shophouse.js'
 import { buildZiYang } from '../builders/ziyang.js'
@@ -58,6 +59,7 @@ import { COPLANAR_DELTA, resolveAllCoplanar } from '../builders/coplanar.js'
 import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
 import { buildQingWharf } from '../builders/qingWharf.js'
+import { sceneBox, sceneNpcs, scenesForEra } from '../../data/streetPropsLayout.js'
 import { getEra } from '../../data/eras.js'
 import { createEraLayout } from './eraLayout.js'
 
@@ -161,6 +163,7 @@ const PROP_BUILDERS = {
   flowerPot: (b, p, o) => flowerPot(b, p.position, o),
   bench: (b, p, o) => bench(b, p.position, { ...o, modern: p.modern }),
   cargoTricycle: (b, p, o) => cargoTricycle(b, p.position, o),
+  pedicab: (b, p, o) => pedicab(b, p.position, o),
   foodStall: (b, p, o) => foodStall(b, p.position, { ...o, canopy: p.canopy }),
   planter: (b, p, o) => planter(b, p.position, o),
   aBoard: (b, p, o) => aBoard(b, p.position, o),
@@ -371,6 +374,9 @@ export function* eraWorldSteps(eraId) {
   for (const line of layout.lanternStrings) lanternString(b, line)
   buildMooringPosts(b, layout.mooringPosts)
   if (layout.qingWharf) npcs.push(...buildQingWharf(b, detail).npcs)
+  // 街頭的情境人物（車夫、牽腳踏車的人、攤販）與道具：範圍是鏡頭遮擋方塊（data/streetPropsLayout.js）
+  for (const scene of scenesForEra(era.id)) b.blockers.push(sceneBox(scene))
+  npcs.push(...sceneNpcs(era.id))
   // 遠景裝飾（街屋後方的樹、遠方天際線、年代的節慶裝飾）另外合併，流暢模式下不顯示
   layout.trees.forEach((tree, i) =>
     // 河岸廣場的榕樹（collider）：落地的氣根只在樹幹的碰撞範圍裡（eraLayout 的半寬 0.55），精緻模式多一批短氣根

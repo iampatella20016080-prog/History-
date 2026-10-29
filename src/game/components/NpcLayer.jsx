@@ -100,10 +100,12 @@ export function Npc({ npc }) {
 
 /** 一組人物（攤位前的人物在街景裡；店裡的人物在那間店的室內群組裡） */
 export function NpcLayer({ npcs, name = 'npcs' }) {
+  // 流暢模式不畫 detailOnly 的人物（街頭情境裡的次要人物；碰撞範圍不變）
+  const detail = useGameStore((state) => QUALITY_MODES[state.qualityMode]?.detail ?? true)
   if (!npcs?.length) return null
   return (
     <group name={name}>
-      {npcs.map((npc) => (
+      {npcs.filter((npc) => detail || !npc.detailOnly).map((npc) => (
         <Npc key={npc.id} npc={npc} />
       ))}
     </group>
