@@ -83,7 +83,7 @@
 - ☑ 清末年代的碼頭、戎克船、茶箱與挑夫：只在港口商街。查證（`docs/research/qing-wharf.md`）：大帆船後來停在河道中由小船接駁（國家文化記憶庫）；外銷茶是約 40 磅的半箱、松木箱、內襯薄鉛、外貼彩色紙或手繪（Davidson 1903，推定相近）；碼頭構造、船型與大小、茶箱外箱尺寸與嘜頭、挑夫的挑法都查無，棧橋沿用示意、茶箱尺寸為建模比例、挑夫為歷史情境重建，「紅頭船」待核不用。建模：兩堆茶箱、三位挑夫（只有待機動作）、棧橋兩側載茶箱的接駁小船、河道中下錨的戎克船、「歷史情境重建」說明牌；沒有新材質，細部多一個批次。配置 `src/data/qingWharfLayout.js`、建模 `src/game/builders/qingWharf.js`、測試 `tests/qingWharf.test.js`。
 - ☐ 各年代的情境人物與道具（人力車、腳踏車、攤車）。
 - ☑ 榕樹改成多層葉片加氣根：三層錯開的葉叢、落地的支柱根只在樹幹與石座的碰撞範圍裡、短氣根停在 2.05 m 以上；廟口攤位的空地不變，網格數不變，精緻模式多一批短氣根；建模 `src/game/builders/environment.js`、測試 `tests/banyan.test.js`。
-- ☐ 灰泥牆的風化、海報與鐵窗花。
+- ☑ 灰泥牆的風化、海報與鐵窗花。
 - ☑ 鏡頭：窄處不穿牆、換年代後面向街道、觀賞模式起始位置避開遮擋（`src/game/viewerCamera.js` 的 `followDistance`、`streetFacingYaw`、`clearYaw`；測試 `tests/cameraPhase9.test.js`）。
 - ☐ 環境音。
 - ☑ 操作說明面板自動收起：桌面第一次移動（WASD／方向鍵／拖曳）或展開約 12 秒無互動後收起，手動切換後以手動為準，狀態記在 sessionStorage；邏輯 `src/ui/controlsHint.js`、測試 `tests/controlsHint.test.js`。

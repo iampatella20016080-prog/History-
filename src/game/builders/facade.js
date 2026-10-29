@@ -50,6 +50,8 @@ export function archFrameShape(w, h, frame) {
  */
 export function rectWindow(b, { x, y, width, height, z = 0, lit = false, frameTint = '#6b4f39', barTint = '#c9ad8a', style = 'bars', shutters = false, shutterTint = '#6d8a83', frameMat = 'wood', glassTint = '#3b3029' }) {
   const f = 0.09
+  // 風化與鐵窗花（builders/weathering.js）要避開或套上的窗洞
+  b.openings?.push({ kind: 'window', x, y, width: width + 2 * f, height: height + 2 * f, z, grille: style === 'grille' })
   b.box(lit ? 'windowLit' : 'dark', [width, height, 0.04], [x, y, z], { tint: lit ? '#6b4b33' : glassTint })
   b.box(frameMat, [width + 2 * f, f, 0.1], [x, y + height / 2 + f / 2, z + 0.03], { tint: frameTint })
   b.box(frameMat, [width + 2 * f + 0.08, f * 1.1, 0.16], [x, y - height / 2 - f * 0.55, z + 0.05], { tint: frameTint })
@@ -80,6 +82,7 @@ export function rectWindow(b, { x, y, width, height, z = 0, lit = false, frameTi
 /** 拱窗（洋樓立面）：拱形框、拱心石、窗臺與百葉窗扇 */
 export function archWindow(b, { x, y, width, height, z = 0, lit = false, frameTint = '#f6efe0', frameMat = 'stucco', keystone = true, shutters = false, shutterTint = '#6d8a83', mullions = true, glassTint = '#3b3029' }) {
   const straight = Math.max(0.2, height - width / 2)
+  b.openings?.push({ kind: 'arch', x, y: y + height / 2, width: width + 0.24, height: height + 0.24, z, straight, bottom: y })
   b.extrude(lit ? 'windowLit' : 'dark', archShape(width, straight), 0.04, {
     position: [x, y, z - 0.02],
     tint: lit ? '#6b4b33' : glassTint,
@@ -110,6 +113,7 @@ export function archWindow(b, { x, y, width, height, z = 0, lit = false, frameTi
 
 /** 圓窗（Art Deco 的舷窗） */
 export function roundWindow(b, { x, y, radius = 0.38, z = 0, lit = false, frameTint = '#2f6b5a' }) {
+  b.openings?.push({ kind: 'round', x, y, width: radius * 2 + 0.2, height: radius * 2 + 0.2, z })
   b.cylinder(lit ? 'windowLit' : 'dark', radius, radius, 0.05, 16, [x, y, z], { rotation: [Math.PI / 2, 0, 0], tint: lit ? '#6b4b33' : '#334044' })
   b.add('plain', new TorusGeometry(radius + 0.04, 0.05, 5, 20), { position: [x, y, z + 0.02], tint: frameTint })
   b.box('plain', [radius * 2, 0.03, 0.04], [x, y, z + 0.03], { tint: frameTint })
@@ -329,12 +333,14 @@ export function rollingShutter(b, { width, height, y0 = 0.15, z = -0.05, openRat
 
 /** 橫式招牌（含木框），position 為招牌中心 */
 export function signBoard(b, { text, style, x = 0, y, z = 0, width, height = 0.6, frameTint = '#5d4231', frame = true }) {
+  b.openings?.push({ kind: 'sign', x, y, width: width + 0.3, height: height + 0.3, z })
   if (frame) b.box('wood', [width + 0.16, height + 0.16, 0.08], [x, y, z + 0.04], { tint: frameTint })
   b.addSign({ text, style, width, height, position: [x, y, z + (frame ? 0.083 : 0.012)] })
 }
 
 /** 直立突出招牌（垂直於立面，兩面都有字） */
 export function projectingSign(b, { text, style = 'vertical', x, y, z = 0, width = 0.55, height = 2.0, boardTint = '#f4efe2' }) {
+  b.openings?.push({ kind: 'sign', x, y, width: 0.5, height: height + 0.3, z })
   b.box('plain', [0.08, height + 0.1, width + 0.1], [x, y, z + width / 2 + 0.25], { tint: boardTint })
   b.box('plain', [0.04, 0.04, 0.3], [x, y + height / 2 - 0.2, z + 0.15], { tint: '#4a4440' })
   b.box('plain', [0.04, 0.04, 0.3], [x, y - height / 2 + 0.2, z + 0.15], { tint: '#4a4440' })

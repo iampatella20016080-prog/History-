@@ -22,6 +22,7 @@ import {
 import { glassStorefront, rectWindow, rollingShutter, signBoard } from './facade.js'
 import { bracketShape, gableShape, ridgeShape } from './shapes.js'
 import { conditionGrime, conditionTint } from './condition.js'
+import { beginWeathering, finishWeathering } from './weathering.js'
 
 /**
  * 閩南式街屋產生器（店家與背景建築共用）
@@ -34,8 +35,9 @@ import { conditionGrime, conditionTint } from './condition.js'
  *
  * condition：new 新建｜mature 使用多年｜aged 老舊（加鐵皮雨遮）｜restored 修復（可換成玻璃店面）
  */
-export function buildShophouse(b, cfg) {
+export function buildShophouse(b, cfg, detail = null) {
   const rng = createRng(cfg.seed ?? 7)
+  const weathering = beginWeathering(b, cfg)
   const condition = cfg.condition ?? 'new'
   const tint = (hex) => conditionTint(hex, condition)
   const grime = (value) => conditionGrime(value, condition)
@@ -275,6 +277,19 @@ export function buildShophouse(b, cfg) {
   if (condition === 'restored' && cfg.planters !== false) {
     planter(b, [w / 2 - 0.6, walkH, walkD - 0.55], { seed: cfg.seed })
     if (w > 5) planter(b, [-w / 2 + 0.6, walkH, walkD - 0.55], { seed: (cfg.seed ?? 1) + 7, small: true })
+  }
+
+  // 灰泥牆的風化、海報與鐵窗花（只有一般街屋）：樓上牆面與一樓兩側的牆柱
+  if (weathering) {
+    const upperFront = floors === 2 ? -0.04 : -0.03
+    const pillarYs = { y0: 0.4, y1: groundH - 0.12 }
+    finishWeathering(b, detail, cfg, weathering, {
+      surfaces: [
+        { x0: -w / 2 + gableT, x1: w / 2 - gableT, y0: groundH + (floors === 2 ? 0.24 : 0.16), y1: wallH - 0.2, z: upperFront },
+        ...[-1, 1].map((side) => ({ x0: side * (w / 2 - pillarW / 2) - pillarW / 2, x1: side * (w / 2 - pillarW / 2) + pillarW / 2, ...pillarYs, z: 0.06 })),
+      ],
+      columns: [-1, 1].map((side) => ({ x: side * (w / 2 - pillarW / 2), width: pillarW, ...pillarYs, z: 0.06 })),
+    })
   }
 
   // 鏡頭遮擋：建築本體＋簷下屋頂（只取步道正上方，避免沿街邊行走時鏡頭被拉近）

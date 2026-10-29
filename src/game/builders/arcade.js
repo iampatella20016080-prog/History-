@@ -1,3 +1,4 @@
+import { beginWeathering, finishWeathering } from './weathering.js'
 import { CylinderGeometry, IcosahedronGeometry, Shape, SphereGeometry, TorusGeometry } from 'three'
 import { STREET } from '../config.js'
 import { createCurvedSlab } from './PartBuilder.js'
@@ -39,7 +40,8 @@ const STYLE_DEFAULTS = {
   postwar: { groundH: 3.5, upperH: 3.0, wallMat: 'tile', columnMat: 'stucco', parapetH: 0.7 },
 }
 
-export function buildArcadeBuilding(b, cfg) {
+export function buildArcadeBuilding(b, cfg, detail = null) {
+  const weathering = beginWeathering(b, cfg)
   const style = cfg.archetype
   const defaults = STYLE_DEFAULTS[style] ?? STYLE_DEFAULTS.baroque
   const rng = createRng(cfg.seed ?? 11)
@@ -194,6 +196,18 @@ export function buildArcadeBuilding(b, cfg) {
       position: [0, topY + 0.25 - roofDrop / 2, front - 0.3 - roofLen / 2],
       rotation: [-roofAngle, 0, 0],
       tint: tint(cfg.roofTint ?? '#f2e6e0'),
+    })
+  }
+
+  // 灰泥牆的風化、海報與鐵窗花（只有一般洋樓）：樓上立面、一樓牆柱與騎樓柱
+  if (weathering) {
+    const pillarYs = { y0: 0.4, y1: groundH - 0.12 }
+    finishWeathering(b, detail, cfg, weathering, {
+      surfaces: [
+        { x0: -w / 2 + 0.05 + (cornerSide < 0 ? cornerR : 0), x1: w / 2 - 0.05 - (cornerSide > 0 ? cornerR : 0), y0: groundH + 0.3, y1: topY - 0.15, z: front },
+        ...[-1, 1].map((side) => ({ x0: side * (w / 2 - 0.25) - 0.25, x1: side * (w / 2 - 0.25) + 0.25, ...pillarYs, z: 0 })),
+      ],
+      columns: [-1, 1].map((side) => ({ x: side * (w / 2 - colW / 2 - 0.02), width: colW, y0: 0.5, y1: groundH - 0.35, z: walkD - 0.02, round: style === 'deco' })),
     })
   }
 
