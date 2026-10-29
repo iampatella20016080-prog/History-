@@ -11,7 +11,8 @@
  *   OUT=docs/lookbook/before node tests/e2e/lookbook.e2e.mjs http://127.0.0.1:5173/
  *
  * 環境變數：PLAYWRIGHT_MODULE、CHROMIUM_EXECUTABLE、OUT（輸出資料夾，預設 docs/lookbook/latest）、
- *           ERAS（逗號分隔）、QUALITIES（預設 low,high）、TIME（固定動畫時間，秒；預設 12）
+ *           ERAS（逗號分隔）、QUALITIES（預設 low,high）、TIME（固定動畫時間，秒；預設 12）、
+ *           SET（details：改拍細部的近景——榕樹、大面積地面、灰泥牆、騎樓柱腳）
  */
 import { createRequire } from 'node:module'
 import { mkdirSync, writeFileSync } from 'node:fs'
@@ -46,6 +47,16 @@ export const ERA_VIEWS = {
   postwar: [storefront('you-ji', '有記名茶', 11.6, 'north'), storefront('bolero', '波麗路', 24.3, 'north'), storefront('rice-and-shine', '迪化街329號', 29.2, 'south')],
   revival: [storefront('luguo', '爐鍋咖啡', 30.2, 'north'), storefront('lao-pan', '老潘魷魚羹', 33.4, 'south'), storefront('zi-yang', '滋養豆餡舖', -30.5, 'north')],
 }
+
+/** 細部的近景（第 9 階段・細部）：每個年代都拍同樣的位置 */
+export const DETAIL_VIEWS = [
+  ['banyan', '廟埕榕樹', [3.4, 1.9, 1.0], [7.6, 3.4, 7.0]],
+  ['banyan-under', '河岸榕樹的粗枝', [-36.0, 1.6, 0.6], [-40.6, 3.7, -3.6]],
+  ['ground', '大面積地面', [-22, 2.8, 0.2], [-8, 0, 0.3]],
+  ['plaster', '樓上灰泥牆', [-7.8, 2.0, 1.6], [-7.8, 5.2, -4.6]],
+  ['plaster-arcade', '洋樓立面', [17.8, 2.0, 1.4], [17.8, 5.4, -4.6]],
+  ['column', '騎樓柱腳', [19.4, 1.15, -0.6], [20.8, 0.15, -3.1]],
+]
 
 async function loadPlaywright() {
   const name = process.env.PLAYWRIGHT_MODULE ?? 'playwright'
@@ -141,7 +152,8 @@ async function run() {
       await page.locator('.intro__start').click()
       await page.waitForFunction(() => document.querySelector('.hud.is-started'), null, { timeout: 30000 })
       await page.waitForTimeout(1500)
-      for (const [id, , position, target] of [...COMMON_VIEWS, ...(ERA_VIEWS[eraId] ?? [])]) {
+      const views = process.env.SET === 'details' ? DETAIL_VIEWS : [...COMMON_VIEWS, ...(ERA_VIEWS[eraId] ?? [])]
+      for (const [id, , position, target] of views) {
         await shoot(`${eraId}-${id}-${quality}`, position, target)
       }
       const [, , position, target] = COMMON_VIEWS[2]

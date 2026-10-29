@@ -1,6 +1,8 @@
 import { CubicBezierCurve3, CylinderGeometry, IcosahedronGeometry, QuadraticBezierCurve3, Shape, TubeGeometry, Vector3 } from 'three'
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { PIER, PLAZA, RIVER, STREET } from '../config.js'
 import { createRng, pick, range } from '../utils/random.js'
+import { dipsIntoClearing, limbGeometry, lumpyClump } from './foliage.js'
 import { shade } from './props.js'
 import { gableShape, junkHullShape, ridgeShape, sailShape } from './shapes.js'
 
@@ -407,6 +409,42 @@ function banyanRoots(b, detail, { x, y, z, scale, trunkH, seed, clearings, groun
 }
 
 /**
+ * 榕樹的粗枝：從樹幹上段往外斜伸，穿過下層兩團葉叢之間的空隙露出來，末端再分出一根細枝。
+ * 全部合併成一個木作幾何（緊接在樹幹之後），經過攤位留空範圍上方太低的枝不產生。
+ */
+function banyanLimbs(b, { x, y, z, scale, trunkH, seed, clearings, angles }) {
+  const rng = createRng(seed * 11 + 7)
+  const parts = []
+  const sorted = [...angles].sort((p, q) => p - q)
+  for (let i = 0; i < sorted.length; i++) {
+    const next = i + 1 < sorted.length ? sorted[i + 1] : sorted[0] + Math.PI * 2
+    // 兩團下層葉叢之間
+    const a = (sorted[i] + next) / 2 + range(rng, -0.12, 0.12)
+    const h0 = y + trunkH * range(rng, 0.82, 0.92)
+    const r0 = trunkRadiusAt(h0 - y, trunkH, scale) * 0.55
+    const reach = range(rng, 2.3, 2.9) * scale
+    const rise = range(rng, 0.45, 0.8) * scale
+    const at = (d, h, da = 0) => [x + Math.cos(a + da) * d, h, z + Math.sin(a + da) * d]
+    const bend = range(rng, -0.1, 0.1)
+    const points = [at(0.1 * scale, h0), at(reach * 0.45, h0 + rise * 0.55, bend), at(reach * 0.8, h0 + rise * 0.9, bend * 1.6), at(reach, h0 + rise, bend * 2)]
+    const radii = [r0, r0 * 0.62, r0 * 0.4, 0.035 * scale]
+    const side = rng() < 0.5 ? -1 : 1
+    const fork = [points[1], at(reach * 0.75, h0 + rise * 1.5, bend + side * 0.32), at(reach * 0.9, h0 + rise * 1.9, bend + side * 0.42)]
+    const limb = limbGeometry(points, radii)
+    const twig = limbGeometry(fork, [radii[1] * 0.7, radii[1] * 0.4, 0.025 * scale])
+    if (dipsIntoClearing(limb, clearings) || dipsIntoClearing(twig, clearings)) {
+      limb.dispose()
+      twig.dispose()
+      continue
+    }
+    parts.push(limb, twig)
+  }
+  if (!parts.length) return
+  const merged = parts.length === 1 ? parts[0] : mergeGeometries(parts, false)
+  b.add('wood', merged, { tint: '#7d664f' })
+}
+
+/**
  * clearing：樹下要留空的範圍（同一個本地座標的矩形與高度 top，例如榕樹下的攤位；可以是一個或多個）：
  * 經過範圍的氣根不產生，樹冠在範圍上方的底面抬高到 top 以上。亂數的使用順序不變，其他部分的形狀與原本相同。
  * 榕樹（banyan）另外可以指定：
@@ -446,7 +484,9 @@ export function buildTree(
     }
     return
   }
-  // 多層樹冠：每一層的葉叢與下一層錯開半格
+  // 多層樹冠：每一層的葉叢與下一層錯開半格。葉團是不規則的形狀（缺口與外緣的小葉團，見 foliage.js），
+  // 形狀用另一組亂數，原本的位置、半徑與顏色不變
+  const lowerAngles = []
   BANYAN_LAYERS.forEach((layer, k) => {
     for (let i = 0; i < layer.count; i++) {
       const a = ((i + k * 0.5) / layer.count) * Math.PI * 2 + rng() * 0.6
@@ -456,14 +496,28 @@ export function buildTree(
       const bz = z + Math.sin(a) * d
       let by = y + trunkH + range(rng, ...layer.y) * scale
       by += clearingLift(clearings, bx, bz, by, r, layer.squash)
-      b.add('plain', new IcosahedronGeometry(r, 1), {
-        position: [bx, by, bz],
-        scale: [1, layer.squash, 1],
-        rotation: [0, rng() * 6, 0],
-        tint: pick(rng, layer.greens),
-      })
+      const spin = rng() * 6
+      const tint = pick(rng, layer.greens)
+      if (k === 0) lowerAngles.push(a)
+      const shapeSeed = seed * 131 + k * 17 + i
+      // 外緣看得到輪廓的下層與中層用較細的網格；外緣小葉團只加在下層，伸進攤位的留空範圍時不加
+      const satellites = k === 0 ? 1 : 0
+      const clump = (n) => {
+        const g = lumpyClump(r, shapeSeed, { satellites: n, outward: a + spin, detail: k === 2 ? 1 : 2 })
+        g.scale(1, layer.squash, 1)
+        g.rotateY(spin)
+        g.translate(bx, by, bz)
+        return g
+      }
+      let g = clump(satellites)
+      if (satellites && dipsIntoClearing(g, clearings)) {
+        g.dispose()
+        g = clump(0)
+      }
+      b.add('plain', g, { tint })
     }
   })
+  banyanLimbs(b, { x, y, z, scale, trunkH, seed, clearings, angles: lowerAngles })
   banyanRoots(b, detail, { x, y, z, scale, trunkH, seed, clearings, groundRadius, floorY })
   // 落葉從下層樹冠的下緣飄下來（components/LeafLayer.jsx）；落在石座外的地面
   b.addLeafTree?.(x, z, { top: y + trunkH + 0.2 * scale, radius: 2.4 * scale, ground: y })

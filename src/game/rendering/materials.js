@@ -1,9 +1,10 @@
-import { Color, DoubleSide, MeshToonMaterial } from 'three'
+import { Color, DoubleSide, MeshBasicMaterial, MeshToonMaterial } from 'three'
 import { getTextures } from './textures.js'
 import { ensureExhibitTexture, getExhibitTexture } from './exhibitTexture.js'
 import { ensureRiceTexture, getRiceTexture } from './riceTexture.js'
 import { ensureSzxTexture, getSzxTexture } from './szxTexture.js'
 import { windUniforms } from './wind.js'
+import { SURFACE_VARIATION, applySurfaceVariation } from './surfaceVariation.js'
 
 /**
  * 共用的卡通渲染材質。
@@ -61,6 +62,8 @@ export const MATERIAL_TILE = {
   riceExhibit: null,
   // 十字軒糕餅舖（2000–現在）的展板、獎狀、價卡與貼紙圖集
   szxExhibit: null,
+  // 接地暗影（builders/contactShadow.js）：每片薄片自己的 0–1 UV
+  contact: null,
 }
 
 /** 發光材質的基礎亮度（乘上年代 glow 值） */
@@ -140,7 +143,20 @@ export function getMaterials() {
     exhibit: exhibitMaterial(toon),
     riceExhibit: lazyAtlasMaterial(toon, getRiceTexture, ensureRiceTexture),
     szxExhibit: lazyAtlasMaterial(toon, getSzxTexture, ensureSzxTexture),
+    // 柱腳與家具的接地暗影：半透明的暖灰，疊在任何地面上都是變暗；不受光、不寫入深度
+    contact: new MeshBasicMaterial({
+      color: new Color('#2e261f'),
+      alphaMap: textures.contactShadow,
+      transparent: true,
+      opacity: 0.5,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+      polygonOffsetUnits: -2,
+    }),
   }
+  // 大面積的地磚與牆面：世界座標的明暗、色相、補丁與破磚（rendering/surfaceVariation.js）
+  for (const [key, config] of Object.entries(SURFACE_VARIATION)) applySurfaceVariation(cache[key], config)
   return cache
 }
 
@@ -199,13 +215,14 @@ export function getInteriorMaterials() {
   interiorCache = { gradientMap: base.gradientMap }
   for (const [name, material] of Object.entries(base)) {
     if (name === 'gradientMap') continue
-    if (name in GLOW_BASE || name === 'glassClear' || name === 'interior' || name === 'woodLight' || !material.isMaterial) {
+    if (name in GLOW_BASE || name === 'glassClear' || name === 'contact' || name === 'interior' || name === 'woodLight' || !material.isMaterial) {
       interiorCache[name] = material
       continue
     }
     const copy = material.clone()
     // clone 不會複製 onBeforeCompile（展板圖集靠它在第一次使用時才繪製）
     if (material.onBeforeCompile) copy.onBeforeCompile = material.onBeforeCompile
+    if (material.customProgramCacheKey) copy.customProgramCacheKey = material.customProgramCacheKey
     // 街景材質的顏色會隨年代調整明度（setMaterialValues）；室內材質維持原本的白色
     copy.color.set('#ffffff')
     copy.emissive = new Color('#ffffff')
