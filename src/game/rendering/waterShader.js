@@ -28,17 +28,19 @@ export const waterUniforms = {
 const WAVES = /* glsl */ `
   uniform float uTime;
   uniform float uOctaves;
-  // 一組正弦波：方向、波數、速度、振幅；回傳 (高度, d高度/dx, d高度/dz)
-  vec3 wave(vec2 p, vec2 dir, float k, float speed, float amp) {
+  // 一組正弦波：方向、波數、速度、振幅；回傳 (高度, d高度/dx, d高度/dz)。
+  // footprint：一個像素在水面上涵蓋的長度。波長小於兩三個像素的波會疊成橫條紋（摩爾紋），依波數淡出
+  vec3 wave(vec2 p, vec2 dir, float k, float speed, float amp, float footprint) {
     float phase = dot(dir, p) * k + uTime * speed;
-    return vec3(sin(phase), dir * cos(phase) * k) * amp;
+    float lod = 1.0 - smoothstep(0.35, 0.9, k * footprint);
+    return vec3(sin(phase), dir * cos(phase) * k) * amp * lod;
   }
   // 水面起伏：低頻的長浪（看得出的明暗）＋高頻的細紋（反光的亮片）
-  vec3 waterWaves(vec2 p) {
-    vec3 w = wave(p, normalize(vec2(0.8, 0.6)), 1.6, 1.1, 0.02);
-    w += wave(p, normalize(vec2(-0.35, 1.0)), 2.9, -1.5, 0.012);
-    w += wave(p, normalize(vec2(0.95, -0.3)), 6.1, 2.3, 0.006);
-    if (uOctaves > 2.5) w += wave(p, normalize(vec2(0.2, -1.0)), 11.3, -3.1, 0.0035);
+  vec3 waterWaves(vec2 p, float footprint) {
+    vec3 w = wave(p, normalize(vec2(0.8, 0.6)), 1.6, 1.1, 0.02, footprint);
+    w += wave(p, normalize(vec2(-0.35, 1.0)), 2.9, -1.5, 0.012, footprint);
+    w += wave(p, normalize(vec2(0.95, -0.3)), 6.1, 2.3, 0.006, footprint);
+    if (uOctaves > 2.5) w += wave(p, normalize(vec2(0.2, -1.0)), 11.3, -3.1, 0.0035, footprint);
     return w;
   }
 `
@@ -67,7 +69,10 @@ export function patchWaterMaterial(material) {
       .replace(
         '#include <map_fragment>',
         `#include <map_fragment>
-        vec3 wWave = waterWaves(vWaterPos.xz);
+        // 遠處一個像素涵蓋好幾公尺的水面：用螢幕空間導數估計，淡出太細的波（避免摩爾紋與亮片閃爍）
+        vec2 wFw = fwidth(vWaterPos.xz);
+        float wFootprint = max(wFw.x, wFw.y);
+        vec3 wWave = waterWaves(vWaterPos.xz, wFootprint);
         vec2 wGrad = wWave.yz;
         diffuseColor.rgb *= 0.97 + 0.05 * (wWave.x / 0.04);`,
       )
@@ -82,11 +87,15 @@ export function patchWaterMaterial(material) {
           vec3 r = reflect(-v, n);
           // 亮片：只有法線剛好把太陽反射到鏡頭的細紋才亮（卡通風格的硬邊），越遠越密、越細
           float s = pow(max(dot(r, uSunDir), 0.0), 600.0);
-          gl_FragColor.rgb += uSunColor * smoothstep(0.3, 0.7, s) * uGlint;
+          // 遠處的亮片融成柔和的光帶（不再是一個個硬邊亮點，避免閃爍）
+          float far = smoothstep(0.08, 0.6, wFootprint);
+          float sparkle = mix(smoothstep(0.3, 0.7, s), pow(max(dot(r, uSunDir), 0.0), 40.0) * 1.1, far);
+          gl_FragColor.rgb += uSunColor * sparkle * uGlint;
           // 靠岸的燈火倒影：沿著河岸的暖色光帶，被波紋切成一段一段
           float bank = smoothstep(uEdgeX - 9.0, uEdgeX - 0.5, vWaterPos.x);
           float broken = smoothstep(0.7, 0.95, sin(vWaterPos.z * 1.3 + wGrad.x * 25.0) * 0.5 + 0.5);
           float ripple = smoothstep(0.55, 0.95, sin(vWaterPos.x * 7.0 + wGrad.y * 30.0 + uTime * 0.9) * 0.5 + 0.5);
+          ripple = mix(ripple, 0.5, smoothstep(0.1, 0.4, wFootprint));
           gl_FragColor.rgb += uWarm * (uNight * bank * broken * ripple * 0.22);
         }`,
       )
