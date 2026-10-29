@@ -2013,6 +2013,57 @@ SOURCES['demomy-tait-tea-label'] = {
   context: '宣紙木版印刷的茶箱商標紙，約37×31.5公分，貼在木箱外面；頁面稱箱內為錫箔內襯（與 Davidson 記的鉛不同）。',
 }
 
+// 第 10 階段「一箱茶的旅程」：路人對話與探索手記的素材（查證紀錄見 docs/research/tea-journey-qing-port.md）
+SOURCES['dodd-blockade-1888'] = {
+  id: 'dodd-blockade-1888',
+  citation: 'John Dodd, Journal of a Blockaded Resident in North Formosa, during the Franco-Chinese War, 1884–5. Hong Kong: Daily Press Office, 1888.',
+  publisher: 'Hong Kong: Daily Press Office（私人印行）',
+  title: 'Journal of a Blockaded Resident in North Formosa（北台封鎖記）',
+  url: 'https://search.worldcat.org/oclc/464653492',
+  published: '1888年',
+  usage: '原書無公開電子全文；日記摘句為轉引，逐字引用前宜核對中譯本（陳政三譯述《北台封鎖記：茶商陶德筆下的清法戰爭》，2002）。',
+  context: '茶商陶德的清法戰爭封鎖日記（1884–85）：淡水被封鎖期間的物資短缺、茶葉運不出去與居民靠傳聞度日。封鎖缺鉛的細節另以 Davidson 1903（頁375–376）為主要依據。',
+}
+SOURCES['danshui-ting-zhi-1871'] = {
+  id: 'danshui-ting-zhi-1871',
+  citation: '陳培桂，《淡水廳志》卷十一〈風俗考〉，1871年；維基文庫。',
+  publisher: '陳培桂（清同治十年）；維基文庫',
+  title: '淡水廳志・風俗考',
+  url: 'https://zh.wikisource.org/wiki/%E6%B7%A1%E6%B0%B4%E5%BB%B3%E5%BF%97/%E5%8D%B711',
+  published: '1871年',
+  usage: '維基文庫頁面標示「尚未校對」，逐字引用前宜對照臺灣銀行經濟研究室《臺灣文獻叢刊》本。作者過世逾50年，原文可引。',
+  context: '風俗考的原文句：「淡俗儉樸，愛惜物力」「茶味薄不如武彝，與福寧埒；然茶樹有數十年不萎者」「估客輳集，以淡為台郡第一」。',
+}
+SOURCES['cna-goodbook-yaoguai-2019'] = {
+  id: 'cna-goodbook-yaoguai-2019',
+  citation: '何敬堯，《妖怪臺灣地圖》〈月裡：大稻埕的古井魔女〉書摘，聯經出版；中央社好書視窗轉載，2019年。',
+  publisher: '中央社好書視窗／聯經出版',
+  title: '妖怪臺灣地圖（周成過臺灣的傳說）',
+  url: 'https://www.cna.com.tw/Proj_GoodBook/2615.aspx',
+  published: '2019年',
+  usage: '民間傳說的梗概與性質說明；人名、籍貫與茶行是否屬實皆不可考，網站一律標「坊間傳說」。',
+  context: '傳說梗概：安溪人周成渡臺在大稻埕經營茶行致富、負心害妻，冤魂復仇；連曉青《清代臺灣三大奇案》（1955）收錄，日治時期改編歌仔戲。',
+}
+SOURCES['ctee-taipei-station-2021'] = {
+  id: 'ctee-taipei-station-2021',
+  citation: '蘇昭旭，《臺鐵風華．百年一瞬》書摘〈你不知道的臺北車站〉，工商時報，2021年2月24日。',
+  publisher: '工商時報／天下文化',
+  title: '你不知道的臺北車站：歲月淬鍊下的特等站',
+  url: 'https://www.ctee.com.tw/news/20210224700230-431001',
+  published: '2021年2月24日',
+  context: '1891年基隆—臺北段鐵路竣工通車；第一代臺北車站是1891年設於大稻埕的「臺北停車場」，木造建築。另有分段通車的不同記載（1889年大稻埕—松山），對話只寫「光緒十七年（1891）火車通基隆」。',
+}
+SOURCES['ltn-shiding-baoge-2021'] = {
+  id: 'ltn-shiding-baoge-2021',
+  citation: '〈採茶歌聲傳情達意「石碇相褒歌」蒐集最古老台語〉，自由時報，2021年6月5日。',
+  publisher: '自由時報',
+  title: '石碇相褒歌：採茶的即興對唱',
+  url: 'https://news.ltn.com.tw/news/NewTaipei/breakingnews/3558903',
+  published: '2021年6月5日',
+  usage: '相褒歌的性質（採茶即興對唱、七字一句四句一葩）有出處；可核對的清末歌詞原文查無，網站自擬的對唱句一律標「虛構對白」。',
+  context: '相褒歌源自採茶時的台語即興對唱，石碇相褒歌為新北市無形文化資產；林金城採集出版《石碇相褒歌》（2021）。',
+}
+
 /* ── 各年代的情境人物與道具（人力車、三輪車、腳踏車、攤車；查證紀錄見 docs/research/era-street-props.md） ── */
 SOURCES['wiki-rickshaw-zh'] = {
   id: 'wiki-rickshaw-zh',
@@ -2083,6 +2134,17 @@ SOURCES['taipeitimes-youbike2-2021'] = {
   published: '2021年5月9日',
   usage: '老屋新生年代的單車遊客：臺北市的公共自行車系統（大稻埕附近的站點查無，網站不畫站點與品牌）。',
   context: 'YouBike 2.0 於2021年5月8日在臺北正式啟用（只讀到報導摘要）。',
+}
+
+SOURCES['nownews-tea-tally-2019'] = {
+  id: 'nownews-tea-tally-2019',
+  citation: '〈失落的茶產業殘跡　茶籌／茶牌見證大稻埕風華〉，NOWnews，2019年4月6日。',
+  publisher: 'NOWnews',
+  title: '茶籌／茶牌：揀茶計酬的憑證（口述與私人收藏）',
+  url: 'https://www.nownews.com/news/3298707',
+  published: '2019年4月6日',
+  usage: '耆老口述與私人收藏的報導，講的是日治以後的揀茶間；清末是否已用茶籌查無，博物館典藏也查無——網站標「口述來源、待核」，不作史實陳述。',
+  context: '報導記茶行以茶籌暫代薪資憑證、定期結算；收藏者藏品中有茶行的鐵片籌與紙籌。',
 }
 
 export function getSource(id) {

@@ -21,6 +21,8 @@ import {
   yongleMtmToWorld,
 } from './miTaiMuLayout.js'
 import { HUANG_YUJIE_HOTSPOTS, MUSEUM, MUSEUM_SITE, museumToWorld } from './huangYujieLayout.js'
+import { DODD_HOTSPOTS, doddToWorld } from './doddLayout.js'
+import { LHT_HOTSPOTS, lhtToWorld } from './linHuaTaiQingLayout.js'
 import { MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN } from './huangYujieMuseum.js'
 import { ACTION_BAR_SITE } from './actionBarLayout.js'
 import { LI_TING_XIANG_ID, LI_TING_XIANG_SOURCE_IDS, LTX_CHAPTERS, LTX_ERA_NOTES, LTX_YEAR_NOTE } from './liTingXiangData.js'
@@ -1962,17 +1964,19 @@ export const SHOPS = [
     facing: 'south',
     interaction: { radius: 3.4 },
     site: { x:  5.15, z: -4.5, rotationY: 0, replaces: ['north-5'] },
+    // 第 10 階段：可以走進去的精製茶廠（揀茶、焙茶、裝箱；歷史情境重建）。
+    // 立面沿用原本 baroque 的語彙（builders/doddTeaHouse.js），門面改成敞開的大門。
     building: {
-      archetype: 'baroque',
+      archetype: 'dodd-tea-house',
       width: 6.9,
       depth: 11,
       floors: 2,
       plasterTint: '#f1e9d8',
       trimTint: '#fbf7ee',
-      storefront: 'half',
       sign: { text: 'Dodd & Co. 寶順洋行', style: 'wood' },
       parapet: 'scroll',
     },
+    hotspots: hotspotsToWorld(DODD_HOTSPOTS, doddToWorld),
     buildingByEra: {
       'qing-port': { condition: 'new' },
     },
@@ -2007,6 +2011,13 @@ export const SHOPS = [
           { term: '精製', definition: '茶農初製的毛茶運到茶廠再篩選、烘焙、分級，才能裝箱外銷。以前要運到福州、廈門精製，大稻埕設廠後就地完成。' },
         ],
         sourceIds: ['chen-ciyu-li-family-2015', 'th-li-chunsheng-memoir', 'culture-taipei-walk-dadaocheng-2018', 'taipei-pictorial-480-dihua', 'taipei-gov-tea-tasting-2017', 'tshs-tamsui-customs-lesson', 'tshs-zhang-tamsui-port'],
+        // 探索手記：讀過這一章就記下這則有出處的外銷消息（主題路線「一箱茶的旅程」的節點）
+        journal: {
+          id: 'news:oolong-1869',
+          kind: 'news',
+          title: '1869：烏龍茶運往紐約',
+          text: '1869年，寶順洋行以兩艘帆船把約十三萬公斤的烏龍茶運往美國紐約，以「Formosa Oolong」為名大受歡迎，奠定臺茶外銷的基礎。',
+        },
       },
       {
         id: 'li',
@@ -2048,6 +2059,36 @@ export const SHOPS = [
       },
       // 第 8 階段：人物小節（純文字，資料在 liChunShengData.js）
       LI_CHUNSHENG_PERSON_CHAPTER,
+      // 第 10 階段：室內（揀茶、焙茶、裝箱）的介紹章節
+      {
+        id: 'refinery',
+        type: 'text',
+        tab: '精製茶廠',
+        title: '精製茶廠：揀茶、焙茶、裝箱',
+        lead: '茶農初製的毛茶運進茶廠，揀去茶梗、以炭火慢焙、趁熱裝進鉛襯的木箱——這一箱茶才算準備好出海。',
+        paragraphs: [
+          '揀茶：毛茶入棧後，揀茶女坐在大竹篩前，用手挑出茶枝、茶梗與壞葉，按件計酬。Davidson（1903）記載，大稻埕大小茶棧約一百五十家，茶季每日僱用的揀茶工逾一萬二千人；手快的女孩從清晨做到傍晚，一天可賺一角五分。',
+          '焙茶：焙茶間裡一排排圓形的焙坑——深二呎、徑二呎、相距一呎，周圍是低磚臺，坑口與臺面齊平。木炭燒到通紅、覆灰養火，一次可以維持一週以上；茶放在「高約三呎、形如骰盅」的焙籠裡，籠腰有篩為底，焙茶工約每小時逐籠翻茶一次，一般焙八到十個小時。',
+          '裝箱：焙好的茶趁熱裝進內襯薄鉛的松木箱，鉛襯焊封防潮，箱外裱上彩色印花紙。裝好的茶箱由挑夫挑到碼頭，小船接駁到河道中的大船。',
+          '這個室內是依 Davidson 記載的流程重建的情境（他寫的是1890年代末的做法，用在這個年代為推定相近）；寶順洋行精製茶廠實際的格局查無。',
+        ],
+        sourceIds: ['davidson-formosa-1903', 'tcmb-dadaocheng-wharf'],
+      },
+      // 第 10 階段：器物 3D 檢視（茶箱；街上碼頭邊的茶箱也可以近看）
+      {
+        id: 'tea-chest',
+        type: 'object',
+        tab: '器物：茶箱',
+        title: '外銷茶箱',
+        lead: '松木箱裡襯焊封的薄鉛防潮、外頭裱上彩色印花紙——一箱約四十磅的烏龍茶，就這樣從大稻埕的碼頭飄洋過海。',
+        object: 'tea-chest',
+        summary: {
+          label: '歷史情境重建',
+          text: 'Davidson（1903）記載外銷茶箱內襯薄鉛、外裱印花紙，半箱約裝四十磅茶；箱子的實際長寬高查無，模型是依重量估的比例，外箱圖案依「德記洋行茶箱籤」的風格設計。',
+        },
+        paragraphs: ['模型（3D 檢視）：可以旋轉、縮放，打開箱蓋看看裡面的薄鉛內襯與烏龍茶。碼頭邊剛卸下的茶箱也可以走近打開。'],
+        sourceIds: ['davidson-formosa-1903', 'demomy-tait-tea-label'],
+      },
       {
         id: 'sources',
         type: 'sources',
@@ -2067,6 +2108,9 @@ export const SHOPS = [
           'pct-li-chunsheng-church',
           'panorama-dadaocheng-1981',
           'wolf-women-tea-2003',
+          'davidson-formosa-1903',
+          'demomy-tait-tea-label',
+          'tcmb-dadaocheng-wharf',
           ...LI_CHUNSHENG_SOURCE_IDS.filter((id) => !['chen-ciyu-li-family-2015', 'th-li-chunsheng-memoir', 'culture-taipei-walk-dadaocheng-2018', 'taipei-pictorial-480-dihua', 'pct-li-chunsheng-church', 'culture-taipei-2002-events'].includes(id)),
         ],
         disclaimer:
@@ -2325,12 +2369,15 @@ export const SHOPS = [
       sign: { text: '林華泰茶行', style: 'wood' },
     },
     buildingByEra: {
-      'qing-port': { condition: 'new' },
+      // 第 10 階段：港口商街版可以走進去（前店、秤茶桌、焙茶區；歷史情境重建，builders/linHuaTaiQing.js）
+      'qing-port': { condition: 'new', archetype: 'lin-hua-tai-qing' },
       banquet: { condition: 'mature', sign: { text: '林華泰茶行', style: 'gold' } },
       modern: { condition: 'mature', sign: { text: '林華泰茶行', style: 'lacquer' } },
       postwar: { condition: 'aged', sign: { text: '林華泰茶行', style: 'painted' } },
       revival: { condition: 'restored', sign: { text: '林華泰茶行', style: 'lacquer' } },
     },
+    // 只有港口商街的版本有室內的資訊熱點（秤茶桌、焙茶區；其他年代仍是一般店面）
+    eras: { 'qing-port': { hotspots: hotspotsToWorld(LHT_HOTSPOTS, lhtToWorld) } },
     // 各年代介紹視窗上方的「此時期的林華泰茶行」；家族口述整理自官網〈林華泰的歷史〉
     eraNotes: {
       'qing-port':
@@ -2422,6 +2469,21 @@ export const SHOPS = [
         ],
         sourceIds: ['linhuatai-site', 'discover-taipei-tea-shops-2012', 'ntcri-73-tea-road'],
       },
+      // 第 10 階段：器物 3D 檢視（桿秤；港口商街版的秤茶桌也可以走近近看）
+      {
+        id: 'tea-scale',
+        type: 'object',
+        tab: '器物：桿秤',
+        title: '桿秤：秤茶論擔論斤',
+        lead: '秤鉤吊起茶簍、秤錘沿著秤桿滑到平衡，刻度就是重量——茶行的買賣，從一桿秤開始。',
+        object: 'tea-scale',
+        summary: {
+          label: '歷史情境重建',
+          text: 'Davidson（1903）記載茶的交易以擔、斤計（他自註一擔＝133磅）；清末茶行用秤的形制查無，模型依一般桿秤的樣式重建。林華泰店裡用了五十多年的老秤是戰後的事（家族口述），不是這一桿。',
+        },
+        paragraphs: ['模型（3D 檢視）：可以旋轉、縮放，按「秤重」把秤錘滑到平衡。港口商街版店內的秤茶桌也可以走近近看。'],
+        sourceIds: ['davidson-formosa-1903', 'linhuatai-site'],
+      },
       {
         id: 'foods',
         type: 'foods',
@@ -2475,9 +2537,10 @@ export const SHOPS = [
           'culture-taipei-walk-dadaocheng-2018',
           'tcmb-tea-trade',
           'ntcri-77-xinfangchun',
+          'davidson-formosa-1903',
         ],
         disclaimer:
-          '林華泰官網只能以 http 開啟，內容多為圖片；〈林華泰的歷史〉是第四代的家族回憶，本站標為「家族口述」。本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建；建築外觀、招牌、擺設與店家位置僅供情境想像，並非精確復原。',
+          '林華泰官網只能以 http 開啟，內容多為圖片；〈林華泰的歷史〉是第四代的家族回憶，本站標為「家族口述」。本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建；建築外觀、招牌、擺設與店家位置僅供情境想像，並非精確復原。港口商街版的室內（前店、秤茶桌、焙茶區）格局查無，為歷史情境重建；焙坑與焙籠的形制依 Davidson（1903，日治初期記載，推定相近）。',
       },
     ],
   },

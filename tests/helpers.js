@@ -186,3 +186,19 @@ export function inShizixuanLot(rect) {
   const maxZ = Math.max(a.z, c.z)
   return rect.minX >= minX - 1e-6 && rect.maxX <= maxX + 1e-6 && rect.minZ >= minZ - 1e-6 && rect.maxZ <= maxZ + 1e-6
 }
+
+/**
+ * 範圍是否在寶順洋行（port 商街的 site，取代 north-5）或林華泰茶行的地段裡：
+ * 這兩家店在港口商街可以走進去（第 10 階段）；其他店家的測試檢查「這個年代沒有室內」時排除它們
+ * （兩家店本身在 teaInteriors.test.js 驗證）。
+ */
+export function inTeaHouseLots(rect) {
+  // maxZ 含店前的一段街道（貼近障礙物的範圍延伸到門前約 4 公尺）
+  const lots = [
+    { minX: 5.15 - 4.0, maxX: 5.15 + 4.0, minZ: -4.5 - 11.3, maxZ: -0.3 },
+    { minX: -22 - 3.6, maxX: -22 + 3.6, minZ: -4.5 - 11.3, maxZ: -0.3 },
+  ]
+  return lots.some(
+    (lot) => rect.minX >= lot.minX - 1e-6 && rect.maxX <= lot.maxX + 1e-6 && rect.minZ >= lot.minZ - 1e-6 && rect.maxZ <= lot.maxZ + 1e-6,
+  )
+}

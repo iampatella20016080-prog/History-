@@ -1,11 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { getInspectObject } from '../../data/inspectObjects.js'
 import { getSource } from '../../data/sources.js'
+import { useGameStore } from '../../state/useGameStore.js'
 import { FoodIllustration } from '../FoodIllustration.jsx'
 import { PHOTOS } from './photos.js'
 
 /**
  * 店家介紹的章節版型。所有店家共用；版型由章節資料的 type 決定：
- * text（文字）、foods（食物圖鑑）、sources（文獻）、process（步驟動畫，例如碾米）、object（可以拖曳旋轉的器物，例如米斗）。
+ * text（文字）、foods（食物圖鑑）、sources（文獻）、process（步驟動畫，例如碾米）、
+ * object（器物：開啟主畫面同一個畫布的 3D 檢視，例如米斗、茶箱）。
  */
 
 function SourceNote({ sourceIds, onShowSources }) {
@@ -328,64 +331,27 @@ export function ProcessChapter({ chapter, onShowSources }) {
   )
 }
 
-/** 米斗的 CSS 立體模型：四片梯形的木板（上寬下窄）、金屬角件、斗底與斗裡的米 */
-function RiceMeasureModel({ rotation }) {
-  return (
-    <div className="measure3d__model" style={{ transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)` }}>
-      {[0, 90, 180, 270].map((angle) => (
-        <div key={angle} className="measure3d__side" style={{ transform: `rotateY(${angle}deg) translateZ(var(--measure-half)) rotateX(var(--measure-tilt))` }}>
-          <span className="measure3d__corner is-left" />
-          <span className="measure3d__corner is-right" />
-        </div>
-      ))}
-      <div className="measure3d__bottom" />
-      <div className="measure3d__rice" />
-    </div>
-  )
-}
-
-/** 可以拖曳旋轉的器物（例如米斗；滑鼠拖曳或手指滑動；沒有碰過時慢慢自己轉） */
+/**
+ * 器物章節：改用主畫面同一個畫布的 3D 檢視（第 10 階段；卡通材質與描邊，
+ * 可以旋轉、縮放與小動作，取代原本的 CSS 立體模型）。
+ * chapter.object 對應 data/inspectObjects.js 的器物 id。
+ */
 export function ObjectChapter({ chapter, onShowSources }) {
-  const [rotation, setRotation] = useState({ x: -24, y: 32 })
-  const drag = useRef(null)
-  const [touched, setTouched] = useState(false)
-  useEffect(() => {
-    if (touched || prefersReducedMotion()) return undefined
-    const timer = setInterval(() => setRotation((r) => ({ ...r, y: r.y + 0.6 })), 40)
-    return () => clearInterval(timer)
-  }, [touched])
-  // 拖曳旋轉時不讓介紹視窗把手指的滑動當成換章節
-  const onPointerDown = (event) => {
-    event.stopPropagation()
-    drag.current = { x: event.clientX, y: event.clientY, start: rotation }
-    setTouched(true)
-    event.currentTarget.setPointerCapture?.(event.pointerId)
-  }
-  const onPointerMove = (event) => {
-    if (!drag.current) return
-    const { x, y, start } = drag.current
-    setRotation({ x: Math.max(-80, Math.min(30, start.x - (event.clientY - y) * 0.5)), y: start.y + (event.clientX - x) * 0.6 })
-  }
-  const onPointerUp = (event) => {
-    event.stopPropagation()
-    drag.current = null
-  }
+  const openInspect = useGameStore((state) => state.openInspect)
+  const object = getInspectObject(chapter.object)
   return (
     <article className="chapter chapter--object">
       <h3 className="chapter__title">{chapter.title}</h3>
       <p className="chapter__lead">{chapter.lead}</p>
-      <div
-        className="measure3d"
-        role="img"
-        aria-label={`${chapter.tab ?? '器物'}的立體模型，可以拖曳旋轉`}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-      >
-        <RiceMeasureModel rotation={rotation} />
-        <span className="measure3d__hint">拖曳旋轉</span>
-      </div>
+      {object && (
+        <button type="button" className="object-launch" onClick={() => openInspect(object.id, 'chapter')}>
+          <span className="object-launch__icon" aria-hidden="true">
+            ❖
+          </span>
+          <span className="object-launch__label">放大檢視（3D）</span>
+          <span className="object-launch__meta">拖曳旋轉・縮放{object.actions?.length ? `・${object.actions.map((action) => action.label).join('、')}` : ''}</span>
+        </button>
+      )}
       {chapter.summary && (
         <section className="chapter-summary">
           <span className="chapter-summary__label">{chapter.summary.label ?? '網站延伸整理'}</span>

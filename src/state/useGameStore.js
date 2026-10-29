@@ -1,7 +1,12 @@
 import { create } from 'zustand'
 import { DEFAULT_ERA_ID, getEra } from '../data/eras.js'
 import { getShop } from '../data/shops.js'
+import { getInspectObject, getInspectable } from '../data/inspectObjects.js'
+import { talkForNpc } from '../data/talk.js'
 import { QUALITY_MODES, initialQualityMode, saveQualityMode } from '../game/quality.js'
+import { addJournalEntry, loadJournal, saveJournal } from '../game/journal.js'
+import { objectJournalId } from '../game/objectInspect.js'
+import { advanceTalk, chooseFollowUp, startTalkSession, talkJournalId } from '../game/talk.js'
 import { isLang, loadLang, saveLang } from '../i18n/lang.js'
 
 /** 網址可指定一開始的年代，例如 ?era=modern */
@@ -87,6 +92,21 @@ export const useGameStore = create((set, get) => ({
   uiHidden: false,
   viewerFocus: null,
 
+  /* ── 第 10 階段：路人對話、器物檢視、探索手記與主題路線 ── */
+  /** 附近有對話的路人與街上可以近看的器物（InteractionSystem 每個影格更新） */
+  nearbyTalkNpcId: null,
+  nearbyInspectableId: null,
+  /** 進行中的對話（game/talk.js 的 session；對話中角色仍可走動，走遠就結束） */
+  talk: null,
+  /** 器物 3D 檢視 { objectId, source: 'street'（街上）或 'chapter'（店家介紹的器物章節）, nonce } */
+  inspect: null,
+  /** 探索手記（localStorage 持久化）與手記視窗 */
+  journal: loadJournal(),
+  journalOpen: false,
+  /** 主題探索模式：進行中的路線 id（data/teaRoute.js；null 表示沒有開啟） */
+  activeRouteId: null,
+  routeOpen: false,
+
   start: () => {
     if (get().started) return
     set((state) => ({
@@ -107,14 +127,106 @@ export const useGameStore = create((set, get) => ({
     if (state.nearbyShopId !== id || state.nearbyHotspotId !== hotspotId) set({ nearbyShopId: id, nearbyHotspotId: hotspotId })
   },
 
+  setNearbyTalk: (npcId) => {
+    if (get().nearbyTalkNpcId !== npcId) set({ nearbyTalkNpcId: npcId })
+  },
+
+  setNearbyInspectable: (id) => {
+    if (get().nearbyInspectableId !== id) set({ nearbyInspectableId: id })
+  },
+
+  /** 記進探索手記（同一個 id 只記一次）並寫回 localStorage */
+  recordJournal: (entry) => {
+    const journal = addJournalEntry(get().journal, entry)
+    if (journal === get().journal) return
+    saveJournal(journal)
+    set({ journal })
+  },
+
+  toggleJournal: (open) => set((state) => ({ journalOpen: open ?? !state.journalOpen, routeOpen: false, menuOpen: false, qualityOpen: false })),
+
+  toggleRoutePanel: (open) => set((state) => ({ routeOpen: open ?? !state.routeOpen, journalOpen: false, menuOpen: false, qualityOpen: false })),
+
+  /** 主題探索模式：開始／結束一條路線 */
+  setActiveRoute: (routeId) => set({ activeRouteId: routeId, routeOpen: false, menuOpen: false }),
+
+  /** 跟附近的路人開始對話（對話中角色仍可走動，走遠會自動結束） */
+  startTalk: (npcId = null) => {
+    const state = get()
+    if (!state.started || state.mode !== 'explore' || state.viewMode !== 'explore' || state.transitioning || state.talk) return false
+    const talk = talkForNpc(state.eraId, npcId ?? state.nearbyTalkNpcId)
+    const session = talk && startTalkSession(talk)
+    if (!session) return false
+    set({ talk: session, menuOpen: false, journalOpen: false, routeOpen: false })
+    return true
+  },
+
+  /** 對話的下一句；一段聽完時記進探索手記 */
+  advanceTalk: () => {
+    const session = get().talk
+    if (!session) return
+    const next = advanceTalk(session)
+    if (next === session) return
+    if (next.stage !== 'line') {
+      get().recordJournal({
+        id: talkJournalId(session.talk),
+        kind: 'talk',
+        eraId: get().eraId,
+        title: `${session.talk.role}（${session.talk.doing}）`,
+        text: session.talk.lines.map((line) => line.text).join(' '),
+      })
+    }
+    set({ talk: next })
+  },
+
+  /** 選擇一個追問 */
+  chooseTalkFollowUp: (id) => {
+    const session = get().talk
+    if (!session) return
+    const next = chooseFollowUp(session, id)
+    if (next !== session) set({ talk: next })
+  },
+
+  endTalk: () => {
+    if (get().talk) set({ talk: null })
+  },
+
+  /** 器物 3D 檢視（source：street 街上的器物、chapter 店家介紹的器物章節）；看過就記進手記 */
+  openInspect: (objectId, source = 'street') => {
+    const object = getInspectObject(objectId)
+    if (!object) return false
+    set((state) => ({ inspect: { objectId, source, nonce: (state.inspect?.nonce ?? 0) + 1 }, menuOpen: false, journalOpen: false, routeOpen: false }))
+    get().recordJournal({ id: objectJournalId(objectId), kind: 'object', eraId: get().eraId, title: object.title, text: object.lead })
+    return true
+  },
+
+  closeInspect: () => {
+    if (get().inspect) set({ inspect: null })
+  },
+
   /**
-   * 玩家在已開放的店家附近按下 E 或點店面。
+   * 玩家按下 E 或點一下：對話中前進一句；否則依最近的互動對象——
+   * 路人（開始對話）、街上的器物（3D 檢視）或已開放的店家（介紹視窗）。
    * hotspotId：點到的是店裡的某個資訊熱點（例如扭蛋機）時，開啟那個熱點的章節；否則用附近的熱點。
    */
   interact: (hotspotId = null) => {
-    const { started, mode, nearbyShopId, nearbyHotspotId, transitioning, viewMode } = get()
-    if (!started || mode !== 'explore' || viewMode !== 'explore' || !nearbyShopId || transitioning) return
-    if (getShop(nearbyShopId, get().eraId)?.status === 'open') get().openShop(nearbyShopId, hotspotId ?? nearbyHotspotId)
+    const state = get()
+    if (state.talk) {
+      if (state.talk.stage === 'line') state.advanceTalk()
+      return
+    }
+    const { started, mode, nearbyShopId, nearbyHotspotId, nearbyTalkNpcId, nearbyInspectableId, transitioning, viewMode } = state
+    if (!started || mode !== 'explore' || viewMode !== 'explore' || transitioning || state.inspect) return
+    if (nearbyTalkNpcId) {
+      state.startTalk(nearbyTalkNpcId)
+      return
+    }
+    if (nearbyInspectableId) {
+      state.openInspect(getInspectable(nearbyInspectableId)?.objectId, 'street')
+      return
+    }
+    if (!nearbyShopId) return
+    if (getShop(nearbyShopId, state.eraId)?.status === 'open') state.openShop(nearbyShopId, hotspotId ?? nearbyHotspotId)
   },
 
   /** 開啟店家介紹（建築觀賞模式中不開啟故事）；hotspotId 省略時，若正在這家店的熱點附近就用那個熱點 */
@@ -131,6 +243,9 @@ export const useGameStore = create((set, get) => ({
       qualityOpen: false,
       visited: { ...state.visited, [id]: true },
     }))
+    // 探索手記：走過的店（依年代記，例如 shop:lin-hua-tai@qing-port）
+    const shop = getShop(id, state.eraId)
+    if (shop) get().recordJournal({ id: `shop:${id}@${state.eraId}`, kind: 'shop', eraId: state.eraId, title: shop.name, text: shop.summary ?? '' })
     return true
   },
 
@@ -145,7 +260,7 @@ export const useGameStore = create((set, get) => ({
 
   setChapter: (index) => set({ chapterIndex: index }),
 
-  toggleMenu: (open) => set((state) => ({ menuOpen: open ?? !state.menuOpen, qualityOpen: false })),
+  toggleMenu: (open) => set((state) => ({ menuOpen: open ?? !state.menuOpen, qualityOpen: false, journalOpen: false })),
 
   /** 從選單前往店家：角色移動到店門口 */
   travelToShop: (id) =>
@@ -172,6 +287,10 @@ export const useGameStore = create((set, get) => ({
       titleCard: { eraId: id, nonce: titleSeq + 1 },
       nearbyShopId: null,
       nearbyHotspotId: null,
+      nearbyTalkNpcId: null,
+      nearbyInspectableId: null,
+      talk: null,
+      inspect: null,
       menuOpen: false,
     })
     return requestId
@@ -215,7 +334,7 @@ export const useGameStore = create((set, get) => ({
     return true
   },
 
-  toggleQualityPanel: (open) => set((state) => ({ qualityOpen: open ?? !state.qualityOpen, menuOpen: false })),
+  toggleQualityPanel: (open) => set((state) => ({ qualityOpen: open ?? !state.qualityOpen, menuOpen: false, journalOpen: false })),
 
   /**
    * 切換探索／建築觀賞模式。只有在開始探索、而且沒有開啟店家介紹時才能進入觀賞模式。
@@ -226,7 +345,7 @@ export const useGameStore = create((set, get) => ({
     if (viewMode === state.viewMode) return false
     if (viewMode === 'viewer') {
       if (!state.started || state.mode !== 'explore') return false
-      set({ viewMode: 'viewer', uiHidden: false, nearbyShopId: null, nearbyHotspotId: null, menuOpen: false, viewerFocus: null })
+      set({ viewMode: 'viewer', uiHidden: false, nearbyShopId: null, nearbyHotspotId: null, nearbyTalkNpcId: null, nearbyInspectableId: null, talk: null, inspect: null, menuOpen: false, viewerFocus: null })
       return true
     }
     if (viewMode === 'explore') {

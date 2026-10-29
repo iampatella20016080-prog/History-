@@ -51,11 +51,13 @@ describe('茶的主線：店家資料', () => {
       assert.deepEqual(Object.keys(shop.eraNotes), spec.eras)
     })
 
-    test(`${shop.name}：五個章節，最後一章是文獻；每一章都有出處`, () => {
-      assert.equal(shop.chapters.length, 5)
+    test(`${shop.name}：章節齊全，最後一章是文獻；每一章都有出處`, () => {
+      // 林華泰多一章「器物：桿秤」（第 10 階段的 3D 檢視）
+      const types = id === 'lin-hua-tai' ? ['text', 'text', 'text', 'object', 'foods', 'sources'] : ['text', 'text', 'text', 'foods', 'sources']
+      assert.equal(shop.chapters.length, types.length)
       assert.deepEqual(
         shop.chapters.map((chapter) => chapter.type),
-        ['text', 'text', 'text', 'foods', 'sources'],
+        types,
       )
       for (const chapter of shop.chapters) {
         assert.ok(chapter.sourceIds?.length, `${chapter.tab} 沒有出處`)

@@ -30,6 +30,9 @@ export function StoryModal() {
   const closeShop = useGameStore((state) => state.closeShop)
   const open = mode === 'reading'
   const { mounted, state } = usePresence(open, 380)
+  // 器物 3D 檢視（從器物章節開啟）時，介紹視窗先讓開，關閉檢視再回來
+  const inspecting = useGameStore((state) => !!state.inspect)
+  const recordJournal = useGameStore((state) => state.recordJournal)
 
   const lastShop = useRef(null)
   if (activeShopId) lastShop.current = getShop(activeShopId, eraId)
@@ -68,18 +71,23 @@ export function StoryModal() {
     if (next !== current) setChapter(next)
   }
 
-  if (!mounted || !shop) return null
+  const chapters = shop?.chapters
+  const index = chapters ? Math.min(chapterIndex, chapters.length - 1) : 0
+  const chapter = chapters?.[index]
 
-  const chapters = shop.chapters
-  const index = Math.min(chapterIndex, chapters.length - 1)
-  const chapter = chapters[index]
+  // 探索手記：讀到帶手記條目的章節（例如寶順洋行的外銷消息）就記下來
+  useEffect(() => {
+    if (open && chapter?.journal) recordJournal({ ...chapter.journal, eraId })
+  }, [open, chapter, eraId, recordJournal])
+
+  if (!mounted || !shop) return null
   const View = CHAPTER_VIEWS[chapter.type] ?? CHAPTER_VIEWS.text
   const sourcesIndex = chapters.findIndex((item) => item.type === 'sources')
   const era = getEra(eraId)
   const eraNote = shop.eraNotes?.[eraId]
 
   return (
-    <div className="story-layer" data-state={state}>
+    <div className={`story-layer${inspecting ? ' is-inspecting' : ''}`} data-state={state}>
       <div className="story-backdrop" aria-hidden="true" />
       <section
         ref={dialog}
