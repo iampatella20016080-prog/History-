@@ -70,6 +70,69 @@ export function followAllowed(hit, minDistance, tight = false) {
   return Math.min(loose, Math.max(FOLLOW_NEAREST, hit - FOLLOW_WALL_GAP))
 }
 
+/** 點是否在某個遮擋方塊裡面（不含邊界） */
+export function pointInBlockers(p, blockers) {
+  return blockers.some((b) => insideBox(p, b, -1e-4))
+}
+
+/**
+ * 第三人稱鏡頭在 direction 方向上可以退到的距離（followAllowed 加上「鏡頭不停在牆裡」的檢查）。
+ * 街道上維持最近距離的規則，但最近距離的位置落在牆或量體裡面時（例如未另外指定的窄處，牆比最近距離還近），
+ * 改用貼近障礙物的規則，鏡頭停在牆前面。騎樓上方的粗略量體比鏡頭高，鏡頭在騎樓下不算在牆裡。
+ */
+export function followDistance(target, direction, wanted, minDistance, blockers, tight = false) {
+  const hit = raycastBoxes(target, direction, wanted + 0.45, blockers)
+  const allowed = followAllowed(hit, minDistance, tight)
+  if (tight || allowed <= hit) return allowed
+  const camera = {
+    x: target.x + direction.x * allowed,
+    y: target.y + direction.y * allowed,
+    z: target.z + direction.z * allowed,
+  }
+  return pointInBlockers(camera, blockers) ? followAllowed(hit, minDistance, true) : allowed
+}
+
+/** 某個 yaw 方向上，鏡頭從注視點可以退多遠（不超過 wanted） */
+function clearDistance(target, yaw, pitch, wanted, blockers) {
+  const direction = orbitDirection(yaw, pitch)
+  return Math.min(wanted, raycastBoxes(target, direction, wanted + 0.45, blockers) - 0.45)
+}
+
+/** 依序嘗試的 yaw 偏移（離原本的方向越近越優先） */
+const CLEAR_OFFSETS = [0, 0.35, -0.35, 0.7, -0.7, 1.05, -1.05, 1.4, -1.4, 1.75, -1.75, 2.1, -2.1, 2.5, -2.5, Math.PI]
+
+/**
+ * 找一個鏡頭不被遮擋的 yaw：先試 yaw 本身，再往兩側逐步偏移；都被擋住時取能退得最遠的方向。
+ * prefer 是額外優先嘗試的方向（例如換年代後沿著街道的兩個方向）。回傳 { yaw, distance }。
+ */
+export function clearYaw(target, yaw, pitch, wanted, blockers, { prefer = [], need = 0.9 } = {}) {
+  let best = null
+  for (const candidate of [yaw, ...prefer, ...CLEAR_OFFSETS.slice(1).map((o) => yaw + o)]) {
+    const distance = clearDistance(target, candidate, pitch, wanted, blockers)
+    if (distance >= wanted * need) return { yaw: candidate, distance }
+    if (!best || distance > best.distance + 1e-6) best = { yaw: candidate, distance }
+  }
+  return best
+}
+
+/** 兩個角度的差（-π 到 π） */
+function angleDelta(a, b) {
+  return Math.atan2(Math.sin(a - b), Math.cos(a - b))
+}
+
+/**
+ * 換年代後的鏡頭方向：鏡頭沿著街道（東西向）放在角色身後，看向街道，不對著建築的牆。
+ * 原本的方向沒被擋住、也大致沿著街道（偏離不到 0.8 rad）時保留；否則取較接近原本方向的街道方向，
+ * 那邊被擋住時改試另一邊與兩側。
+ */
+export function streetFacingYaw(target, yaw, pitch, wanted, blockers) {
+  const along = [Math.PI / 2, -Math.PI / 2].sort((a, b) => Math.abs(angleDelta(yaw, a)) - Math.abs(angleDelta(yaw, b)))
+  const nearest = along[0]
+  const start = Math.abs(angleDelta(yaw, nearest)) < 0.8 ? yaw : yaw + angleDelta(nearest, yaw)
+  const other = start + angleDelta(along[1], start)
+  return clearYaw(target, start, pitch, wanted, blockers, { prefer: [other] })
+}
+
 /** 點是否在建築另外指定的「貼近障礙物」範圍裡（例如豆花店的224巷；室內範圍另外由 interiorAmount 判斷）；範圍屬於某個樓層（預設 0） */
 export function inFollowArea(p, areas = [], level = 0) {
   return areas.some((r) => onLevel(r, level) && p.x >= r.minX && p.x <= r.maxX && p.z >= r.minZ && p.z <= r.maxZ)

@@ -32,6 +32,7 @@ export function World({ world, promptLayer, onSwap }) {
       <StoreMarkers shopModels={world.shopModels} promptLayer={promptLayer} />
       <Player collision={world.collision} shopModels={world.shopModels} />
       <CameraRig
+        eraId={world.eraId}
         blockers={world.blockers}
         buildings={world.buildings}
         shopModels={world.shopModels}
