@@ -1,6 +1,7 @@
 import { STREET } from '../config.js'
 import { createCurvedSlab } from './PartBuilder.js'
 import { MATERIAL_TILE } from '../rendering/materials.js'
+import { SHOP_SHELF_HEIGHTS } from '../rendering/shopGlow.js'
 import { createRng, pick } from '../utils/random.js'
 import {
   bambooPoles,
@@ -390,13 +391,14 @@ function interiorRoom(b, innerW, openingH, walkH, rng) {
   const roomD = 2.9
   const cz = -roomD / 2 - 0.12
   b.box('planks', [innerW, 0.04, roomD], [0, walkH + 0.02, cz], { tint: '#6b5643' })
-  b.box('windowLit', [innerW, openingH, 0.1], [0, openingH / 2, -roomD - 0.12], { tint: '#4a3a2e' })
+  // 後牆：中間亮、四周與上方暗、層架下有陰影（店內透光，rendering/shopGlow.js）
+  b.shopGlow(b.box('windowLit', [innerW, openingH, 0.1], [0, openingH / 2, -roomD - 0.12], { tint: '#4a3a2e' }), 'back', { floorOffset: walkH })
   b.box('dark', [innerW, 0.1, roomD], [0, openingH + 0.05, cz], { tint: '#2c241e' })
   for (const side of [-1, 1]) {
     b.box('dark', [0.1, openingH, roomD], [side * (innerW / 2 - 0.05), openingH / 2, cz], { tint: '#463a30' })
   }
-  for (let i = 0; i < 2; i++) {
-    const sy = walkH + 0.95 + i * 0.62
+  for (const shelfH of SHOP_SHELF_HEIGHTS) {
+    const sy = walkH + shelfH
     b.box('wood', [innerW * 0.86, 0.05, 0.36], [0, sy, -roomD + 0.08], { tint: '#8d6c4d' })
     const items = Math.floor(innerW / 0.42)
     for (let k = 0; k < items; k++) {

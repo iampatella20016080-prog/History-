@@ -52,7 +52,8 @@ export function rectWindow(b, { x, y, width, height, z = 0, lit = false, frameTi
   const f = 0.09
   // 風化與鐵窗花（builders/weathering.js）要避開或套上的窗洞
   b.openings?.push({ kind: 'window', x, y, width: width + 2 * f, height: height + 2 * f, z, grille: style === 'grille' })
-  b.box(lit ? 'windowLit' : 'dark', [width, height, 0.04], [x, y, z], { tint: lit ? '#6b4b33' : glassTint })
+  const glass = b.box(lit ? 'windowLit' : 'dark', [width, height, 0.04], [x, y, z], { tint: lit ? '#6b4b33' : glassTint })
+  if (lit) b.shopGlow(glass, 'room')
   b.box(frameMat, [width + 2 * f, f, 0.1], [x, y + height / 2 + f / 2, z + 0.03], { tint: frameTint })
   b.box(frameMat, [width + 2 * f + 0.08, f * 1.1, 0.16], [x, y - height / 2 - f * 0.55, z + 0.05], { tint: frameTint })
   b.box(frameMat, [f, height, 0.1], [x - width / 2 - f / 2, y, z + 0.03], { tint: frameTint })
@@ -83,11 +84,12 @@ export function rectWindow(b, { x, y, width, height, z = 0, lit = false, frameTi
 export function archWindow(b, { x, y, width, height, z = 0, lit = false, frameTint = '#f6efe0', frameMat = 'stucco', keystone = true, shutters = false, shutterTint = '#6d8a83', mullions = true, glassTint = '#3b3029' }) {
   const straight = Math.max(0.2, height - width / 2)
   b.openings?.push({ kind: 'arch', x, y: y + height / 2, width: width + 0.24, height: height + 0.24, z, straight, bottom: y })
-  b.extrude(lit ? 'windowLit' : 'dark', archShape(width, straight), 0.04, {
+  const glass = b.extrude(lit ? 'windowLit' : 'dark', archShape(width, straight), 0.04, {
     position: [x, y, z - 0.02],
     tint: lit ? '#6b4b33' : glassTint,
     curveSegments: 8,
   })
+  if (lit) b.shopGlow(glass, 'room')
   b.extrude(frameMat, archFrameShape(width, straight, 0.12), 0.12, {
     position: [x, y, z - 0.02],
     tint: frameTint,
@@ -114,7 +116,8 @@ export function archWindow(b, { x, y, width, height, z = 0, lit = false, frameTi
 /** 圓窗（Art Deco 的舷窗） */
 export function roundWindow(b, { x, y, radius = 0.38, z = 0, lit = false, frameTint = '#2f6b5a' }) {
   b.openings?.push({ kind: 'round', x, y, width: radius * 2 + 0.2, height: radius * 2 + 0.2, z })
-  b.cylinder(lit ? 'windowLit' : 'dark', radius, radius, 0.05, 16, [x, y, z], { rotation: [Math.PI / 2, 0, 0], tint: lit ? '#6b4b33' : '#334044' })
+  const glass = b.cylinder(lit ? 'windowLit' : 'dark', radius, radius, 0.05, 16, [x, y, z], { rotation: [Math.PI / 2, 0, 0], tint: lit ? '#6b4b33' : '#334044' })
+  if (lit) b.shopGlow(glass, 'room')
   b.add('plain', new TorusGeometry(radius + 0.04, 0.05, 5, 20), { position: [x, y, z + 0.02], tint: frameTint })
   b.box('plain', [radius * 2, 0.03, 0.04], [x, y, z + 0.03], { tint: frameTint })
 }
@@ -302,12 +305,13 @@ export function glassStorefront(b, { width, height, y0 = 0.15, z = -0.1, frameTi
   const panes = Math.max(2, Math.round(width / 1.1))
   const paneW = width / panes
   const doorIndex = Math.floor(panes / 2)
+  const glass = []
   for (let i = 0; i < panes; i++) {
     const px = -width / 2 + paneW * (i + 0.5)
     const isDoor = i === doorIndex
     const bottom = isDoor ? y0 : y0 + 0.45
     const h = height - (bottom - y0)
-    b.box('glassWarm', [paneW - 0.08, h - 0.08, 0.04], [px, bottom + h / 2, z])
+    glass.push(b.box('glassWarm', [paneW - 0.08, h - 0.08, 0.04], [px, bottom + h / 2, z]))
     if (!isDoor) b.box(frameMat, [paneW, 0.45, 0.12], [px, y0 + 0.225, z + 0.02], { tint: frameTint })
   }
   for (let i = 0; i <= panes; i++) {
@@ -315,6 +319,8 @@ export function glassStorefront(b, { width, height, y0 = 0.15, z = -0.1, frameTi
   }
   b.box(frameMat, [width + 0.08, 0.1, 0.14], [0, y0 + height, z + 0.03], { tint: frameTint })
   b.box(frameMat, [width, 0.06, 0.1], [0, y0 + height * 0.78, z + 0.03], { tint: frameTint })
+  // 整排玻璃後面是同一個假房間（店內透光，rendering/shopGlow.js）
+  b.shopGlowGroup(glass, 'room')
 }
 
 /** 鐵捲門：openRatio 為拉起的比例 */

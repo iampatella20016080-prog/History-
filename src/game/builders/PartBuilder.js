@@ -12,6 +12,7 @@ import {
 } from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { MATERIAL_TILE } from '../rendering/materials.js'
+import { tagShopGlowUV, tagShopGlowUVGroup } from '../rendering/shopGlow.js'
 
 const KEEP_ATTRIBUTES = new Set(['position', 'normal', 'uv'])
 const UP = new Vector3(0, 1, 0)
@@ -240,6 +241,24 @@ export class PartBuilder {
     if (!this.groups.has(material)) this.groups.set(material, [])
     this.groups.get(material).push(g)
     return g
+  }
+
+  /**
+   * 店內透光：在剛加入的幾何（windowLit）寫入 UV 標記，kind 'room' 是假室內窗、'back' 是店內後牆
+   * （見 rendering/shopGlow.js）。回傳同一個幾何。
+   */
+  shopGlow(geometry, kind, options) {
+    const { position, normal, uv } = geometry.attributes
+    tagShopGlowUV(position.array, normal.array, uv.array, kind, options)
+    uv.needsUpdate = true
+    return geometry
+  }
+
+  /** 好幾片幾何共用一個假房間（玻璃店面的整排玻璃） */
+  shopGlowGroup(geometries, kind, options) {
+    const parts = geometries.map((g) => ({ positions: g.attributes.position.array, normals: g.attributes.normal.array, uvs: g.attributes.uv.array }))
+    tagShopGlowUVGroup(parts, kind, options)
+    for (const g of geometries) g.attributes.uv.needsUpdate = true
   }
 
   box(material, size, position = [0, 0, 0], options = {}) {

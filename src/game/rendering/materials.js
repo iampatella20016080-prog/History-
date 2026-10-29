@@ -4,6 +4,13 @@ import { ensureExhibitTexture, getExhibitTexture } from './exhibitTexture.js'
 import { ensureRiceTexture, getRiceTexture } from './riceTexture.js'
 import { ensureSzxTexture, getSzxTexture } from './szxTexture.js'
 import { windUniforms } from './wind.js'
+import {
+  ROOM_DEPTH,
+  SHOP_GLOW_FRAGMENT_PARS,
+  SHOP_GLOW_U0,
+  SHOP_GLOW_VERTEX,
+  SHOP_GLOW_VERTEX_PARS,
+} from './shopGlow.js'
 
 /**
  * 共用的卡通渲染材質。
@@ -52,7 +59,8 @@ export const MATERIAL_TILE = {
   plain: 1,
   dark: 1,
   cloth: 1,
-  windowLit: 1,
+  // 0–1 的 UV：店內透光用 UV 標記效果種類（見 shopGlow.js）
+  windowLit: null,
   lanternLit: 1,
   bulb: 1,
   // 黃玉階文史館的展板圖集：平面零件自己指定圖集上的 UV（見 exhibitAtlas.js）
@@ -120,12 +128,15 @@ export function getMaterials() {
     bamboo: toon({ map: textures.bamboo }),
     paper: toon({ map: textures.teaLabel }),
     glass: toon({ map: textures.glass, emissive: new Color('#ffcf8a'), emissiveIntensity: 0 }),
-    glassWarm: toon({
-      map: textures.interior,
-      emissive: new Color('#ffffff'),
-      emissiveMap: textures.interior,
-      emissiveIntensity: 0.3,
-    }),
+    // 玻璃店面：原本的室內貼圖畫在假室內的後牆，左右牆、天花板與地板取貼圖邊緣的顏色（shopGlow.js）
+    glassWarm: shopGlass(
+      toon({
+        map: textures.interior,
+        emissive: new Color('#ffffff'),
+        emissiveMap: textures.interior,
+        emissiveIntensity: 0.3,
+      }),
+    ),
     // 透明玻璃：看得見櫥窗後方的淺層室內（不寫入深度、不參與輪廓線）
     glassClear: toon({ transparent: true, opacity: 0.2, depthWrite: false }),
     // 室內陳設：帶一點暖色自發光，在騎樓的陰影下仍看得清楚
@@ -133,7 +144,8 @@ export function getMaterials() {
     plain: toon(),
     dark: toon(),
     cloth: toon({ side: DoubleSide }),
-    windowLit: toon({ emissive: new Color('#ffb768'), emissiveIntensity: 0.2 }),
+    // 亮窗與店內後牆：依 UV 標記畫假室內或後牆的漸層，沒標記的維持平面發光（shopGlow.js）
+    windowLit: shopWindow(toon({ emissive: new Color('#ffb768'), emissiveIntensity: 0.2 })),
     lanternLit: toon({ emissive: new Color('#ff7a45'), emissiveIntensity: 0.2 }),
     bulb: toon({ emissive: new Color('#fff0c8'), emissiveIntensity: 0.4 }),
     // 黃玉階文史館的展板（圖集很大，第一次有網格用到時才繪製；其他年代不佔記憶體）
@@ -168,6 +180,90 @@ function swayingAwning(material) {
       )
   }
   material.customProgramCacheKey = () => 'awning-sway'
+  return material
+}
+
+/** 店內透光的頂點著色器：傳世界座標、法線與 UV（windowLit 沒有貼圖，vUv 不存在） */
+function shopGlowVertex(shader) {
+  shader.vertexShader = shader.vertexShader
+    .replace('#include <common>', `#include <common>\n${SHOP_GLOW_VERTEX_PARS}`)
+    .replace('#include <begin_vertex>', `#include <begin_vertex>\n${SHOP_GLOW_VERTEX}`)
+}
+
+/**
+ * 亮窗與店內後牆（不加光源、不加繪製呼叫）：
+ * - 店內後牆：中間亮、左右與上方暗、層架下有陰影；
+ * - 假室內窗：視線打到看不見的房間，斜看有視差，窗邊兩側有窗簾；
+ * - 沒標記的（室內場景裡的窗、門楣）維持原本的平面發光。
+ * 明暗同時乘在底色與自發光：白天看得出房間的深淺，入夜時燈光集中在中間。
+ */
+function shopWindow(material) {
+  material.onBeforeCompile = (shader) => {
+    shopGlowVertex(shader)
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>\n${SHOP_GLOW_FRAGMENT_PARS}`)
+      .replace(
+        '#include <color_fragment>',
+        `#include <color_fragment>
+        // 求交放在分支外面（dFdx 在分支裡沒有定義）
+        vec4 shopHit = shopRoomHit(vec2(vShopUv.x - ${SHOP_GLOW_U0.room.toFixed(1)}, vShopUv.y), ${ROOM_DEPTH.window.toFixed(2)});
+        float shopShade = 1.0;
+        float shopEmissive = 1.0;
+        if (vShopUv.x > ${(SHOP_GLOW_U0.back - 0.5).toFixed(1)}) {
+          shopShade = shopBackWall(vShopUv.x - ${SHOP_GLOW_U0.back.toFixed(1)}, vShopUv.y);
+          // 中間約等於原本的亮度，往外收暗（太亮會在入夜的年代過曝，層架陰影就看不出來）
+          shopEmissive = shopShade * 1.05;
+        } else if (vShopUv.x > ${(SHOP_GLOW_U0.room - 0.5).toFixed(1)}) {
+          float px = vShopUv.x - ${SHOP_GLOW_U0.room.toFixed(1)};
+          shopShade = shopHit.w < -0.5 ? 0.8 : shopRoomShade(shopHit);
+          // 窗簾：貼在玻璃上（不跟著視差），兩側收起、偏暗
+          float curtain = max(1.0 - smoothstep(0.08, 0.17, px), smoothstep(0.83, 0.92, px));
+          shopShade = mix(shopShade, 0.32, curtain * 0.8);
+          shopEmissive = shopShade * 1.3;
+        }
+        if (vShopUv.x > 9.5) diffuseColor.rgb *= mix(0.45, 1.15, shopShade);`,
+      )
+      .replace(
+        '#include <emissivemap_fragment>',
+        '#include <emissivemap_fragment>\n        totalEmissiveRadiance *= vShopUv.x > 9.5 ? shopEmissive * shopLampTint(shopShade) : vec3(1.0);',
+      )
+  }
+  material.customProgramCacheKey = () => 'shop-window'
+  return material
+}
+
+/**
+ * 玻璃店面：假室內，後牆是原本的室內貼圖，其他面取貼圖邊緣的顏色並依燈的距離收暗；
+ * 玻璃反光留在玻璃面上（不跟著視差）。
+ */
+function shopGlass(material) {
+  material.onBeforeCompile = (shader) => {
+    shopGlowVertex(shader)
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>\n${SHOP_GLOW_FRAGMENT_PARS}`)
+      .replace(
+        '#include <map_fragment>',
+        `// 玻璃店面整排標成 u ∈ [10, 11]（共用一個房間），其他的 glassWarm 是原本 0–1 的 UV
+        vec2 shopUv = vec2(vShopUv.x > ${(SHOP_GLOW_U0.room - 0.5).toFixed(1)} ? vShopUv.x - ${SHOP_GLOW_U0.room.toFixed(1)} : vShopUv.x, vShopUv.y);
+        vec4 shopHit = shopRoomHit(shopUv, ${ROOM_DEPTH.glass.toFixed(2)});
+        vec2 shopTexUv = shopHit.w < -0.5 ? shopUv : shopHit.xy;
+        if (shopHit.w > 0.5 && shopHit.w < 1.5) shopTexUv = vec2(shopHit.x > 0.5 ? 0.985 : 0.015, shopHit.y);
+        else if (shopHit.w > 1.5 && shopHit.w < 2.5) shopTexUv = vec2(shopHit.x, 0.03);
+        else if (shopHit.w > 2.5) shopTexUv = vec2(shopHit.x, 0.97);
+        shopTexUv = clamp(shopTexUv, 0.005, 0.995);
+        float shopShade = shopHit.w < 0.5 ? 1.0 : shopRoomShade(shopHit) * 1.25;
+        vec3 shopRoom = texture2D(map, shopTexUv).rgb * shopShade;
+        // 玻璃反光：留在玻璃面上，不跟著視差
+        float shopGlint = fract(shopUv.x * 0.8 + shopUv.y * 0.45 + 0.15);
+        shopRoom += vec3(0.06) * smoothstep(0.0, 0.04, shopGlint) * (1.0 - smoothstep(0.07, 0.13, shopGlint));
+        diffuseColor.rgb *= shopRoom;`,
+      )
+      .replace(
+        '#include <emissivemap_fragment>',
+        'totalEmissiveRadiance *= shopRoom;',
+      )
+  }
+  material.customProgramCacheKey = () => 'shop-glass'
   return material
 }
 

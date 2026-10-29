@@ -16,3 +16,14 @@ OUT=docs/lookbook/after node tests/e2e/lookbook.e2e.mjs http://127.0.0.1:5173/
 ```
 
 已知：`modern-xin-fang-chun-*` 的鏡頭前有一團遮擋（改動前後都有，是視角位置的問題，不是這次的改動）。
+
+## 店內透光（第 9 階段）
+
+- `shop-glow-before/`：改動前（main，5867e2d）；`shop-glow-after/`：改動後
+- 視角（`SET=shop-glow`，見腳本的 `SHOP_GLOW_VIEWS`）：每個年代兩三個一般店面，`-front` 正面（注視點較低，看得到店內深處）、`-oblique` 斜看（看假室內的視差）
+- 繪製呼叫（街道遠景，`stats.json`）前後完全相同：流暢 225／212／232／258／307，精緻 245／230／246／288／356（港口商街、酒樓繁華、摩登、庶民生活、老屋新生）
+- 摩登的改動前截圖與數字是另外重拍的（第一次拍時摩登的街道遠景量到還沒載完的影格，只有 158／172）
+
+```bash
+SET=shop-glow OUT=docs/lookbook/shop-glow-after node tests/e2e/lookbook.e2e.mjs http://127.0.0.1:5173/
+```
