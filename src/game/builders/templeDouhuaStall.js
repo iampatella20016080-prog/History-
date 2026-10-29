@@ -4,6 +4,7 @@ import { conditionTint } from './condition.js'
 import { shade } from './props.js'
 import { bowlStack } from './squidSoupWares.js'
 import { douhuaBowl, douhuaBucket, flatScoop, peanutBasin, spoonBasin, syrupKettle, woodStool } from './templeSweetsWares.js'
+import { contactShadow } from './contactShadow.js'
 
 /**
  * 1945–1980「庶民生活」：慈聖宮廟口的傳統豆花攤（飲食文化情境示意，不是特定的店家，也不是導演的豆花店的前身）。
@@ -33,6 +34,7 @@ function cart(b, tint) {
   const { half, depth, height } = S.cart
   const top = cartTop()
   const bodyBottom = G + 0.26
+  contactShadow(b, 0, G, -depth / 2, half * 2, depth)
   // 車身：木板側板與正面板（中間一道橫木），木框角柱
   b.box('wood', [half * 2 - 0.04, top - 0.03 - bodyBottom, depth - 0.04], [0, (bodyBottom + top - 0.03) / 2, -depth / 2], { tint: tint(PANEL) })
   for (const z of [0, -depth]) {

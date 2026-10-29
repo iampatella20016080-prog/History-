@@ -234,7 +234,7 @@ export function roeTray(b, position, { rotationY = 0 } = {}) {
 export function displayTable(b, position, { width = 1.7, depth = 0.6, height = 0.66, rotationY = 0, tint = '#a98562' } = {}) {
   b.group(position, rotationY, () => {
     b.box('wood', [width, 0.06, depth], [0, height - 0.03, 0], { tint })
-    contactShadow(b, 0, 0, 0, width - 0.1, depth - 0.06, { spread: 0.1 })
+    contactShadow(b, 0, 0, 0, width - 0.1, depth - 0.06, { spread: 0.16 })
     const lx = width / 2 - 0.08
     const lz = depth / 2 - 0.06
     for (const sx of [-1, 1]) {
@@ -486,7 +486,7 @@ export function teaTable(b, position, { rotationY = 0, seed = 1 } = {}) {
   const rng = createRng(seed)
   b.group(position, rotationY, () => {
     b.box('wood', [0.82, 0.05, 0.82], [0, 0.74, 0], { tint: '#8c6446' })
-    contactShadow(b, 0, 0, 0, 0.72, 0.72, { spread: 0.1 })
+    contactShadow(b, 0, 0, 0, 0.72, 0.72, { spread: 0.16 })
     for (const sx of [-1, 1]) {
       for (const sz of [-1, 1]) b.box('wood', [0.05, 0.72, 0.05], [sx * 0.34, 0.36, sz * 0.34], { tint: '#6c4c34' })
     }
@@ -655,7 +655,7 @@ export function bench(b, position, { rotationY = 0, length = 1.6, modern = false
     for (let i = 0; i < 3; i++) {
       b.box('wood', [length, 0.04, 0.12], [0, 0.45, -0.14 + i * 0.14], { tint: modern ? '#b48e64' : '#8c6a48' })
     }
-    contactShadow(b, 0, 0, 0, length - 0.2, 0.36, { spread: 0.1 })
+    contactShadow(b, 0, 0, 0, length - 0.2, 0.36, { spread: 0.16 })
     for (const side of [-1, 1]) {
       b.box(modern ? 'plain' : 'wood', [0.06, 0.45, 0.42], [side * (length / 2 - 0.15), 0.225, 0], { tint: modern ? '#2a2c2e' : '#6c4c34' })
     }

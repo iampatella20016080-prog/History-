@@ -5,7 +5,7 @@
  * 依「世界座標」疊上三層變化，不新增材質、不增加繪製呼叫：
  *
  * 1. 大尺度的明暗與色相：約 5–14 公尺一個起伏的低頻雜訊，偏暖或偏冷幾個百分點
- * 2. 補丁：雜訊超過門檻的不規則區塊整片換一個色調（柏油補過的路面、重新抹過的灰泥）
+ * 2. 補丁：雜訊超過門檻的幾公尺大的不規則區塊整片換一個色調（柏油補過的路面、重新抹過的灰泥）
  * 3. 單塊的破磚與換過的磚：依貼圖實際的磚格（rows × perRow、是否錯縫）找出每一塊，
  *    以整個世界的磚格編號取亂數，少數幾塊顏色不同或有一道裂縫；同一張貼圖的不同重複位置結果不同
  *
@@ -15,23 +15,24 @@
 /**
  * 各材質的設定：
  * - tone：大尺度明暗幅度；hue：冷暖幅度；scale：起伏的尺度（公尺）
- * - patch：補丁色調差（0 不做）
+ * - patch：補丁色調差（0 不做）；patchScale：補丁的大小（公尺）；seam：補丁邊緣接縫的深度（只有柏油，
+ *   其他材質的接縫看起來像一圈水漬，不加）。石板與夯土的貼圖本身已有深淺，不加補丁
  * - grid：貼圖一次重複裡的磚格（與 textures.js 的繪製一致）；bond 為錯縫（奇數列偏移半塊）
  * - broken：一塊磚是破磚（有裂縫）的機率；swapped：換過、顏色不同的機率
  */
 export const SURFACE_VARIATION = {
-  plaster: { tone: 0.07, hue: 0.03, scale: 7, patch: 0.06 },
-  stucco: { tone: 0.06, hue: 0.025, scale: 7, patch: 0.05 },
+  plaster: { tone: 0.07, hue: 0.03, scale: 7, patch: 0.06, patchScale: 3.5 },
+  stucco: { tone: 0.06, hue: 0.025, scale: 7, patch: 0.05, patchScale: 3.5 },
   brick: { tone: 0.06, hue: 0.03, scale: 6, patch: 0, grid: { rows: 16, perRow: 4, bond: true }, broken: 0.012, swapped: 0.03 },
-  stone: { tone: 0.08, hue: 0.03, scale: 9, patch: 0.06 },
-  earth: { tone: 0.1, hue: 0.04, scale: 12, patch: 0.07 },
-  asphalt: { tone: 0.08, hue: 0.02, scale: 10, patch: 0.1 },
+  stone: { tone: 0.08, hue: 0.03, scale: 9, patch: 0 },
+  earth: { tone: 0.1, hue: 0.04, scale: 12, patch: 0 },
+  asphalt: { tone: 0.08, hue: 0.02, scale: 10, patch: 0.1, patchScale: 4, seam: 0.18 },
   pavers: { tone: 0.06, hue: 0.025, scale: 9, patch: 0, grid: { rows: 8, perRow: 4, bond: true }, broken: 0.015, swapped: 0.04 },
   tile: { tone: 0.05, hue: 0.02, scale: 6, patch: 0, grid: { rows: 16, perRow: 4, bond: true }, broken: 0.01, swapped: 0.03 },
   marketTile: { tone: 0.05, hue: 0.015, scale: 8, patch: 0, grid: { rows: 4, perRow: 4, bond: false }, broken: 0.03, swapped: 0.04 },
   terracotta: { tone: 0.06, hue: 0.03, scale: 6, patch: 0, grid: { rows: 4, perRow: 4, bond: false }, broken: 0.03, swapped: 0.05 },
   creamTile: { tone: 0.05, hue: 0.02, scale: 6, patch: 0, grid: { rows: 4, perRow: 4, bond: false }, broken: 0.025, swapped: 0.04 },
-  roof: { tone: 0.06, hue: 0.03, scale: 8, patch: 0.05 },
+  roof: { tone: 0.06, hue: 0.03, scale: 8, patch: 0.05, patchScale: 4 },
 }
 
 const fract = (x) => x - Math.floor(x)
@@ -67,7 +68,7 @@ export function unitState(col, row, config) {
 const GLSL_COMMON = /* glsl */ `
 uniform vec4 uSurfVar;   // tone, hue, 1/scale, patch
 uniform vec4 uSurfGrid;  // rows, perRow, bond, 有磚格
-uniform vec2 uSurfUnit;  // broken, swapped
+uniform vec4 uSurfUnit;  // broken, swapped, 1/patchScale, seam
 varying vec3 vSurfWorld;
 varying float vSurfUp;
 float surfHash(vec2 p) {
@@ -99,11 +100,11 @@ const GLSL_APPLY = /* glsl */ `
   tone *= vec3(1.0 + warm * uSurfVar.y, 1.0, 1.0 - warm * uSurfVar.y);
   if (uSurfVar.w > 0.0) {
     // 補丁：雜訊高的不規則區塊整片偏一個色調，邊緣有一圈較深的接縫
-    float pn = surfNoise(sp * 0.9 + 73.0) * 0.7 + surfNoise(sp * 3.1 + 5.0) * 0.3;
+    float pn = surfNoise(sp * uSurfUnit.z + 73.0) * 0.75 + surfNoise(sp * uSurfUnit.z * 3.0 + 5.0) * 0.25;
     float inPatch = smoothstep(0.7, 0.72, pn);
     float seam = smoothstep(0.68, 0.7, pn) - inPatch;
     tone *= mix(vec3(1.0), vec3(1.0 - uSurfVar.w * 0.6, 1.0 - uSurfVar.w * 0.5, 1.0 - uSurfVar.w * 0.2), inPatch);
-    tone *= 1.0 - seam * 0.18;
+    tone *= 1.0 - seam * uSurfUnit.w;
   }
 #ifdef USE_MAP
   if (uSurfGrid.w > 0.5) {
@@ -154,7 +155,7 @@ function surfaceVariationCompile(shader) {
   const grid = cfg.grid
   shader.uniforms.uSurfVar = { value: [cfg.tone, cfg.hue, 1 / cfg.scale, cfg.patch ?? 0] }
   shader.uniforms.uSurfGrid = { value: grid ? [grid.rows, grid.perRow, grid.bond ? 1 : 0, 1] : [1, 1, 0, 0] }
-  shader.uniforms.uSurfUnit = { value: [cfg.broken ?? 0, cfg.swapped ?? 0] }
+  shader.uniforms.uSurfUnit = { value: [cfg.broken ?? 0, cfg.swapped ?? 0, 1 / (cfg.patchScale ?? 4), cfg.seam ?? 0] }
   shader.vertexShader = shader.vertexShader
     .replace('#include <common>', '#include <common>\nvarying vec3 vSurfWorld;\nvarying float vSurfUp;')
     .replace(

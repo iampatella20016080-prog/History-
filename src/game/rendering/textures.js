@@ -9,7 +9,6 @@ import {
   SRGBColorSpace,
 } from 'three'
 import { createRng, hash2 } from '../utils/random.js'
-import { contactFalloff } from '../builders/contactShadow.js'
 import { DISPLAY_FONT, registerFontTexture } from './fonts.js'
 
 /**
@@ -1108,26 +1107,6 @@ function toonGradient() {
   return texture
 }
 
-/** 接地暗影的濃度圖（alphaMap 讀綠色通道；中間實心、往外柔和淡出） */
-function contactShadowTexture() {
-  const S = 64
-  const data = new Uint8Array(S * S * 4)
-  for (let j = 0; j < S; j++) {
-    for (let i = 0; i < S; i++) {
-      const a = Math.round(contactFalloff((i + 0.5) / S, (j + 0.5) / S) * 255)
-      const k = (j * S + i) * 4
-      data[k] = data[k + 1] = data[k + 2] = a
-      data[k + 3] = 255
-    }
-  }
-  const texture = new DataTexture(data, S, S)
-  texture.minFilter = LinearFilter
-  texture.magFilter = LinearFilter
-  texture.generateMipmaps = false
-  texture.needsUpdate = true
-  return texture
-}
-
 let cache = null
 
 /** 所有貼圖只產生一次 */
@@ -1164,7 +1143,6 @@ export function getTextures() {
     steel: steelTexture(),
     perforated: perforatedTexture(),
     toonGradient: toonGradient(),
-    contactShadow: contactShadowTexture(),
   }
   return cache
 }

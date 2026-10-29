@@ -2,6 +2,7 @@ import { TEMPLE_STALL, TEMPLE_STALL_HOTSPOTS } from '../../data/squidSoupLayout.
 import { conditionTint } from './condition.js'
 import { shade } from './props.js'
 import { bigPot, bowlStack, ladle, soupSpoon, squidGeng, toppingTray } from './squidSoupWares.js'
+import { contactShadow } from './contactShadow.js'
 
 /**
  * 1945–1980「庶民生活」：慈聖宮廟埕旁的魷魚羹攤（飲食文化情境示意，不是特定的店家，也不是老潘的前身）。
@@ -29,6 +30,7 @@ function counter(b, tint) {
   const { half, depth, height } = S.counter
   const top = counterTop()
   const back = -depth
+  contactShadow(b, 0, G, back / 2, half * 2, depth)
   for (const x of [-half + 0.04, half - 0.04]) {
     for (const z of [back + 0.04, -0.04]) b.box('wood', [0.06, height - 0.03, 0.06], [x, G + (height - 0.03) / 2, z], { tint: tint(WOOD_DARK) })
   }
@@ -110,6 +112,7 @@ function tables(b, detail, tint) {
   for (const [i, table] of S.tables.entries()) {
     const t = S.tableHalf
     b.box('wood', [t * 2, 0.035, t * 2], [table.x, G + h, table.z], { tint: tint(shade(WOOD, 1.08)) })
+    contactShadow(b, table.x, G, table.z, t * 2 - 0.06)
     for (const sx of [-1, 1]) {
       for (const sz of [-1, 1]) b.box('wood', [0.04, h, 0.04], [table.x + sx * (t - 0.04), G + h / 2, table.z + sz * (t - 0.04)], { tint: tint(WOOD_DARK) })
     }
@@ -119,6 +122,7 @@ function tables(b, detail, tint) {
       const z = table.z + sz * S.stoolOffset
       const x = table.x + (i % 2 ? 0.03 : -0.03) * sz
       b.box('wood', [0.32, 0.04, 0.26], [x, G + 0.42, z], { tint: tint(shade(WOOD, 1.12)) })
+      contactShadow(b, x, G, z, 0.26, 0.2)
       for (const lx of [-0.12, 0.12]) {
         for (const lz of [-0.09, 0.09]) b.box('wood', [0.035, 0.42, 0.035], [x + lx, G + 0.21, z + lz], { tint: tint(WOOD_DARK) })
       }

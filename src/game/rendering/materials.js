@@ -5,6 +5,7 @@ import { ensureRiceTexture, getRiceTexture } from './riceTexture.js'
 import { ensureSzxTexture, getSzxTexture } from './szxTexture.js'
 import { windUniforms } from './wind.js'
 import { SURFACE_VARIATION, applySurfaceVariation } from './surfaceVariation.js'
+import { CONTACT_OPACITY } from '../builders/contactShadow.js'
 
 /**
  * 共用的卡通渲染材質。
@@ -62,7 +63,7 @@ export const MATERIAL_TILE = {
   riceExhibit: null,
   // 十字軒糕餅舖（2000–現在）的展板、獎狀、價卡與貼紙圖集
   szxExhibit: null,
-  // 接地暗影（builders/contactShadow.js）：每片薄片自己的 0–1 UV
+  // 接地暗影（builders/contactShadow.js）：單色薄片，不用貼圖
   contact: null,
 }
 
@@ -143,12 +144,12 @@ export function getMaterials() {
     exhibit: exhibitMaterial(toon),
     riceExhibit: lazyAtlasMaterial(toon, getRiceTexture, ensureRiceTexture),
     szxExhibit: lazyAtlasMaterial(toon, getSzxTexture, ensureSzxTexture),
-    // 柱腳與家具的接地暗影：半透明的暖灰，疊在任何地面上都是變暗；不受光、不寫入深度
+    // 柱腳與家具的接地暗影（builders/contactShadow.js）：半透明的暖灰，三層薄片疊出由深到淡的幾階；
+    // 疊在任何地面上都是變暗，不受光、不寫入深度
     contact: new MeshBasicMaterial({
       color: new Color('#2e261f'),
-      alphaMap: textures.contactShadow,
       transparent: true,
-      opacity: 0.5,
+      opacity: CONTACT_OPACITY,
       depthWrite: false,
       polygonOffset: true,
       polygonOffsetFactor: -2,

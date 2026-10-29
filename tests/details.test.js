@@ -5,7 +5,7 @@ import { ERAS } from '../src/data/eras.js'
 import { STREET } from '../src/game/config.js'
 import { PartBuilder } from '../src/game/builders/PartBuilder.js'
 import { buildArcadeBuilding } from '../src/game/builders/arcade.js'
-import { CONTACT_LIFT, contactFalloff, contactShadow } from '../src/game/builders/contactShadow.js'
+import { CONTACT_LIFT, CONTACT_RINGS, contactDarkness, contactShadow } from '../src/game/builders/contactShadow.js'
 import { BANYAN_ROOT_CLEARANCE, buildTree } from '../src/game/builders/environment.js'
 import { LUMP_IN, LUMP_OUT, lumpyClump } from '../src/game/builders/foliage.js'
 import { pottedPlant, stool } from '../src/game/builders/props.js'
@@ -212,15 +212,25 @@ describe('細部：水漬從窗臺下開始', () => {
 })
 
 describe('細部：接地暗影', () => {
-  test('暗影貼圖：中間實心、四周淡出到 0，由內往外遞減', () => {
-    assert.equal(contactFalloff(0.5, 0.5), 1)
-    assert.equal(contactFalloff(0, 0.5), 0)
-    assert.equal(contactFalloff(1, 1), 0)
-    let last = 1
-    for (let u = 0.5; u <= 1; u += 0.05) {
-      const a = contactFalloff(u, 0.5)
-      assert.ok(a <= last + 1e-9)
-      last = a
+  test('三層由大到小的薄片：越靠近物件疊得越暗，最暗處約五到六成', () => {
+    const b = new PartBuilder()
+    contactShadow(b, 0, 0, 0, 0.5)
+    const sizes = b.groups.get('contact').map((g) => {
+      g.computeBoundingBox()
+      return g.boundingBox.max.x - g.boundingBox.min.x
+    })
+    assert.equal(sizes.length, CONTACT_RINGS.length)
+    for (let i = 1; i < sizes.length; i++) assert.ok(sizes[i] < sizes[i - 1])
+    assert.ok(sizes.at(-1) > 0.5, '最小的一層也比底面大')
+    assert.ok(contactDarkness(1) < 0.35 && contactDarkness(3) > 0.5 && contactDarkness(3) < 0.75)
+  })
+
+  test('maxZ：暗影不超出步道前緣懸在半空中', () => {
+    const b = new PartBuilder()
+    contactShadow(b, 0, 0.15, 1.5, 0.52, 0.52, { maxZ: 1.7 })
+    for (const g of b.groups.get('contact')) {
+      g.computeBoundingBox()
+      assert.ok(g.boundingBox.max.z <= 1.7 + 1e-6)
     }
   })
 
@@ -231,6 +241,10 @@ describe('細部：接地暗影', () => {
     g.computeBoundingBox()
     const box = g.boundingBox
     assert.ok(Math.abs(box.min.y - (0.2 + CONTACT_LIFT)) < 1e-6 && Math.abs(box.max.y - box.min.y) < 1e-6, '水平貼地')
+    for (const ring of b.groups.get('contact')) {
+      ring.computeBoundingBox()
+      assert.ok(ring.boundingBox.min.y < 0.2 + 0.01, '每一層都貼著地面')
+    }
     assert.ok(box.max.x - box.min.x > 0.3, '比凳腳的範圍大')
     const r = new PartBuilder()
     r.group([0, 0, 0], Math.PI / 4, () => contactShadow(r, 0, 0, 0, 1, 0.2, { spread: 0 }))
@@ -253,7 +267,7 @@ describe('細部：接地暗影', () => {
     const onWalkway = (list) =>
       list.filter((g) => {
         g.computeBoundingBox()
-        return Math.abs(g.boundingBox.min.y - (STREET.walkwayHeight + CONTACT_LIFT)) < 1e-6
+        return Math.abs(g.boundingBox.min.y - (STREET.walkwayHeight + CONTACT_LIFT)) < 1e-6 && g.boundingBox.max.z <= STREET.walkwayDepth + 1e-6
       }).length
     assert.ok(onWalkway(b.groups.get('contact')) >= 2, '兩根騎樓柱')
     const s = new PartBuilder()
@@ -261,7 +275,7 @@ describe('細部：接地暗影', () => {
     assert.ok(onWalkway(s.groups.get('contact')) >= 2, '兩根亭仔腳木柱')
   })
 
-  test('材質：半透明、不寫入深度、不投射陰影、不描輪廓線；室內不重設它的顏色', () => {
+  test('材質：半透明、不寫入深度、不投射陰影、不描輪廓線；室內不重設它的顏色；不用貼圖', () => {
     const batches = readFileSync(new URL('../src/game/components/StaticBatches.jsx', import.meta.url), 'utf8')
     assert.match(batches, /NO_SHADOW_CAST = new Set\([^)]*'contact'/)
     assert.match(batches, /NO_OUTLINE = new Set\([^)]*'contact'/)

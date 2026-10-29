@@ -1,6 +1,7 @@
 import { CircleGeometry, IcosahedronGeometry, LatheGeometry, PlaneGeometry, SphereGeometry, TorusGeometry, Vector2 } from 'three'
 import { createRng } from '../utils/random.js'
 import { soupBowl } from './squidSoupWares.js'
+import { contactShadow } from './contactShadow.js'
 
 /**
  * 廟口豆花攤與糕粿攤共用的食品、碗盤與器具（1945–1980，飲食文化情境示意）。
@@ -427,6 +428,7 @@ export function kuehMold(b, x, y, z, { rotationY = 0, lean = 0 } = {}) {
 export function woodStool(b, x, y, z, { top = 0.42, tint = '#9a7656', legTint = '#6c4c34', rotationY = 0 } = {}) {
   b.group([x, y, z], rotationY, () => {
     b.box('wood', [0.3, 0.035, 0.24], [0, top - 0.018, 0], { tint })
+    contactShadow(b, 0, 0, 0, 0.26, 0.2)
     for (const lx of [-0.115, 0.115]) {
       for (const lz of [-0.085, 0.085]) b.box('wood', [0.032, top - 0.035, 0.032], [lx, (top - 0.035) / 2, lz], { tint: legTint })
     }
