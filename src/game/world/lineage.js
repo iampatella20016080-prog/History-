@@ -161,6 +161,8 @@ export function genericBuildingConfig(lot, era) {
     pottedPlants: era.id === 'banquet' && arcade && rng() < 0.35,
     cafe: (era.id === 'modern' && state.archetype === 'deco' && rng() < 0.5) || (era.id === 'revival' && rng() < 0.3),
     walkway: true,
+    // 灰泥牆的風化、海報與鐵窗花（builders/weathering.js）：只套用在一般街屋
+    weathering: era.id,
   }
   if (state.archetype === 'minnan') {
     config.upper = state.params.upperBrick ? 'brick' : state.params.floors === 2 ? 'plaster' : state.params.ground
