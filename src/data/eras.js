@@ -53,7 +53,7 @@ export const ERAS = [
       wires: false,
       lanternStrings: false,
       items: ['teaChests', 'sacks', 'baskets', 'jars', 'handcart', 'carryingPole'],
-      boats: 'junks',
+      boats: 'qingWharf',
     },
     availableStores: ['lin-fu-zhen', 'dodd-tea-house', 'xia-hai-cheng-huang', 'lin-hua-tai'],
   },

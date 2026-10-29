@@ -1983,6 +1983,36 @@ SOURCES['wiki-wang-jingquan'] = {
   context: '百科條目：王井泉1905年6月4日生、1965年逝；1938年3月3日開設山水亭；1953年遷民生西路、1955年歇業。本站不據此寫任何未在學術來源出現的細節。',
 }
 
+/* ── 清末碼頭（港口商街的碼頭、接駁小船、茶箱與挑夫；查證紀錄見 docs/research/qing-wharf.md） ── */
+SOURCES['tcmb-dadaocheng-wharf'] = {
+  id: 'tcmb-dadaocheng-wharf',
+  citation: '阮素芬（撰寫），〈大稻埕碼頭〉，國家文化記憶庫（國立臺灣歷史博物館），CC BY 3.0 TW。',
+  publisher: '文化部國家文化記憶庫',
+  title: '大稻埕碼頭',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?id=333219&indexCode=Culture_Place',
+  published: '線上條目（2026年10月查閱）',
+  context: '碼頭沿革由新莊、艋舺移到大稻埕，約1860年代唐山帆船改泊大稻埕，1870年以後大稻埕為淡水河最大也是最後的內河港；後來帆船無法靠岸，只能停在河道中，由小船接駁；依1901年地圖，早期碼頭在第三水門與臺北大橋之間。',
+}
+SOURCES['davidson-formosa-1903'] = {
+  id: 'davidson-formosa-1903',
+  citation: 'James W. Davidson, The Island of Formosa, Past and Present, London and New York: Macmillan, 1903.',
+  publisher: 'Macmillan（Internet Archive 全文）',
+  title: 'The Island of Formosa, Past and Present',
+  url: 'https://archive.org/details/islandofformosap00davi',
+  published: '1903年',
+  context: '茶業章（約1898–1900年所見，用於清末時註明「推定相近」）：外銷茶的標準包裝是約40磅的「半箱」，另有四分之一箱與10磅小盒；茶趁熱裝箱，內襯焊封的薄鉛；鉛片在大稻埕以鐵鍋與瓦片現場澆鑄；松木箱板自廈門、福州運來，在大稻埕組釘；箱外貼彩色印花紙或由畫工手繪。淡水河口1895年可見戎克船、貨船、木筏與舢舨。',
+}
+SOURCES['demomy-tait-tea-label'] = {
+  id: 'demomy-tait-tea-label',
+  citation: '〈1890年德記洋行福爾摩沙烏龍茶箱商標紙〉，DEMOMY 收藏平臺（使用者 NIKKO 上傳），2025年12月31日。',
+  publisher: 'DEMOMY 收藏平臺',
+  title: '1890年德記洋行福爾摩沙烏龍茶箱商標紙',
+  url: 'https://www.demomy.com/item.php?id=204',
+  published: '2025年12月31日',
+  usage: '民間藏家頁面，只作旁證；年份為推測，待核。網站的茶箱外裱紙不仿這張商標。',
+  context: '宣紙木版印刷的茶箱商標紙，約37×31.5公分，貼在木箱外面；頁面稱箱內為錫箔內襯（與 Davidson 記的鉛不同）。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

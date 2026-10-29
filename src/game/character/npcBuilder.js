@@ -96,6 +96,10 @@ export const NPC_LOOKS = {
   riceMiller: { era: 'banquet', skin: '#d0a07a', hair: 'short', top: { kind: 'shirt', color: '#d8cdb5', trim: '#c4b89e' }, bottom: '#3d4652', shoes: ['#3a2c22', '#3a2c22'], extras: { apron: '#8a7a62', douli: '#cfb06b' } },
   riceClerk: { era: 'modern', skin: '#e2b98f', hair: 'short', top: { kind: 'long', color: '#ece6d6', trim: '#d7cfbc' }, bottom: '#3b3734', shoes: ['#2a2622', '#2a2622'] },
   riceMillerModern: { era: 'modern', skin: '#cf9f78', hair: 'short', top: { kind: 'singlet', color: '#efe9db' }, bottom: '#53514c', shoes: ['#3a2c22', '#3a2c22'], extras: { apron: '#6f6656', towel: '#e8e1d0' } },
+  // 1853–1895：清末碼頭的挑夫（歷史情境重建：短衫或赤膊加背心、捲起的褲管、草鞋、斗笠與辮子；見 data/qingWharfLayout.js）
+  qingPorter: { era: 'qing-port', skin: '#c08f64', hair: 'short', top: { kind: 'singlet', color: '#e6dccb' }, bottom: '#4b5560', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#ddd3bf', douli: '#d4b878', queue: true } },
+  qingPorterPole: { era: 'qing-port', skin: '#b98a60', hair: 'short', top: { kind: 'singlet', color: '#ded3bf' }, bottom: '#56524a', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#ddd3bf', douli: '#cdb070', queue: true, teaPole: { pole: '#b49a5e', chest: '#c9a77a', paper: '#e0ad58', band: '#5a4634' } } },
+  qingPorterJacket: { era: 'qing-port', skin: '#c99a70', hair: 'short', top: { kind: 'long', color: '#4f6275', trim: '#425364' }, bottom: '#3d3a36', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#e3d9c6', queue: true } },
   // 1945–1980：米苔目攤的攤販與客人
   postwarVendor: { era: 'postwar', skin: '#d6ad84', hair: 'short', top: { kind: 'singlet', color: '#efebe1' }, bottom: '#454b55', shoes: ['#2a2622', '#c9bfab'], extras: { apron: '#5f7186', towel: '#ece6d8' } },
   postwarDiner: { era: 'postwar', hair: 'short', top: { kind: 'shirt', color: '#e6e1d3', trim: '#cfc8b6' }, bottom: '#6a6862', shoes: ['#4a3225', '#2b1d16'] },
@@ -210,6 +214,11 @@ function headParts(parts, look, extras) {
     parts.add(extras.cap, new SphereGeometry(0.165, 14, 8, 0, Math.PI * 2, 0, Math.PI * 0.5), { p: [0, 0.2, -0.01] })
     parts.add(extras.cap, box(0.2, 0.018, 0.13), { p: [0, 0.205, 0.2], r: [-0.12, 0, 0] })
   }
+  if (extras.queue) {
+    // 辮子：從後腦垂到背上
+    parts.add(hairColor, tube(0.03, 0.022, 0.42, 6), { p: [0, -0.06, -0.15], r: [-0.22, 0, 0] })
+    parts.add(hairColor, sphere(0.026, 6, 4), { p: [0, -0.28, -0.1] })
+  }
   if (extras.douli) {
     // 斗笠：寬的竹編圓錐
     parts.add(extras.douli, new ConeGeometry(0.34, 0.16, 18), { p: [0, 0.33, -0.01] })
@@ -221,7 +230,7 @@ function headParts(parts, look, extras) {
 }
 
 /** 上衣、骨盆、圍裙、毛巾與背包（軀幹座標：原點在髖部） */
-function torsoParts(parts, look, extras, frame) {
+function torsoParts(parts, look, extras, frame, seated = false) {
   const { kind, color, trim } = look.top
   const edge = trim ?? new Color(color).multiplyScalar(0.86).getStyle()
   parts.add(color, tube(0.194, 0.224, 0.63, 16), { p: [0, 0.285, 0], frame })
@@ -251,6 +260,18 @@ function torsoParts(parts, look, extras, frame) {
     // 扛在左肩上的米袋
     parts.add(extras.shoulderSack, sphere(0.2, 12, 8), { p: [0.2, 0.74, -0.02], s: [1.0, 0.75, 1.6], frame })
     parts.add(new Color(extras.shoulderSack).multiplyScalar(0.82).getStyle(), tube(0.06, 0.08, 0.06, 8), { p: [0.2, 0.72, 0.3], r: [Math.PI / 2, 0, 0], frame })
+  }
+  if (extras.teaPole && !seated) {
+    // 扁擔挑著兩個茶箱：扁擔架在左肩上（carry 姿勢的左手扶著），兩端用繩子吊著茶箱，箱底離地約 0.3 公尺（坐著時不挑）
+    const { pole, chest, paper, band } = extras.teaPole
+    parts.add(pole, tube(0.028, 0.028, 1.9, 6), { p: [0.2, 0.66, 0], r: [Math.PI / 2, 0, 0], frame })
+    for (const end of [-1, 1]) {
+      const z = end * 0.78
+      for (const dz of [-0.16, 0.16]) parts.add(band, tube(0.008, 0.008, 0.84, 4), { p: [0.2, 0.25, z + dz], frame })
+      parts.add(chest, box(0.36, 0.36, 0.48), { p: [0.2, -0.36, z], frame })
+      parts.add(paper, box(0.37, 0.24, 0.38), { p: [0.2, -0.36, z], frame })
+      parts.add(band, box(0.38, 0.03, 0.5), { p: [0.2, -0.36, z], frame })
+    }
   }
   if (extras.backpack) {
     parts.add(extras.backpack, box(0.3, 0.38, 0.14), { p: [0, 0.34, -0.29], frame })
@@ -363,7 +384,7 @@ export function buildNpcGeometry(lookId, poseId, { seatY = 0.46 } = {}) {
 
   const body = new Parts()
   legs(body, look, pose, seatY)
-  torsoParts(body, look, extras, torso)
+  torsoParts(body, look, extras, torso, pose.seated)
   const right = armFrames(torso, -1, pose.right)
   const left = armFrames(torso, 1, pose.left)
   upperArm(body, look, right.shoulderFrame)
