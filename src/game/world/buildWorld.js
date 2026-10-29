@@ -371,7 +371,14 @@ export function* eraWorldSteps(eraId) {
   buildMooringPosts(b, layout.mooringPosts)
   // 遠景裝飾（街屋後方的樹、遠方天際線、年代的節慶裝飾）另外合併，流暢模式下不顯示
   layout.trees.forEach((tree, i) =>
-    buildTree(tree.collider ? b : detail, tree.position, { scale: tree.scale, seed: 10 + i, banyan: !!tree.collider }),
+    // 河岸廣場的榕樹（collider）：落地的氣根只在樹幹的碰撞範圍裡（eraLayout 的半寬 0.55），精緻模式多一批短氣根
+    buildTree(tree.collider ? b : detail, tree.position, {
+      scale: tree.scale,
+      seed: 10 + i,
+      banyan: !!tree.collider,
+      groundRadius: 0.55,
+      detail: tree.collider ? detail : null,
+    }),
   )
   for (const item of layout.decorations ?? []) placeDecoration(detail, item)
   yield

@@ -55,7 +55,7 @@ const SHARED_TABLES = [
   [2.4, -1.0],
 ]
 
-export function buildTemple(b, cfg) {
+export function buildTemple(b, cfg, detail = null) {
   const rng = createRng(cfg.seed ?? 19)
   const condition = cfg.condition ?? 'mature'
   const tint = (hex) => conditionTint(hex, condition)
@@ -160,7 +160,8 @@ export function buildTemple(b, cfg) {
     // 戰後的魷魚羹攤與豆花攤在西側榕樹下（cfg.clearing）、米苔目攤與糕粿攤在東側榕樹下（cfg.eastClearing）：
     // 那一棵的氣根與低垂的樹冠讓出攤位的空間（可以是一個或多個範圍）
     const clearing = (side > 0 ? cfg.clearing : cfg.eastClearing) ?? null
-    buildTree(b, [tx, 0, treeZ], { scale: 0.9, seed: 300 + side, banyan: true, clearing })
+    // 落地的氣根只在石座的碰撞範圍裡（templeCollision 的榕樹石座，半寬 0.95）；精緻模式多一批短氣根（detail）
+    buildTree(b, [tx, 0, treeZ], { scale: 0.9, seed: 300 + side, banyan: true, clearing, groundRadius: 0.95, detail })
     if (cfg.stalls) {
       // 東側的板凳在米苔目攤的位置：有米苔目攤的年代移到榕樹靠矮牆的那一側
       const benchX = side < 0 && cfg.eastClearing ? tx + side * 1.55 : tx + side * -1.6

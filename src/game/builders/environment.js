@@ -1,4 +1,4 @@
-import { CylinderGeometry, IcosahedronGeometry, Shape } from 'three'
+import { CubicBezierCurve3, CylinderGeometry, IcosahedronGeometry, QuadraticBezierCurve3, Shape, TubeGeometry, Vector3 } from 'three'
 import { PIER, PLAZA, RIVER, STREET } from '../config.js'
 import { createRng, pick, range } from '../utils/random.js'
 import { shade } from './props.js'
@@ -307,23 +307,118 @@ function distanceToClearing(c, px, pz) {
   return Math.hypot(Math.max(c.minX - px, 0, px - c.maxX), Math.max(c.minZ - pz, 0, pz - c.maxZ))
 }
 
-/** 樹冠的一團在留空範圍上方要抬高多少（範圍裡最大的那一個） */
-function clearingLift(clearings, bx, bz, by, r) {
+/** 樹冠的一團在留空範圍上方要抬高多少（範圍裡最大的那一個）；squash 是葉團的高度比例 */
+function clearingLift(clearings, bx, bz, by, r, squash = 0.72) {
   let lift = 0
   for (const c of clearings) {
     const near = distanceToClearing(c, bx, bz)
     if (near >= r) continue
-    const bottom = by - 0.72 * r * Math.sqrt(1 - (near / r) ** 2)
+    const bottom = by - squash * r * Math.sqrt(1 - (near / r) ** 2)
     if (bottom < c.top) lift = Math.max(lift, c.top - bottom)
   }
   return lift
 }
 
+/** 氣根末端的最低高度：不在樹幹附近落地的氣根都停在這個高度以上，不擋住人物的走道 */
+export const BANYAN_ROOT_CLEARANCE = 2.05
+
+/**
+ * 榕樹的樹冠：三層錯開的葉叢（下層寬而扁、顏色最深，上層小而亮），像手繪的層層葉片。
+ * 每一層的數量、離樹幹的距離、半徑、高度（乘上 scale）與葉團的高度比例。
+ */
+const BANYAN_LAYERS = [
+  { count: 6, d: [1.6, 2.2], r: [1.15, 1.45], y: [0.5, 0.85], squash: 0.5, greens: ['#6f8160', '#76875f', '#6a7b5c'] },
+  { count: 5, d: [0.8, 1.5], r: [1.3, 1.7], y: [1.2, 1.55], squash: 0.56, greens: ['#8e9c77', '#7f8e6b', '#86956f'] },
+  { count: 3, d: [0, 0.7], r: [1.1, 1.45], y: [1.95, 2.3], squash: 0.62, greens: ['#a3ae86', '#9aa682', '#adb68e'] },
+]
+
+/** 樹幹在高度 h 的半徑 */
+function trunkRadiusAt(h, trunkH, scale) {
+  const t = Math.min(Math.max(h / trunkH, 0), 1)
+  return (0.55 + (0.28 - 0.55) * t) * scale
+}
+
+/** 一條氣根的路徑在水平面上是否靠近留空範圍（取曲線上的幾個點） */
+function rootInClearing(curve, clearings) {
+  if (!clearings.length) return false
+  for (let i = 0; i <= 8; i++) {
+    const p = curve.getPoint(i / 8)
+    if (clearings.some((c) => distanceToClearing(c, p.x, p.z) < 0.12)) return true
+  }
+  return false
+}
+
+function addRoot(target, curve, radius, tint) {
+  target.add('wood', new TubeGeometry(curve, 6, radius, 3, false), { tint })
+}
+
+/**
+ * 榕樹的氣根（亂數的使用順序與留空範圍無關）：
+ * - 落地的支柱根：從下層樹冠垂下，在 groundRadius 以內（樹幹與石座的碰撞範圍裡）落到 floorY；
+ *   路徑先在樹冠裡往樹幹收、再幾乎垂直地落下，低於 BANYAN_ROOT_CLEARANCE 的部分都在 groundRadius 以內
+ * - 垂在樹冠下的短氣根：末端停在 BANYAN_ROOT_CLEARANCE 以上，人物從底下走過
+ * - detail 有給時（精緻模式才顯示的細部）另外多一批短氣根；流暢模式（觸控裝置的預設）只有前兩種
+ */
+function banyanRoots(b, detail, { x, y, z, scale, trunkH, seed, clearings, groundRadius, floorY }) {
+  const rng = createRng(seed * 7 + 3)
+  const tints = ['#7c6650', '#6f5b47', '#85705a']
+  for (let i = 0; i < 5; i++) {
+    const a = (i / 5) * Math.PI * 2 + rng() * 0.8
+    const d0 = range(rng, 1.0, 1.6) * scale
+    const y0 = y + trunkH + range(rng, 0.45, 0.7) * scale
+    const twist = range(rng, -0.25, 0.25)
+    const tint = pick(rng, tints)
+    const radius = range(rng, 0.035, 0.05)
+    const floorR = trunkRadiusAt(floorY - y, trunkH, scale)
+    let dEnd = range(rng, floorR + 0.06, groundRadius - 0.14)
+    let yEnd = y + floorY
+    // 碰撞範圍只比樹幹粗一點（例如河岸廣場的榕樹）：氣根貼著樹幹落下，在樹幹的下段長進樹幹
+    if (groundRadius - 0.14 < floorR + 0.06) {
+      yEnd = y + range(rng, 0.55, 0.95) * scale
+      dEnd = trunkRadiusAt(yEnd - y, trunkH, scale) + 0.02
+    }
+    const at = (d, h, da = 0) => new Vector3(x + Math.cos(a + da) * d, h, z + Math.sin(a + da) * d)
+    const curve = new CubicBezierCurve3(
+      at(d0, y0),
+      at(dEnd + (d0 - dEnd) * 0.3, y0, twist * 0.5),
+      at(dEnd, y0 - 0.2 * scale, twist),
+      at(dEnd, yEnd, twist),
+    )
+    if (!rootInClearing(curve, clearings)) addRoot(b, curve, radius, tint)
+  }
+  const curtain = (target, count, r) => {
+    for (let i = 0; i < count; i++) {
+      const a = r() * Math.PI * 2
+      const d0 = range(r, 1.1, 2.5) * scale
+      const y0 = y + trunkH + range(r, 0.55, 0.8) * scale
+      const yEnd = Math.max(y + BANYAN_ROOT_CLEARANCE, y0 - range(r, 0.8, 1.4))
+      const sway = range(r, -0.14, 0.14)
+      const tint = pick(r, tints)
+      const radius = range(r, 0.02, 0.032)
+      const top = new Vector3(x + Math.cos(a) * d0, y0, z + Math.sin(a) * d0)
+      const end = new Vector3(top.x + Math.sin(a) * sway, yEnd, top.z - Math.cos(a) * sway)
+      const mid = new Vector3((top.x + end.x) / 2 + Math.cos(a) * 0.08, (y0 + yEnd) / 2, (top.z + end.z) / 2 + Math.sin(a) * 0.08)
+      const curve = new QuadraticBezierCurve3(top, mid, end)
+      if (!rootInClearing(curve, clearings)) addRoot(target, curve, radius, tint)
+    }
+  }
+  curtain(b, 8, rng)
+  if (detail) curtain(detail, 10, createRng(seed * 7 + 5))
+}
+
 /**
  * clearing：樹下要留空的範圍（同一個本地座標的矩形與高度 top，例如榕樹下的攤位；可以是一個或多個）：
- * 垂到範圍裡的氣根不產生，樹冠在範圍上方的底面抬高到 top 以上。亂數的使用順序不變，其他部分的形狀與原本相同。
+ * 經過範圍的氣根不產生，樹冠在範圍上方的底面抬高到 top 以上。亂數的使用順序不變，其他部分的形狀與原本相同。
+ * 榕樹（banyan）另外可以指定：
+ * - groundRadius：氣根可以落地的水平半徑（樹幹與石座的碰撞範圍，人物走不進去）
+ * - floorY：落地氣根的末端高度（環樹石座的座面）
+ * - detail：精緻模式才顯示的細部，多一批垂在樹冠下的短氣根
  */
-export function buildTree(b, position, { scale = 1, seed = 1, banyan = false, clearing = null } = {}) {
+export function buildTree(
+  b,
+  position,
+  { scale = 1, seed = 1, banyan = false, clearing = null, groundRadius = 0.55, floorY = 0.38, detail = null } = {},
+) {
   const rng = createRng(seed)
   const [x, y, z] = position
   const clearings = clearing ? [clearing].flat().filter(Boolean) : []
@@ -332,39 +427,46 @@ export function buildTree(b, position, { scale = 1, seed = 1, banyan = false, cl
     tint: '#8a7258',
     grime: 0.25,
   })
-  const blobs = banyan ? 7 : 5
-  const greens = ['#8e9c77', '#7f8e6b', '#9aa682', '#86956f']
-  for (let i = 0; i < blobs; i++) {
-    const a = (i / blobs) * Math.PI * 2 + rng()
-    const d = (i === 0 ? 0 : range(rng, 1.0, 2.0)) * scale * (banyan ? 1.4 : 1)
-    const r = range(rng, 1.4, 2.1) * scale * (banyan ? 1.15 : 1)
-    const bx = x + Math.cos(a) * d
-    const bz = z + Math.sin(a) * d
-    let by = y + trunkH + range(rng, 0.6, 1.6) * scale
-    by += clearingLift(clearings, bx, bz, by, r)
-    b.add('plain', new IcosahedronGeometry(r, 1), {
-      position: [bx, by, bz],
-      scale: [1, 0.72, 1],
-      rotation: [0, rng() * 6, 0],
-      tint: pick(rng, greens),
-    })
-  }
-  if (banyan) {
-    // 氣根
-    for (let i = 0; i < 9; i++) {
-      const a = rng() * Math.PI * 2
-      const d = range(rng, 0.9, 2.6)
-      const h = range(rng, 1.6, 2.6)
-      const rx = x + Math.cos(a) * d
-      const rz = z + Math.sin(a) * d
-      if (clearings.some((c) => distanceToClearing(c, rx, rz) < 0.12)) continue
-      b.cylinder('wood', 0.025, 0.035, h, 4, [rx, y + trunkH + 0.5 - h / 2, rz], {
-        tint: '#7c6650',
+  if (!banyan) {
+    const greens = ['#8e9c77', '#7f8e6b', '#9aa682', '#86956f']
+    for (let i = 0; i < 5; i++) {
+      const a = (i / 5) * Math.PI * 2 + rng()
+      const d = (i === 0 ? 0 : range(rng, 1.0, 2.0)) * scale
+      const r = range(rng, 1.4, 2.1) * scale
+      const bx = x + Math.cos(a) * d
+      const bz = z + Math.sin(a) * d
+      let by = y + trunkH + range(rng, 0.6, 1.6) * scale
+      by += clearingLift(clearings, bx, bz, by, r)
+      b.add('plain', new IcosahedronGeometry(r, 1), {
+        position: [bx, by, bz],
+        scale: [1, 0.72, 1],
+        rotation: [0, rng() * 6, 0],
+        tint: pick(rng, greens),
       })
     }
-    // 樹下石座
-    b.cylinder('stone', 0.95, 1.05, 0.38, 10, [x, y + 0.19, z], { tint: '#c8c0ae' })
+    return
   }
+  // 多層樹冠：每一層的葉叢與下一層錯開半格
+  BANYAN_LAYERS.forEach((layer, k) => {
+    for (let i = 0; i < layer.count; i++) {
+      const a = ((i + k * 0.5) / layer.count) * Math.PI * 2 + rng() * 0.6
+      const d = range(rng, ...layer.d) * scale
+      const r = range(rng, ...layer.r) * scale
+      const bx = x + Math.cos(a) * d
+      const bz = z + Math.sin(a) * d
+      let by = y + trunkH + range(rng, ...layer.y) * scale
+      by += clearingLift(clearings, bx, bz, by, r, layer.squash)
+      b.add('plain', new IcosahedronGeometry(r, 1), {
+        position: [bx, by, bz],
+        scale: [1, layer.squash, 1],
+        rotation: [0, rng() * 6, 0],
+        tint: pick(rng, layer.greens),
+      })
+    }
+  })
+  banyanRoots(b, detail, { x, y, z, scale, trunkH, seed, clearings, groundRadius, floorY })
+  // 樹下石座
+  b.cylinder('stone', 0.95, 1.05, 0.38, 10, [x, y + 0.19, z], { tint: '#c8c0ae' })
 }
 
 /* ───────────── 戎克船 ───────────── */
