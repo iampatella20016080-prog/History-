@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { ERAS, getEra } from '../data/eras.js'
 import { getQualitySettings } from '../game/quality.js'
 import { useGameStore } from '../state/useGameStore.js'
+import { AmbienceSettings } from './AmbienceSettings.jsx'
 import { MusicSettings } from './MusicSettings.jsx'
 import { LANGS } from '../i18n/lang.js'
 import { useT } from '../i18n/useT.js'
@@ -210,6 +211,7 @@ export function SettingsMenu() {
           </div>
           <p className="hud-menu__note">{t('settings.qualityNote')}</p>
           <MusicSettings />
+          <AmbienceSettings />
           <section className="settings-section" aria-labelledby="settings-lang-heading">
             <p className="hud-menu__heading">
               <span id="settings-lang-heading">{t('settings.language')}</span>
