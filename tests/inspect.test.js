@@ -72,7 +72,7 @@ test('街上的器物：年代存在、objectId 有資料、位置在碼頭南�
     assert.ok(item.radius > 0 && item.prompt, item.id)
   }
   assert.equal(getInspectable('wharf-tea-chest').objectId, 'tea-chest')
-  assert.equal(inspectablesOfEra('qing-port').length, 1)
+  assert.equal(inspectablesOfEra('qing-port').length, 5)
   assert.equal(inspectablesOfEra('banquet').length, 0)
   // 位置貼著南側的茶箱堆（走近就能近看）
   const south = stackBox(TEA_STACKS.find((stack) => stack.id === 'south'))

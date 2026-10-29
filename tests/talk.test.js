@@ -4,6 +4,8 @@ import { advanceTalk, chooseFollowUp, currentLine, hasNextLine, remainingFollowU
 import { QING_PORT_TALK, qingPortTalkOf } from '../src/data/qingPortTalk.js'
 import { TALK_BY_ERA, talkForNpc, talksOfEra } from '../src/data/talk.js'
 import { PORTERS } from '../src/data/qingWharfLayout.js'
+import { DODD } from '../src/data/doddLayout.js'
+import { LHT } from '../src/data/linHuaTaiQingLayout.js'
 import { getSource } from '../src/data/sources.js'
 
 test('路人對話：開場逐句前進，說完進入追問', () => {
@@ -50,8 +52,8 @@ test('港口商街的對話資料：格式正確、標示有效、「有出處�
   }
 })
 
-test('港口商街的對話：npcId 對應清末碼頭的挑夫，id 不重複', () => {
-  const npcIds = PORTERS.map((porter) => `qing-wharf-${porter.id}`)
+test('港口商街的對話：npcId 對應碼頭的挑夫或兩間室內的人物，id 不重複', () => {
+  const npcIds = [...PORTERS.map((porter) => `qing-wharf-${porter.id}`), ...DODD.npcs.map((npc) => npc.id), ...LHT.npcs.map((npc) => npc.id)]
   const seen = new Set()
   for (const talk of QING_PORT_TALK) {
     assert.ok(npcIds.includes(talk.npcId), `${talk.id}：npcId ${talk.npcId} 不在碼頭的挑夫裡`)

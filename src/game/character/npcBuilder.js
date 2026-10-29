@@ -100,6 +100,12 @@ export const NPC_LOOKS = {
   qingPorter: { era: 'qing-port', skin: '#c08f64', hair: 'short', top: { kind: 'singlet', color: '#e6dccb' }, bottom: '#4b5560', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#ddd3bf', douli: '#d4b878', queue: true } },
   qingPorterPole: { era: 'qing-port', skin: '#b98a60', hair: 'short', top: { kind: 'singlet', color: '#ded3bf' }, bottom: '#56524a', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#ddd3bf', douli: '#cdb070', queue: true, teaPole: { pole: '#b49a5e', chest: '#c9a77a', paper: '#e0ad58', band: '#5a4634' } } },
   qingPorterJacket: { era: 'qing-port', skin: '#c99a70', hair: 'short', top: { kind: 'long', color: '#4f6275', trim: '#425364' }, bottom: '#3d3a36', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#e3d9c6', queue: true } },
+  // 1853–1895：寶順洋行精製茶廠與林華泰茶行的室內人物（第 10 階段；歷史情境重建，不對應任何真實人物）
+  qingPicker: { era: 'qing-port', skin: '#e2bf98', hair: 'bun', top: { kind: 'long', color: '#8a5a62', trim: '#744a52' }, bottom: '#3a4254', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#d9cdb6' } },
+  qingPickerBlue: { era: 'qing-port', skin: '#dbb690', hair: 'bun', top: { kind: 'long', color: '#5a7086', trim: '#4a5d70' }, bottom: '#443d36', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#e3d9c2' } },
+  qingRoaster: { era: 'qing-port', skin: '#c08f64', hair: 'short', top: { kind: 'singlet', color: '#e0d6c2' }, bottom: '#4b4740', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#ddd3bf', queue: true } },
+  qingClerk: { era: 'qing-port', skin: '#e2b98f', hair: 'short', top: { kind: 'long', color: '#50586a', trim: '#424a5a' }, bottom: '#35312c', shoes: ['#2a2622', '#2a2622'], extras: { queue: true } },
+  qingApprentice: { era: 'qing-port', skin: '#d0a07a', hair: 'short', top: { kind: 'long', color: '#9a8a6a', trim: '#827356' }, bottom: '#4a443c', shoes: ['#b59c6c', '#b59c6c'], extras: { apron: '#c9bda0', queue: true } },
   // 1945–1980：米苔目攤的攤販與客人
   postwarVendor: { era: 'postwar', skin: '#d6ad84', hair: 'short', top: { kind: 'singlet', color: '#efebe1' }, bottom: '#454b55', shoes: ['#2a2622', '#c9bfab'], extras: { apron: '#5f7186', towel: '#ece6d8' } },
   postwarDiner: { era: 'postwar', hair: 'short', top: { kind: 'shirt', color: '#e6e1d3', trim: '#cfc8b6' }, bottom: '#6a6862', shoes: ['#4a3225', '#2b1d16'] },
@@ -173,6 +179,15 @@ export const NPC_POSES = {
     right: { shoulder: 0.12, spread: 0.12, twist: 0, elbow: 0.2 },
     left: { shoulder: 2.55, spread: 0.32, twist: 0.1, elbow: 1.6 },
     anim: { elbow: [0.15, 0.4], period: 2.0, nod: 0.03, turn: 0.1 },
+  },
+  // 坐著揀茶（第 10 階段）：上半身前傾看著面前的竹篩，右手在篩與身側之間來回挑茶梗
+  sort: {
+    seated: true,
+    lean: 0.22,
+    head: 0.38,
+    right: { shoulder: 0.55, spread: 0.1, twist: -0.2, elbow: 0.9 },
+    left: { shoulder: 0.5, spread: 0.08, twist: -0.18, elbow: 0.85 },
+    anim: { elbow: [0.7, 1.35], period: 2.2, nod: 0.06, turn: 0.07 },
   },
   eat: {
     seated: true,

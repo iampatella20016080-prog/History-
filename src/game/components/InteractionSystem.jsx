@@ -28,12 +28,12 @@ export function InteractionSystem({ shopModels, npcs = [], eraId }) {
     const p = playerState.position
     const level = playerState.level ?? 0
 
-    // 有對話的路人（都在街上，樓層 0）：對話中走遠就結束
+    // 有對話的路人（街上與室內都在樓層 0；室內的人物走近時室內一定已經載入）：對話中走遠就結束
     let nearestTalk = null
     let talkDistance = Infinity
     if (level === 0) {
       for (const npc of npcs) {
-        if (npc.zone || !talkForNpc(eraId, npc.id)) continue
+        if (!talkForNpc(eraId, npc.id)) continue
         const distance = Math.hypot(p.x - npc.position[0], p.z - npc.position[2])
         const radius = TALK_RADIUS + (store.nearbyTalkNpcId === npc.id ? EXIT_MARGIN : 0)
         if (distance < radius && distance < talkDistance) {
