@@ -5,7 +5,10 @@ import { EraScene } from './components/EraScene.jsx'
 import { InteractionSystem } from './components/InteractionSystem.jsx'
 import { Lighting, SceneFog } from './components/Lighting.jsx'
 import { Mountains } from './components/Mountains.jsx'
+import { ObjectStage } from './components/ObjectStage.jsx'
 import { Player } from './components/Player.jsx'
+import { RouteGuides } from './components/RouteGuides.jsx'
+import { StreetPrompts } from './components/StreetPrompts.jsx'
 import { River } from './components/River.jsx'
 import { Sky } from './components/Sky.jsx'
 import { StoreMarkers } from './components/StoreMarkers.jsx'
@@ -30,6 +33,9 @@ export function World({ world, promptLayer, onSwap }) {
       <EraDirector onSwap={onSwap} />
       <EraScene key={world.eraId} world={world} />
       <StoreMarkers shopModels={world.shopModels} promptLayer={promptLayer} />
+      <StreetPrompts npcs={world.npcs ?? []} eraId={world.eraId} promptLayer={promptLayer} />
+      <RouteGuides world={world} />
+      <ObjectStage />
       <Player collision={world.collision} shopModels={world.shopModels} />
       <CameraRig
         eraId={world.eraId}
@@ -40,7 +46,7 @@ export function World({ world, promptLayer, onSwap }) {
         followAreas={world.followAreas}
         viewerSpace={viewerSpace}
       />
-      <InteractionSystem shopModels={world.shopModels} />
+      <InteractionSystem shopModels={world.shopModels} npcs={world.npcs ?? []} eraId={world.eraId} />
     </>
   )
 }

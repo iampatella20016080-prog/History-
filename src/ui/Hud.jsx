@@ -7,6 +7,7 @@ import { LicensesPanel } from './LicensesPanel.jsx'
 import { ChapterCard } from './ChapterCard.jsx'
 import { EraNotice } from './EraNotice.jsx'
 import { MusicNotice } from './MusicSettings.jsx'
+import { JournalPanel } from './JournalPanel.jsx'
 import { SettingsMenu } from './SettingsMenu.jsx'
 import { OverviewPanel } from './OverviewPanel.jsx'
 import { StoreDirectory } from './StoreDirectory.jsx'
@@ -232,6 +233,7 @@ export function Hud() {
       <div className="hud-actions">
         <SettingsMenu />
         <StoreDirectory era={era} shops={shops} />
+        <JournalPanel />
         <OverviewPanel />
       </div>
       <LicensesPanel />

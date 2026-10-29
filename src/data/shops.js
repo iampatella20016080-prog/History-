@@ -2007,6 +2007,13 @@ export const SHOPS = [
           { term: '精製', definition: '茶農初製的毛茶運到茶廠再篩選、烘焙、分級，才能裝箱外銷。以前要運到福州、廈門精製，大稻埕設廠後就地完成。' },
         ],
         sourceIds: ['chen-ciyu-li-family-2015', 'th-li-chunsheng-memoir', 'culture-taipei-walk-dadaocheng-2018', 'taipei-pictorial-480-dihua', 'taipei-gov-tea-tasting-2017', 'tshs-tamsui-customs-lesson', 'tshs-zhang-tamsui-port'],
+        // 探索手記：讀過這一章就記下這則有出處的外銷消息（主題路線「一箱茶的旅程」的節點）
+        journal: {
+          id: 'news:oolong-1869',
+          kind: 'news',
+          title: '1869：烏龍茶運往紐約',
+          text: '1869年，寶順洋行以兩艘帆船把約十三萬公斤的烏龍茶運往美國紐約，以「Formosa Oolong」為名大受歡迎，奠定臺茶外銷的基礎。',
+        },
       },
       {
         id: 'li',
@@ -2048,6 +2055,21 @@ export const SHOPS = [
       },
       // 第 8 階段：人物小節（純文字，資料在 liChunShengData.js）
       LI_CHUNSHENG_PERSON_CHAPTER,
+      // 第 10 階段：器物 3D 檢視（茶箱；街上碼頭邊的茶箱也可以近看）
+      {
+        id: 'tea-chest',
+        type: 'object',
+        tab: '器物：茶箱',
+        title: '外銷茶箱',
+        lead: '松木箱裡襯焊封的薄鉛防潮、外頭裱上彩色印花紙——一箱約四十磅的烏龍茶，就這樣從大稻埕的碼頭飄洋過海。',
+        object: 'tea-chest',
+        summary: {
+          label: '歷史情境重建',
+          text: 'Davidson（1903）記載外銷茶箱內襯薄鉛、外裱印花紙，半箱約裝四十磅茶；箱子的實際長寬高查無，模型是依重量估的比例，外箱圖案依「德記洋行茶箱籤」的風格設計。',
+        },
+        paragraphs: ['模型（3D 檢視）：可以旋轉、縮放，打開箱蓋看看裡面的薄鉛內襯與烏龍茶。碼頭邊剛卸下的茶箱也可以走近打開。'],
+        sourceIds: ['davidson-formosa-1903', 'demomy-tait-tea-label'],
+      },
       {
         id: 'sources',
         type: 'sources',
@@ -2067,6 +2089,8 @@ export const SHOPS = [
           'pct-li-chunsheng-church',
           'panorama-dadaocheng-1981',
           'wolf-women-tea-2003',
+          'davidson-formosa-1903',
+          'demomy-tait-tea-label',
           ...LI_CHUNSHENG_SOURCE_IDS.filter((id) => !['chen-ciyu-li-family-2015', 'th-li-chunsheng-memoir', 'culture-taipei-walk-dadaocheng-2018', 'taipei-pictorial-480-dihua', 'pct-li-chunsheng-church', 'culture-taipei-2002-events'].includes(id)),
         ],
         disclaimer:

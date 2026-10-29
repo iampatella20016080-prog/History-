@@ -18,18 +18,21 @@ export function useGameKeyboard() {
     const onKeyDown = (event) => {
       const store = useGameStore.getState()
       if (event.code === 'KeyE' && !event.repeat) {
-        const shop = store.nearbyShopId ? getShop(store.nearbyShopId, store.eraId) : null
-        if (store.started && store.mode === 'explore' && store.viewMode === 'explore' && shop?.status === 'open' && !store.transitioning) {
+        // 依最近的互動對象擇一：對話中前進一句；路人交談、街上的器物近看、店家介紹
+        if (store.started && (store.talk || store.nearbyTalkNpcId || store.nearbyInspectableId || store.nearbyShopId)) {
           event.preventDefault()
-          store.openShop(store.nearbyShopId)
+          store.interact()
         }
       } else if (/^Digit[1-5]$/.test(event.code) && !event.repeat && store.started) {
         const era = ERAS[Number(event.code.slice(5)) - 1]
         if (era) store.requestEra(era.id)
       } else if (event.code === 'Escape') {
         if (store.uiHidden) store.setUiHidden(false)
+        else if (store.inspect) store.closeInspect()
+        else if (store.talk) store.endTalk()
         else if (store.mode !== 'explore') store.closeShop()
         else if (store.menuOpen) store.toggleMenu(false)
+        else if (store.journalOpen) store.toggleJournal(false)
       } else if (store.mode === 'reading' && (event.code === 'ArrowRight' || event.code === 'ArrowLeft')) {
         event.preventDefault()
         const delta = event.code === 'ArrowRight' ? 1 : -1

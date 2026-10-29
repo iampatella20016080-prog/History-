@@ -2782,109 +2782,6 @@ kbd {
   justify-self: end;
 }
 
-/* 可以拖曳旋轉的米斗（CSS 立體模型） */
-.measure3d {
-  --measure-half: 74px;
-  --measure-tilt: -12deg;
-  position: relative;
-  height: 260px;
-  margin: 4px 0 18px;
-  perspective: 700px;
-  background: radial-gradient(circle at 50% 40%, #f8efdc, #e3cfa6);
-  border: 1px solid rgba(120, 86, 52, 0.3);
-  border-radius: 4px;
-  touch-action: none;
-  cursor: grab;
-  user-select: none;
-  overflow: hidden;
-}
-
-.measure3d:active {
-  cursor: grabbing;
-}
-
-.measure3d__model {
-  position: absolute;
-  top: 70px;
-  left: 50%;
-  width: 0;
-  height: 0;
-  transform-style: preserve-3d;
-}
-
-.measure3d__side {
-  position: absolute;
-  left: -74px;
-  top: 0;
-  width: 148px;
-  height: 104px;
-  transform-origin: 50% 0;
-  background:
-    repeating-linear-gradient(90deg, rgba(60, 35, 15, 0.12) 0 2px, transparent 2px 13px),
-    linear-gradient(#a8784a, #7a5232);
-  clip-path: polygon(0 0, 100% 0, 85% 100%, 15% 100%);
-  backface-visibility: visible;
-}
-
-.measure3d__side::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 8px;
-  background: #6a4428;
-}
-
-.measure3d__corner {
-  position: absolute;
-  top: 0;
-  width: 10px;
-  height: 22px;
-  background: #3f3a34;
-}
-
-.measure3d__corner.is-left {
-  left: 0;
-}
-
-.measure3d__corner.is-right {
-  right: 0;
-}
-
-.measure3d__bottom,
-.measure3d__rice {
-  position: absolute;
-  transform-style: preserve-3d;
-}
-
-.measure3d__bottom {
-  left: -52px;
-  top: 50px;
-  width: 104px;
-  height: 104px;
-  background: #5a3a24;
-  transform: rotateX(90deg);
-}
-
-.measure3d__rice {
-  left: -66px;
-  top: -54px;
-  width: 132px;
-  height: 132px;
-  background:
-    radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.9) 0 2px, transparent 3px) 0 0 / 14px 11px,
-    radial-gradient(circle at 70% 60%, rgba(220, 210, 180, 0.9) 0 2px, transparent 3px) 0 0 / 17px 13px,
-    #f1ead6;
-  transform: translateY(14px) rotateX(90deg);
-}
-
-.measure3d__hint {
-  position: absolute;
-  right: 10px;
-  bottom: 8px;
-  font-size: 13px;
-  letter-spacing: 0.15em;
-  color: rgba(70, 45, 25, 0.7);
-}
 
 @media (max-width: 640px) {
   .process__stage {
@@ -3149,4 +3046,464 @@ kbd {
   color: var(--paper);
   background: var(--ink);
   border-color: var(--ink);
+}
+
+/* ───────────── 第 10 階段：路人對話 ───────────── */
+
+.dialogue-layer {
+  position: fixed;
+  inset: auto 0 max(18px, env(safe-area-inset-bottom)) 0;
+  display: flex;
+  justify-content: center;
+  z-index: 30;
+  pointer-events: none;
+  padding: 0 16px;
+}
+
+.dialogue {
+  pointer-events: auto;
+  width: min(560px, 100%);
+  padding: 14px 18px 12px;
+  border-radius: 10px;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.26s ease, transform 0.26s ease;
+}
+
+.dialogue-layer[data-state='open'] .dialogue {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dialogue__header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
+
+.dialogue__role {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.dialogue__doing {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  flex: 1;
+  min-width: 0;
+}
+
+.dialogue__close {
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.dialogue__close:hover {
+  opacity: 1;
+}
+
+.dialogue__text {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+.dialogue__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* 對話與手記的三種標示：有出處／坊間傳說／虛構對白（畫面上看得到） */
+.talk-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+
+.talk-label.is-sourced {
+  color: #3f6b50;
+}
+
+.talk-label.is-folklore {
+  color: #8a5a2d;
+}
+
+.talk-label.is-fiction {
+  color: #6b6558;
+}
+
+.dialogue__sources {
+  font-size: 0.72rem;
+  opacity: 0.68;
+}
+
+.dialogue__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  justify-content: flex-end;
+}
+
+.dialogue__choices {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.dialogue__ask {
+  margin: 0;
+  font-size: 0.8rem;
+  opacity: 0.72;
+  flex: 1 0 100%;
+}
+
+.dialogue__choice {
+  text-align: left;
+}
+
+.dialogue__choice.is-bye {
+  opacity: 0.75;
+}
+
+/* ───────────── 第 10 階段：器物 3D 檢視 ───────────── */
+
+.inspect-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 34;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.inspect-layer[data-state='open'] {
+  opacity: 1;
+}
+
+.inspect-stage {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+  touch-action: none;
+}
+
+.inspect-stage:active {
+  cursor: grabbing;
+}
+
+.inspect-stage__hint {
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--paper);
+  text-shadow: 0 1px 4px rgba(20, 14, 8, 0.6);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.inspect-close {
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top));
+  right: max(14px, env(safe-area-inset-right));
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.inspect-card {
+  position: absolute;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(620px, calc(100% - 32px));
+  max-height: 38vh;
+  overflow: auto;
+  padding: 12px 18px 14px;
+  border-radius: 10px;
+}
+
+.inspect-card__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inspect-card__title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.inspect-card__lead {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  line-height: 1.65;
+  opacity: 0.85;
+}
+
+.inspect-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.inspect-card__more {
+  margin-top: 10px;
+  font-size: 0.8rem;
+}
+
+.inspect-card__more summary {
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.inspect-card__more p {
+  margin: 6px 0 0;
+  line-height: 1.6;
+}
+
+.inspect-card__sources {
+  opacity: 0.68;
+}
+
+/* 器物章節：開啟 3D 檢視的按鈕（取代原本的 CSS 立體模型） */
+.object-launch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin: 14px 0;
+  padding: 26px 16px;
+  border-radius: 10px;
+  border: 1px dashed color-mix(in srgb, var(--ink) 35%, transparent);
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.object-launch:hover {
+  background: color-mix(in srgb, var(--ink) 9%, transparent);
+}
+
+.object-launch__icon {
+  font-size: 1.6rem;
+}
+
+.object-launch__label {
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.object-launch__meta {
+  font-size: 0.74rem;
+  opacity: 0.7;
+}
+
+/* 器物檢視時介紹視窗先讓開（關閉檢視再回來） */
+.story-layer.is-inspecting {
+  visibility: hidden;
+}
+
+/* ───────────── 第 10 階段：探索手記與主題路線 ───────────── */
+
+.hud-menu__seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  font-size: 0.7rem;
+}
+
+.journal {
+  width: min(400px, calc(100vw - 32px));
+}
+
+.journal__heading {
+  margin-top: 14px;
+}
+
+.journal__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.journal__tab {
+  border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+  background: none;
+  color: inherit;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+.journal__tab.is-active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.journal__empty {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.journal__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.journal-entry {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.journal-entry__kind {
+  flex: none;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+  border-radius: 4px;
+  padding: 2px 5px;
+  opacity: 0.8;
+}
+
+.journal-entry__title {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.journal-entry__era {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.7rem;
+  opacity: 0.65;
+  margin-left: 6px;
+}
+
+.journal-entry__text {
+  margin: 3px 0 0;
+  font-size: 0.76rem;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+.journal-route {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+}
+
+.journal-route.is-active {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.journal-route__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.journal-route__title {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.journal-route__meta {
+  display: block;
+  font-size: 0.72rem;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+.journal-route__intro {
+  margin: 6px 0 0;
+  font-size: 0.76rem;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+.journal-route__travel {
+  margin-top: 8px;
+}
+
+.journal-route__nodes {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.route-node {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.route-node__mark {
+  flex: none;
+  width: 18px;
+  text-align: center;
+  color: #3f6b50;
+}
+
+.route-node.is-done .route-node__title {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.journal-route__page .route-node.is-done .route-node__title {
+  opacity: 1;
+  text-decoration: none;
+}
+
+.route-node__title {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.route-node__hint {
+  margin: 2px 0 0;
+  font-size: 0.74rem;
+  opacity: 0.75;
+  line-height: 1.55;
+}
+
+.journal-route__done {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
+  opacity: 0.8;
 }
