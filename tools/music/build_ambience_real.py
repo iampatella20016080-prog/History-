@@ -34,9 +34,7 @@ PEAK = 10 ** (-1 / 20)
 # 來源：id → (下載網址, 存檔名)
 SOURCES = {
     'fs318064': 'https://cdn.freesound.org/previews/318/318064_4457609-hq.mp3',
-    'fs763822': 'https://cdn.freesound.org/previews/763/763822_11744683-hq.mp3',
     'fs585316': 'https://cdn.freesound.org/previews/585/585316_12458758-hq.mp3',
-    'fs623986': 'https://cdn.freesound.org/previews/623/623986_12458758-hq.mp3',
     'fs792545': 'https://cdn.freesound.org/previews/792/792545_16169849-hq.mp3',
     'fs688055': 'https://cdn.freesound.org/previews/688/688055_8202516-hq.mp3',
     'fs826604': 'https://cdn.freesound.org/previews/826/826604_8432168-hq.mp3',
@@ -45,7 +43,6 @@ SOURCES = {
     'fs350323': 'https://cdn.freesound.org/previews/350/350323_2205380-hq.mp3',
     'wc_bach1915': 'https://upload.wikimedia.org/wikipedia/commons/8/89/Concerto_for_two_violins_Part_1_%281915_recording%29.mp3',
     'fs686530': 'https://cdn.freesound.org/previews/686/686530_14954609-hq.mp3',
-    'fs450702': 'https://cdn.freesound.org/previews/450/450702_612689-hq.mp3',
 }
 
 
@@ -159,25 +156,10 @@ def river_lap(src):
     return loop_from(band(cut(x, 10.0, 14.0), lo=120), 12, 2.0)
 
 
-def wharf_calls(src):
-    # 一群人隨划槳節奏一起出力的悶喊（無詞）：取 1.2–12.4 秒的八次出力，低通 2.5 kHz 並降一點音量模擬河岸距離；
-    # 放在 16 秒循環的開頭，後面留白（河水由 river-lap 提供）
-    x = band(cut(load(src, 'fs763822'), 1.2, 11.2), lo=90, hi=2500)
-    buf = np.zeros(n_of(16))
-    place(buf, fade(x, 0.15, 0.8), 0.5)
-    return buf
-
-
 def oars(src):
     # 芬蘭湖上的舊木划艇：8–22 秒的划槳、槳架摩擦與水花（避開 23 秒處最大聲的一下）
     x = load(src, 'fs585316')
     return loop_from(band(cut(x, 8.0, 14.0), lo=60), 12, 2.0)
-
-
-def street_murmur(src):
-    # 臺北木柵市場的人聲：20–40 秒（沒有突出的敲擊聲）；低通 6 kHz 讓人聲更不清楚、只留嘈雜感
-    x = load(src, 'fs623986')
-    return loop_from(band(cut(x, 20.0, 20.0), lo=100, hi=6000), 18, 2.0)
 
 
 def gong_distant(src):
@@ -212,12 +194,6 @@ def gramophone(src):
     return buf
 
 
-def vendor_calls(src):
-    # 同一段木柵市場錄音裡較熱鬧的 135–153 秒（攤位前的人聲與交易聲，聽不出清楚的句子）；低通 7 kHz
-    x = load(src, 'fs623986')
-    return loop_from(band(cut(x, 135.0, 18.0), lo=100, hi=7000), 16, 2.0)
-
-
 def trishaw(src):
     # 腳踏車滑行經過（放慢到 0.8 倍，聽起來較重、較慢）＋日本松戶車站附近錄的腳踏車鈴兩次
     ride = band(load(src, 'fs826604'), lo=60)
@@ -245,24 +221,14 @@ def radio(src):
     return buf
 
 
-def scooter(src):
-    # 兩輛機車由遠而近再遠去：1–29 秒（第 5、22 秒經過），去掉 50 Hz 以下的風噪
-    x = load(src, 'fs450702')
-    return loop_from(band(cut(x, 1.0, 28.0), lo=50), 26, 2.0)
-
-
 BUILD = {
     'river-lap': river_lap,
-    'wharf-calls': wharf_calls,
     'oars': oars,
-    'street-murmur': street_murmur,
     'gong-distant': gong_distant,
     'bicycle-bell': bicycle_bell,
     'gramophone': gramophone,
-    'vendor-calls': vendor_calls,
     'trishaw': trishaw,
     'radio': radio,
-    'scooter': scooter,
 }
 
 

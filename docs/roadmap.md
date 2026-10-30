@@ -85,7 +85,7 @@
 - ☑ 榕樹改成多層葉片加氣根：三層錯開的葉叢、落地的支柱根只在樹幹與石座的碰撞範圍裡、短氣根停在 2.05 m 以上；廟口攤位的空地不變，網格數不變，精緻模式多一批短氣根；建模 `src/game/builders/environment.js`、測試 `tests/banyan.test.js`。
 - ☑ 灰泥牆的風化、海報與鐵窗花。
 - ☑ 鏡頭：窄處不穿牆、換年代後面向街道、觀賞模式起始位置避開遮擋（`src/game/viewerCamera.js` 的 `followDistance`、`streetFacingYaw`、`clearYaw`；測試 `tests/cameraPhase9.test.js`）。
-- ☑ 環境音：每個年代一組環境聲，與背景音樂分開的開關與音量，位置相關的聲音依人物距離調整 gain，同時最多 4 個聲軌，轉場淡出淡入；11 個音檔全是程式合成（約 1.0 MB），來源與年代待核見 `docs/research/ambience-sources.md`，iPad 實機尚未試聽（`src/audio/ambienceCore.js`、`tests/ambience.test.js`）。
+- ☑ 環境音：每個年代一組環境聲，與背景音樂分開的開關與音量，位置相關的聲音依人物距離調整 gain，同時最多 4 個聲軌，轉場淡出淡入；後來換成 CC0／公有領域的真實錄音（#71），再依使用者決定移除碼頭吆喝、街上人聲、廟埕叫賣、機車，剩 7 個音檔（約 1.0 MB，合成音留作備援），來源與年代待核見 `docs/research/ambience-sources.md`，iPad 實機尚未試聽（`src/audio/ambienceCore.js`、`tests/ambience.test.js`）。
 - ☑ 操作說明面板自動收起：桌面第一次移動（WASD／方向鍵／拖曳）或展開約 12 秒無互動後收起，手動切換後以手動為準，狀態記在 sessionStorage；邏輯 `src/ui/controlsHint.js`、測試 `tests/controlsHint.test.js`。
 
 > 2026-10-29 討論後追加（視覺精緻度）。依據是 `docs/` 裡五個年代的截圖：白天的年代已經清楚好看，差距在傍晚與入夜的年代，以及場景幾乎完全靜止。
