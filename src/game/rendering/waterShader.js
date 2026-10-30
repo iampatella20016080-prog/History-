@@ -1,4 +1,4 @@
-import { Color, CustomBlending, DoubleSide, SrcColorFactor, ShaderMaterial, Vector3, ZeroFactor } from 'three'
+import { Color, CustomBlending, DoubleSide, Matrix4, SrcColorFactor, ShaderMaterial, Vector3, ZeroFactor } from 'three'
 
 /**
  * 淡水河的水面與倒影（著色器）
@@ -9,6 +9,9 @@ import { Color, CustomBlending, DoubleSide, SrcColorFactor, ShaderMaterial, Vect
  * - 反光：依波紋的法線把太陽反射到鏡頭的地方點出閃爍的亮片（夕陽時在河面上連成一條金色的光帶），
  *   斜看水面時混入天空地平線的顏色（菲涅耳）；
  * - 燈火倒影：入夜的年代（glow 高）靠岸的水面有暖色、隨波紋斷開的光帶。
+ *
+ * 岸上的倒影（只在精緻畫質，material.userData.planarReflection）：取樣 RiverReflection 畫的平面反射貼圖，
+ * 依波紋的斜率扭曲；斜看水面時倒影較清楚（菲涅耳），並帶一點河水的顏色。流暢畫質的著色器原樣不變。
  *
  * 船的倒影：把船的幾何對水面鏡射，深度改成「同一條視線打到水面的深度」，
  * 所以倒影畫在水面上、會被岸邊與船身擋住，卻不會被水面本身遮掉；離水面越遠越淡、越晃。
@@ -24,6 +27,37 @@ export const waterUniforms = {
   uWarm: { value: new Color('#ffb066') },
   uEdgeX: { value: 0 },
 }
+
+/** 平面反射（精緻畫質）：倒影貼圖、世界座標 → 貼圖座標的矩陣、強度與河水色調 */
+export const waterReflectUniforms = {
+  tReflect: { value: null },
+  uReflectMatrix: { value: new Matrix4() },
+  uReflect: { value: 0.85 },
+  uReflectTint: { value: new Color('#ffffff') },
+}
+
+const REFLECT_HEAD = /* glsl */ `
+  uniform sampler2D tReflect;
+  uniform mat4 uReflectMatrix;
+  uniform float uReflect;
+  uniform vec3 uReflectTint;
+`
+
+// 放在菲涅耳混入天色之後、亮片之前（亮片仍然壓在倒影上面）
+const REFLECT_APPLY = /* glsl */ `
+          {
+            vec4 rc = uReflectMatrix * vec4(vWaterPos, 1.0);
+            // 波紋扭曲：橫向（沿河岸）晃得多、縱向少，近處晃得比遠處明顯
+            vec2 ruv = rc.xy / rc.w + vec2(wGrad.x, wGrad.y * 0.4) * 0.045 / max(1.0, rc.w * 0.03);
+            vec3 refl = texture2D(tReflect, clamp(ruv, 0.001, 0.999)).rgb;
+            // 卡通風格：倒影的明暗分成幾階（和色階一致的硬邊），帶一點河水的顏色
+            float rl = dot(refl, vec3(0.299, 0.587, 0.114));
+            float steps = floor(rl * 5.0 + 0.5) / 5.0;
+            refl *= mix(1.0, steps / max(rl, 0.001), 0.45);
+            refl *= uReflectTint;
+            gl_FragColor.rgb = mix(gl_FragColor.rgb, refl, uReflect * mix(0.3, 0.95, smoothstep(0.0, 0.6, fres)));
+          }
+`
 
 const WAVES = /* glsl */ `
   uniform float uTime;
@@ -46,7 +80,9 @@ const WAVES = /* glsl */ `
 /** 在河面的卡通材質上加入波紋、反光與燈火倒影（材質仍是 MeshToonMaterial，陰影與霧照舊） */
 export function patchWaterMaterial(material) {
   material.onBeforeCompile = (shader) => {
+    const reflect = Boolean(material.userData.planarReflection)
     Object.assign(shader.uniforms, waterUniforms)
+    if (reflect) Object.assign(shader.uniforms, waterReflectUniforms)
     shader.vertexShader = shader.vertexShader
       .replace('#include <common>', '#include <common>\nvarying vec3 vWaterPos;')
       .replace('#include <project_vertex>', '#include <project_vertex>\nvWaterPos = (modelMatrix * vec4(transformed, 1.0)).xyz;')
@@ -62,7 +98,7 @@ export function patchWaterMaterial(material) {
         uniform float uNight;
         uniform vec3 uWarm;
         uniform float uEdgeX;
-        ${WAVES}`,
+        ${reflect ? REFLECT_HEAD : ''}${WAVES}`,
       )
       .replace(
         '#include <map_fragment>',
@@ -78,7 +114,7 @@ export function patchWaterMaterial(material) {
           vec3 n = normalize(vec3(-wGrad.x, 1.0, -wGrad.y));
           vec3 v = normalize(cameraPosition - vWaterPos);
           float fres = pow(1.0 - max(dot(n, v), 0.0), 4.0);
-          gl_FragColor.rgb = mix(gl_FragColor.rgb, uSky, fres * 0.4);
+          gl_FragColor.rgb = mix(gl_FragColor.rgb, uSky, fres * 0.4);${reflect ? REFLECT_APPLY : ''}
           vec3 r = reflect(-v, n);
           // 亮片：只有法線剛好把太陽反射到鏡頭的細紋才亮（卡通風格的硬邊），越遠越密、越細
           float s = pow(max(dot(r, uSunDir), 0.0), 600.0);
@@ -91,7 +127,7 @@ export function patchWaterMaterial(material) {
         }`,
       )
   }
-  material.customProgramCacheKey = () => 'river-water'
+  material.customProgramCacheKey = () => (material.userData.planarReflection ? 'river-water-reflect' : 'river-water')
   return material
 }
 

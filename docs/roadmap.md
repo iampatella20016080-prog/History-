@@ -96,6 +96,7 @@
 - ☑ 畫面動態（`game/motion.js`、`rendering/waterShader.js`、`rendering/wind.js`、`components/LeafLayer.jsx`；爐灶的煙只有庶民生活的煤球爐與各年代的香爐，其他年代沒有建模的爐灶）：河水的波紋與反光、船的倒影、燈籠輕輕擺動（燈籠已是實例化繪製）、布幡與遮雨棚隨風、爐灶的煙、榕樹下的落葉；守住 iPad 的繪製呼叫預算。
 - ☑ 店內透出的光：改成有深度的漸層（中間亮、四周與上方暗、層架下有陰影），不加動態光源。做法：店內後牆用 UV 上的高度畫漸層與層架陰影；樓上的亮窗與玻璃店面改成假室內（interior mapping，斜看有視差，整排玻璃共用一個房間）；都在 `windowLit`、`glassWarm` 的著色器裡算，街景批次數不變；只在精緻畫質啟用，流暢畫質（iPad）維持原本的平面發光；室內場景的窗沒有標記、維持原樣。邏輯 `src/game/rendering/shopGlow.js`、測試 `tests/shopGlow.test.js`、前後對照 `docs/lookbook/shop-glow-before/`、`shop-glow-after/`。
 - ☑ 細部：榕樹與盆栽的外緣做得不規則並露出粗枝；打破大面積地磚與牆面的重複感；灰泥牆的水漬改從窗臺下開始（原本從牆頂往下，閩南街屋有出簷，牆頂反而淋不到雨）；柱腳與家具的接地暗影做進模型，兩種畫質都看得到。不規則葉團與粗枝 `builders/foliage.js`、世界座標的明暗／補丁／破磚 `rendering/surfaceVariation.js`（不新增材質）、窗臺下的水漬 `builders/weathering.js`、接地暗影 `builders/contactShadow.js`（新的半透明 `contact` 材質，每個年代街景多一批、用到家具的室內多一批）；測試 `tests/details.test.js`，前後對照 `docs/lookbook/details/`。iPad 實機尚未看過。
+- ☑ 材質凹凸與河面倒映（**只在精緻畫質**；流暢畫質不產生法線貼圖、不畫倒影，著色器與繪製呼叫和以前相同）：磚縫、屋瓦（筒瓦與板瓦的弧面）、木紋與木板接縫、石板與地磚縫、洗石子由既有手繪貼圖推算法線（同尺寸、同 UV，不新增材質批次），法線進入卡通色階，斜光下背光的一側跳暗一階；河面用低解析度的平面反射倒映岸上的牆、屋頂、燈火、天空與遠山（圖層篩選，不畫人物、船、招牌、室內與地面），隨波紋扭曲。純邏輯 `rendering/reliefMath.js`、`rendering/planarReflection.js`，接線 `rendering/relief.js`、`components/RiverReflection.jsx`；測試 `tests/reliefReflection.test.js`，前後對照 `docs/lookbook/relief/`。iPad 不受影響（觸控預設流暢）；桌面實機的幀率還沒量。
 
 ## 第 10 階段｜一箱茶的旅程（互動功能的第一條完整路線）
 

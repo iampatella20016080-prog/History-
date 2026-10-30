@@ -8,7 +8,8 @@ import { WHARF_BOATS } from '../../data/qingWharfLayout.js'
 import { atmosphere } from '../atmosphere.js'
 import { QUALITY_MODES } from '../quality.js'
 import { motionEnabled, MOTION_SETTINGS } from '../motion.js'
-import { createReflectionMaterial, patchWaterMaterial, reflectionUniforms, waterUniforms } from '../rendering/waterShader.js'
+import { createReflectionMaterial, patchWaterMaterial, reflectionUniforms, waterReflectUniforms, waterUniforms } from '../rendering/waterShader.js'
+import { RiverReflection } from './RiverReflection.jsx'
 import { useGameStore } from '../../state/useGameStore.js'
 import { PartBuilder } from '../builders/PartBuilder.js'
 import { buildFerry, buildJunk, buildSampan } from '../builders/environment.js'
@@ -17,6 +18,7 @@ import { getTextures } from '../rendering/textures.js'
 import { StaticBatches } from './StaticBatches.jsx'
 
 const WL = RIVER.waterLevel
+const WHITE = new Color('#ffffff')
 
 /** 各年代河面上的船：清末到日治初期的戎克船、之後的舢舨，以及今日的遊船 */
 const BOATS = {
@@ -198,6 +200,8 @@ export function River({ eraId }) {
     const night = Math.min(1, Math.max(0, (a.glow * a.lanternGlow - 0.45) / 0.35))
     waterUniforms.uNight.value = night * night * (3 - 2 * night)
     waterUniforms.uEdgeX.value = RIVER.edgeX
+    // 岸上的倒影帶一點河水的顏色（只有精緻畫質的水面著色器讀這組）
+    waterReflectUniforms.uReflectTint.value.copy(a.water).lerp(WHITE, 0.55)
     reflectionUniforms.uTime.value = t
     reflectionUniforms.uWaterLevel.value = WL
     reflectionUniforms.uEdgeX.value = RIVER.edgeX
@@ -206,6 +210,15 @@ export function River({ eraId }) {
   })
 
   const detail = useGameStore((state) => QUALITY_MODES[state.qualityMode]?.detail !== false)
+  // 岸上的倒影（平面反射）只在精緻畫質；流暢畫質用不打補丁的水面材質，維持原樣
+  const reflectScale = useGameStore((state) => QUALITY_MODES[state.qualityMode]?.waterReflection ?? 0)
+  useEffect(() => {
+    const on = reflectScale > 0
+    const rippled = materials.rippled
+    if (Boolean(rippled.userData.planarReflection) === on) return
+    rippled.userData.planarReflection = on
+    rippled.needsUpdate = true
+  }, [materials, reflectScale])
   const boats = BOATS[getEra(eraId)?.streetProps.boats] ?? BOATS.junks
   const width = 1100
   return (
@@ -218,6 +231,7 @@ export function River({ eraId }) {
         detail || (boat.position[0] > -80 && !boat.detailOnly) ? <Boat key={`${eraId}-${i}`} boat={boat} reflection={motion} /> : null,
       )}
       <RiverMist detail={detail} />
+      {reflectScale > 0 && <RiverReflection scale={reflectScale} />}
     </group>
   )
 }

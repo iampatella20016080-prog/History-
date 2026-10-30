@@ -14,6 +14,7 @@
  *           ERAS（逗號分隔）、QUALITIES（預設 low,high）、TIME（固定動畫時間，秒；預設 12）、
  *           SET（shop-glow：只拍店內透光的店面視角，見 SHOP_GLOW_VIEWS）
  *           SET（details：改拍細部的近景——榕樹、大面積地面、灰泥牆、騎樓柱腳）
+ *           SET=relief：材質凹凸與河面倒映——斜光下的牆面、屋瓦、地磚、河岸三個角度
  */
 import { createRequire } from 'node:module'
 import { mkdirSync, writeFileSync } from 'node:fs'
@@ -79,6 +80,19 @@ export const DETAIL_VIEWS = [
   ['plaster-arcade', '洋樓立面', [17.8, 2.0, 1.4], [17.8, 5.4, -4.6]],
   ['column', '騎樓柱腳', [19.4, 1.15, -0.6], [20.8, 0.15, -3.1]],
 ]
+
+/** 材質凹凸與河面倒映（只在精緻畫質）：每個年代都拍同樣的位置 */
+export const RELIEF_VIEWS = [
+  ['wall-north', '貼著北側立面斜看', [2, 2.0, -3.4], [12, 2.6, -4.7]],
+  ['wall-south', '貼著南側立面斜看', [2, 2.0, 3.4], [12, 2.6, 4.7]],
+  ['roof', '屋瓦', [-8, 9.5, 5], [-2, 6.5, -8]],
+  ['ground', '地磚', [-22, 2.8, 0.2], [-8, 0, 0.3]],
+  ['river', '河岸', [-41, 3.0, 3.5], [-72, -0.8, -1]],
+  ['river-bank', '從河面看岸邊', [-58, 3.0, 9], [-40, 1.5, 0]],
+  ['river-along', '沿著河岸', [-47.5, 2.6, 16], [-49, 0.2, -12]],
+]
+
+const VIEW_SETS = { details: DETAIL_VIEWS, relief: RELIEF_VIEWS }
 
 async function loadPlaywright() {
   const name = process.env.PLAYWRIGHT_MODULE ?? 'playwright'
@@ -171,10 +185,11 @@ async function run() {
     for (const eraId of ERA_IDS) {
       await page.goto(`${BASE_URL}?era=${eraId}&quality=${quality}`, { waitUntil: 'load' })
       await page.waitForFunction((era) => document.documentElement.dataset.sceneEra === era, eraId, { timeout: TIMEOUT })
-      await page.locator('.intro__start').click()
+      // 軟體繪圖很慢時開場按鈕的動畫一直不算「穩定」，等不到就直接點
+      await page.locator('.intro__start').click({ timeout: 60000 }).catch(() => page.locator('.intro__start').click({ force: true }))
       await page.waitForFunction(() => document.querySelector('.hud.is-started'), null, { timeout: 30000 })
       await page.waitForTimeout(1500)
-      const views = SET === 'shop-glow' ? (SHOP_GLOW_VIEWS[eraId] ?? []) : SET === 'details' ? DETAIL_VIEWS : [...COMMON_VIEWS, ...(ERA_VIEWS[eraId] ?? [])]
+      const views = SET === 'shop-glow' ? (SHOP_GLOW_VIEWS[eraId] ?? []) : (VIEW_SETS[SET] ?? [...COMMON_VIEWS, ...(ERA_VIEWS[eraId] ?? [])])
       for (const [id, , position, target] of views) {
         await shoot(`${eraId}-${id}-${quality}`, position, target)
       }

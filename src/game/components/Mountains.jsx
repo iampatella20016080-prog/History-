@@ -133,7 +133,7 @@ export function Mountains() {
   return (
     <group ref={group}>
       {layers.geometries.map((geometry, i) => (
-        <mesh key={i} geometry={geometry} material={layers.material} renderOrder={-900 + i} frustumCulled={false} />
+        <mesh key={i} geometry={geometry} material={layers.material} renderOrder={-900 + i} frustumCulled={false} userData={{ reflect: true }} />
       ))}
     </group>
   )
