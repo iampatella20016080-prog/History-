@@ -65,7 +65,12 @@ export function AmbienceSettings() {
           </button>
         )}
       </p>
-      <p className="music-settings__note">河水、人聲、攤販等環境聲依你所在的位置變化；皆為程式合成的示意音，非真實錄音。</p>
+      <p className="music-settings__note">河水、人聲、攤販等環境聲依你所在的位置變化；皆為授權清楚（CC0 或公有領域）的真實錄音剪輯，多為情境示意，不是當年當地的錄音（
+        <a href={`${import.meta.env.BASE_URL}audio/ambience/CREDITS.md`} target="_blank" rel="noreferrer">
+          來源與授權
+        </a>
+        ）。
+      </p>
     </div>
   )
 }

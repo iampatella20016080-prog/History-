@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { existsSync, statSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, test } from 'node:test'
@@ -21,6 +21,7 @@ import {
   masterTarget,
   planTracks,
 } from '../src/audio/ambienceCore.js'
+import { AMBIENCE_CREDITS, AMBIENCE_LICENSES, AMBIENCE_SOURCES } from '../src/audio/ambienceCredits.js'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const PUBLIC = join(ROOT, 'public')
@@ -41,8 +42,14 @@ describe('環境音：聲音清單', () => {
       assert.ok(size < 300 * 1024, `${id} 超過 300 KB`)
       total += size
       assert.ok(sound.duration > 4 && sound.duration < 30)
+      assert.ok(existsSync(join(PUBLIC, sound.fallback.file)), `${id} 的合成備援音檔不存在`)
+      assert.ok(sound.fallback.duration > 4 && sound.fallback.duration < 30)
     }
     assert.ok(total < 2 * 1024 * 1024, '全部音檔 < 2 MB')
+    for (const era of ERAS) {
+      const eraBytes = ERA_AMBIENCE[era.id].reduce((sum, e) => sum + statSync(join(PUBLIC, AMBIENCE_SOUNDS[e.sound].file)).size, 0)
+      assert.ok(eraBytes < 1024 * 1024, `${era.id} 的環境音合計 ${Math.round(eraBytes / 1024)} KB，超過 1 MB`)
+    }
     assert.deepEqual(new Set(ambienceSoundIds()), new Set(Object.keys(AMBIENCE_SOUNDS)), '沒有沒用到的音檔')
   })
 
@@ -66,6 +73,80 @@ describe('環境音：聲音清單', () => {
         assert.ok(e.outer > e.inner && e.inner > 0)
         assert.ok(e.gain > 0 && e.gain <= 1)
       }
+  })
+})
+
+/** 逐格讀 MP3 的幀標頭（MPEG-1 Layer III）：回傳取樣率、聲道、位元率與總長度（秒） */
+function readMp3(path) {
+  const buf = readFileSync(path)
+  let i = 0
+  if (buf.toString('latin1', 0, 3) === 'ID3') i = 10 + ((buf[6] << 21) | (buf[7] << 14) | (buf[8] << 7) | buf[9])
+  const RATES = [44100, 48000, 32000]
+  const KBPS = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320]
+  const frames = []
+  while (i + 4 <= buf.length) {
+    if (buf[i] !== 0xff || (buf[i + 1] & 0xfe) !== 0xfa) break // MPEG-1、Layer III
+    const kbps = KBPS[buf[i + 2] >> 4]
+    const rate = RATES[(buf[i + 2] >> 2) & 3]
+    const padding = (buf[i + 2] >> 1) & 1
+    const mono = buf[i + 3] >> 6 === 3
+    frames.push({ kbps, rate, mono })
+    i += Math.floor((144000 * kbps) / rate) + padding
+  }
+  const audio = frames.slice(1) // 第一格是 LAME 的 Info 標頭，不含聲音
+  return { end: i, size: buf.length, frames: audio, seconds: (audio.length * 1152) / (frames[0]?.rate ?? 1) }
+}
+
+describe('環境音：真實錄音的來源與授權記錄', () => {
+  const realFiles = readdirSync(join(PUBLIC, 'audio/ambience')).filter((f) => f.endsWith('.mp3'))
+
+  test('資料夾裡每個音檔都在音檔表與來源記錄裡，沒有多出來或缺記錄的', () => {
+    assert.deepEqual(realFiles.sort(), Object.values(AMBIENCE_SOUNDS).map((s) => s.file.split('/').pop()).sort())
+    assert.deepEqual(Object.keys(AMBIENCE_CREDITS).sort(), Object.keys(AMBIENCE_SOUNDS).sort())
+    const synth = readdirSync(join(PUBLIC, 'audio/ambience/synth')).filter((f) => f.endsWith('.mp3'))
+    assert.deepEqual(synth.sort(), realFiles.sort(), '每個真實錄音都有同名的合成備援')
+  })
+
+  test('每個來源都有網址、作者、原始檔名、錄音說明，授權只能是 CC0 或公有領域', () => {
+    const used = new Set()
+    for (const [id, credit] of Object.entries(AMBIENCE_CREDITS)) {
+      assert.ok(credit.sources.length >= 1, id)
+      assert.ok(credit.edits.length > 20, `${id} 要寫剪輯方式`)
+      assert.ok(credit.context === null || credit.context.startsWith('情境示意'), `${id} 的 context 以「情境示意」開頭`)
+      for (const sid of credit.sources) {
+        assert.ok(AMBIENCE_SOURCES[sid], `${id}: 來源 ${sid} 沒有記錄`)
+        used.add(sid)
+      }
+    }
+    for (const [sid, s] of Object.entries(AMBIENCE_SOURCES)) {
+      assert.ok(used.has(sid), `${sid} 沒有用到`)
+      assert.ok(AMBIENCE_LICENSES.includes(s.license), `${sid} 的授權 ${s.license} 不是 CC0 或公有領域`)
+      assert.match(s.url, /^https:\/\/(freesound\.org\/people\/[^/]+\/sounds\/\d+\/|commons\.wikimedia\.org\/wiki\/File:)/, sid)
+      assert.match(s.licenseUrl, /^https:\/\//, sid)
+      for (const key of ['title', 'author', 'licenseName', 'originalFile', 'recorded', 'downloaded']) assert.ok(s[key]?.length > 3, `${sid}.${key}`)
+    }
+  })
+
+  test('CREDITS.md 列出每個音檔、每個來源網址與原始檔名（由資料檔產生）', () => {
+    const md = readFileSync(join(PUBLIC, 'audio/ambience/CREDITS.md'), 'utf8')
+    for (const file of realFiles) assert.ok(md.includes(`\`${file}\``), file)
+    for (const s of Object.values(AMBIENCE_SOURCES)) {
+      assert.ok(md.includes(s.url), s.url)
+      assert.ok(md.includes(s.originalFile), s.originalFile)
+    }
+    for (const credit of Object.values(AMBIENCE_CREDITS)) {
+      assert.ok(md.includes(credit.edits), '剪輯說明與資料檔一致（改了資料檔要執行 node tools/music/write_ambience_credits.mjs）')
+      if (credit.context) assert.ok(md.includes(credit.context))
+    }
+  })
+
+  test('音檔格式：MP3 單聲道 32 kHz、固定位元率，長度是循環長度加前後各 1 秒', () => {
+    for (const [id, sound] of Object.entries(AMBIENCE_SOUNDS)) {
+      const mp3 = readMp3(join(PUBLIC, sound.file))
+      assert.equal(mp3.end, mp3.size, `${id}：整個檔案都是 MP3 幀（沒有多餘的標籤）`)
+      assert.ok(mp3.frames.every((f) => f.mono && f.rate === 32000 && f.kbps === 64), `${id}：單聲道 32 kHz 64 kbps`)
+      assert.ok(Math.abs(mp3.seconds - (sound.duration + 2 * LOOP_PAD)) < 0.1, `${id}：${mp3.seconds.toFixed(2)} 秒`)
+    }
   })
 })
 
@@ -289,6 +370,51 @@ describe('環境音管理器', () => {
     again.game.setState({ started: true })
     await again.flush()
     assert.equal(again.ctxs.length, 0, '關閉時不建立 AudioContext')
+  })
+
+  test('真實錄音載入失敗時改用合成備援，循環區間跟著換成備援的長度', async () => {
+    const fetched = []
+    const sources = []
+    const manager = createAmbienceManager({
+      storage: { getItem: () => null, setItem() {} },
+      doc: { hidden: false, addEventListener() {}, removeEventListener() {} },
+      createContext: () => ({
+        state: 'running',
+        currentTime: 0,
+        destination: {},
+        createGain: () => ({ gain: new FakeParam(1), connect() {}, disconnect() {} }),
+        createBuffer: () => ({}),
+        createBufferSource: () => {
+          const s = { connect() {}, disconnect() {}, start(_, off) { this.offset = off; sources.push(this) }, stop() {} }
+          return s
+        },
+        resume: () => Promise.resolve(),
+        decodeAudioData: (data) => (data.bad ? Promise.reject(new Error('decode')) : Promise.resolve({ from: data.url })),
+      }),
+      resolveUrl: (f) => f,
+      // 河水的真實錄音解碼失敗、人聲的真實錄音下載失敗，其餘正常
+      fetchAudio: async (url) => {
+        fetched.push(url)
+        if (url === AMBIENCE_SOUNDS['street-murmur'].file) throw new Error('404')
+        return { slice: () => ({ url, bad: url === AMBIENCE_SOUNDS['river-lap'].file }) }
+      },
+      setInterval: () => 1,
+      clearInterval() {},
+      getPosition: () => ({ x: -40, z: 0 }),
+    })
+    const game = createStore(() => ({ started: false, transitioning: false, eraId: 'qing-port', mode: 'explore' }))
+    manager.connect(game)
+    game.setState({ started: true })
+    for (let i = 0; i < 12; i++) await new Promise((r) => setImmediate(r))
+    const state = manager.inspect()
+    assert.equal(state.status, 'playing')
+    assert.deepEqual(state.fallbacks.sort(), ['river-lap', 'street-murmur'])
+    assert.ok(fetched.includes(AMBIENCE_SOUNDS['river-lap'].fallback.file))
+    const loopOf = (id) => sources.find((s) => s.buffer.from === AMBIENCE_SOUNDS[id].file || s.buffer.from === AMBIENCE_SOUNDS[id].fallback.file)
+    assert.equal(loopOf('river-lap').loopEnd, LOOP_PAD + AMBIENCE_SOUNDS['river-lap'].fallback.duration)
+    assert.equal(loopOf('wharf-calls').loopEnd, LOOP_PAD + AMBIENCE_SOUNDS['wharf-calls'].duration)
+    assert.equal(loopOf('wharf-calls').buffer.from, AMBIENCE_SOUNDS['wharf-calls'].file, '其餘仍用真實錄音')
+    manager.disconnect()
   })
 
   test('載入失敗不會讓程式出錯，也不會每個更新週期重試', async () => {

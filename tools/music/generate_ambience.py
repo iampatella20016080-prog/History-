@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-環境音合成工具：產生 public/audio/ambience/*.mp3（每個年代的場景環境聲，與背景音樂分開）
+環境音合成工具：產生 public/audio/ambience/synth/*.mp3（每個年代的場景環境聲，與背景音樂分開）
+
+第 9 階段之後網站改用真實錄音（tools/music/build_ambience_real.py）；這裡的合成音只在真實錄音載入或解碼失敗時當備援。
 
 全部是程式合成（numpy 濾波雜訊＋加法合成），不是真實錄音、也沒有使用任何第三方音檔，
 所以沒有授權問題；聽感是「示意」，不宣稱還原當年的實際聲音。
@@ -374,7 +376,7 @@ def encode(name, sig, out_dir):
 
 
 def main():
-    out_dir = Path(sys.argv[1] if len(sys.argv) > 1 else 'public/audio/ambience')
+    out_dir = Path(sys.argv[1] if len(sys.argv) > 1 else 'public/audio/ambience/synth')
     out_dir.mkdir(parents=True, exist_ok=True)
     for name, fn in SOUNDS.items():
         sig = fn()

@@ -38,3 +38,15 @@ python3 tools/music/analyze.py                  # 檢查循環長度、週期性
 2. 以同樣的檔名放進 `public/audio/`，或修改 `src/audio/musicTracks.js` 的 `file`。
 3. 把設定表的 `source` 改成實際來源（作曲者、授權），並更新這份說明。
 4. 執行 `python3 tools/music/analyze.py` 與 `node tests/e2e/music.e2e.mjs`（需要開發伺服器），最後務必實際試聽。
+
+## 環境音（`public/audio/ambience/`）
+
+環境音和背景音樂分開，是 **CC0 或公有領域的真實錄音** 剪成的短循環：
+
+```bash
+python3 tools/music/build_ambience_real.py <來源資料夾>   # 需要 numpy 與 ffmpeg；來源資料夾沒有的錄音會依網址下載；輸出 public/audio/ambience/*.mp3 並檢查循環接點
+node tools/music/write_ambience_credits.mjs              # 由 src/audio/ambienceCredits.js 產生 public/audio/ambience/CREDITS.md
+python3 tools/music/generate_ambience.py                 # 合成備援，輸出 public/audio/ambience/synth/*.mp3
+```
+
+來源、授權與剪輯記錄見 `public/audio/ambience/CREDITS.md`，年代依據見 `docs/research/ambience-sources.md`。
