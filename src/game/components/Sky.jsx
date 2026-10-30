@@ -61,6 +61,9 @@ const SKY_FRAGMENT = /* glsl */ `
   }
 `
 
+/** 天空與雲畫進河面倒映（精緻畫質，components/RiverReflection.jsx） */
+const REFLECT = { reflect: true }
+
 function useNoOutlineLayer(ref) {
   useEffect(() => {
     ref.current?.traverse((object) => object.layers.set(LAYERS.NO_OUTLINE))
@@ -152,10 +155,10 @@ export function Sky() {
 
   return (
     <group ref={group}>
-      <mesh ref={dome} material={skyMaterial} renderOrder={-1000} frustumCulled={false}>
+      <mesh ref={dome} material={skyMaterial} renderOrder={-1000} frustumCulled={false} userData={REFLECT}>
         <sphereGeometry args={[900, 32, 16]} />
       </mesh>
-      <mesh ref={clouds} geometry={cloud.geometry} material={cloud.material} />
+      <mesh ref={clouds} geometry={cloud.geometry} material={cloud.material} userData={REFLECT} />
     </group>
   )
 }

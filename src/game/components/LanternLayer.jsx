@@ -123,5 +123,5 @@ export function LanternLayer({ lanterns }) {
   })
 
   if (!lanterns.length) return null
-  return <instancedMesh ref={mesh} args={[geometry, material, lanterns.length]} castShadow frustumCulled={false} />
+  return <instancedMesh ref={mesh} args={[geometry, material, lanterns.length]} castShadow frustumCulled={false} userData={{ reflect: true }} />
 }

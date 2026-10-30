@@ -28,3 +28,7 @@ OUT=docs/lookbook/after node tests/e2e/lookbook.e2e.mjs http://127.0.0.1:5173/
 ```bash
 SET=shop-glow OUT=docs/lookbook/shop-glow-after node tests/e2e/lookbook.e2e.mjs http://127.0.0.1:5173/
 ```
+
+## 材質凹凸與河面倒映（`relief/`）
+
+`SET=relief` 拍的精緻畫質前後對照（`before/` 是 main a8a83f5、`after/` 是本分支）：`wall-north`／`wall-south` 貼著兩側立面斜看（磚縫、木作）、`roof` 屋瓦、`ground` 地磚、`river` 河岸、`river-bank` 從河面看岸邊、`river-along` 沿著河岸。流暢畫質沒有任何改變，所以只拍精緻畫質。`stats.json` 的街道遠景背對河面，倒影整趟略過，數字前後相同；河岸視角多的繪製呼叫見 README。

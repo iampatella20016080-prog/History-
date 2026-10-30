@@ -8,6 +8,8 @@
 /** Three.js 圖層：NO_OUTLINE 圖層的物件不參與輪廓線計算（天空、遠山、半透明效果） */
 export const LAYERS = {
   NO_OUTLINE: 1,
+  // 河面倒映（精緻畫質）：畫進平面反射的物件多開這個圖層（rendering/planarReflection.js）
+  REFLECT: 2,
 }
 
 export const STREET = {

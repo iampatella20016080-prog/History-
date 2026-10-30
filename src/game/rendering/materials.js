@@ -279,6 +279,11 @@ export function setSurfaceDetail(on) {
   setSurfaceVariationEnabled(on, [getMaterials(), interiorCache])
 }
 
+/** 已經產生的室內材質（還沒產生時是 null；材質凹凸開關時一起處理） */
+export function peekInteriorMaterials() {
+  return interiorCache
+}
+
 /**
  * 依年代 glow 值（0 白天 – 1 入夜）更新所有發光材質；
  * lanternGlow 只調整燈籠與燈泡（酒樓年代調暗，避免過曝）。

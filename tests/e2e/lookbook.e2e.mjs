@@ -15,6 +15,7 @@
  *           SET（shop-glow：只拍店內透光的店面視角，見 SHOP_GLOW_VIEWS）
  *           SET（details：改拍細部的近景——榕樹、大面積地面、灰泥牆、騎樓柱腳；
  *                air：空氣遠近感與光束——街道往兩頭的遠景、河岸，酒樓繁華與摩登加拍騎樓）
+ *           SET=relief：材質凹凸與河面倒映——斜光下的牆面、屋瓦、地磚、河岸三個角度
  */
 import { createRequire } from 'node:module'
 import { mkdirSync, writeFileSync } from 'node:fs'
@@ -81,6 +82,17 @@ export const DETAIL_VIEWS = [
   ['column', '騎樓柱腳', [19.4, 1.15, -0.6], [20.8, 0.15, -3.1]],
 ]
 
+/** 材質凹凸與河面倒映（只在精緻畫質）：每個年代都拍同樣的位置 */
+export const RELIEF_VIEWS = [
+  ['wall-north', '貼著北側立面斜看', [2, 2.0, -3.4], [12, 2.6, -4.7]],
+  ['wall-south', '貼著南側立面斜看', [2, 2.0, 3.4], [12, 2.6, 4.7]],
+  ['roof', '屋瓦', [-8, 9.5, 5], [-2, 6.5, -8]],
+  ['ground', '地磚', [-22, 2.8, 0.2], [-8, 0, 0.3]],
+  ['river', '河岸', [-41, 3.0, 3.5], [-72, -0.8, -1]],
+  ['river-bank', '從河面看岸邊', [-58, 3.0, 9], [-40, 1.5, 0]],
+  ['river-along', '沿著河岸', [-47.5, 2.6, 16], [-49, 0.2, -12]],
+]
+
 /** 空氣遠近感與光束（第 9 階段追加）：往東、往西（夕陽方向）的街道遠景與河岸 */
 export const AIR_VIEWS = [
   COMMON_VIEWS[2],
@@ -97,6 +109,7 @@ export const AIR_ARCADE_VIEWS = {
 function viewsFor(eraId) {
   if (SET === 'shop-glow') return SHOP_GLOW_VIEWS[eraId] ?? []
   if (SET === 'details') return DETAIL_VIEWS
+  if (SET === 'relief') return RELIEF_VIEWS
   if (SET === 'air') return [...AIR_VIEWS, ...(AIR_ARCADE_VIEWS[eraId] ?? [])]
   return [...COMMON_VIEWS, ...(ERA_VIEWS[eraId] ?? [])]
 }
@@ -194,7 +207,8 @@ async function run() {
     for (const eraId of ERA_IDS) {
       await page.goto(`${BASE_URL}?era=${eraId}&quality=${quality}`, { waitUntil: 'load' })
       await page.waitForFunction((era) => document.documentElement.dataset.sceneEra === era, eraId, { timeout: TIMEOUT })
-      await page.locator('.intro__start').click()
+      // 軟體繪圖很慢時開場按鈕的動畫一直不算「穩定」，等不到就直接點
+      await page.locator('.intro__start').click({ timeout: 60000 }).catch(() => page.locator('.intro__start').click({ force: true }))
       await page.waitForFunction(() => document.querySelector('.hud.is-started'), null, { timeout: 30000 })
       await page.waitForTimeout(1500)
       const views = viewsFor(eraId)
