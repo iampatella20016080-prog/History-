@@ -3508,6 +3508,74 @@ kbd {
   opacity: 0.8;
 }
 
+/* 主題路線的地圖（第 12 階段）：遊戲街景的俯視示意，節點與你的位置 */
+.route-map {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 8px 0 2px;
+  border-radius: 6px;
+  background: var(--paper-dark);
+}
+
+.route-map__river {
+  fill: #9fb7c0;
+}
+
+.route-map__ground {
+  fill: var(--paper-light);
+}
+
+.route-map__block {
+  fill: color-mix(in srgb, var(--ink) 16%, var(--paper-dark));
+}
+
+.route-map__label {
+  font-size: 2.6px;
+  fill: var(--ink-soft);
+}
+
+.route-map__node circle {
+  fill: #4f7b62;
+  stroke: var(--paper-light);
+  stroke-width: 0.5;
+}
+
+.route-map__node text {
+  font-size: 2.6px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: #fff;
+}
+
+.route-map__node.is-done circle {
+  fill: color-mix(in srgb, #4f7b62 45%, var(--paper-dark));
+}
+
+.route-map__node.is-elsewhere {
+  opacity: 0.5;
+}
+
+.route-map__node .route-map__era {
+  font-size: 2.2px;
+  font-weight: 400;
+  fill: var(--ink);
+}
+
+.route-map__player {
+  fill: #b8463a;
+  stroke: #fff;
+  stroke-width: 0.45;
+}
+
+.route-node__era {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.7rem;
+  opacity: 0.65;
+  margin-left: 6px;
+}
+
 /* ── 效能量測（?stats=1） ─────────────────────────── */
 
 .stats-overlay {

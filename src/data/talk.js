@@ -1,13 +1,20 @@
 /**
  * 路人對話的總表：每個年代有對話的路人（npcId 對應街景的人物）。
- * 對話的格式與標示見 game/talk.js；目前只有港口商街（第 10 階段），
- * 之後的年代照同樣的做法加進 TALK_BY_ERA。
+ * 對話的格式與標示見 game/talk.js；港口商街的碼頭與茶行（第 10 階段）在 qingPortTalk.js，
+ * 第 12 階段主題路線的對話寫在各路線的資料檔（data/routes/*.js 的 TALK，每段對話有 eraId）。
  */
 import { QING_PORT_TALK } from './qingPortTalk.js'
+import { PASTRY_TALK } from './routes/pastryRoute.js'
 
-export const TALK_BY_ERA = {
-  'qing-port': QING_PORT_TALK,
+const ROUTE_TALK = [...PASTRY_TALK]
+
+function byEra(talks) {
+  const map = { 'qing-port': [...QING_PORT_TALK] }
+  for (const talk of talks) (map[talk.eraId] ??= []).push(talk)
+  return map
 }
+
+export const TALK_BY_ERA = byEra(ROUTE_TALK)
 
 /** 這個年代所有有對話的路人 */
 export function talksOfEra(eraId) {

@@ -4,6 +4,7 @@ import { Color, Euler, MeshToonMaterial, Quaternion, Vector3 } from 'three'
 import { buildInspectObject, inspectPartTransform } from '../builders/inspectObjects.js'
 import { inspectRuntime, resetInspectRuntime } from '../inspectRuntime.js'
 import { inspectActionT, updateInspect } from '../objectInspect.js'
+import { QUALITY_MODES } from '../quality.js'
 import { getMaterials } from '../rendering/materials.js'
 import { renderState } from '../runtime.js'
 import { useGameStore } from '../../state/useGameStore.js'
@@ -44,12 +45,16 @@ export function ObjectStage() {
   const root = useRef()
   const spin = useRef()
   const partRefs = useRef({})
-  const object = useMemo(() => (inspect ? buildInspectObject(inspect.objectId) : null), [inspect])
+  // 精緻畫質用高細節模型，流暢畫質簡化（零件與小動作相同）
+  const detail = useGameStore((state) => QUALITY_MODES[state.qualityMode]?.detail ?? true)
+  const object = useMemo(() => (inspect ? buildInspectObject(inspect.objectId, { detail }) : null), [inspect, detail])
+  // 開始檢視的俯仰角（兩種畫質相同；換畫質時不重設檢視狀態）
+  const viewPitch = object?.viewPitch
 
   // 每次打開都從預設的角度開始
   useEffect(() => {
-    if (inspect) resetInspectRuntime()
-  }, [inspect])
+    if (inspect) resetInspectRuntime({ pitch: viewPitch })
+  }, [inspect, viewPitch])
 
   // 在 CameraRig 之後執行（priority 0.5）：檢視中覆寫鏡頭，鏡頭移到街道上空的舞台前
   useFrame(({ camera }, delta) => {

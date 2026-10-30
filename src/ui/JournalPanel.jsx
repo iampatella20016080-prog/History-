@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { getEra } from '../data/eras.js'
-import { ROUTES, getRoute } from '../data/teaRoute.js'
+import { ROUTES, getRoute } from '../data/routes.js'
 import { JOURNAL_KINDS, journalEntries } from '../game/journal.js'
-import { routeCount, routeComplete, routeJournalPage, routeProgress } from '../game/themeRoute.js'
+import { nodeEra, routeCount, routeComplete, routeEras, routeJournalPage, routeProgress } from '../game/themeRoute.js'
 import { useGameStore } from '../state/useGameStore.js'
+import { RouteMap } from './RouteMap.jsx'
 
 const KIND_TABS = [null, 'talk', 'object', 'shop', 'news']
 
@@ -68,7 +69,7 @@ export function JournalPanel() {
                     <div className="journal-route__info">
                       <span className="journal-route__title">{item.title}</span>
                       <span className="journal-route__meta">
-                        {getEra(item.eraId)?.title}｜{count.done}／{count.total}
+                        {routeEras(item).map((id) => getEra(id)?.title).join('・')}｜{count.done}／{count.total}
                       </span>
                       <p className="journal-route__intro">{item.intro}</p>
                     </div>
@@ -126,29 +127,37 @@ function ActiveRoute({ route, journal, eraId, requestEra, onStop }) {
   const complete = routeComplete(route, journal)
   const count = routeCount(route, journal)
   const progress = routeProgress(route, journal)
+  const eras = routeEras(route)
+  const pending = progress.filter((node) => !node.done)
+  const travelEra = pending.some((node) => nodeEra(route, node) === eraId) ? null : (pending[0] && nodeEra(route, pending[0]))
   return (
     <div className="journal-route is-active">
       <div className="journal-route__info">
         <span className="journal-route__title">{route.title}</span>
         <span className="journal-route__meta">
-          {getEra(route.eraId)?.title}｜{count.done}／{count.total}
+          {eras.map((id) => getEra(id)?.title).join('・')}｜{count.done}／{count.total}
           {complete && '・完成'}
         </span>
-        {route.eraId !== eraId && (
-          <button type="button" className="button-ghost journal-route__travel" onClick={() => requestEra(route.eraId)}>
-            前往{getEra(route.eraId)?.title}（{getEra(route.eraId)?.yearRange}）
+        {/* 還沒完成的節點都不在這個年代時，帶你過去（跨年代的路線：前往下一個還沒完成的節點的年代） */}
+        {!complete && travelEra && (
+          <button type="button" className="button-ghost journal-route__travel" onClick={() => requestEra(travelEra)}>
+            前往{getEra(travelEra)?.title}（{getEra(travelEra)?.yearRange}）
           </button>
         )}
       </div>
+      {!complete && <RouteMap route={route} progress={progress} eraId={eraId} />}
       {!complete && (
         <ul className="journal-route__nodes">
-          {progress.map((node) => (
+          {progress.map((node, i) => (
             <li key={node.id} className={`route-node${node.done ? ' is-done' : ''}`}>
               <span className="route-node__mark" aria-hidden="true">
-                {node.done ? '✓' : '○'}
+                {node.done ? '✓' : i + 1}
               </span>
               <div>
-                <span className="route-node__title">{node.title}</span>
+                <span className="route-node__title">
+                  {node.title}
+                  {eras.length > 1 && <em className="route-node__era">{getEra(nodeEra(route, node))?.title}</em>}
+                </span>
                 {!node.done && <p className="route-node__hint">{node.hint}</p>}
               </div>
             </li>
@@ -158,6 +167,7 @@ function ActiveRoute({ route, journal, eraId, requestEra, onStop }) {
       {complete && (
         <div className="journal-route__page">
           <p className="journal-route__done">這條路線走完了——這是你一路記下的手記：</p>
+          {route.closing && <p className="journal-route__intro">{route.closing}</p>}
           <ul className="journal-route__nodes">
             {routeJournalPage(route, journal).map(({ node, entry }) => (
               <li key={node.id} className="route-node is-done">

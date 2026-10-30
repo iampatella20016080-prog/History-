@@ -11,6 +11,6 @@ export const inspectRuntime = {
   value: newInspectState(),
 }
 
-export function resetInspectRuntime() {
-  inspectRuntime.value = newInspectState()
+export function resetInspectRuntime(options) {
+  inspectRuntime.value = newInspectState(options)
 }

@@ -47,6 +47,7 @@ node tests/e2e/viewer.e2e.mjs http://127.0.0.1:5173/
   - `shops.js`：店家的座標、各年代建築（`buildingByEra`）、招牌、介紹章節
   - `sources.js`：文獻
   - `*Layout.js`：單一店家或主題的配置，例如 `luguoCafeLayout.js`、`squidSoupLayout.js`、`miTaiMuLayout.js`
+  - `routes.js`、`routes/*.js`：主題探索路線（第 12 階段）；每條路線的節點、路人對話、情境人物（`routeFigures.js` 合併）與器物在同一個檔案，器物建模在 `game/builders/routeObjects/`
 - `src/game/world/`：街景產生流程
   - 流程：`lots.js`（共用地段）→ `lineage.js`（各年代的建築演變）→ `eraLayout.js`（建築、道具、碰撞 `SITE_COLLISION`）→ `buildWorld.js`（分段產生；室內產生器登記在 `BUILDING_INTERIORS`）
   - 在 `world.worker.js` 中執行，失敗時退回主執行緒
