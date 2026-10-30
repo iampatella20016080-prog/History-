@@ -48,7 +48,7 @@ describe('茶的主線：店家資料', () => {
         assert.equal(era.availableStores.includes(id), spec.eras.includes(era.id), `${era.id} 的店家名錄`)
       }
       // 每個出現的年代都有「此時期的店家」說明
-      assert.deepEqual(Object.keys(shop.eraNotes), spec.eras)
+      assert.deepEqual(Object.keys(shop.eraNotes).filter((key) => !key.endsWith('En')), spec.eras)
     })
 
     test(`${shop.name}：章節齊全，最後一章是文獻；每一章都有出處`, () => {

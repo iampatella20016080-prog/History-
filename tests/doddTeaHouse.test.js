@@ -35,7 +35,7 @@ describe('寶順洋行與李春生：店家資料', () => {
     assert.equal(shop.kind, 'heritage')
     assert.equal(shop.status, 'open')
     assert.deepEqual(Object.keys(shop.buildingByEra), ['qing-port'])
-    assert.deepEqual(Object.keys(shop.eraNotes), ['qing-port'])
+    assert.deepEqual(Object.keys(shop.eraNotes).filter((key) => !key.endsWith('En')), ['qing-port'])
     for (const era of ERAS) {
       assert.equal(era.availableStores.includes(SHOP_ID), era.id === 'qing-port', era.id)
     }

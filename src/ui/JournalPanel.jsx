@@ -39,8 +39,8 @@ export function JournalPanel() {
     return () => window.removeEventListener('pointerdown', onPointerDown)
   }, [open, toggleJournal])
 
-  const route = activeRouteId ? getRoute(activeRouteId) : null
-  const entries = journalEntries(journal, kind)
+  const route = activeRouteId ? L(getRoute(activeRouteId)) : null
+  const entries = L(journalEntries(journal, kind))
 
   return (
     <div className="hud-menu" ref={container}>
@@ -65,7 +65,7 @@ export function JournalPanel() {
               <span>{t('journal.routes')}</span>
             </p>
             {!route &&
-              ROUTES.map((item) => {
+              L(ROUTES).map((item) => {
                 const count = routeCount(item, journal)
                 return (
                   <div key={item.id} className="journal-route">
@@ -174,7 +174,9 @@ function ActiveRoute({ route, journal, eraId, requestEra, onStop }) {
           <p className="journal-route__done">{t('journal.routeDone')}</p>
           {route.closing && <p className="journal-route__intro">{route.closing}</p>}
           <ul className="journal-route__nodes">
-            {routeJournalPage(route, journal).map(({ node, entry }) => (
+            {routeJournalPage(route, journal).map(({ node, entry: rawEntry }) => {
+              const entry = L(rawEntry)
+              return (
               <li key={node.id} className="route-node is-done">
                 <span className="route-node__mark" aria-hidden="true">
                   ✓
@@ -184,7 +186,8 @@ function ActiveRoute({ route, journal, eraId, requestEra, onStop }) {
                   {entry?.text && <p className="route-node__hint">{entry.text}</p>}
                 </div>
               </li>
-            ))}
+              )
+            })}
           </ul>
         </div>
       )}

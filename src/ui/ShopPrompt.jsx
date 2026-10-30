@@ -9,6 +9,7 @@ import { useLocalizer, useT } from '../i18n/useT.js'
  */
 export function ShopPrompt({ shop: zhShop, hotspot: zhHotspot = null }) {
   const t = useT()
+  const lang = useGameStore((state) => state.lang)
   const L = useLocalizer()
   const shop = L(zhShop)
   const hotspot = L(zhHotspot)
@@ -41,7 +42,7 @@ export function ShopPrompt({ shop: zhShop, hotspot: zhHotspot = null }) {
             `${shop.name}｜${hotspot.note}`
           ) : (
             <>
-              {shopYearText(shop) ? `${shopYearText(shop)}｜` : ''}
+              {shopYearText(shop, lang) ? `${shopYearText(shop, lang)}｜` : ''}
               {shop.category}
             </>
           )}

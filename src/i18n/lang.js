@@ -55,7 +55,9 @@ export function shopSummary(shop, lang) {
   if (lang === 'en') {
     const en = typeof shop?.summaryEn === 'object' && shop.summaryEn ? shop.summaryEn[shop.era] : shop?.summaryEn
     if (en) return { text: en, fallback: false }
-    return { text: shop?.summary ?? '', fallback: true }
+    const text = shop?.summary ?? ''
+    // 店家已經過 localize()：summaryEn 換成了 summary，沒有中文就不算退回
+    return { text, fallback: /[\u3400-\u9fff]/.test(text) }
   }
   return { text: shop?.summary ?? '', fallback: false }
 }

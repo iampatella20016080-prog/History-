@@ -2,9 +2,11 @@
 export const CJK = /[㐀-鿿]/
 export const hasCjk = (s) => typeof s === 'string' && CJK.test(s)
 /** 不需要英文的欄位：內部識別、招牌圖集上的原樣文字、台語／羅馬拼音原文 */
-export const EXEMPT_KEYS = new Set(['sign', 'signText', 'signLines', 'original', 'quote', 'taiwanese', 'romanization', 'zh', 'hanzi', 'script'])
+export const EXEMPT_KEYS = new Set(['seals', 'smallSign', 'hangingSign', 'lanterns', 'sign', 'signText', 'signLines', 'original', 'quote', 'taiwanese', 'romanization', 'zh', 'hanzi', 'script'])
 
 /** 遍歷資料物件：每個含中文的字串，檢查同層有沒有 `${key}En` */
+const SIGN_KEYS = new Set(['sign', 'smallSign', 'hangingSign', 'lanterns'])
+
 export function walk(value, trail, out, seen = new Set(), parent = null, pkey = '') {
   if (value == null || typeof value === 'function') return
   if (typeof value === 'object') {
@@ -18,6 +20,7 @@ export function walk(value, trail, out, seen = new Set(), parent = null, pkey = 
       return
     }
     for (const [k, v] of Object.entries(value)) {
+      if (/En$/.test(k) || SIGN_KEYS.has(k)) continue // 英文欄位本身（可以夾中文原名）與招牌字樣不檢查
       if (typeof v === 'string' && hasCjk(v)) {
         out.push({ path: `${trail}.${k}`, text: v, key: k, parent: value, covered: coveredKey(value, k) })
       } else walk(v, `${trail}.${k}`, out, seen, value, k)

@@ -173,7 +173,9 @@ export const useGameStore = create((set, get) => ({
         kind: 'talk',
         eraId: get().eraId,
         title: `${session.talk.role}（${session.talk.doing}）`,
+        titleEn: `${session.talk.roleEn ?? session.talk.role} (${session.talk.doingEn ?? session.talk.doing})`,
         text: session.talk.lines.map((line) => line.text).join(' '),
+        textEn: session.talk.lines.map((line) => line.textEn ?? line.text).join(' '),
       })
     }
     set({ talk: next })
@@ -204,7 +206,7 @@ export const useGameStore = create((set, get) => ({
     const object = getInspectObject(objectId)
     if (!object) return false
     set((state) => ({ inspect: { objectId, source, nonce: (state.inspect?.nonce ?? 0) + 1 }, menuOpen: false, journalOpen: false, routeOpen: false }))
-    get().recordJournal({ id: objectJournalId(objectId), kind: 'object', eraId: get().eraId, title: object.title, text: object.lead })
+    get().recordJournal({ id: objectJournalId(objectId), kind: 'object', eraId: get().eraId, title: object.title, titleEn: object.titleEn, text: object.lead, textEn: object.leadEn })
     return true
   },
 
@@ -253,7 +255,7 @@ export const useGameStore = create((set, get) => ({
     }))
     // 探索手記：走過的店（依年代記，例如 shop:lin-hua-tai@qing-port）
     const shop = getShop(id, state.eraId)
-    if (shop) get().recordJournal({ id: `shop:${id}@${state.eraId}`, kind: 'shop', eraId: state.eraId, title: shop.name, text: shop.summary ?? '' })
+    if (shop) get().recordJournal({ id: `shop:${id}@${state.eraId}`, kind: 'shop', eraId: state.eraId, title: shop.name, titleEn: shop.nameEn, text: shop.summary ?? '', textEn: shop.summaryEn && typeof shop.summaryEn === 'string' ? shop.summaryEn : undefined })
     return true
   },
 
