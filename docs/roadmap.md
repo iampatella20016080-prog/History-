@@ -94,6 +94,7 @@
 - ☐ 固定視角截圖審查（已完成：截圖腳本 `tests/e2e/lookbook.e2e.mjs` 與光線、動態的前後對照 `docs/lookbook/`；還沒做：入口、招牌與走路閃爍的逐項問題清單）：用開發版的 `window.__DDC__.cameraOverride` 固定鏡頭，拍慈聖宮前與各年代幾個店門口（兩種畫質，加灰階縮圖），列出入口、招牌、明暗與走路時閃爍的問題；之後每項美術修改都附同一視角的前後對照。
 - ☑ 酒樓繁華與摩登的光線（`eras.js` 的分離色調、暗部提亮與材質明度 `materialValue`；其他三個年代不變）：保留傍晚入夜與黃昏的氣氛，但陰影偏冷、燈火偏暖，拉開磚、木、屋瓦與灰泥的明度差。目前兩個年代的暗部糊成一片、整片偏紅，立面細節看不清楚。
 - ☑ 畫面動態（`game/motion.js`、`rendering/waterShader.js`、`rendering/wind.js`、`components/LeafLayer.jsx`；爐灶的煙只有庶民生活的煤球爐與各年代的香爐，其他年代沒有建模的爐灶）：河水的波紋與反光、船的倒影、燈籠輕輕擺動（燈籠已是實例化繪製）、布幡與遮雨棚隨風、爐灶的煙、榕樹下的落葉；守住 iPad 的繪製呼叫預算。
+- ☑ 空氣遠近感與斜陽光束（**只在精緻畫質**，流暢畫質與 iPad 完全不變）：依深度與高度的霧讓遠景往天空色退、降低飽和，描邊跟著淡出，河面上一層薄霧；傍晚與黃昏的斜陽穿過騎樓與巷口的光束（螢幕空間、用深度遮擋）。各年代參數 `eras.js` 的 `lighting.air`、純邏輯 `src/game/aerial.js`、後製 `src/game/rendering/airPass.js`；測試 `tests/aerial.test.js`、`tests/e2e/air.e2e.mjs`，前後對照 `docs/lookbook/air/`。
 - ☑ 店內透出的光：改成有深度的漸層（中間亮、四周與上方暗、層架下有陰影），不加動態光源。做法：店內後牆用 UV 上的高度畫漸層與層架陰影；樓上的亮窗與玻璃店面改成假室內（interior mapping，斜看有視差，整排玻璃共用一個房間）；都在 `windowLit`、`glassWarm` 的著色器裡算，街景批次數不變；只在精緻畫質啟用，流暢畫質（iPad）維持原本的平面發光；室內場景的窗沒有標記、維持原樣。邏輯 `src/game/rendering/shopGlow.js`、測試 `tests/shopGlow.test.js`、前後對照 `docs/lookbook/shop-glow-before/`、`shop-glow-after/`。
 - ☑ 細部：榕樹與盆栽的外緣做得不規則並露出粗枝；打破大面積地磚與牆面的重複感；灰泥牆的水漬改從窗臺下開始（原本從牆頂往下，閩南街屋有出簷，牆頂反而淋不到雨）；柱腳與家具的接地暗影做進模型，兩種畫質都看得到。不規則葉團與粗枝 `builders/foliage.js`、世界座標的明暗／補丁／破磚 `rendering/surfaceVariation.js`（不新增材質）、窗臺下的水漬 `builders/weathering.js`、接地暗影 `builders/contactShadow.js`（新的半透明 `contact` 材質，每個年代街景多一批、用到家具的室內多一批）；測試 `tests/details.test.js`，前後對照 `docs/lookbook/details/`。iPad 實機尚未看過。
 
