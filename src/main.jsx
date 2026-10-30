@@ -8,6 +8,9 @@ import { transitionState } from './game/transition.js'
 import { useGameStore } from './state/useGameStore.js'
 import './styles/global.css'
 
+// 網址 ?lang=en 或記住的選擇：開場就讓 <html lang> 對得上
+document.documentElement.lang = useGameStore.getState().lang
+
 // 背景音樂：在 3D 場景之外、全站只連接一次
 audioManager.connect(useGameStore)
 // 環境音：依人物位置調整音量；被瀏覽器阻擋時，下一次點擊或按鍵就是使用者操作，在那時恢復

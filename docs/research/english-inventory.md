@@ -1,0 +1,2139 @@
+# 英文版盤點
+
+由 `node tools/i18n/inventory.mjs --write` 產生；每次補完一批要重新跑。
+
+- 資料檔中文字串：**6021**，尚無英文對應：**4851**（排除 sign、signText、signLines、original、quote、taiwanese、romanization、zh、hanzi、script 等刻意保留的欄位）
+- 介面元件裡仍寫死中文的行：**14**
+
+## 資料檔
+
+| 檔案 | 中文字串 | 缺英文 | 缺的字數 |
+| --- | ---: | ---: | ---: |
+| `src/data/ciShengMiaokouData.js` | 146 | 146 | 5941 |
+| `src/data/dihuaNianhuoData.js` | 53 | 53 | 2068 |
+| `src/data/doddLayout.js` | 8 | 8 | 94 |
+| `src/data/eras.js` | 80 | 80 | 373 |
+| `src/data/huangYujieLayout.js` | 23 | 23 | 157 |
+| `src/data/huangYujieMuseum.js` | 59 | 59 | 1622 |
+| `src/data/inspectObjects.js` | 191 | 10 | 594 |
+| `src/data/jiangWeiShuiData.js` | 33 | 33 | 1822 |
+| `src/data/liChunShengData.js` | 35 | 35 | 2273 |
+| `src/data/liTingXiangData.js` | 85 | 85 | 3885 |
+| `src/data/licenses.js` | 12 | 12 | 386 |
+| `src/data/linHuaTaiQingLayout.js` | 6 | 6 | 76 |
+| `src/data/luguoCafeLayout.js` | 10 | 10 | 111 |
+| `src/data/miTaiMuLayout.js` | 15 | 15 | 153 |
+| `src/data/operatorsData.js` | 52 | 52 | 4229 |
+| `src/data/overview.js` | 75 | 75 | 1113 |
+| `src/data/qingPortTalk.js` | 57 | 0 | 0 |
+| `src/data/riceAndShineData.js` | 167 | 167 | 6566 |
+| `src/data/riceAndShineEraConfig.js` | 16 | 16 | 174 |
+| `src/data/riceAndShineLayout.js` | 38 | 38 | 257 |
+| `src/data/routes/folkloreRoute.js` | 81 | 0 | 0 |
+| `src/data/routes/neighbourRoute.js` | 73 | 0 | 0 |
+| `src/data/routes/newsRoute.js` | 93 | 0 | 0 |
+| `src/data/routes/oldHouseRoute.js` | 90 | 0 | 0 |
+| `src/data/routes/pastryRoute.js` | 85 | 0 | 0 |
+| `src/data/routes/templeMealRoute.js` | 77 | 0 | 0 |
+| `src/data/routes.js` | 82 | 0 | 0 |
+| `src/data/shizixuanData.js` | 83 | 83 | 2127 |
+| `src/data/shizixuanEraConfig.js` | 12 | 12 | 78 |
+| `src/data/shizixuanLayout.js` | 44 | 44 | 183 |
+| `src/data/shops.js` | 2243 | 2234 | 81995 |
+| `src/data/sources.js` | 1443 | 1443 | 46605 |
+| `src/data/squidSoupLayout.js` | 11 | 11 | 102 |
+| `src/data/talk.js` | 330 | 0 | 0 |
+| `src/data/teaRoute.js` | 12 | 0 | 0 |
+| `src/data/templeSnackLayout.js` | 12 | 12 | 132 |
+| `src/data/wangJingQuanData.js` | 31 | 31 | 1948 |
+| `src/data/xiyuanData.js` | 58 | 58 | 2934 |
+
+## 介面元件（寫死的中文）
+
+### `src/ui/FoodIllustration.jsx`（1）
+
+- L1165：`<text x="74" y="96" textAnchor="middle" fontSize="12" fill="#fff6e8" fontFamily="serif">包種</text>`
+
+### `src/game/components/EraDirector.jsx`（3）
+
+- L51：`if (!useGameStore.getState().swapEra(job.id, job.to)) throw new Error('轉場已失效：#${job.id}')`
+- L56：`console.error('[大稻埕食光街] 無法切換到「${job.target}」，留在原本的年代：', error)`
+- L86：`console.error('[大稻埕食光街] 年代轉場發生錯誤：', error)`
+
+### `src/game/components/EraScene.jsx`（1）
+
+- L89：`console.warn('[大稻埕食光街] ${zone.id} 室內產生失敗，稍後再試：', error)`
+
+### `src/game/components/FlickerDebug.jsx`（9）
+
+- L15：`['bounds', '外框'],`
+- L16：`['shadows', '關閉陰影'],`
+- L17：`['transparent', '關閉透明物件'],`
+- L18：`['lod', '關閉距離切換'],`
+- L19：`['facade', '隱藏立面'],`
+- L20：`['decals', '隱藏貼花'],`
+- L42：`panel.innerHTML = '<strong>DEBUG_FLICKER</strong><br>' + OPTIONS.map(([key, label]) => '<label style`
+- L52：`rows.push({ name: o.name || o.parent?.name || '(未命名)', material, vertices: o.geometry?.attributes?.p`
+- L57：`console.info('[DEBUG_FLICKER] 年代群組：', eras)`
+
+## 資料檔缺英文明細（每檔最多列 400 筆）
+
+### `src/data/ciShengMiaokouData.js`（缺 146）
+
+- `CI_SHENG_CHAPTERS.heritage[0].tab`：廟與廟埕
+- `CI_SHENG_CHAPTERS.heritage[0].title`：慈聖宮：從艋舺到日新街
+- `CI_SHENG_CHAPTERS.heritage[0].lead`：同安人的媽祖廟隨著頂下郊拚遷到大稻埕，又在日治市區改正時遷到今天保安街49巷的位置；廟埕前的榕樹下，
+- `CI_SHENG_CHAPTERS.heritage[0].paragraphs[0]`：中央研究院人社中心 GIS 專題的說明寫，嘉慶年間泉州同安商人從福建分靈媽祖，先供奉於艋舺八甲庄；咸
+- `CI_SHENG_CHAPTERS.heritage[0].paragraphs[1]`：日治時期的市區改正讓廟再遷一次：中研院專題寫1909年6月25日起拆除、遷至日新街的農地，1914年
+- `CI_SHENG_CHAPTERS.heritage[0].paragraphs[2]`：現址是臺北市大同區保安街49巷17號（維基百科）。維基百科寫慈聖宮是直轄市定古蹟（2020年12月2
+- `CI_SHENG_CHAPTERS.heritage[0].paragraphs[3]`：說明｜街上這座廟是情境示意：規模、格局、榕樹與廟埕沿用本站的廟宇原型，相對位置也不是精確復原。酒樓繁
+- `CI_SHENG_CHAPTERS.heritage[0].timeline[0].place`：嘉慶年間
+- `CI_SHENG_CHAPTERS.heritage[0].timeline[0].text`：同安商人分靈媽祖，先供奉於艋舺八甲庄（中研院 GIS 專題，未附史料）。
+- `CI_SHENG_CHAPTERS.heritage[0].timeline[1].text`：頂下郊拚後同安人遷至大稻埕。
+- `CI_SHENG_CHAPTERS.heritage[0].timeline[2].place`：約1860年代
+- `CI_SHENG_CHAPTERS.heritage[0].timeline[2].text`：在大稻埕建廟：1855／1864／1866／1869各說不一，待核。
+- `CI_SHENG_CHAPTERS.heritage[0].timeline[3].text`：市區改正拆除、遷建至日新街（兩說並列，待核）。
+- `CI_SHENG_CHAPTERS.heritage[0].timeline[4].text`：重建完成，稱「大稻埕慈聖宮」（兩說並列，待核）。
+- `CI_SHENG_CHAPTERS.heritage[0].timeline[5].place`：2020（待核）
+- `CI_SHENG_CHAPTERS.heritage[0].timeline[5].text`：維基百科寫評定為直轄市定古蹟；官方公告未核對。
+- `CI_SHENG_CHAPTERS.heritage[0].glossary[0].term`：市區改正
+- `CI_SHENG_CHAPTERS.heritage[0].glossary[0].definition`：日治時期以拓寬道路、整理街廓為主的都市改造；大稻埕的市區改正讓慈聖宮從原址遷到日新街。
+- `CI_SHENG_CHAPTERS.heritage[0].glossary[1].term`：頂下郊拚
+- `CI_SHENG_CHAPTERS.heritage[0].glossary[1].definition`：1853年艋舺的泉州三邑人（頂郊）與同安人（下郊）之間的分類械鬥；同安人落敗後遷往大稻埕。
+- `CI_SHENG_CHAPTERS.heritage[1].tab`：資料來源
+- `CI_SHENG_CHAPTERS.heritage[1].title`：資料來源
+- `CI_SHENG_CHAPTERS.heritage[1].intro`：本章節整理自下列資料，點選即可開啟原始網頁；查證紀錄見專案的 docs/research/ci-sh
+- `CI_SHENG_CHAPTERS.heritage[1].disclaimer`：慈聖宮的初建與遷建年份各說不一，本站並列、標待核；古蹟身分只有維基百科一個來源。街上這座廟是情境示意
+- `CI_SHENG_CHAPTERS.postwar[0].tab`：廟口小吃
+- `CI_SHENG_CHAPTERS.postwar[0].title`：廟口的小吃攤（歷史情境重建）
+- `CI_SHENG_CHAPTERS.postwar[0].lead`：榕樹下、廟埕前緣的一排攤位：清湯的排骨湯、切塊赤肉的肉粥、白煮豬腳配麵線、豬肚小腸的四神湯。這些是依
+- `CI_SHENG_CHAPTERS.postwar[0].paragraphs[0]`：說明｜本章是歷史情境重建。慈聖宮廟口的小吃攤什麼時候開始聚集，沒有官方或學術的史料：中研院 GIS 
+- `CI_SHENG_CHAPTERS.postwar[0].paragraphs[1]`：史料｜現在的廟口（保安街49巷一側）不到100公尺內有十多家攤商（食尚玩家），媒體寫這些攤位「數十年
+- `CI_SHENG_CHAPTERS.postwar[0].paragraphs[2]`：情境設計｜本站把四種食物當作「廟口小吃」的類型來呈現：原汁排骨湯（湯頭清澈，排骨可選肥瘦）、肉粥（赤
+- `CI_SHENG_CHAPTERS.postwar[0].paragraphs[3]`：史料｜臺北市市場處介紹廟口一攤四神湯時寫，攤家早年在迪化街口擺攤、後來才遷到慈聖宮廟口。這是「攤販從
+- `CI_SHENG_CHAPTERS.postwar[0].paragraphs[4]`：史料｜教育部《臺灣台語常用詞辭典》：賣點心小吃的攤販稱「點心擔」，「廟口」是「廟門口、廟前廣場」。
+- `CI_SHENG_CHAPTERS.postwar[0].facts[0].label`：位置
+- `CI_SHENG_CHAPTERS.postwar[0].facts[0].value`：慈聖宮廟埕前緣、榕樹下（場景配置）
+- `CI_SHENG_CHAPTERS.postwar[0].facts[1].label`：年代
+- `CI_SHENG_CHAPTERS.postwar[0].facts[1].value`：約民國50年代前後聚集（1960年代；中研院 GIS 專題，待核）
+- `CI_SHENG_CHAPTERS.postwar[0].facts[2].label`：性質
+- `CI_SHENG_CHAPTERS.postwar[0].facts[2].value`：歷史情境重建：食物類型依現在廟口的攤位，不對應任何實際的店家
+- `CI_SHENG_CHAPTERS.postwar[0].facts[3].label`：不寫
+- `CI_SHENG_CHAPTERS.postwar[0].facts[3].value`：具名老店的店名與招牌、攤主、各攤年份與傳承代數（查無可靠出處）
+- `CI_SHENG_CHAPTERS.postwar[0].glossary[0].term`：點心擔
+- `CI_SHENG_CHAPTERS.postwar[0].glossary[0].definition`：賣點心小吃的攤販（教育部《臺灣台語常用詞辭典》）。
+- `CI_SHENG_CHAPTERS.postwar[0].glossary[1].term`：廟口
+- `CI_SHENG_CHAPTERS.postwar[0].glossary[1].definition`：廟門口、廟前廣場（同上）。
+- `CI_SHENG_CHAPTERS.postwar[1].tab`：四種小吃
+- `CI_SHENG_CHAPTERS.postwar[1].title`：廟口的四種小吃
+- `CI_SHENG_CHAPTERS.postwar[1].intro`：四種在現在廟口可以看到的小吃類型，依媒體與臺北市市場處的描述整理做法特色；不是某一攤的配方，也不代表
+- `CI_SHENG_CHAPTERS.postwar[1].items[0].name`：原汁排骨湯
+- `CI_SHENG_CHAPTERS.postwar[1].items[0].category`：湯品｜排骨
+- `CI_SHENG_CHAPTERS.postwar[1].items[0].description`：排骨慢燉成清澈的湯頭，不勾芡、不加藥材；排骨可以選肥一點或瘦一點。
+- `CI_SHENG_CHAPTERS.postwar[1].items[0].note`：做法特色依食尚玩家對現在攤位的描述；不寫店名、年份與價格。
+- `CI_SHENG_CHAPTERS.postwar[1].items[1].name`：肉粥
+- `CI_SHENG_CHAPTERS.postwar[1].items[1].category`：粥品｜赤肉
+- `CI_SHENG_CHAPTERS.postwar[1].items[1].description`：米粒煮開的鹹粥，赤肉切成小塊而不絞碎，上桌前撒油蔥酥與芹菜。
+- `CI_SHENG_CHAPTERS.postwar[1].items[1].note`：做法特色依食尚玩家的描述；「台北三大」之類的排名是媒體說法，本站不採。
+- `CI_SHENG_CHAPTERS.postwar[1].items[2].name`：豬腳麵線
+- `CI_SHENG_CHAPTERS.postwar[1].items[2].category`：麵食｜豬腳
+- `CI_SHENG_CHAPTERS.postwar[1].items[2].description`：白煮清燉的豬腳，不加醬色；配麵線，可以選湯的或乾的。
+- `CI_SHENG_CHAPTERS.postwar[1].items[2].note`：做法特色依食記的描述；某攤自述的創立年份沒有佐證，本站不寫。
+- `CI_SHENG_CHAPTERS.postwar[1].items[3].name`：四神湯
+- `CI_SHENG_CHAPTERS.postwar[1].items[3].category`：湯品｜藥燉
+- `CI_SHENG_CHAPTERS.postwar[1].items[3].description`：以豬肚為主的藥燉湯，可以換小腸、肝連或粉腸；配著肉包或燒賣一起吃。
+- `CI_SHENG_CHAPTERS.postwar[1].items[3].note`：做法特色依臺北市市場處的介紹；同一份介紹裡的經營年數前後不一，本站不寫年數與店名。
+- `CI_SHENG_CHAPTERS.postwar[1].footnote`：四種小吃是示意的類型，不代表價格、份量或配方；本站沒有找到1945–1980年間廟口攤位的菜單或照片
+- `CI_SHENG_CHAPTERS.postwar[3].tab`：資料來源
+- `CI_SHENG_CHAPTERS.postwar[3].title`：資料來源
+- `CI_SHENG_CHAPTERS.postwar[3].intro`：本章節整理自下列資料，點選即可開啟原始網頁；查證紀錄見專案的 docs/research/ci-sh
+- `CI_SHENG_CHAPTERS.postwar[3].disclaimer`：廟口的小吃攤是「歷史情境重建」：攤販聚集的年代只有中研院 GIS 專題一句未附出處的說明（民國50年
+- `CI_SHENG_CHAPTERS.revival[0].tab`：現在的廟口
+- `CI_SHENG_CHAPTERS.revival[0].title`：現在的廟口
+- `CI_SHENG_CHAPTERS.revival[0].lead`：保安街49巷的慈聖宮廟口，現在仍有排骨湯、肉粥、豬腳麵線、四神湯這類小吃攤。
+- `CI_SHENG_CHAPTERS.revival[0].paragraphs[0]`：史料｜媒體與臺北市市場處的介紹寫，現在廟口不到100公尺內有十多家攤商，賣的有原汁排骨湯、肉粥、豬腳
+- `CI_SHENG_CHAPTERS.revival[0].paragraphs[1]`：說明｜本站不寫任何具名的店家：各攤的年份、攤主與傳承代數在不同的來源裡互相矛盾，沒有可靠的出處。切換
+- `CI_SHENG_CHAPTERS.revival[2].tab`：資料來源
+- `CI_SHENG_CHAPTERS.revival[2].title`：資料來源
+- `CI_SHENG_CHAPTERS.revival[2].intro`：本章節整理自下列資料，點選即可開啟原始網頁；查證紀錄見專案的 docs/research/ci-sh
+- `CI_SHENG_CHAPTERS.revival[2].disclaimer`：廟口的小吃攤是「歷史情境重建」：攤販聚集的年代只有中研院 GIS 專題一句未附出處的說明（民國50年
+- `CI_SHENG_ERA_NOTES.banquet`：慈聖宮在1909／1910年前後因市區改正遷到這裡、1914／1916年重建完成（年份待核）；年代前
+- `CI_SHENG_ERA_NOTES.modern`：日治市區改正後遷建於此的慈聖宮（1914／1916年完成，年份待核）。這座廟是情境示意，不是精確復原
+- `CI_SHENG_ERA_NOTES.postwar`：廟口的小吃攤是歷史情境重建：中研院 GIS 專題寫「民國50年間」攤販聚集（待核），各攤的店名、攤主
+- `CI_SHENG_ERA_NOTES.revival`：現在保安街49巷的廟口仍有排骨湯、肉粥、豬腳麵線、四神湯這類小吃攤；本站不寫任何具名的店家。
+- `MIAOKOU_CHAPTER.tab`：廟口小吃
+- `MIAOKOU_CHAPTER.title`：廟口的小吃攤（歷史情境重建）
+- `MIAOKOU_CHAPTER.lead`：榕樹下、廟埕前緣的一排攤位：清湯的排骨湯、切塊赤肉的肉粥、白煮豬腳配麵線、豬肚小腸的四神湯。這些是依
+- `MIAOKOU_CHAPTER.paragraphs[0]`：說明｜本章是歷史情境重建。慈聖宮廟口的小吃攤什麼時候開始聚集，沒有官方或學術的史料：中研院 GIS 
+- `MIAOKOU_CHAPTER.paragraphs[1]`：史料｜現在的廟口（保安街49巷一側）不到100公尺內有十多家攤商（食尚玩家），媒體寫這些攤位「數十年
+- `MIAOKOU_CHAPTER.paragraphs[2]`：情境設計｜本站把四種食物當作「廟口小吃」的類型來呈現：原汁排骨湯（湯頭清澈，排骨可選肥瘦）、肉粥（赤
+- `MIAOKOU_CHAPTER.paragraphs[3]`：史料｜臺北市市場處介紹廟口一攤四神湯時寫，攤家早年在迪化街口擺攤、後來才遷到慈聖宮廟口。這是「攤販從
+- `MIAOKOU_CHAPTER.paragraphs[4]`：史料｜教育部《臺灣台語常用詞辭典》：賣點心小吃的攤販稱「點心擔」，「廟口」是「廟門口、廟前廣場」。
+- `MIAOKOU_CHAPTER.facts[0].label`：位置
+- `MIAOKOU_CHAPTER.facts[0].value`：慈聖宮廟埕前緣、榕樹下（場景配置）
+- `MIAOKOU_CHAPTER.facts[1].label`：年代
+- `MIAOKOU_CHAPTER.facts[1].value`：約民國50年代前後聚集（1960年代；中研院 GIS 專題，待核）
+- `MIAOKOU_CHAPTER.facts[2].label`：性質
+- `MIAOKOU_CHAPTER.facts[2].value`：歷史情境重建：食物類型依現在廟口的攤位，不對應任何實際的店家
+- `MIAOKOU_CHAPTER.facts[3].label`：不寫
+- `MIAOKOU_CHAPTER.facts[3].value`：具名老店的店名與招牌、攤主、各攤年份與傳承代數（查無可靠出處）
+- `MIAOKOU_CHAPTER.glossary[0].term`：點心擔
+- `MIAOKOU_CHAPTER.glossary[0].definition`：賣點心小吃的攤販（教育部《臺灣台語常用詞辭典》）。
+- `MIAOKOU_CHAPTER.glossary[1].term`：廟口
+- `MIAOKOU_CHAPTER.glossary[1].definition`：廟門口、廟前廣場（同上）。
+- `MIAOKOU_FOODS_CHAPTER.tab`：四種小吃
+- `MIAOKOU_FOODS_CHAPTER.title`：廟口的四種小吃
+- `MIAOKOU_FOODS_CHAPTER.intro`：四種在現在廟口可以看到的小吃類型，依媒體與臺北市市場處的描述整理做法特色；不是某一攤的配方，也不代表
+- `MIAOKOU_FOODS_CHAPTER.items[0].name`：原汁排骨湯
+- `MIAOKOU_FOODS_CHAPTER.items[0].category`：湯品｜排骨
+- `MIAOKOU_FOODS_CHAPTER.items[0].description`：排骨慢燉成清澈的湯頭，不勾芡、不加藥材；排骨可以選肥一點或瘦一點。
+- `MIAOKOU_FOODS_CHAPTER.items[0].note`：做法特色依食尚玩家對現在攤位的描述；不寫店名、年份與價格。
+- `MIAOKOU_FOODS_CHAPTER.items[1].name`：肉粥
+- `MIAOKOU_FOODS_CHAPTER.items[1].category`：粥品｜赤肉
+- `MIAOKOU_FOODS_CHAPTER.items[1].description`：米粒煮開的鹹粥，赤肉切成小塊而不絞碎，上桌前撒油蔥酥與芹菜。
+- `MIAOKOU_FOODS_CHAPTER.items[1].note`：做法特色依食尚玩家的描述；「台北三大」之類的排名是媒體說法，本站不採。
+- `MIAOKOU_FOODS_CHAPTER.items[2].name`：豬腳麵線
+- `MIAOKOU_FOODS_CHAPTER.items[2].category`：麵食｜豬腳
+- `MIAOKOU_FOODS_CHAPTER.items[2].description`：白煮清燉的豬腳，不加醬色；配麵線，可以選湯的或乾的。
+- `MIAOKOU_FOODS_CHAPTER.items[2].note`：做法特色依食記的描述；某攤自述的創立年份沒有佐證，本站不寫。
+- `MIAOKOU_FOODS_CHAPTER.items[3].name`：四神湯
+- `MIAOKOU_FOODS_CHAPTER.items[3].category`：湯品｜藥燉
+- `MIAOKOU_FOODS_CHAPTER.items[3].description`：以豬肚為主的藥燉湯，可以換小腸、肝連或粉腸；配著肉包或燒賣一起吃。
+- `MIAOKOU_FOODS_CHAPTER.items[3].note`：做法特色依臺北市市場處的介紹；同一份介紹裡的經營年數前後不一，本站不寫年數與店名。
+- `MIAOKOU_FOODS_CHAPTER.footnote`：四種小吃是示意的類型，不代表價格、份量或配方；本站沒有找到1945–1980年間廟口攤位的菜單或照片
+- `MIAOKOU_TODAY_CHAPTER.tab`：現在的廟口
+- `MIAOKOU_TODAY_CHAPTER.title`：現在的廟口
+- `MIAOKOU_TODAY_CHAPTER.lead`：保安街49巷的慈聖宮廟口，現在仍有排骨湯、肉粥、豬腳麵線、四神湯這類小吃攤。
+- `MIAOKOU_TODAY_CHAPTER.paragraphs[0]`：史料｜媒體與臺北市市場處的介紹寫，現在廟口不到100公尺內有十多家攤商，賣的有原汁排骨湯、肉粥、豬腳
+- `MIAOKOU_TODAY_CHAPTER.paragraphs[1]`：說明｜本站不寫任何具名的店家：各攤的年份、攤主與傳承代數在不同的來源裡互相矛盾，沒有可靠的出處。切換
+- `TEMPLE_HISTORY_CHAPTER.tab`：廟與廟埕
+- `TEMPLE_HISTORY_CHAPTER.title`：慈聖宮：從艋舺到日新街
+- `TEMPLE_HISTORY_CHAPTER.lead`：同安人的媽祖廟隨著頂下郊拚遷到大稻埕，又在日治市區改正時遷到今天保安街49巷的位置；廟埕前的榕樹下，
+- `TEMPLE_HISTORY_CHAPTER.paragraphs[0]`：中央研究院人社中心 GIS 專題的說明寫，嘉慶年間泉州同安商人從福建分靈媽祖，先供奉於艋舺八甲庄；咸
+- `TEMPLE_HISTORY_CHAPTER.paragraphs[1]`：日治時期的市區改正讓廟再遷一次：中研院專題寫1909年6月25日起拆除、遷至日新街的農地，1914年
+- `TEMPLE_HISTORY_CHAPTER.paragraphs[2]`：現址是臺北市大同區保安街49巷17號（維基百科）。維基百科寫慈聖宮是直轄市定古蹟（2020年12月2
+- `TEMPLE_HISTORY_CHAPTER.paragraphs[3]`：說明｜街上這座廟是情境示意：規模、格局、榕樹與廟埕沿用本站的廟宇原型，相對位置也不是精確復原。酒樓繁
+- `TEMPLE_HISTORY_CHAPTER.timeline[0].place`：嘉慶年間
+- `TEMPLE_HISTORY_CHAPTER.timeline[0].text`：同安商人分靈媽祖，先供奉於艋舺八甲庄（中研院 GIS 專題，未附史料）。
+- `TEMPLE_HISTORY_CHAPTER.timeline[1].text`：頂下郊拚後同安人遷至大稻埕。
+- `TEMPLE_HISTORY_CHAPTER.timeline[2].place`：約1860年代
+- `TEMPLE_HISTORY_CHAPTER.timeline[2].text`：在大稻埕建廟：1855／1864／1866／1869各說不一，待核。
+- `TEMPLE_HISTORY_CHAPTER.timeline[3].text`：市區改正拆除、遷建至日新街（兩說並列，待核）。
+- `TEMPLE_HISTORY_CHAPTER.timeline[4].text`：重建完成，稱「大稻埕慈聖宮」（兩說並列，待核）。
+- `TEMPLE_HISTORY_CHAPTER.timeline[5].place`：2020（待核）
+- `TEMPLE_HISTORY_CHAPTER.timeline[5].text`：維基百科寫評定為直轄市定古蹟；官方公告未核對。
+- `TEMPLE_HISTORY_CHAPTER.glossary[0].term`：市區改正
+- `TEMPLE_HISTORY_CHAPTER.glossary[0].definition`：日治時期以拓寬道路、整理街廓為主的都市改造；大稻埕的市區改正讓慈聖宮從原址遷到日新街。
+- `TEMPLE_HISTORY_CHAPTER.glossary[1].term`：頂下郊拚
+- `TEMPLE_HISTORY_CHAPTER.glossary[1].definition`：1853年艋舺的泉州三邑人（頂郊）與同安人（下郊）之間的分類械鬥；同安人落敗後遷往大稻埕。
+
+### `src/data/dihuaNianhuoData.js`（缺 53）
+
+- `NANBEI_BACKGROUND_CHAPTER.tab`：過年前買南北貨
+- `NANBEI_BACKGROUND_CHAPTER.title`：背景：年前買南北貨的習慣（與1996年的活動無關）
+- `NANBEI_BACKGROUND_CHAPTER.lead`：年前到迪化街買南北貨，是比年貨大街更早的習慣；這一節只當背景，兩件事不能連在一起讀。
+- `NANBEI_BACKGROUND_CHAPTER.paragraphs[0]`：背景｜BIOS monthly 2016年的文章整理：清咸豐年間移民增多、兩岸貿易熱絡，臺灣輸出米糖
+- `NANBEI_BACKGROUND_CHAPTER.paragraphs[1]`：分開讀｜這一節說的是年前辦年貨的習慣與迪化街的批發角色；1996年的年貨大街則是市府與商家辦的活動。
+- `NANBEI_BACKGROUND_CHAPTER.paragraphs[2]`：待補｜文章列為參考的〈大稻埕南北貨座談會紀錄〉（《臺北文獻》110期，1994年12月）本站未能取得
+- `NANBEI_BACKGROUND_CHAPTER.facts[0].label`：性質
+- `NANBEI_BACKGROUND_CHAPTER.facts[0].value`：二手整理的背景介紹，標待核
+- `NANBEI_BACKGROUND_CHAPTER.facts[1].label`：不寫
+- `NANBEI_BACKGROUND_CHAPTER.facts[1].value`：戰前至戰後的南北貨商家名單與店史（查無可靠出處）
+- `NANBEI_BACKGROUND_CHAPTER.facts[2].label`：待補
+- `NANBEI_BACKGROUND_CHAPTER.facts[2].value`：《臺北文獻》110期〈大稻埕南北貨座談會紀錄〉（1994）
+- `NIANHUO_CHAPTER.tab`：迪化街年貨大街
+- `NIANHUO_CHAPTER.title`：迪化街年貨大街：1996年起的春節前活動
+- `NIANHUO_CHAPTER.lead`：每年農曆春節前，迪化街一帶會辦起「年貨大街」。這是一項有起始年份的活動，而不是一條古老的街市傳統。
+- `NIANHUO_CHAPTER.paragraphs[0]`：史料｜臺北市政府工務局的新聞稿寫，迪化街年貨大街「起源於1996年農曆春節前半個月舉辦」，並說這是臺
+- `NIANHUO_CHAPTER.paragraphs[1]`：報導｜報時光2023年的文章重現了民生報1995年12月23日的報導：構想由民間的「迪化街工作室」提
+- `NIANHUO_CHAPTER.paragraphs[2]`：並列｜官方稿強調「市府首創」，報導則顯示構想來自民間、市府協辦。兩種說法本站並列，不替它們統一；比較
+- `NIANHUO_CHAPTER.paragraphs[3]`：現況｜活動大約在農曆春節前半個月舉辦，詳細的日期、範圍與串聯的商圈每年不同；本站沒有逐年核對，所以不
+- `NIANHUO_CHAPTER.paragraphs[4]`：說明｜年貨大街是市府與商家自1996年起辦理的活動。網路上有宣傳性的「第一」「百年」之類說法，本站沒
+- `NIANHUO_CHAPTER.facts[0].label`：起始
+- `NIANHUO_CHAPTER.facts[0].value`：1996年（臺北市政府新聞稿）
+- `NIANHUO_CHAPTER.facts[1].label`：構想由來
+- `NIANHUO_CHAPTER.facts[1].value`：官方稿：市府首創；報導：民間迪化街工作室提出、市府協辦（並列）
+- `NIANHUO_CHAPTER.facts[2].label`：時間
+- `NIANHUO_CHAPTER.facts[2].value`：農曆春節前約半個月（各年日期不同，不寫死）
+- `NIANHUO_CHAPTER.facts[3].label`：待核
+- `NIANHUO_CHAPTER.facts[3].value`：主辦與承辦單位、1996年實際日期與範圍、各年規模與數字
+- `NIANHUO_CHAPTER.timeline[0].place`：1995年12月
+- `NIANHUO_CHAPTER.timeline[0].text`：民生報報導：民間迪化街工作室提出構想，約50家商戶支持，市府協辦（報時光2023年重現，原報未查閱，
+- `NIANHUO_CHAPTER.timeline[1].text`：迪化街年貨大街在農曆春節前半個月首次舉辦（臺北市政府新聞稿）。
+- `NIANHUO_CHAPTER.timeline[2].place`：現在
+- `NIANHUO_CHAPTER.timeline[2].text`：每年春節前仍舉辦；各年日期與範圍以當年市府公告為準。
+- `NIANHUO_TIMELINE_EVENT.text`：迪化街年貨大街首次在農曆春節前半個月舉辦（市府新聞稿；構想由來與實際日期、範圍待核）。
+- `XIA_ER_ZUI_CHAPTER.tab`：相關店家：呷二嘴
+- `XIA_ER_ZUI_CHAPTER.title`：同樣賣米苔目的店：呷二嘴
+- `XIA_ER_ZUI_CHAPTER.lead`：甘州街上另一家賣米苔目的小吃店，只是同一種食物的參訪對照；它和永樂米苔目、也和廟口的情境攤位都沒有傳
+- `XIA_ER_ZUI_CHAPTER.paragraphs[0]`：位置｜呷二嘴在臺北市大同區甘州街34號（ETtoday 旅遊雲2026年、貓大爺2022年的食記）。
+- `XIA_ER_ZUI_CHAPTER.paragraphs[1]`：現況與做法｜食記寫，夏季賣米苔目冰，可以自選米苔目、粉粿、紅豆、仙草等四種配料；冬季改賣熱食，有米苔
+- `XIA_ER_ZUI_CHAPTER.paragraphs[2]`：年份｜三篇食記都寫「1954年創立」，但各篇沒有引用文件，也沒有執照、登記或口述歷史可以核實，所以這
+- `XIA_ER_ZUI_CHAPTER.paragraphs[3]`：說明｜食記的排名與「推薦」一類說法，本站沒有找到官方頁面可以核對，不採用。這家店和廟口小吃群裡的米苔
+- `XIA_ER_ZUI_CHAPTER.facts[0].label`：地址
+- `XIA_ER_ZUI_CHAPTER.facts[0].value`：臺北市大同區甘州街34號（食記）
+- `XIA_ER_ZUI_CHAPTER.facts[1].label`：創立年
+- `XIA_ER_ZUI_CHAPTER.facts[1].value`：1954（店家與食記的說法，未見文件佐證）
+- `XIA_ER_ZUI_CHAPTER.facts[2].label`：季節
+- `XIA_ER_ZUI_CHAPTER.facts[2].value`：夏季米苔目冰、冬季熱食（食記）
+- `XIA_ER_ZUI_CHAPTER.facts[3].label`：關係
+- `XIA_ER_ZUI_CHAPTER.facts[3].value`：米苔目主題的現代相關店家，同類食物的參訪對照，沒有品牌傳承關係
+- `XIA_ER_ZUI_RELATED.place.name`：呷二嘴
+- `XIA_ER_ZUI_RELATED.place.address`：臺北市大同區甘州街34號
+- `XIA_ER_ZUI_RELATED.place.summary`：大稻埕的米苔目小吃店，夏季賣米苔目冰，冬季賣熱食。
+- `XIA_ER_ZUI_RELATED.relation`：同類食物的參訪對照，沒有品牌傳承關係
+
+### `src/data/doddLayout.js`（缺 8）
+
+- `DODD_HOTSPOTS[0].label`：寶順洋行
+- `DODD_HOTSPOTS[0].note`：英商陶德的洋行：臺灣烏龍茶外銷的起點
+- `DODD_HOTSPOTS[1].label`：揀茶桌
+- `DODD_HOTSPOTS[1].note`：婦女坐在大竹篩前挑出茶枝與壞葉，按件計酬
+- `DODD_HOTSPOTS[2].label`：焙茶區
+- `DODD_HOTSPOTS[2].note`：磚臺上的焙坑燒著炭火，茶在焙籠裡烘上八到十個小時
+- `DODD_HOTSPOTS[3].label`：裝箱檯
+- `DODD_HOTSPOTS[3].note`：茶趁熱裝進鉛襯的木箱焊封，等著挑去碼頭
+
+### `src/data/eras.js`（缺 80）
+
+- `ERAS[0].title`：港口商街
+- `ERAS[0].description`：清末移民、茶葉、南北貨與港口貿易
+- `ERAS[0].mood`：古樸典雅、熙來攘往，像一幅清末商街的風俗畫。
+- `ERAS[0].lighting.timeOfDay`：午後斜陽
+- `ERAS[0].buildingStyle.signWords[0]`：茶
+- `ERAS[0].buildingStyle.signWords[1]`：米
+- `ERAS[0].buildingStyle.signWords[2]`：布
+- `ERAS[0].buildingStyle.signWords[3]`：油
+- `ERAS[0].buildingStyle.signWords[4]`：糖
+- `ERAS[0].buildingStyle.signWords[5]`：藥材
+- `ERAS[0].buildingStyle.signWords[6]`：雜貨
+- `ERAS[0].buildingStyle.signWords[7]`：竹器
+- `ERAS[0].buildingStyle.signWords[8]`：海味
+- `ERAS[0].buildingStyle.signWords[9]`：陶器
+- `ERAS[0].buildingStyle.signWords[10]`：香燭
+- `ERAS[0].buildingStyle.signWords[11]`：金紙
+- `ERAS[0].buildingStyle.signWords[12]`：豆
+- `ERAS[0].buildingStyle.signWords[13]`：油紙
+- `ERAS[1].title`：酒樓繁華
+- `ERAS[1].description`：酒樓、宴席、仕紳社交與城市繁榮
+- `ERAS[1].mood`：傍晚入夜，暖黃燈火從窗內灑出，繁華而典雅。
+- `ERAS[1].lighting.timeOfDay`：傍晚入夜
+- `ERAS[1].buildingStyle.signWords[0]`：茶行
+- `ERAS[1].buildingStyle.signWords[1]`：布莊
+- `ERAS[1].buildingStyle.signWords[2]`：銀樓
+- `ERAS[1].buildingStyle.signWords[3]`：漢藥
+- `ERAS[1].buildingStyle.signWords[4]`：洋服
+- `ERAS[1].buildingStyle.signWords[5]`：料理
+- `ERAS[1].buildingStyle.signWords[6]`：旅館
+- `ERAS[1].buildingStyle.signWords[7]`：海產
+- `ERAS[1].buildingStyle.signWords[8]`：雜貨
+- `ERAS[1].buildingStyle.signWords[9]`：茶館
+- `ERAS[1].buildingStyle.signWords[10]`：米商
+- `ERAS[2].title`：摩登大稻埕
+- `ERAS[2].description`：Art Deco 建築、西餐、咖啡與新文化
+- `ERAS[2].mood`：黃昏的金色光線，咖啡館與西餐廳的窗內透出暖光，浪漫而時髦。
+- `ERAS[2].lighting.timeOfDay`：黃昏
+- `ERAS[2].buildingStyle.signWords[0]`：喫茶
+- `ERAS[2].buildingStyle.signWords[1]`：洋食
+- `ERAS[2].buildingStyle.signWords[2]`：寫真館
+- `ERAS[2].buildingStyle.signWords[3]`：洋服
+- `ERAS[2].buildingStyle.signWords[4]`：化粧品
+- `ERAS[2].buildingStyle.signWords[5]`：時計
+- `ERAS[2].buildingStyle.signWords[6]`：書店
+- `ERAS[2].buildingStyle.signWords[7]`：藥局
+- `ERAS[2].buildingStyle.signWords[8]`：茶行
+- `ERAS[2].buildingStyle.signWords[9]`：布行
+- `ERAS[2].buildingStyle.signWords[10]`：百貨
+- `ERAS[3].title`：庶民生活
+- `ERAS[3].description`：市場、廟口、小吃與日常生活
+- `ERAS[3].mood`：午後陽光穿過榕樹，蒸氣裊裊，像一張活起來的老照片。
+- `ERAS[3].lighting.timeOfDay`：午後
+- `ERAS[3].buildingStyle.signWords[0]`：冰果室
+- `ERAS[3].buildingStyle.signWords[1]`：電器行
+- `ERAS[3].buildingStyle.signWords[2]`：西藥房
+- `ERAS[3].buildingStyle.signWords[3]`：照相館
+- `ERAS[3].buildingStyle.signWords[4]`：五金行
+- `ERAS[3].buildingStyle.signWords[5]`：布行
+- `ERAS[3].buildingStyle.signWords[6]`：鐘錶行
+- `ERAS[3].buildingStyle.signWords[7]`：米店
+- `ERAS[3].buildingStyle.signWords[8]`：雜貨店
+- `ERAS[3].buildingStyle.signWords[9]`：麵店
+- `ERAS[3].buildingStyle.signWords[10]`：旅社
+- `ERAS[3].buildingStyle.signWords[11]`：茶行
+- `ERAS[3].buildingStyle.signWords[12]`：南北貨
+- `ERAS[4].yearRange`：2000–現在
+- `ERAS[4].title`：老屋新生
+- `ERAS[4].description`：老屋再生、歷史保存與當代飲食文化
+- `ERAS[4].mood`：明亮柔和的自然光，修復的老屋裡透出溫暖燈光，清新而優雅。
+- `ERAS[4].lighting.timeOfDay`：明亮白日
+- `ERAS[4].buildingStyle.signWords[0]`：咖啡
+- `ERAS[4].buildingStyle.signWords[1]`：茶館
+- `ERAS[4].buildingStyle.signWords[2]`：選物
+- `ERAS[4].buildingStyle.signWords[3]`：甜點
+- `ERAS[4].buildingStyle.signWords[4]`：書店
+- `ERAS[4].buildingStyle.signWords[5]`：茶行
+- `ERAS[4].buildingStyle.signWords[6]`：南北貨
+- `ERAS[4].buildingStyle.signWords[7]`：食堂
+- `ERAS[4].buildingStyle.signWords[8]`：手作
+- `ERAS[4].buildingStyle.signWords[9]`：藝文
+
+### `src/data/huangYujieLayout.js`（缺 23）
+
+- `HUANG_YUJIE_HOTSPOTS[0].label`：黃玉階文史館
+- `HUANG_YUJIE_HOTSPOTS[0].note`：紅磚拱窗的歷史街屋（元珍豆醬店）
+- `HUANG_YUJIE_HOTSPOTS[1].label`：黃玉階與大稻埕
+- `HUANG_YUJIE_HOTSPOTS[1].note`：人物展示牆
+- `HUANG_YUJIE_HOTSPOTS[2].label`：社會改革與初等教育
+- `HUANG_YUJIE_HOTSPOTS[2].note`：文史展板
+- `HUANG_YUJIE_HOTSPOTS[3].label`：元珍豆醬店與飲食生活
+- `HUANG_YUJIE_HOTSPOTS[3].note`：醬缸與商號陳列
+- `HUANG_YUJIE_HOTSPOTS[4].label`：日常器物與商號生活
+- `HUANG_YUJIE_HOTSPOTS[4].note`：茶席與舊式器物
+- `HUANG_YUJIE_HOTSPOTS[5].label`：「元珍」匾額
+- `HUANG_YUJIE_HOTSPOTS[5].note`：二樓窗下的黑底金字匾額
+- `HUANG_YUJIE_HOTSPOTS[6].label`：陶醬缸
+- `HUANG_YUJIE_HOTSPOTS[6].note`：入口一側的展示物
+- `HUANG_YUJIE_HOTSPOTS[7].label`：老屋的木梁
+- `HUANG_YUJIE_HOTSPOTS[7].note`：裸露的木梁與修補構件
+- `HUANG_YUJIE_HOTSPOTS[8].label`：木製展示架
+- `HUANG_YUJIE_HOTSPOTS[8].note`：舊商號的包裝、器物與文獻
+- `HUANG_YUJIE_HOTSPOTS[9].label`：「學貫中西」匾額
+- `HUANG_YUJIE_HOTSPOTS[9].note`：後牆的小展桌
+- `MUSEUM.counterJars[0].label`：醬
+- `MUSEUM.counterJars[1].label`：醋
+- `MUSEUM.counterJars[2].label`：醋
+
+### `src/data/huangYujieMuseum.js`（缺 59）
+
+- `HISTORIC_SHOP.name`：元珍豆醬店
+- `HISTORIC_SHOP.trade`：醬菜業
+- `HISTORIC_SHOP.names[0].name`：元珍
+- `HISTORIC_SHOP.names[0].note`：帳冊上的寫法；二樓窗下的匾額
+- `HISTORIC_SHOP.names[1].name`：源珍
+- `HISTORIC_SHOP.names[1].note`：地方耆老口述的說法；騎樓的綠色斜掛匾額、室內的布旗
+- `MUSEUM_RECORD.name`：黃玉階文史館
+- `MUSEUM_RECORD.category`：文化據點
+- `MUSEUM_RECORD.type`：文化展示／歷史街屋
+- `ORGANIZATIONS[0].name`：社團法人臺灣文化事業發展協會
+- `ORGANIZATIONS[0].permitBy`：內政部
+- `ORGANIZATIONS[0].registeredAt`：臺灣桃園地方法院
+- `ORGANIZATIONS[0].purpose`：文化記憶保存、文化調查、人才培訓及教育推廣
+- `ORGANIZATIONS[0].relationNote`：待核實：公開資料沒有說明協會與黃玉階文史館的營運、主辦或所有權關係。
+- `PENDING[0].field`：老屋的興建年
+- `PENDING[0].note`：未查到可靠資料，留空。
+- `PENDING[1].field`：文史館的開館日
+- `PENDING[1].note`：未查到可靠資料，留空（不以協會的登記日代替）。
+- `PENDING[2].field`：詳細門牌
+- `PENDING[2].note`：依照片與相鄰的豆花店，位在迪化街一段224巷；門牌未核實，留空。
+- `PENDING[3].field`：開放時間
+- `PENDING[3].note`：未核實，不列出。
+- `PENDING[4].field`：營運單位與協會的關係
+- `PENDING[4].note`：公開資料沒有說明，待核實。
+- `PENDING[5].field`：請願設立女子分校
+- `PENDING[5].note`：只見於《人間福報》的文章，校名與年份待其他資料核實。
+- `PENDING[6].field`：館內教育展板上的校名與年份
+- `PENDING[6].note`：照片中的小字沒有逐一核對，本站不轉載；也不能因為館內有教育展，就推論這棟建築以前是學校。
+- `PENDING[7].field`：至善堂
+- `PENDING[7].note`：臺灣記憶記載黃玉階創建「至善堂」會所；豆花店的介紹提到空間提供者財團法人台北市至善堂。兩者是否為同一
+- `PERSON.name`：黃玉階
+- `PHOTO_OBSERVATIONS[0].text`：站在巷子裡正對兩棟建築：左邊是紅磚拱窗的文史館，右邊是灰色立面的導演的豆花店，兩棟的騎樓相連。
+- `PHOTO_OBSERVATIONS[1].text`：二層紅磚街屋：二樓三組拱形窗（中央較寬）、四道磚柱與拱頂的放射狀磚紋；窗下中央是黑底金字的「元珍」匾
+- `PHOTO_OBSERVATIONS[2].text`：一樓兩根紅磚圓柱、灰色柱頭，後面是退縮的木造門面；門前有木質花槽與植栽，牆面有風化的深色痕跡與牆縫植
+- `PHOTO_OBSERVATIONS[3].text`：騎樓頂部露出深褐色的木梁與木板，有綠色斜掛的「源珍」匾額、木櫃式的構件與暖色的吊燈；騎樓的介紹板標題
+- `PHOTO_OBSERVATIONS[4].text`：室內保留裸露的木梁與木板天花，可以看到修補過的木料與金屬固定構件。
+- `PHOTO_OBSERVATIONS[5].text`：入口一側與醬料陳列區擺著深褐色的陶醬缸，部分加蓋或用紅布、麻布封口，貼著「醬」「醋」的紅色菱形紙。
+- `PHOTO_OBSERVATIONS[6].text`：一面木板牆是黃玉階的人物展示（肖像看板、醫療公衛與社會參與的說明、裝框的文件）；另一面大型展板的標題
+- `PHOTO_OBSERVATIONS[7].text`：後牆掛著黑底金字的「學貫中西」匾額，下方是淺綠色的老窗框、人體解剖圖掛軸與鋪深藍桌布的小展桌。
+- `PHOTO_OBSERVATIONS[8].text`：高到天花的深色木製開放層架：牛皮紙包裝與紅紙封條、竹編與藤編提籃、綁紅繩的小陶甕、茶具與鍋具、便當提
+- `PHOTO_OBSERVATIONS[9].text`：茶席：圓形竹托盤上的黑色茶壺與杯底朝上的茶杯；上方懸掛米白布面、紅色紋樣的大型布旗與「源珍」小布旗。
+- `PHOTO_OBSERVATIONS[10].text`：中央是深色長木桌與長板凳，可以坐下聽導覽、翻閱資料。
+- `SCENARIO_DESIGN[0].text`：建築與室內的尺寸依照片的比例估算，不是測量；照片沒有拍到的展間深處是簡化的配置。
+- `SCENARIO_DESIGN[1].text`：立面的彩色陶飾板以簡化的浮雕表現，保留照片中的配置與色彩，沒有替換成其他圖樣。
+- `SCENARIO_DESIGN[2].text`：展板上的小字以版面示意（標題、年代軸、段落、圖片與城市剪影），不逐字重建館方的展板；可以閱讀的文字是
+- `SCENARIO_DESIGN[3].text`：層架、醬缸、茶具與器物是依照片簡化的示意，不是館藏的複製，也不代表確切的年代。
+- `SCENARIO_DESIGN[4].text`：照片裡的路人、車牌、鏡頭光斑與行動電源機、交通錐等現代雜物沒有放進場景；兩棟室內之間沒有打通新的門。
+- `SCENARIO_DESIGN[5].text`：只製作照片拍到的一樓；二樓只有外觀，沒有虛構二樓的展覽。
+- `VERIFIED_FACTS[0].text`：黃玉階生於1850年、逝於1918年，出生地是彰化大肚堡五汊港（今臺中市梧棲區）。
+- `VERIFIED_FACTS[1].text`：1882年（光緒八年）遷居大稻埕。
+- `VERIFIED_FACTS[2].text`：經營醬菜業（醬菜坊），同時以漢醫行醫。
+- `VERIFIED_FACTS[3].text`：日治初期霍亂、鼠疫流行時奔走救治，不收謝禮。
+- `VERIFIED_FACTS[4].text`：取得官方核發的醫生執照；年份有1897年（臺灣記憶）與1901年（國家文化記憶庫）兩種記載。
+- `VERIFIED_FACTS[5].text`：1900–1917年擔任大稻埕區長。
+- `VERIFIED_FACTS[6].text`：被推為臺北天然足會與斷髮不改裝會的會長，推廣放足、斷髮。
+- `VERIFIED_FACTS[7].text`：百年前的元珍豆醬店，如今是黃玉階文史館；門口掛著「元珍」與「源珍」兩塊招牌。
+- `VERIFIED_FACTS[8].text`：館內有醬缸、「學貫中西」匾額與人體解剖圖。
+- `VERIFIED_FACTS[9].text`：日治時期的初等教育：1898年國語傳習所改為公學校（臺籍兒童）與小學校（日籍兒童），1922年修訂臺
+- `VERIFIED_FACTS[10].text`：社團法人臺灣文化事業發展協會：內政部2023年10月18日許可設立，2024年5月16日法人設立登記
+
+### `src/data/inspectObjects.js`（缺 10）
+
+- `INSPECT_OBJECTS.tea-chest.paragraphs[0]`：Davidson（1903）記載，外銷的茶裝在內襯薄鉛的木箱裡，鉛襯焊封防潮；箱外裱紙、印上商號與圖
+- `INSPECT_OBJECTS.tea-chest.paragraphs[1]`：箱子的實際長寬高查無：模型是依約四十磅茶葉估的比例，外箱圖案依「德記洋行茶箱籤」的風格設計，都是歷史
+- `INSPECT_OBJECTS.rice-measure.paragraphs[0]`：「斗」是計算容量的單位，十升為一斗、十斗為一石；「米斗」是形狀像斗、用來量米的木器（教育部《重編國語
+- `INSPECT_OBJECTS.rice-measure.paragraphs[1]`：場景中的米斗是示意的模型，不代表某一件實際的器物或容量。
+- `INSPECT_OBJECTS.tea-tally.paragraphs[0]`：茶籌的說法來自耆老口述與私人收藏的報導（揀茶以茶籌暫代薪資憑證、定期結算），講的是日治以後的揀茶間；
+- `INSPECT_OBJECTS.tea-tally.paragraphs[1]`：模型是依報導描述（鐵片籌與紙籌）想像的示意，不對應任何一枚實際的茶籌，也不把它安在任何真實店家上。
+- `INSPECT_OBJECTS.tea-scale.paragraphs[0]`：Davidson（1903）記載茶的交易與工資以擔（picul）、斤（catty）計，他自註一擔＝1
+- `INSPECT_OBJECTS.tea-scale.paragraphs[1]`：清末茶行用秤的形制查無：模型依一般桿秤（秤桿、秤鉤、秤錘）的樣式重建，是歷史情境重建。
+- `INSPECT_OBJECTS.roasting-basket.paragraphs[0]`：Davidson（1903）記載：焙坑深二呎、徑二呎、相距一呎，周圍是低磚臺；木炭燒到通紅、覆灰養火
+- `INSPECT_OBJECTS.roasting-basket.paragraphs[1]`：他寫的是1890年代末的做法，用在這個年代為推定相近；模型依文字描述重建，是歷史情境重建。
+
+### `src/data/jiangWeiShuiData.js`（缺 33）
+
+- `JIANG_WEISHUI_MAP_PLACE.name`：渭水驛站（緊鄰大安醫院舊址）
+- `JIANG_WEISHUI_MAP_PLACE.address`：延平北路二段27號
+- `JIANG_WEISHUI_PERSON_CHAPTER.tab`：人物：蔣渭水
+- `JIANG_WEISHUI_PERSON_CHAPTER.title`：人物：蔣渭水——太平町的醫師、酒樓股東與文化協會的發起人
+- `JIANG_WEISHUI_PERSON_CHAPTER.lead`：前一章提到春風得意樓的股東蔣渭水，這一節把他在大稻埕的行動按年份排出來：開醫院、入股酒樓、發起文化協
+- `JIANG_WEISHUI_PERSON_CHAPTER.paragraphs[0]`：年份｜他的生年各資料不一：國家文化記憶庫寫1888年，台灣文學辭典的條目標題寫1891年，文化部英文
+- `JIANG_WEISHUI_PERSON_CHAPTER.paragraphs[1]`：大安醫院｜1916年，他在大稻埕太平町（今延平北路二段）開設大安醫院（國家文化記憶庫；文化部〈蔣渭水
+- `JIANG_WEISHUI_PERSON_CHAPTER.paragraphs[2]`：春風得意樓｜1914年開業的春風得意樓，1916年遷到太平橫街的新建街屋。莊永明的專文寫，1920年
+- `JIANG_WEISHUI_PERSON_CHAPTER.paragraphs[3]`：臺灣文化協會｜1921年10月，臺灣文化協會成立，蔣渭水是重要成員之一（國家文化記憶庫）。成立日期「
+- `JIANG_WEISHUI_PERSON_CHAPTER.paragraphs[4]`：今日可去的地方｜延平北路二段27號的「渭水驛站」是臺北市政府文化局的文化館所，前身是臺北市都市更新處
+- `JIANG_WEISHUI_PERSON_CHAPTER.timeline[0].text`：出生，各資料不一：國家文化記憶庫1888年、文化部英文頁摘要1890年、台灣文學辭典1891年，三說
+- `JIANG_WEISHUI_PERSON_CHAPTER.timeline[1].text`：在大稻埕太平町開設大安醫院（門牌各說不一，待核）。
+- `JIANG_WEISHUI_PERSON_CHAPTER.timeline[2].text`：春風得意樓改組增資，成為大股東（莊永明）。
+- `JIANG_WEISHUI_PERSON_CHAPTER.timeline[3].text`：10月，臺灣文化協會成立（17日與靜修女學校地點只見二手報導，待核）。
+- `JIANG_WEISHUI_PERSON_CHAPTER.timeline[4].text`：2月買下春風得意樓全部股份，同年歇業（莊永明）。
+- `JIANG_WEISHUI_PERSON_CHAPTER.timeline[5].text`：文化協會分裂，與林獻堂退出協會運作（國家文化記憶庫）。
+- `JIANG_WEISHUI_PERSON_CHAPTER.timeline[6].text`：8月5日病逝（國家文化記憶庫）。
+- `JIANG_WEISHUI_PERSON_CHAPTER.timeline[7].text`：10月7日，延平北路二段27號「渭水驛站」常設展《你好，渭水》開幕（臺北市政府文化局）。
+- `JIANG_WEISHUI_PERSON_CHAPTER.facts[0].label`：生年
+- `JIANG_WEISHUI_PERSON_CHAPTER.facts[0].value`：1888（國家文化記憶庫）／1890（文化部英文頁摘要）／1891（台灣文學辭典）並列，待核；卒年1
+- `JIANG_WEISHUI_PERSON_CHAPTER.facts[1].label`：大安醫院
+- `JIANG_WEISHUI_PERSON_CHAPTER.facts[1].value`：1916年設於太平町（今延平北路二段）；《臺灣民報》總批發處；門牌27／31／33／35號各說不一，
+- `JIANG_WEISHUI_PERSON_CHAPTER.facts[2].label`：春風得意樓
+- `JIANG_WEISHUI_PERSON_CHAPTER.facts[2].value`：1920年入股成為大股東、1922年買下全部，同年歇業；大安醫院在對街（莊永明，單一詳細來源）；非創
+- `JIANG_WEISHUI_PERSON_CHAPTER.facts[3].label`：臺灣文化協會
+- `JIANG_WEISHUI_PERSON_CHAPTER.facts[3].value`：1921年10月成立；成立日17日與靜修女學校地點待核
+- `JIANG_WEISHUI_PERSON_CHAPTER.facts[4].label`：渭水驛站
+- `JIANG_WEISHUI_PERSON_CHAPTER.facts[4].value`：延平北路二段27號；臺北市政府文化局館所，前身URS27W；2020年10月7日開幕；緊鄰大安醫院舊
+- `JIANG_WEISHUI_PERSON_CHAPTER.facts[5].label`：年代對應
+- `JIANG_WEISHUI_PERSON_CHAPTER.facts[5].value`：活動年份1916–1931，落在「酒樓繁華」1895–1930的後半
+- `JIANG_WEISHUI_TIMELINE_EVENTS[0].text`：蔣渭水在大稻埕太平町開設大安醫院，後來也是《臺灣民報》的總批發處（門牌待核）。
+- `JIANG_WEISHUI_TIMELINE_EVENTS[1].text`：臺灣文化協會成立（10月），蔣渭水是重要成員之一；成立日與地點待核。
+- `JIANG_WEISHUI_TIMELINE_EVENTS[2].text`：延平北路二段27號「渭水驛站」常設展《你好，渭水》開幕（10月7日），館所緊鄰大安醫院舊址。
+
+### `src/data/liChunShengData.js`（缺 35）
+
+- `LI_CHUNSHENG_MAP_PLACE.name`：大稻埕教會
+- `LI_CHUNSHENG_MAP_PLACE.address`：甘州街40號
+- `LI_CHUNSHENG_PERSON_CHAPTER.tab`：人物：李春生
+- `LI_CHUNSHENG_PERSON_CHAPTER.title`：人物：李春生——夾在洋行與茶農之間的買辦
+- `LI_CHUNSHENG_PERSON_CHAPTER.lead`：這一節把前面幾章散開的年份收回到一個人身上：一位在廈門長大的基督徒少年，怎麼成為洋行的買辦，再成為自
+- `LI_CHUNSHENG_PERSON_CHAPTER.paragraphs[0]`：廈門｜1838年1月12日，李春生生在福建廈門，父親是船員（陳慈玉）。他的自敘寫「自幼奉耶穌教，年十
+- `LI_CHUNSHENG_PERSON_CHAPTER.paragraphs[1]`：買辦｜來臺的年份有幾種記載：自敘寫「迨三十歲（1866年），復受英商寶順行重盟，東渡在台北」，陳慈玉
+- `LI_CHUNSHENG_PERSON_CHAPTER.paragraphs[2]`：茶商｜寶順行結束後，他續任英商和記行的買辦；自敘寫他在臺灣住了二十九年。他後來自己經營茶業，烏龍茶經
+- `LI_CHUNSHENG_PERSON_CHAPTER.paragraphs[3]`：人與街｜1878年，他與林維源捐出巨款並督造臺北城（國史館、陳慈玉）。1889年，劉銘傳把大稻埕沿岸
+- `LI_CHUNSHENG_PERSON_CHAPTER.paragraphs[4]`：人與教會｜他一生是長老教會的信徒。慈聖宮旁、甘州街40號的大稻埕教會，1915年遷建的禮拜堂由他出資
+- `LI_CHUNSHENG_PERSON_CHAPTER.paragraphs[5]`：當時的稱呼｜國史館的編者稱他是「清季台灣北部最有名富紳」；陳慈玉引杜聰明的定位，稱他為「台灣茶業之父
+- `LI_CHUNSHENG_PERSON_CHAPTER.timeline[0].text`：生於福建廈門，父親是船員。
+- `LI_CHUNSHENG_PERSON_CHAPTER.timeline[1].text`：在廈門受洗。自敘「年十五學商業，兼習英國語文」。
+- `LI_CHUNSHENG_PERSON_CHAPTER.timeline[2].text`：受雇於廈門英商怡記洋行。
+- `LI_CHUNSHENG_PERSON_CHAPTER.timeline[3].text`：受英商寶順行之聘來臺北任買辦（陳慈玉記1865年，自敘「迨三十歲」即1866年；維基寫1868年移居
+- `LI_CHUNSHENG_PERSON_CHAPTER.timeline[4].text`：與林維源捐款並督造臺北城。
+- `LI_CHUNSHENG_PERSON_CHAPTER.timeline[5].text`：與林維源成立建昌公司，建昌街、千秋街成為洋樓街（央廣寫1886年，待核）。
+- `LI_CHUNSHENG_PERSON_CHAPTER.timeline[6].text`：「李節記」資本額居大稻埕茶商第三；獲勳六等旭日章；赴日本參觀，寫成《東遊六十四日隨筆》（赴日細節待核
+- `LI_CHUNSHENG_PERSON_CHAPTER.timeline[7].text`：大稻埕教會遷建禮拜堂（甘州街40號），由他出資、規劃並監造。
+- `LI_CHUNSHENG_PERSON_CHAPTER.timeline[8].text`：過世（9月7日與10月5日兩說，本站只寫年份）。
+- `LI_CHUNSHENG_PERSON_CHAPTER.timeline[9].text`：孫輩李延旭、李延弼與信徒在貴德街44號建李春生紀念教會（5月5日設立）。
+- `LI_CHUNSHENG_PERSON_CHAPTER.facts[0].label`：來臺年
+- `LI_CHUNSHENG_PERSON_CHAPTER.facts[0].value`：1865（陳慈玉）／1866（自敘「迨三十歲」）／1868（維基）並列，待核
+- `LI_CHUNSHENG_PERSON_CHAPTER.facts[1].label`：身分
+- `LI_CHUNSHENG_PERSON_CHAPTER.facts[1].value`：寶順洋行、和記洋行的買辦；後自營茶商（李節記）
+- `LI_CHUNSHENG_PERSON_CHAPTER.facts[2].label`：大稻埕教會
+- `LI_CHUNSHENG_PERSON_CHAPTER.facts[2].value`：甘州街40號；1915年遷建禮拜堂，李春生出資、規劃並監造；1901年任長老只見維基，待核
+- `LI_CHUNSHENG_PERSON_CHAPTER.facts[3].label`：李春生紀念教會
+- `LI_CHUNSHENG_PERSON_CHAPTER.facts[3].value`：貴德街44號；1935年5月5日設立；孫輩李延旭、李延弼與信徒所建
+- `LI_CHUNSHENG_PERSON_CHAPTER.facts[4].label`：當時的稱呼
+- `LI_CHUNSHENG_PERSON_CHAPTER.facts[4].value`：「清季台灣北部最有名富紳」（國史館）；「台灣茶業之父」（陳慈玉引杜聰明；《走讀大稻埕》；公視台語）
+- `LI_CHUNSHENG_PERSON_CHAPTER.facts[5].label`：待核
+- `LI_CHUNSHENG_PERSON_CHAPTER.facts[5].value`：四達商行（1861，央廣）；建昌公司1886年（央廣）；1896年赴日細節（維基）；1901年長老（
+- `LI_CHUNSHENG_TIMELINE_EVENTS[0].text`：李春生受英商寶順行之聘來臺北任買辦，同年到安溪採辦茶苗（自敘「迨三十歲」；陳慈玉記1865年，並列）
+- `LI_CHUNSHENG_TIMELINE_EVENTS[1].text`：大稻埕教會在甘州街遷建禮拜堂，由李春生出資、規劃並監造。
+
+### `src/data/liTingXiangData.js`（缺 85）
+
+- `LTX_CHAPTERS[0].tab`：現況與傳承
+- `LTX_CHAPTERS[0].title`：第一章｜現況與傳承（店家自述）
+- `LTX_CHAPTERS[0].lead`：李亭香是現在迪化街上的一家糕餅店；關於它的歷史，本站查到的都是店家說法與媒體轉述，這裡照實標示。
+- `LTX_CHAPTERS[0].paragraphs[0]`：創立年份：ETtoday（2019年）、鏡週刊（2018年）與多篇食記都寫「創立於1895年」，彼此
+- `LTX_CHAPTERS[0].paragraphs[1]`：創立地點：各來源互相矛盾。《今周刊》與小島裡的專欄寫創店的那一代先在大稻埕的餅店學做餅，回家鄉蘆洲開
+- `LTX_CHAPTERS[0].paragraphs[2]`：現在的店在大稻埕迪化街（媒體報導）；門牌本站沒有從可以開啟的來源核對，因此對照地圖上不標這家店。ET
+- `LTX_CHAPTERS[0].paragraphs[3]`：經營者：《今周刊》與 ETtoday 都寫現任經營者李佳陽原是面板工程師（友達光電），返家接班，其父
+- `LTX_CHAPTERS[0].paragraphs[4]`：為什麼只在「老屋新生」出現：日治時期與戰後初期這家店的店址、產品與營業情況，本站查無任何資料；最具體
+- `LTX_CHAPTERS[0].facts[0].label`：創立
+- `LTX_CHAPTERS[0].facts[0].value`：店家自述1895年（待核；《今周刊》推算約1894年）
+- `LTX_CHAPTERS[0].facts[1].label`：創立地點
+- `LTX_CHAPTERS[0].facts[1].value`：蘆洲（《今周刊》、小島裡）或大稻埕（ETtoday、鏡週刊），來源矛盾、並列
+- `LTX_CHAPTERS[0].facts[2].label`：現址
+- `LTX_CHAPTERS[0].facts[2].value`：大稻埕迪化街（門牌未能核對，地圖不標）
+- `LTX_CHAPTERS[0].facts[3].label`：經營者
+- `LTX_CHAPTERS[0].facts[3].value`：李佳陽（曾任面板工程師，返家接班；世代序號不寫）
+- `LTX_CHAPTERS[1].tab`：店名與平西餅
+- `LTX_CHAPTERS[1].title`：第二章｜店名由來與招牌餅（店家說法）
+- `LTX_CHAPTERS[1].lead`：「亭」是騎樓的亭仔腳：店家說，餅香從騎樓飄出去，店名就這麼來的。
+- `LTX_CHAPTERS[1].paragraphs[0]`：店名由來：《今周刊》與小島裡的專欄都寫，早年店面的騎樓（臺語「亭仔腳」）常飄出餅香，店名的「亭香」由
+- `LTX_CHAPTERS[1].paragraphs[1]`：平西餅：《今周刊》、鏡週刊、小島裡與食記都提到平西餅是李亭香的長銷商品；《今周刊》寫它有「27層餅皮
+- `LTX_CHAPTERS[1].paragraphs[2]`：ETtoday 與鏡週刊也提到造型糕餅「平安龜」；食記裡的金錢龜、綠豆糕禮盒等是現在販售的商品，沒有
+- `LTX_CHAPTERS[1].paragraphs[3]`：場景中的店屋只用一般的「餅舖」陳設與招牌，不複製店內實際的裝潢、包裝與商標；不列價格與營業時間。
+- `LTX_CHAPTERS[1].facts[0].label`：店名
+- `LTX_CHAPTERS[1].facts[0].value`：騎樓（亭仔腳）飄出餅香（店家說法）
+- `LTX_CHAPTERS[1].facts[1].label`：招牌餅
+- `LTX_CHAPTERS[1].facts[1].value`：平西餅（「27層餅皮」僅《今周刊》一篇）
+- `LTX_CHAPTERS[1].facts[2].label`：造型餅
+- `LTX_CHAPTERS[1].facts[2].value`：平安龜（ETtoday、鏡週刊）
+- `LTX_CHAPTERS[2].tab`：兼賣雜貨
+- `LTX_CHAPTERS[2].title`：第三章｜大稻埕沒落時期兼賣雜貨
+- `LTX_CHAPTERS[2].lead`：餅店不只賣餅：兩篇報導都提到，大稻埕人潮散去的那些年，店裡曾兼賣香菸與雜貨。
+- `LTX_CHAPTERS[2].paragraphs[0]`：《今周刊》寫，約40年前大稻埕沒落，家中一度兼賣香菸、罐頭等雜貨；ETtoday 也寫平西餅之外曾賣
+- `LTX_CHAPTERS[2].paragraphs[1]`：這段經歷說明了舊市街的商業起落怎麼落到一家店上：批發與人潮離開迪化街後，老店靠多樣的商品撐過去，再在
+- `LTX_CHAPTERS[2].facts[0].label`：時期
+- `LTX_CHAPTERS[2].facts[0].value`：「約40年前」（約1980年代，待核）
+- `LTX_CHAPTERS[2].facts[1].label`：兼賣
+- `LTX_CHAPTERS[2].facts[1].value`：香菸、罐頭、杏仁霜、白脫糖等（兩篇報導）
+- `LTX_CHAPTERS[3].tab`：參考文獻
+- `LTX_CHAPTERS[3].title`：第四章｜參考文獻
+- `LTX_CHAPTERS[3].intro`：李亭香的介紹整理自下列媒體報導與部落格，點選即可開啟原始網頁。沒有官方或學術來源。
+- `LTX_CHAPTERS[3].disclaimer`：本站查到的全是商業媒體與部落格，多篇「1895年」互相轉述、沒有文件佐證；創立地點（蘆洲或大稻埕）與
+- `LTX_DECLINE_CHAPTER.tab`：兼賣雜貨
+- `LTX_DECLINE_CHAPTER.title`：第三章｜大稻埕沒落時期兼賣雜貨
+- `LTX_DECLINE_CHAPTER.lead`：餅店不只賣餅：兩篇報導都提到，大稻埕人潮散去的那些年，店裡曾兼賣香菸與雜貨。
+- `LTX_DECLINE_CHAPTER.paragraphs[0]`：《今周刊》寫，約40年前大稻埕沒落，家中一度兼賣香菸、罐頭等雜貨；ETtoday 也寫平西餅之外曾賣
+- `LTX_DECLINE_CHAPTER.paragraphs[1]`：這段經歷說明了舊市街的商業起落怎麼落到一家店上：批發與人潮離開迪化街後，老店靠多樣的商品撐過去，再在
+- `LTX_DECLINE_CHAPTER.facts[0].label`：時期
+- `LTX_DECLINE_CHAPTER.facts[0].value`：「約40年前」（約1980年代，待核）
+- `LTX_DECLINE_CHAPTER.facts[1].label`：兼賣
+- `LTX_DECLINE_CHAPTER.facts[1].value`：香菸、罐頭、杏仁霜、白脫糖等（兩篇報導）
+- `LTX_ERA_NOTES.revival`：李亭香只在「老屋新生」開放探索：現在迪化街上的糕餅店，1895年創立是店家自述（待核）。其他年代同一
+- `LTX_NAME_CHAPTER.tab`：店名與平西餅
+- `LTX_NAME_CHAPTER.title`：第二章｜店名由來與招牌餅（店家說法）
+- `LTX_NAME_CHAPTER.lead`：「亭」是騎樓的亭仔腳：店家說，餅香從騎樓飄出去，店名就這麼來的。
+- `LTX_NAME_CHAPTER.paragraphs[0]`：店名由來：《今周刊》與小島裡的專欄都寫，早年店面的騎樓（臺語「亭仔腳」）常飄出餅香，店名的「亭香」由
+- `LTX_NAME_CHAPTER.paragraphs[1]`：平西餅：《今周刊》、鏡週刊、小島裡與食記都提到平西餅是李亭香的長銷商品；《今周刊》寫它有「27層餅皮
+- `LTX_NAME_CHAPTER.paragraphs[2]`：ETtoday 與鏡週刊也提到造型糕餅「平安龜」；食記裡的金錢龜、綠豆糕禮盒等是現在販售的商品，沒有
+- `LTX_NAME_CHAPTER.paragraphs[3]`：場景中的店屋只用一般的「餅舖」陳設與招牌，不複製店內實際的裝潢、包裝與商標；不列價格與營業時間。
+- `LTX_NAME_CHAPTER.facts[0].label`：店名
+- `LTX_NAME_CHAPTER.facts[0].value`：騎樓（亭仔腳）飄出餅香（店家說法）
+- `LTX_NAME_CHAPTER.facts[1].label`：招牌餅
+- `LTX_NAME_CHAPTER.facts[1].value`：平西餅（「27層餅皮」僅《今周刊》一篇）
+- `LTX_NAME_CHAPTER.facts[2].label`：造型餅
+- `LTX_NAME_CHAPTER.facts[2].value`：平安龜（ETtoday、鏡週刊）
+- `LTX_SOURCES_CHAPTER.tab`：參考文獻
+- `LTX_SOURCES_CHAPTER.title`：第四章｜參考文獻
+- `LTX_SOURCES_CHAPTER.intro`：李亭香的介紹整理自下列媒體報導與部落格，點選即可開啟原始網頁。沒有官方或學術來源。
+- `LTX_SOURCES_CHAPTER.disclaimer`：本站查到的全是商業媒體與部落格，多篇「1895年」互相轉述、沒有文件佐證；創立地點（蘆洲或大稻埕）與
+- `LTX_TODAY_CHAPTER.tab`：現況與傳承
+- `LTX_TODAY_CHAPTER.title`：第一章｜現況與傳承（店家自述）
+- `LTX_TODAY_CHAPTER.lead`：李亭香是現在迪化街上的一家糕餅店；關於它的歷史，本站查到的都是店家說法與媒體轉述，這裡照實標示。
+- `LTX_TODAY_CHAPTER.paragraphs[0]`：創立年份：ETtoday（2019年）、鏡週刊（2018年）與多篇食記都寫「創立於1895年」，彼此
+- `LTX_TODAY_CHAPTER.paragraphs[1]`：創立地點：各來源互相矛盾。《今周刊》與小島裡的專欄寫創店的那一代先在大稻埕的餅店學做餅，回家鄉蘆洲開
+- `LTX_TODAY_CHAPTER.paragraphs[2]`：現在的店在大稻埕迪化街（媒體報導）；門牌本站沒有從可以開啟的來源核對，因此對照地圖上不標這家店。ET
+- `LTX_TODAY_CHAPTER.paragraphs[3]`：經營者：《今周刊》與 ETtoday 都寫現任經營者李佳陽原是面板工程師（友達光電），返家接班，其父
+- `LTX_TODAY_CHAPTER.paragraphs[4]`：為什麼只在「老屋新生」出現：日治時期與戰後初期這家店的店址、產品與營業情況，本站查無任何資料；最具體
+- `LTX_TODAY_CHAPTER.facts[0].label`：創立
+- `LTX_TODAY_CHAPTER.facts[0].value`：店家自述1895年（待核；《今周刊》推算約1894年）
+- `LTX_TODAY_CHAPTER.facts[1].label`：創立地點
+- `LTX_TODAY_CHAPTER.facts[1].value`：蘆洲（《今周刊》、小島裡）或大稻埕（ETtoday、鏡週刊），來源矛盾、並列
+- `LTX_TODAY_CHAPTER.facts[2].label`：現址
+- `LTX_TODAY_CHAPTER.facts[2].value`：大稻埕迪化街（門牌未能核對，地圖不標）
+- `LTX_TODAY_CHAPTER.facts[3].label`：經營者
+- `LTX_TODAY_CHAPTER.facts[3].value`：李佳陽（曾任面板工程師，返家接班；世代序號不寫）
+
+### `src/data/licenses.js`（缺 12）
+
+- `CODE_LICENSE.text`：程式碼授權：待決定（專案目前沒有 LICENSE 檔）。
+- `CONTENT_LICENSE.name`：創用 CC 姓名標示—非商業性—相同方式分享 4.0 國際（CC BY-NC-SA 4.0）
+- `CONTENT_LICENSE.terms[0]`：姓名標示：使用時請標示本站名稱與作者
+- `CONTENT_LICENSE.terms[1]`：非商業性：不得用於商業目的
+- `CONTENT_LICENSE.terms[2]`：相同方式分享：改作後須以相同授權散布
+- `CONTENT_LICENSE.scope`：本站撰寫的文字與繪製的插圖。引用的文獻、國家文化記憶庫等第三方內容不在此授權範圍，各依其原授權。
+- `OPEN_DATA[0].name`：文化部國家文化記憶庫
+- `OPEN_DATA[0].note`：已在查證紀錄中確認的條目：〈有記名茶〉（阮素芬；國立臺灣工藝研究發展中心建檔）標示為 CC BY 3
+- `OPEN_DATA[1].name`：國家圖書館「臺灣記憶」
+- `OPEN_DATA[1].license`：頁面標示「不開放授權」
+- `OPEN_DATA[1].note`：本站只引用事實，不引用原文。
+- `PHOTO_CREDITS.text`：本站目前沒有使用外部老照片。街景與室內的圖樣都是程式產生的原創示意；章節中的實地照片是專案自行取得的
+
+### `src/data/linHuaTaiQingLayout.js`（缺 6）
+
+- `LHT_HOTSPOTS[0].label`：林華泰茶行
+- `LHT_HOTSPOTS[0].note`：1883 年起做毛茶的篩選與精製
+- `LHT_HOTSPOTS[1].label`：秤茶桌
+- `LHT_HOTSPOTS[1].note`：毛茶論擔論斤計價，桿秤上的秤錘移到刻度就知道重量
+- `LHT_HOTSPOTS[2].label`：焙茶區
+- `LHT_HOTSPOTS[2].note`：店後的焙坑與焙籠：毛茶再篩選、烘焙，才能出售或外銷
+
+### `src/data/luguoCafeLayout.js`（缺 10）
+
+- `LUGUO_HOTSPOTS[0].label`：小藝埕（屈臣氏大藥房舊址）
+- `LUGUO_HOTSPOTS[0].note`：轉角塔樓的立面保留「A.S. WATSON & CO.」字樣
+- `LUGUO_HOTSPOTS[1].label`：樓梯入口
+- `LUGUO_HOTSPOTS[1].note`：從巷子側的騎樓走上二樓
+- `LUGUO_HOTSPOTS[2].label`：窗邊座位
+- `LUGUO_HOTSPOTS[2].note`：三組木格窗面對小巷
+- `LUGUO_HOTSPOTS[3].label`：咖啡吧檯
+- `LUGUO_HOTSPOTS[3].note`：手沖、義式咖啡與烘焙咖啡豆
+- `LUGUO_HOTSPOTS[4].label`：紅色扭蛋機
+- `LUGUO_HOTSPOTS[4].note`：裝著咖啡器具的迷你模型（依實地照片）
+
+### `src/data/miTaiMuLayout.js`（缺 15）
+
+- `MI_TAI_MU_STALL_HOTSPOTS[0].label`：廟口的米苔目
+- `MI_TAI_MU_STALL_HOTSPOTS[0].note`：飲食文化情境示意
+- `MI_TAI_MU_STALL_HOTSPOTS[1].label`：一碗米苔目
+- `MI_TAI_MU_STALL_HOTSPOTS[1].note`：攤台上展示的一碗與小菜（示意）
+- `MI_TAI_MU_THEME.title`：米苔目飲食文化
+- `MI_TAI_MU_THEME.related[0].place.name`：呷二嘴
+- `MI_TAI_MU_THEME.related[0].place.address`：臺北市大同區甘州街34號
+- `MI_TAI_MU_THEME.related[0].place.summary`：大稻埕的米苔目小吃店，夏季賣米苔目冰，冬季賣熱食。
+- `MI_TAI_MU_THEME.related[0].relation`：同類食物的參訪對照，沒有品牌傳承關係
+- `YONGLE_MTM_HOTSPOTS[0].label`：永樂米苔目
+- `YONGLE_MTM_HOTSPOTS[0].note`：大稻埕的米苔目小吃店
+- `YONGLE_MTM_HOTSPOTS[1].label`：店內的用餐空間
+- `YONGLE_MTM_HOTSPOTS[1].note`：狹長的一樓、方桌與圓凳、牆上的菜單板
+- `YONGLE_MTM_HOTSPOTS[2].label`：一碗米苔目
+- `YONGLE_MTM_HOTSPOTS[2].note`：湯米苔目與幾樣小菜
+
+### `src/data/operatorsData.js`（缺 52）
+
+- `OPERATORS_POSTWAR_CHAPTER.tab`：群像：在地經營者
+- `OPERATORS_POSTWAR_CHAPTER.title`：群像：1945–1980，這條街上是誰在把飲食留下來
+- `OPERATORS_POSTWAR_CHAPTER.lead`：這個年代本站沒有單一人物可寫，改把街上各家店章節裡已經有出處的經營者行動收在一起：誰接手、誰搬廠、誰
+- `OPERATORS_POSTWAR_CHAPTER.paragraphs[0]`：為什麼放在林復振｜林復振是五個年代都在這條街上的南北貨商號；中研院臺史所檔案館的〈林復振商行〉記載，
+- `OPERATORS_POSTWAR_CHAPTER.paragraphs[1]`：茶行：第三代與搬廠｜有記名茶的官網沿革與國家文化記憶庫記載，第三代王澄清十七歲就來臺，負責精製廠與外
+- `OPERATORS_POSTWAR_CHAPTER.paragraphs[2]`：餐廳與餅舖｜波麗路的廖水來戰後一直在民生西路原址營業，1976年在隔壁開了第二店（《遠見雜誌》201
+- `OPERATORS_POSTWAR_CHAPTER.paragraphs[3]`：不具名的攤販｜慈聖宮廟口的小吃攤，中研院 GIS 專題只寫「民國50年間，因香火鼎盛，周邊攤販聚集成
+- `OPERATORS_POSTWAR_CHAPTER.paragraphs[4]`：查無而不寫｜林復振在這段時間的經營者，文獻未載。迪化街一段329號的店屋，文化部的資料只記1907年
+- `OPERATORS_POSTWAR_CHAPTER.timeline[0].text`：有記名茶遷廠到重慶北路二段64巷26號（官網沿革、國家文化記憶庫）。
+- `OPERATORS_POSTWAR_CHAPTER.timeline[1].text`：新芳春茶行改組為兩合公司（國家文化記憶庫）。
+- `OPERATORS_POSTWAR_CHAPTER.timeline[2].text`：山水亭遷到民生西路一帶、規模縮小，1955年歇業（曾品滄、林振莖）。
+- `OPERATORS_POSTWAR_CHAPTER.timeline[3].place`：民國50年間
+- `OPERATORS_POSTWAR_CHAPTER.timeline[3].text`：慈聖宮廟口攤販聚集成市集（中研院 GIS 專題，未附出處，待核）。
+- `OPERATORS_POSTWAR_CHAPTER.timeline[4].text`：新芳春第三代王國忠接手（國家文化記憶庫）。
+- `OPERATORS_POSTWAR_CHAPTER.timeline[5].text`：有記在濟南路設第一家內銷門市（官網沿革）。
+- `OPERATORS_POSTWAR_CHAPTER.timeline[6].text`：波麗路在隔壁開第二店（《遠見雜誌》2011年）。
+- `OPERATORS_POSTWAR_CHAPTER.timeline[7].text`：林華泰第三代林大村獲孝行楷模匾額（官網，家族口述）。
+- `OPERATORS_POSTWAR_CHAPTER.facts[0].label`：有姓名出處的經營者
+- `OPERATORS_POSTWAR_CHAPTER.facts[0].value`：王澄清（有記）、王連河與王國忠（新芳春）、林大村（林華泰）、廖水來（波麗路）、王井泉（山水亭）
+- `OPERATORS_POSTWAR_CHAPTER.facts[1].label`：只寫行動、不點名
+- `OPERATORS_POSTWAR_CHAPTER.facts[1].value`：慈聖宮廟口各攤（店名、攤主、年份、代數一律不寫）
+- `OPERATORS_POSTWAR_CHAPTER.facts[2].label`：待核
+- `OPERATORS_POSTWAR_CHAPTER.facts[2].value`：廟口「民國50年間」聚集；四神湯攤從迪化街口遷入；新芳春停歇的時間；林華泰分家的年份；十字軒各代接手
+- `OPERATORS_POSTWAR_CHAPTER.facts[3].label`：不寫
+- `OPERATORS_POSTWAR_CHAPTER.facts[3].value`：各店之間的師承或合作；經營者的動機；林復振、329號店屋與李亭香在這段時間的店況（查無）
+- `OPERATORS_REVIVAL_CHAPTER.tab`：群像：在地經營者
+- `OPERATORS_REVIVAL_CHAPTER.title`：群像：2000年以後，這條街上是誰在把飲食留下來
+- `OPERATORS_REVIVAL_CHAPTER.lead`：老屋新生這個年代也沒有單一人物可寫，本站把街上各家店章節裡已經有出處的經營者行動收在一起：誰返家接班
+- `OPERATORS_REVIVAL_CHAPTER.paragraphs[0]`：為什麼放在永樂市場｜永樂市場的故事已經承擔了年貨大街、大稻埕戲苑這類跨店家、跨街區的章節，所以本站把
+- `OPERATORS_REVIVAL_CHAPTER.paragraphs[1]`：返家接班｜滋養豆餡舖：《料理．台灣》2021年的專訪記載，原址面臨都市更新，第三代林濬彤決定接手，承
+- `OPERATORS_REVIVAL_CHAPTER.paragraphs[2]`：茶行的第四、五代與分家｜有記名茶的官網沿革記載，第四代王連源在2004年把廠房前半部整理為門市、二樓
+- `OPERATORS_REVIVAL_CHAPTER.paragraphs[3]`：把老屋交出去，或租回來｜新芳春茶行：2011到2015年修復，第三代王國忠把洋樓捐給臺北市政府（公視
+- `OPERATORS_REVIVAL_CHAPTER.paragraphs[4]`：新店與集體的活動｜導演的豆花店：紀錄片導演何明瑞2019年7月開著「導演的豆花車」到偏鄉做兒童影像教
+- `OPERATORS_REVIVAL_CHAPTER.paragraphs[5]`：不點名與查無｜永樂米苔目：媒體整理寫「民國五十六年創立、傳承三代」（Bella儂儂2025年），本站
+- `OPERATORS_REVIVAL_CHAPTER.timeline[0].text`：有記第四代王連源整理門市、二樓改清源堂（官網沿革）。
+- `OPERATORS_REVIVAL_CHAPTER.timeline[1].text`：屈臣氏大藥房屋主答應出租，周奕成創立小藝埕、2011年開幕（《遠見雜誌》2013年、大藝埕官網）。
+- `OPERATORS_REVIVAL_CHAPTER.timeline[2].text`：林華泰家族分家，林茂森在隔壁另開茶行（自由時報2014年）。
+- `OPERATORS_REVIVAL_CHAPTER.timeline[3].text`：有記第五代王聖鈞接班（官網沿革）。
+- `OPERATORS_REVIVAL_CHAPTER.timeline[4].text`：唐家後代把迪化街一段329號老屋捐給臺北市政府（中央社稿）。
+- `OPERATORS_REVIVAL_CHAPTER.timeline[5].text`：新芳春修復完成、王國忠捐贈市府；2016年9月20日開放（公視、中山區公所）。
+- `OPERATORS_REVIVAL_CHAPTER.timeline[6].text`：何明瑞的導演的豆花車登場（《500輯》）。
+- `OPERATORS_REVIVAL_CHAPTER.timeline[7].text`：329號登錄歷史建築（文化部）；WANGTEA LAB 開幕（《臺灣工藝》）。
+- `OPERATORS_REVIVAL_CHAPTER.timeline[8].text`：導演的豆花店核准設立（商工登記）。
+- `OPERATORS_REVIVAL_CHAPTER.timeline[9].text`：稻舍加入老房子文化運動（中央社稿）。
+- `OPERATORS_REVIVAL_CHAPTER.facts[0].label`：有姓名出處的經營者
+- `OPERATORS_REVIVAL_CHAPTER.facts[0].value`：林濬彤（滋養）、邱獻德與邱易為（十字軒）、李佳陽與李榮華（李亭香）、王連源與王聖鈞（有記）、林茂森、
+- `OPERATORS_REVIVAL_CHAPTER.facts[1].label`：只寫行動、不點名
+- `OPERATORS_REVIVAL_CHAPTER.facts[1].value`：爐鍋咖啡的經營者；黃玉階文史館的營運單位；慈聖宮廟口各攤；年貨大街的個別商家
+- `OPERATORS_REVIVAL_CHAPTER.facts[2].label`：待核
+- `OPERATORS_REVIVAL_CHAPTER.facts[2].value`：年貨大街的構想由來（官方稿與報導並列）；滋養遷入的年份；李亭香的世代與接班年；永樂米苔目的創立年
+- `OPERATORS_REVIVAL_CHAPTER.facts[3].label`：不寫
+- `OPERATORS_REVIVAL_CHAPTER.facts[3].value`：各店之間的師承、合作或傳承；經營者的動機；老潘魷魚羹、好粿緣、林復振的現任經營者（查無）
+
+### `src/data/overview.js`（缺 75）
+
+- `MAP_PLACES[0].name`：永樂市場・好粿緣
+- `MAP_PLACES[0].address`：迪化街一段21號
+- `MAP_PLACES[1].name`：老潘魷魚羹
+- `MAP_PLACES[1].address`：迪化街一段30號
+- `MAP_PLACES[2].name`：爐鍋咖啡（小藝埕）
+- `MAP_PLACES[2].address`：迪化街一段32巷1號
+- `MAP_PLACES[3].name`：永樂米苔目
+- `MAP_PLACES[3].address`：民樂街111號
+- `MAP_PLACES[4].name`：新芳春茶行
+- `MAP_PLACES[4].address`：民生西路309號
+- `MAP_PLACES[5].name`：波麗路
+- `MAP_PLACES[5].address`：民生西路314號
+- `MAP_PLACES[6].name`：十字軒糕餅舖
+- `MAP_PLACES[6].address`：延平北路二段68號
+- `MAP_PLACES[7].name`：有記名茶
+- `MAP_PLACES[7].address`：重慶北路二段64巷26號
+- `MAP_PLACES[8].name`：林華泰茶行
+- `MAP_PLACES[8].address`：重慶北路二段193號
+- `MAP_PLACES[9].name`：慈聖宮與廟口小吃
+- `MAP_PLACES[9].address`：保安街49巷17號
+- `MAP_PLACES[10].name`：滋養豆餡舖
+- `MAP_PLACES[10].address`：迪化街一段247號（涼州街口）
+- `MAP_PLACES[11].name`：導演的豆花店・黃玉階文史館
+- `MAP_PLACES[11].address`：迪化街一段224巷24號（文史館門牌未核實）
+- `MAP_PLACES[12].name`：稻舍（迪化街329號店屋）
+- `MAP_PLACES[12].address`：迪化街一段329號
+- `MAP_PLACES[13].name`：霞海城隍廟
+- `MAP_PLACES[13].address`：迪化街一段61號
+- `MAP_PLACES[14].name`：乾元藥行
+- `MAP_PLACES[14].address`：迪化街一段71號（門牌僅見部落格與名錄摘要，未核實）
+- `MAP_PLACES[15].name`：李春生紀念教會
+- `MAP_PLACES[15].address`：貴德街44號
+- `MAP_PLACES[16].name`：大稻埕教會
+- `MAP_PLACES[16].address`：甘州街40號
+- `MAP_PLACES[17].name`：渭水驛站（緊鄰大安醫院舊址）
+- `MAP_PLACES[17].address`：延平北路二段27號
+- `MAP_PLACES[18].name`：洋行區（建昌街・千秋街）
+- `MAP_PLACES[18].address`：今貴德街一帶，洋行與茶行的確切門牌未載
+- `MAP_STREETS[0].name`：淡水河
+- `MAP_STREETS[1].name`：貴德街
+- `MAP_STREETS[2].name`：西寧北路
+- `MAP_STREETS[3].name`：迪化街一段
+- `MAP_STREETS[4].name`：民樂街
+- `MAP_STREETS[5].name`：延平北路二段
+- `MAP_STREETS[6].name`：重慶北路二段
+- `MAP_STREETS[7].name`：民權西路
+- `MAP_STREETS[8].name`：涼州街
+- `MAP_STREETS[9].name`：保安街
+- `MAP_STREETS[10].name`：歸綏街
+- `MAP_STREETS[11].name`：民生西路
+- `MAP_STREETS[12].name`：南京西路
+- `TIMELINE_EVENTS[0].text`：艋舺頂下郊拚，同安人隨林右藻移居大稻埕。
+- `TIMELINE_EVENTS[1].text`：滬尾正式設關開埠（1858年天津條約開放，通稱1860年淡水開港）。
+- `TIMELINE_EVENTS[2].text`：李春生受英商寶順行之聘來臺北任買辦，同年到安溪採辦茶苗（自敘「迨三十歲」；陳慈玉記1865年，並列）
+- `TIMELINE_EVENTS[3].text`：陶德把精製茶廠設在大稻埕。
+- `TIMELINE_EVENTS[4].text`：臺灣烏龍茶運往紐約，「Formosa Oolong」打開美國市場。
+- `TIMELINE_EVENTS[5].text`：霞海城隍廟「五月十三迎城隍」的起源年代（官方民俗登錄）。
+- `TIMELINE_EVENTS[6].text`：同安茶商在大稻埕設源隆行，專製包種茶外銷。
+- `TIMELINE_EVENTS[7].text`：林維源與李春生成立建昌公司，建昌街、千秋街（今貴德街）成為洋樓街。
+- `TIMELINE_EVENTS[8].text`：日本人調查：大稻埕茶商252店、從業3,612人。
+- `TIMELINE_EVENTS[9].text`：慈聖宮因市區改正遷至日新街（今保安街49巷）重建完成；遷建起於1909／1910、完工另有1916一
+- `TIMELINE_EVENTS[10].text`：大稻埕教會在甘州街遷建禮拜堂，由李春生出資、規劃並監造。
+- `TIMELINE_EVENTS[11].text`：蔣渭水在大稻埕太平町開設大安醫院，後來也是《臺灣民報》的總批發處（門牌待核）。
+- `TIMELINE_EVENTS[12].text`：臺灣文化協會成立（10月），蔣渭水是重要成員之一；成立日與地點待核。
+- `TIMELINE_EVENTS[13].text`：李春生紀念教會在貴德街設立。
+- `TIMELINE_EVENTS[14].text`：王井泉與張文環、陳逸松、黃得時等組啟文社，創刊《台灣文學》季刊，社址設於山水亭。
+- `TIMELINE_EVENTS[15].text`：厚生演劇研究會成立，會址設於山水亭；9月在永樂座演出《閹雞》等劇。
+- `TIMELINE_EVENTS[16].text`：霞海城隍廟增祀月下老人。
+- `TIMELINE_EVENTS[17].text`：江山樓拆除。
+- `TIMELINE_EVENTS[18].text`：永樂市場現在的大樓開業。
+- `TIMELINE_EVENTS[19].text`：迪化街年貨大街首次在農曆春節前半個月舉辦（市府新聞稿；構想由來與實際日期、範圍待核）。
+- `TIMELINE_EVENTS[20].text`：新芳春茶行指定為直轄市定古蹟。
+- `TIMELINE_EVENTS[21].text`：大稻埕戲苑在永樂市場大樓8、9樓正式營運（2010年試營運；前身為1987年的延平活動中心，開幕年份
+- `TIMELINE_EVENTS[22].text`：新芳春茶行修復後開放參觀。
+- `TIMELINE_EVENTS[23].text`：延平北路二段27號「渭水驛站」常設展《你好，渭水》開幕（10月7日），館所緊鄰大安醫院舊址。
+
+### `src/data/riceAndShineData.js`（缺 167）
+
+- `RICE_CHAPTERS.banquet[0].tab`：米業店屋
+- `RICE_CHAPTERS.banquet[0].title`：北街米業逐漸形成
+- `RICE_CHAPTERS.banquet[0].lead`：1895–1930：北街的街屋裡開始出現米袋、竹籮與「米」字木牌。
+- `RICE_CHAPTERS.banquet[0].summary.label`：歷史情境示意
+- `RICE_CHAPTERS.banquet[0].summary.text`：依文化部的資料，大稻埕北段在日治時期成為米產業的中心；稻舍負責人介紹，329號的前身唐益興米行由唐塗
+- `RICE_CHAPTERS.banquet[0].paragraphs[0]`：人物：店門口的米商、扛米袋的搬運工與篩米的碾米工人，都是情境人物，不對應任何實際的人。
+- `RICE_CHAPTERS.banquet[0].paragraphs[1]`：界線：資料記載這棟紅磚店屋建於1907年；場景把完整的紅磚拱券立面放在1930–1945，是為了讓同
+- `RICE_CHAPTERS.banquet[0].lists[0].title`：情境設計
+- `RICE_CHAPTERS.banquet[0].lists[0].items[0]`：1895–1980 的店內、街邊與人物是歷史情境示意。資料記載這棟紅磚店屋建於1907年；場景把完整
+- `RICE_CHAPTERS.banquet[1].tab`：北街米業
+- `RICE_CHAPTERS.banquet[1].title`：北街為什麼曾經都是米行？
+- `RICE_CHAPTERS.banquet[1].lead`：迪化街的北段，日治時期是大稻埕的米業中心。
+- `RICE_CHAPTERS.banquet[1].summary.text`：文化部的歷史建築資料記載，大稻埕北段在日治時期是米產業的中心；329號和鄰房331號原本相通，當時是
+- `RICE_CHAPTERS.banquet[1].paragraphs[0]`：從一棟店屋看一條街：329號的紅磚店屋是那段米業歷史留下來的見證之一。文化部的資料把它和331號放在
+- `RICE_CHAPTERS.banquet[1].paragraphs[1]`：米行聚集的原因：查到的資料只記載了「米產業中心」與「近五十家碾米行」，沒有說明為什麼聚集在北段，所以
+- `RICE_CHAPTERS.banquet[1].facts[0].label`：位置
+- `RICE_CHAPTERS.banquet[1].facts[0].value`：迪化街北段（昔日稱「北街」）
+- `RICE_CHAPTERS.banquet[1].facts[1].label`：全盛時期
+- `RICE_CHAPTERS.banquet[1].facts[1].value`：碾米行將近五十家（2019年報導）
+- `RICE_CHAPTERS.banquet[1].facts[2].label`：329號
+- `RICE_CHAPTERS.banquet[1].facts[2].value`：與331號原相通，唐家米行（文化部資料）
+- `RICE_CHAPTERS.banquet[2].tab`：米斗
+- `RICE_CHAPTERS.banquet[2].title`：米斗：量米的木斗
+- `RICE_CHAPTERS.banquet[2].lead`：在用秤以前，米常常是「量」的：用斗、升計算米的多少。
+- `RICE_CHAPTERS.banquet[2].summary.label`：辭典與一般說明
+- `RICE_CHAPTERS.banquet[2].summary.text`：「斗」是計算容量的單位，十升為一斗、十斗為一石；「米斗」是形狀像斗、用來量米的木器（教育部《重編國語
+- `RICE_CHAPTERS.banquet[2].paragraphs[0]`：模型（可以拖曳旋轉）：上寬下窄的木斗，四片木板拼接，角上包著金屬角件，斗口有磨損的痕跡，裡面還留著一
+- `RICE_CHAPTERS.banquet[2].paragraphs[1]`：說明：「刮平」與交易標準是一般說明，沒有附特定的文獻；場景中的米斗是示意的模型，不代表某一件實際的器
+- `RICE_CHAPTERS.banquet[3].tab`：參考文獻
+- `RICE_CHAPTERS.banquet[3].title`：參考文獻
+- `RICE_CHAPTERS.banquet[3].intro`：迪化街一段329號店屋、北街米業與稻舍的介紹整理自下列資料，點選即可開啟原始網頁。每一筆都註明出版時
+- `RICE_CHAPTERS.banquet[3].disclaimer`：1895–1980 的店內、街邊與人物是歷史情境示意。資料記載這棟紅磚店屋建於1907年；場景把完整
+- `RICE_CHAPTERS.modern[0].tab`：米行與碾米間
+- `RICE_CHAPTERS.modern[0].title`：迪化街329號米行／碾米間
+- `RICE_CHAPTERS.modern[0].lead`：1930–1945：紅磚拱券的店屋裡，前店賣米、中段碾米、天井透光，後進是米倉。
+- `RICE_CHAPTERS.modern[0].summary.label`：歷史情境示意
+- `RICE_CHAPTERS.modern[0].summary.text`：文化部的資料記載，329號與331號原本相通，是唐家經營的米行，見證北段米產業的發展。2019年的報
+- `RICE_CHAPTERS.modern[0].paragraphs[0]`：前店：米袋、米斗、木櫃與帳桌，桌上是秤、算盤與帳本。
+- `RICE_CHAPTERS.modern[0].paragraphs[1]`：中段：左邊的大型碾米機（漏斗、機身、皮帶輪）、木製農具、竹籮、米篩與稻穀堆；右邊堆著白米。
+- `RICE_CHAPTERS.modern[0].paragraphs[2]`：後段：天井的自然光、米倉裡堆疊的米袋、木梯與木桁架。燈光偏暗，只有暖色燈泡與天井的日光，沒有現代的軌
+- `RICE_CHAPTERS.modern[0].lists[0].title`：情境設計
+- `RICE_CHAPTERS.modern[0].lists[0].items[0]`：1895–1980 的店內、街邊與人物是歷史情境示意。資料記載這棟紅磚店屋建於1907年；場景把完整
+- `RICE_CHAPTERS.modern[0].lists[0].items[1]`：騎樓與天井的壁畫、展板與老照片是本站原創的簡化圖樣，不複製照片裡的壁畫或任何畫作。
+- `RICE_CHAPTERS.modern[3].tab`：碾米
+- `RICE_CHAPTERS.modern[3].title`：碾米：從稻穀到白米
+- `RICE_CHAPTERS.modern[3].lead`：碾米間把剛收成的稻穀，變成米行賣的白米。
+- `RICE_CHAPTERS.modern[3].steps[0].label`：稻穀
+- `RICE_CHAPTERS.modern[3].steps[0].text`：帶著外殼的稻。
+- `RICE_CHAPTERS.modern[3].steps[1].label`：脫殼
+- `RICE_CHAPTERS.modern[3].steps[1].text`：用礱把穀殼磨去。「礱」是形狀像磨、有齒痕的器具，多用木料製成。
+- `RICE_CHAPTERS.modern[3].steps[2].label`：糙米
+- `RICE_CHAPTERS.modern[3].steps[2].text`：稻去殼後、碾得不精的米。
+- `RICE_CHAPTERS.modern[3].steps[3].label`：精米
+- `RICE_CHAPTERS.modern[3].steps[3].text`：精米機去除糙米外層的米糠，成為白米。
+- `RICE_CHAPTERS.modern[3].paragraphs[0]`：名詞的說明整理自教育部《重編國語辭典修訂本》的「礱」「糙米」與「精米機」。
+- `RICE_CHAPTERS.modern[3].paragraphs[1]`：2019年的報導寫到，這棟店屋第一進的一樓過去左邊擺著大型碾米機、右邊堆白米；現在的稻舍保留碾米的器
+- `RICE_CHAPTERS.modern[4].tab`：參考文獻
+- `RICE_CHAPTERS.modern[4].title`：參考文獻
+- `RICE_CHAPTERS.modern[4].intro`：迪化街一段329號店屋、北街米業與稻舍的介紹整理自下列資料，點選即可開啟原始網頁。每一筆都註明出版時
+- `RICE_CHAPTERS.modern[4].disclaimer`：1895–1980 的店內、街邊與人物是歷史情境示意。資料記載這棟紅磚店屋建於1907年；場景把完整
+- `RICE_CHAPTERS.postwar[0].tab`：戰後的轉變
+- `RICE_CHAPTERS.postwar[0].title`：戰後米業與產業轉變
+- `RICE_CHAPTERS.postwar[0].lead`：1945–1980：同一棟紅磚店屋老了，米袋少了，店裡的一部分變成住家與倉庫。
+- `RICE_CHAPTERS.postwar[0].summary.label`：歷史情境示意
+- `RICE_CHAPTERS.postwar[0].summary.text`：這個年代沿用同一棟紅磚店屋，磚色變深、牆面有使用的痕跡，木門窗也舊了。米袋的數量減少，後進的一部分成
+- `RICE_CHAPTERS.postwar[0].paragraphs[0]`：留下來的器物：舊米斗、米篩、木櫃與碾米器具——它們也是今天稻舍展示器物的來源想像。
+- `RICE_CHAPTERS.postwar[0].paragraphs[1]`：戰後的生活用品：方桌與板凳、碗櫃、熱水瓶、鋁盆與收音機，都是簡化的示意。
+- `RICE_CHAPTERS.postwar[0].lists[0].title`：待核實
+- `RICE_CHAPTERS.postwar[0].lists[0].items[0]`：沒有查到戰後到2014年之間的使用紀錄；1945–1980 的住家與倉庫是情境示意。
+- `RICE_CHAPTERS.postwar[2].tab`：參考文獻
+- `RICE_CHAPTERS.postwar[2].title`：參考文獻
+- `RICE_CHAPTERS.postwar[2].intro`：迪化街一段329號店屋、北街米業與稻舍的介紹整理自下列資料，點選即可開啟原始網頁。每一筆都註明出版時
+- `RICE_CHAPTERS.postwar[2].disclaimer`：1895–1980 的店內、街邊與人物是歷史情境示意。資料記載這棟紅磚店屋建於1907年；場景把完整
+- `RICE_CHAPTERS.revival[0].tab`：稻舍
+- `RICE_CHAPTERS.revival[0].title`：稻舍 Rice & Shine
+- `RICE_CHAPTERS.revival[0].lead`：百年米業空間被重新利用：米行的紅磚店屋，現在是米食料理與稻米文化的餐館。
+- `RICE_CHAPTERS.revival[0].summary.text`：迪化街一段329號店屋是2020年登錄的臺北市歷史建築。稻舍負責人葉守倫介紹，前身是1916年唐塗薩
+- `RICE_CHAPTERS.revival[0].paragraphs[0]`：空間（依報導與照片）：兩進、兩層樓，兩進之間有過廊相通。一樓前進是餐廳與米業文化展示，穿過天井到後進
+- `RICE_CHAPTERS.revival[0].paragraphs[1]`：唐家與葉家：這棟店屋是唐家的米行；葉守倫是另一家米行（1923年創立的葉晉發米行）的後代（2019年
+- `RICE_CHAPTERS.revival[0].lists[0].title`：使用者照片觀察
+- `RICE_CHAPTERS.revival[0].lists[0].items[0]`：二層紅磚店屋：一樓三個紅磚拱券（中央較寬）與四道磚柱，二樓三組木框窗（中央是格子窗），窗下三塊白色飾
+- `RICE_CHAPTERS.revival[0].lists[0].items[1]`：騎樓鋪紅色地磚，中央是玻璃入口，上方有金色的「稻舍」店招；騎樓掛著黑底的「稻舍米糧行」牌子，騎樓牆上
+- `RICE_CHAPTERS.revival[0].lists[0].items[2]`：店內是大面積裸露的紅磚牆、深色木梁與木質天花、紅陶地磚、深色木桌與藤編椅背的木椅，暖色的軌道燈。
+- `RICE_CHAPTERS.revival[0].lists[0].items[3]`：二樓有陡的木樓梯、紅磚牆、木框大窗、長木桌與藤編木椅，可以辦小型展覽與講座。
+- `RICE_CHAPTERS.revival[0].lists[1].title`：情境設計
+- `RICE_CHAPTERS.revival[0].lists[1].items[0]`：「稻舍 Rice & Shine」的名稱、招牌、玻璃門、軌道燈與餐桌只出現在2000–現在。
+- `RICE_CHAPTERS.revival[0].lists[1].items[1]`：騎樓與天井的壁畫、展板與老照片是本站原創的簡化圖樣，不複製照片裡的壁畫或任何畫作。
+- `RICE_CHAPTERS.revival[0].lists[1].items[2]`：尺寸依照片估算；照片沒有拍到的後進與二樓細部是簡化的配置。
+- `RICE_CHAPTERS.revival[1].tab`：米食料理
+- `RICE_CHAPTERS.revival[1].title`：米食料理：木托盤上的一份套餐
+- `RICE_CHAPTERS.revival[1].lead`：稻舍不是咖啡廳：主角是米飯，以及配飯的台式料理。
+- `RICE_CHAPTERS.revival[1].summary.label`：使用者照片觀察
+- `RICE_CHAPTERS.revival[1].summary.text`：套餐放在木托盤上：淺綠色碗裡的白飯撒著油蔥酥，青花碗裝著控肉或雞腿，旁邊是青菜、淋醬油的豆腐與小菜，
+- `RICE_CHAPTERS.revival[1].paragraphs[0]`：2022年的報導寫到，老屋改造為「米食文化餐館」。場景中的料理與餐具依照片簡化建模，不代表現在的菜單
+- `RICE_CHAPTERS.revival[5].tab`：竹籮與竹篩
+- `RICE_CHAPTERS.revival[5].title`：竹籮、竹篩與米業的器具
+- `RICE_CHAPTERS.revival[5].lead`：展示架上，每一層都是不同的器物：米斗、竹編、陶甕、帳本與小工具。
+- `RICE_CHAPTERS.revival[5].summary.label`：使用者照片觀察
+- `RICE_CHAPTERS.revival[5].summary.text`：展示區陳列土礱、蓑衣、斗笠、竹籮與竹篩等器具。竹籮用來盛裝、搬運穀物，竹篩用來篩去雜物；竹編的紋路、
+- `RICE_CHAPTERS.revival[5].paragraphs[0]`：器具用途是一般說明，沒有附特定的文獻；場景中的器物是簡化的示意，不是館藏或店內器物的複製。
+- `RICE_CHAPTERS.revival[6].tab`：天井
+- `RICE_CHAPTERS.revival[6].title`：天井：老屋裡的光
+- `RICE_CHAPTERS.revival[6].lead`：穿過前進，來到兩進之間的天井：日光從上方灑下來。
+- `RICE_CHAPTERS.revival[6].summary.label`：使用者照片觀察
+- `RICE_CHAPTERS.revival[6].summary.text`：天井是紅磚圍牆，種著植物與小樹，牆面因為潮濕顏色較深，燈光與日光從上方照下來。2019年的報導寫到，
+- `RICE_CHAPTERS.revival[7].tab`：南街殷賑
+- `RICE_CHAPTERS.revival[7].title`：郭雪湖《南街殷賑》與大稻埕街景
+- `RICE_CHAPTERS.revival[7].lead`：1930年，郭雪湖畫下南街（今天的迪化街）最熱鬧的一天。
+- `RICE_CHAPTERS.revival[7].summary.text`：郭雪湖1930年的作品《南街殷賑》，描繪迪化街霞海城隍廟口的中元普渡，在當年的臺展得獎，現由臺北市立
+- `RICE_CHAPTERS.revival[7].paragraphs[0]`：畫家的視角：中央社的報導寫到，郭雪湖和寶香齋的第二代是同學，常到寶香齋二樓，從窗戶望出去看整條南街。
+- `RICE_CHAPTERS.revival[7].paragraphs[1]`：展示說明：二樓的展示板只放文字說明與原創的街景線條，不重製畫作的圖像；作品請到臺北市立美術館的資料查
+- `RICE_CHAPTERS.revival[8].tab`：老屋再生
+- `RICE_CHAPTERS.revival[8].title`：老屋再生：從米行到稻舍
+- `RICE_CHAPTERS.revival[8].lead`：你現在看到的餐館，是在舊米業空間上重新活化的結果。
+- `RICE_CHAPTERS.revival[8].summary.text`：米行 → 產業衰退 → 歷史建築保存 → 稻舍 Rice & Shine。資料記載這棟店屋建於190
+- `RICE_CHAPTERS.revival[8].timeline[0].text`：店屋建立（文化部資料）。
+- `RICE_CHAPTERS.revival[8].timeline[1].text`：唐塗薩創立唐益興米行（2022年報導）。
+- `RICE_CHAPTERS.revival[8].timeline[2].place`：戰後
+- `RICE_CHAPTERS.revival[8].timeline[2].text`：米業逐漸轉變（情境示意，沒有查到329號的使用紀錄）。
+- `RICE_CHAPTERS.revival[8].timeline[3].text`：唐家後代把老屋捐給臺北市政府（2022年報導）。
+- `RICE_CHAPTERS.revival[8].timeline[4].text`：登錄為臺北市歷史建築（文化部資料）。
+- `RICE_CHAPTERS.revival[8].timeline[5].text`：以稻舍加入老房子文化運動，剪綵（2022年報導）。
+- `RICE_CHAPTERS.revival[9].tab`：參考文獻
+- `RICE_CHAPTERS.revival[9].title`：參考文獻
+- `RICE_CHAPTERS.revival[9].intro`：迪化街一段329號店屋、北街米業與稻舍的介紹整理自下列資料，點選即可開啟原始網頁。每一筆都註明出版時
+- `RICE_CHAPTERS.revival[9].disclaimer`：1895–1980 的店內、街邊與人物是歷史情境示意。資料記載這棟紅磚店屋建於1907年；場景把完整
+- `RICE_ERA_NOTES.banquet`：1895–1930：北街的街屋開始出現米業用途（歷史情境示意）。這裡還沒有「稻舍」，也還不是現在的紅
+- `RICE_ERA_NOTES.modern`：1930–1945：紅磚拱券的329號店屋作為米行與碾米間（歷史情境示意）。
+- `RICE_ERA_NOTES.postwar`：1945–1980：同一棟店屋老化，米業逐漸轉變，部分空間成為住家與倉庫（歷史情境示意）。
+- `RICE_ERA_NOTES.revival`：2000–現在：歷史建築活化為「稻舍 Rice & Shine」。外觀與店內依使用者提供的照片建模，
+- `RICE_FACTS[0].text`：迪化街一段329號店屋是臺北市的歷史建築，2020年4月28日登錄，資料記載的建立年代是1907年。
+- `RICE_FACTS[1].text`：大稻埕北段在日治時期是米產業的中心；329號與鄰房331號原本相通，當時是唐家經營的米行。
+- `RICE_FACTS[2].text`：迪化街北段是碾米行聚集的地方，全盛時期將近五十家。
+- `RICE_FACTS[3].text`：稻舍的負責人介紹，這裡的前身是1916年（大正五年）唐塗薩創立的唐益興米行；唐家後代在2014年把老
+- `RICE_FACTS[4].text`：建築是兩進、兩層樓，兩進之間有過廊相通，各有木梯；第一進的一樓過去左邊擺大型碾米機、右邊堆白米。
+- `RICE_FACTS[5].text`：營運團隊修復老屋，保留碾米廠的氛圍，屋內陳列碾米機等器物，規畫稻米文化策展與米食餐飲。
+- `RICE_FACTS[6].text`：稻舍原是臺北市「都市再生前進基地」（URS）的示範基地，之後加入「老房子文化運動」，2022年6月8
+- `RICE_FACTS[7].text`：郭雪湖1930年的《南街殷賑》描繪迪化街霞海城隍廟口的中元普渡，在當年的臺展得獎，現由臺北市立美術館
+- `RICE_OBSERVATIONS[0].text`：二層紅磚店屋：一樓三個紅磚拱券（中央較寬）與四道磚柱，二樓三組木框窗（中央是格子窗），窗下三塊白色飾
+- `RICE_OBSERVATIONS[1].text`：騎樓鋪紅色地磚，中央是玻璃入口，上方有金色的「稻舍」店招；騎樓掛著黑底的「稻舍米糧行」牌子，騎樓牆上
+- `RICE_OBSERVATIONS[2].text`：店內是大面積裸露的紅磚牆、深色木梁與木質天花、紅陶地磚、深色木桌與藤編椅背的木椅，暖色的軌道燈。
+- `RICE_OBSERVATIONS[3].text`：牆邊陳列土礱、蓑衣、斗笠與竹器等米業器具，乾燥花與稻田的照片。
+- `RICE_OBSERVATIONS[4].text`：天井是紅磚圍牆，有植物、小樹與壁畫，燈光從上方照下來。
+- `RICE_OBSERVATIONS[5].text`：二樓有陡的木樓梯、紅磚牆、木框大窗、長木桌與藤編木椅，可以辦小型展覽與講座。
+- `RICE_OBSERVATIONS[6].text`：米食套餐放在木托盤上：淺綠色碗的白飯、青花碗的控肉或雞腿、小碟的青菜、豆腐與小菜、有蓋的湯盅，筷子與
+- `RICE_PENDING[0].field`：唐家與葉家
+- `RICE_PENDING[0].note`：文化部資料與報導都說這裡是唐家的米行；現在的經營者葉守倫是另一家米行（葉晉發米行，1923年創立）的
+- `RICE_PENDING[1].field`：米行為什麼聚集在北街
+- `RICE_PENDING[1].note`：查到的資料記載北段是米產業的中心、碾米行近五十家，但沒有說明聚集的原因，本站不推測。
+- `RICE_PENDING[2].field`：329號在戰後的使用
+- `RICE_PENDING[2].note`：沒有查到戰後到2014年之間的使用紀錄；1945–1980 的住家與倉庫是情境示意。
+- `RICE_PENDING[3].field`：稻舍的開幕年份
+- `RICE_PENDING[3].note`：報導寫到2014年唐家捐贈、URS 示範基地與2022年加入老房子文化運動，沒有明確的開幕日期。
+- `RICE_RECORD.address`：臺北市大同區迪化街一段329號
+- `RICE_RECORD.heritage.name`：迪化街一段329號店屋
+- `RICE_RECORD.heritage.category`：歷史建築
+- `RICE_RECORD.historicShop.name`：唐益興米行
+- `RICE_RECORD.historicShop.founder`：唐塗薩
+- `RICE_RECORD.modern.name`：稻舍 Rice & Shine
+- `RICE_RECORD.modern.operator`：葉守倫
+- `RICE_RECORD.linkedTo.address`：迪化街一段331號
+- `RICE_RECORD.linkedTo.note`：原與329號相通
+- `RICE_SCENARIO[0].text`：1895–1980 的店內、街邊與人物是歷史情境示意。資料記載這棟紅磚店屋建於1907年；場景把完整
+- `RICE_SCENARIO[1].text`：「稻舍 Rice & Shine」的名稱、招牌、玻璃門、軌道燈與餐桌只出現在2000–現在。
+- `RICE_SCENARIO[2].text`：騎樓與天井的壁畫、展板與老照片是本站原創的簡化圖樣，不複製照片裡的壁畫或任何畫作。
+- `RICE_SCENARIO[3].text`：料理與餐具依照片簡化建模，每張桌子的狀態與套餐略有不同；不代表現在的菜單，也不寫價格。
+- `RICE_SCENARIO[4].text`：尺寸依照片估算；照片沒有拍到的後進與二樓細部是簡化的配置。
+
+### `src/data/riceAndShineEraConfig.js`（缺 16）
+
+- `RICE_AND_SHINE_BY_ERA.banquet.label`：北街米業逐漸形成
+- `RICE_AND_SHINE_BY_ERA.banquet.name`：北街米業店屋（迪化街329號）
+- `RICE_AND_SHINE_BY_ERA.modern.label`：米行與碾米產業
+- `RICE_AND_SHINE_BY_ERA.modern.name`：迪化街329號米行／碾米間
+- `RICE_AND_SHINE_BY_ERA.postwar.label`：戰後米業與產業轉變
+- `RICE_AND_SHINE_BY_ERA.postwar.name`：迪化街329號米行（戰後）
+- `RICE_AND_SHINE_BY_ERA.revival.label`：老屋再生・稻舍
+- `RICE_AND_SHINE_BY_ERA.revival.name`：稻舍 Rice & Shine
+- `riceAndShineEraConfig.1895.label`：北街米業逐漸形成
+- `riceAndShineEraConfig.1895.name`：北街米業店屋（迪化街329號）
+- `riceAndShineEraConfig.1930.label`：米行與碾米產業
+- `riceAndShineEraConfig.1930.name`：迪化街329號米行／碾米間
+- `riceAndShineEraConfig.1945.label`：戰後米業與產業轉變
+- `riceAndShineEraConfig.1945.name`：迪化街329號米行（戰後）
+- `riceAndShineEraConfig.2000.label`：老屋再生・稻舍
+- `riceAndShineEraConfig.2000.name`：稻舍 Rice & Shine
+
+### `src/data/riceAndShineLayout.js`（缺 38）
+
+- `RICE_HOTSPOTS.earlyRiceTrade[0].label`：北街米業逐漸形成
+- `RICE_HOTSPOTS.earlyRiceTrade[0].note`：米袋、竹籮與木牌
+- `RICE_HOTSPOTS.earlyRiceTrade[1].label`：米斗
+- `RICE_HOTSPOTS.earlyRiceTrade[1].note`：量米的木斗
+- `RICE_HOTSPOTS.riceMill[0].label`：迪化街329號米行／碾米間
+- `RICE_HOTSPOTS.riceMill[0].note`：紅磚拱券的米行
+- `RICE_HOTSPOTS.riceMill[1].label`：米斗與帳桌
+- `RICE_HOTSPOTS.riceMill[1].note`：秤、算盤與帳本
+- `RICE_HOTSPOTS.riceMill[2].label`：碾米機
+- `RICE_HOTSPOTS.riceMill[2].note`：稻穀變成白米
+- `RICE_HOTSPOTS.riceMill[3].label`：北街為什麼曾經都是米行？
+- `RICE_HOTSPOTS.riceMill[3].note`：天井
+- `RICE_HOTSPOTS.riceMill[4].label`：米倉
+- `RICE_HOTSPOTS.riceMill[4].note`：堆疊的米袋與木梯
+- `RICE_HOTSPOTS.postwarRiceHouse[0].label`：戰後米業與產業轉變
+- `RICE_HOTSPOTS.postwarRiceHouse[0].note`：老化的紅磚店屋
+- `RICE_HOTSPOTS.postwarRiceHouse[1].label`：留下來的碾米器具
+- `RICE_HOTSPOTS.postwarRiceHouse[1].note`：蓋著布的碾米機
+- `RICE_HOTSPOTS.postwarRiceHouse[2].label`：住家與倉庫
+- `RICE_HOTSPOTS.postwarRiceHouse[2].note`：後進的日常
+- `RICE_HOTSPOTS.riceAndShineModern[0].label`：稻舍 Rice & Shine
+- `RICE_HOTSPOTS.riceAndShineModern[0].note`：老屋再生的米食餐館
+- `RICE_HOTSPOTS.riceAndShineModern[1].label`：老屋再生
+- `RICE_HOTSPOTS.riceAndShineModern[1].note`：米行 → 歷史建築 → 稻舍
+- `RICE_HOTSPOTS.riceAndShineModern[2].label`：米食料理
+- `RICE_HOTSPOTS.riceAndShineModern[2].note`：木托盤上的套餐
+- `RICE_HOTSPOTS.riceAndShineModern[3].label`：北街為什麼曾經都是米行？
+- `RICE_HOTSPOTS.riceAndShineModern[3].note`：米業文化展示
+- `RICE_HOTSPOTS.riceAndShineModern[4].label`：米斗
+- `RICE_HOTSPOTS.riceAndShineModern[4].note`：量米的木斗
+- `RICE_HOTSPOTS.riceAndShineModern[5].label`：竹籮與竹篩
+- `RICE_HOTSPOTS.riceAndShineModern[5].note`：土礱、蓑衣與斗笠
+- `RICE_HOTSPOTS.riceAndShineModern[6].label`：天井
+- `RICE_HOTSPOTS.riceAndShineModern[6].note`：日光、植物與壁畫
+- `RICE_HOTSPOTS.riceAndShineModern[7].label`：碾米工廠
+- `RICE_HOTSPOTS.riceAndShineModern[7].note`：舊碾米機
+- `RICE_HOTSPOTS.riceAndShineModern[8].label`：郭雪湖《南街殷賑》與大稻埕
+- `RICE_HOTSPOTS.riceAndShineModern[8].note`：二樓的小展覽
+
+### `src/data/shizixuanData.js`（缺 83）
+
+- `SZX_CHAPTERS.modern[0].tab`：店史
+- `SZX_CHAPTERS.modern[0].title`：十字軒（糕餅店初創）
+- `SZX_CHAPTERS.modern[0].lead`：窄身的街屋糕餅店：前舖賣西點麵包與傳統糕餅，後坊是製餅的工作間。
+- `SZX_CHAPTERS.modern[0].summary.text`：報導記載創辦人邱炳星12歲到日本人開的麵包店學藝，先賣西點麵包，後來接做婚嫁用的漢餅。報導中提及創業
+- `SZX_CHAPTERS.modern[0].paragraphs[0]`：場景把紅磚木構的窄身街屋放在這個年代，表現糕餅店初創時的樣貌；店內陳設是依一般糕餅店的樣貌重建的歷史
+- `SZX_CHAPTERS.modern[0].facts[0].label`：創辦人
+- `SZX_CHAPTERS.modern[0].facts[0].value`：邱炳星
+- `SZX_CHAPTERS.modern[0].facts[1].label`：品項
+- `SZX_CHAPTERS.modern[0].facts[1].value`：西點麵包、傳統糕餅、初期漢餅
+- `SZX_CHAPTERS.modern[1].tab`：品項
+- `SZX_CHAPTERS.modern[1].title`：西點麵包與初期漢餅
+- `SZX_CHAPTERS.modern[1].lead`：帳桌上擺著剛出爐的西點麵包，也開始接做婚嫁用的漢餅。
+- `SZX_CHAPTERS.modern[1].paragraphs[0]`：報導記載創辦人先以西點麵包起家，後來因應婚嫁需求開始製作漢餅，是十字軒最早的兩類商品。
+- `SZX_CHAPTERS.modern[2].tab`：滿月
+- `SZX_CHAPTERS.modern[2].title`：滿月：彌月紅圓
+- `SZX_CHAPTERS.modern[2].lead`：嬰兒出生滿一個月稱為「滿月」，也稱「彌月」，親友會分送紅圓等糕點誌喜。
+- `SZX_CHAPTERS.modern[2].paragraphs[0]`：辭典釋義：初生的嬰兒滿一個月，稱為「滿月」，也稱為「彌月」。
+- `SZX_CHAPTERS.modern[3].tab`：收涎
+- `SZX_CHAPTERS.modern[3].title`：收涎：收瀾鹹光餅
+- `SZX_CHAPTERS.modern[3].lead`：嬰兒滿四個月時，用紅絲線串起口酥餅掛在脖子上，逐一咬餅，祈求「收瀾收離離，囡仔好育飼」。
+- `SZX_CHAPTERS.modern[3].paragraphs[0]`：台語稱「收瀾」；辭典釋義提到這個習俗與吉祥話。
+- `SZX_CHAPTERS.modern[4].tab`：婚嫁
+- `SZX_CHAPTERS.modern[4].title`：婚嫁：訂婚喜餅
+- `SZX_CHAPTERS.modern[4].lead`：訂婚時男方贈送女方喜餅，女方再分贈親友，以糕餅告知婚事將近。
+- `SZX_CHAPTERS.modern[4].paragraphs[0]`：辭典釋義：訂婚時，男方贈送女方的禮餅，分贈親友以示告知婚事。
+- `SZX_CHAPTERS.modern[5].tab`：祝壽
+- `SZX_CHAPTERS.modern[5].title`：祝壽：做壽壽桃
+- `SZX_CHAPTERS.modern[5].lead`：長輩做壽時以壽桃祝賀，壽桃是鮮桃或麵製的桃形食品，象徵長壽。
+- `SZX_CHAPTERS.modern[5].paragraphs[0]`：辭典釋義：祝壽時所用的鮮桃，或麵粉製成桃形、象徵長壽的食品。
+- `SZX_CHAPTERS.modern[6].tab`：祭祀
+- `SZX_CHAPTERS.modern[6].title`：祭祀：祭祀紅龜粿
+- `SZX_CHAPTERS.modern[6].lead`：紅龜粿的粿皮染紅、印上龜型圖樣後蒸製，常用來祭拜神明、酬神或添丁分贈親友。
+- `SZX_CHAPTERS.modern[6].paragraphs[0]`：辭典釋義：由糯米製成，粿皮染紅、以模具印上龜型圖樣後蒸製；常用來祭拜神明、酬神，或在添丁時分送親友。
+- `SZX_CHAPTERS.modern[7].tab`：參考文獻
+- `SZX_CHAPTERS.modern[7].title`：參考文獻
+- `SZX_CHAPTERS.modern[7].intro`：十字軒糕餅舖與糕餅禮俗的介紹整理自下列資料，點選即可開啟原始網頁。每一筆都註明出版時間與用途。
+- `SZX_CHAPTERS.modern[7].disclaimer`：1930、1945的店面與擺設是依報導描述與一般糕餅店樣貌重建的歷史情境示意；2000–現在的外觀依
+- `SZX_CHAPTERS.postwar[0].tab`：店史
+- `SZX_CHAPTERS.postwar[0].title`：十字軒餅舖（戰後）
+- `SZX_CHAPTERS.postwar[0].lead`：戰後的十字軒擴大為兩個店面寬，漢餅、壽桃與祭祀糕點是主力商品。
+- `SZX_CHAPTERS.postwar[0].summary.text`：報導記載十字軒因鄰近霞海城隍廟做起壽桃生意，壽桃是全盛時期銷量最好的商品，一天可賣超過一萬顆；全盛時
+- `SZX_CHAPTERS.postwar[0].paragraphs[0]`：場景把土黃色的戰後店面放在這個年代，木製餅櫃、紙盒與竹籮是當時常見的包裝與陳設方式，依一般糕餅店樣貌
+- `SZX_CHAPTERS.postwar[0].facts[0].label`：主力商品
+- `SZX_CHAPTERS.postwar[0].facts[0].value`：漢餅、喜餅、壽桃、紅龜、祭祀糕餅、節慶糕點
+- `SZX_CHAPTERS.postwar[0].facts[1].label`：全盛時期
+- `SZX_CHAPTERS.postwar[0].facts[1].value`：漢餅、西點、包子分開設廠，師傅近20位
+- `SZX_CHAPTERS.postwar[1].tab`：品項
+- `SZX_CHAPTERS.postwar[1].title`：漢餅、壽桃與祭祀糕點
+- `SZX_CHAPTERS.postwar[1].lead`：木製餅櫃裡是漢餅與喜餅，紙盒與竹籮裝著壽桃、紅龜與節慶糕點。
+- `SZX_CHAPTERS.postwar[1].paragraphs[0]`：壽桃因鄰近霞海城隍廟而成為主力商品；紅龜、祭祀糕餅則配合祭祀與節慶需求製作。
+- `SZX_CHAPTERS.revival[0].tab`：店史
+- `SZX_CHAPTERS.revival[0].title`：十字軒糕餅舖
+- `SZX_CHAPTERS.revival[0].lead`：延平北路二段68號的老字號：三層樓米色建築，紅底金字招牌寫著「TEN CAKE SINCE 1930
+- `SZX_CHAPTERS.revival[0].summary.text`：報導記載第二代邱獻德、第三代邱易為接手經營；店招上的「TEN CAKE SINCE 1930」呼應報
+- `SZX_CHAPTERS.revival[0].paragraphs[0]`：外觀依實地照片的立面語彙重建：三層樓米色建築、兩個騎樓開間、木框窗與紅底金字招牌；店內有木作天花、玻
+- `SZX_CHAPTERS.revival[0].facts[0].label`：地址
+- `SZX_CHAPTERS.revival[0].facts[0].value`：延平北路二段68號
+- `SZX_CHAPTERS.revival[0].facts[1].label`：傳承
+- `SZX_CHAPTERS.revival[0].facts[1].value`：邱炳星 → 邱獻德 → 邱易為
+- `SZX_CHAPTERS.revival[1].tab`：品項
+- `SZX_CHAPTERS.revival[1].title`：紅色禮盒與包裝糕餅
+- `SZX_CHAPTERS.revival[1].lead`：玻璃展示櫃與牆面的包裝糕餅，紅色禮盒延續訂婚喜餅與節慶送禮的傳統。
+- `SZX_CHAPTERS.revival[1].paragraphs[0]`：現在的十字軒仍延續漢餅、壽桃等傳統品項，以紅色禮盒與包裝糕餅因應現代送禮的需求。
+- `SZX_CHAPTERS.revival[2].tab`：歷史展示
+- `SZX_CHAPTERS.revival[2].title`：老照片與獎狀
+- `SZX_CHAPTERS.revival[2].lead`：展示角陳列老照片、獎狀、老電話與擺件，記錄三代人的經營歷程。
+- `SZX_CHAPTERS.revival[2].paragraphs[0]`：報導記載第二代邱獻德、第三代邱易為接手經營；展示角的老照片、獎狀與老物件是呼應這段傳承歷史的情境陳設
+- `SZX_ERA_NOTES.modern`：窄身的街屋糕餅店：前舖賣西點麵包與傳統糕餅，後坊是製餅的工作間；報導記載創辦人邱炳星約在1920年代
+- `SZX_ERA_NOTES.postwar`：戰後擴大為兩個店面寬的餅舖：木製餅櫃、紙盒與竹籮裝著漢餅、壽桃與祭祀糕點，因鄰近霞海城隍廟而主打壽桃
+- `SZX_ERA_NOTES.revival`：延平北路二段68號的老字號：三層樓米色建築、紅底金字招牌，店內有玻璃展示櫃、紅色禮盒牆與記錄三代傳承
+- `SZX_FACTS[0].text`：十字軒糕餅舖創辦於1920年代，店招寫「TEN CAKE SINCE 1930」；報導中以2024年
+- `SZX_FACTS[1].text`：創辦人邱炳星12歲到日本人開的麵包店學藝，先賣西點麵包，後來接做婚嫁用的漢餅。
+- `SZX_FACTS[2].text`：因為鄰近霞海城隍廟，十字軒也做起壽桃生意，壽桃是全盛時期銷量最好的商品，一天可賣超過一萬顆。
+- `SZX_FACTS[3].text`：全盛時期漢餅、西點、包子分開設廠，師傅將近20位；第二代邱獻德、第三代邱易為接手經營。
+- `SZX_RECORD.address`：臺北市大同區延平北路二段68號
+- `SZX_RECORD.founder.name`：邱炳星
+- `SZX_RECORD.founder.note`：12歲到日本人開的麵包店學藝，先做西點麵包，後來接做婚嫁用的漢餅，再因鄰近霞海城隍廟做起壽桃生意。
+- `SZX_RECORD.generations[0]`：邱炳星（創辦人）
+- `SZX_RECORD.generations[1]`：邱獻德（第二代）
+- `SZX_RECORD.generations[2]`：邱易為（第三代）
+- `SZX_SCENARIO[0].text`：報導沒有記載1930–1980之間店面的實際樣貌；1930的窄身店屋與1945的戰後店面是依一般糕餅
+- `SZX_SCENARIO[1].text`：2000–現在的外觀依實地照片的立面語彙（三層樓米色建築、兩個騎樓開間、紅底金字招牌）重建，不是逐一
+- `SZX_SCENARIO[2].text`：滿月、收涎、婚嫁、祝壽、祭祀五個文化節點是教育部辭典的通用釋義，說明這些糕餅在人生禮俗中的用途，不是
+
+### `src/data/shizixuanEraConfig.js`（缺 12）
+
+- `SHIZIXUAN_BY_ERA.modern.label`：糕餅店初創
+- `SHIZIXUAN_BY_ERA.modern.name`：十字軒（糕餅店）
+- `SHIZIXUAN_BY_ERA.postwar.label`：漢餅與喜慶糕點
+- `SHIZIXUAN_BY_ERA.postwar.name`：十字軒餅舖
+- `SHIZIXUAN_BY_ERA.revival.label`：延平北路的老字號
+- `SHIZIXUAN_BY_ERA.revival.name`：十字軒糕餅舖
+- `shizixuanEraConfig.1930.label`：糕餅店初創
+- `shizixuanEraConfig.1930.name`：十字軒（糕餅店）
+- `shizixuanEraConfig.1945.label`：漢餅與喜慶糕點
+- `shizixuanEraConfig.1945.name`：十字軒餅舖
+- `shizixuanEraConfig.2000.label`：延平北路的老字號
+- `shizixuanEraConfig.2000.name`：十字軒糕餅舖
+
+### `src/data/shizixuanLayout.js`（缺 44）
+
+- `SZX_HOTSPOTS.earlyShop[0].label`：十字軒（糕餅店）
+- `SZX_HOTSPOTS.earlyShop[0].note`：窄身街屋的糕餅店
+- `SZX_HOTSPOTS.earlyShop[1].label`：西點與漢餅
+- `SZX_HOTSPOTS.earlyShop[1].note`：帳桌與糕餅
+- `SZX_HOTSPOTS.earlyShop[2].label`：滿月
+- `SZX_HOTSPOTS.earlyShop[2].note`：彌月紅圓
+- `SZX_HOTSPOTS.earlyShop[3].label`：收涎
+- `SZX_HOTSPOTS.earlyShop[3].note`：收瀾鹹光餅
+- `SZX_HOTSPOTS.earlyShop[4].label`：婚嫁
+- `SZX_HOTSPOTS.earlyShop[4].note`：訂婚喜餅
+- `SZX_HOTSPOTS.earlyShop[5].label`：祝壽
+- `SZX_HOTSPOTS.earlyShop[5].note`：做壽壽桃
+- `SZX_HOTSPOTS.earlyShop[6].label`：祭祀
+- `SZX_HOTSPOTS.earlyShop[6].note`：祭祀紅龜粿
+- `SZX_HOTSPOTS.postwarShop[0].label`：十字軒餅舖
+- `SZX_HOTSPOTS.postwarShop[0].note`：戰後的漢餅店
+- `SZX_HOTSPOTS.postwarShop[1].label`：漢餅與壽桃
+- `SZX_HOTSPOTS.postwarShop[1].note`：木製餅櫃與紙盒
+- `SZX_HOTSPOTS.postwarShop[2].label`：滿月
+- `SZX_HOTSPOTS.postwarShop[2].note`：彌月紅圓
+- `SZX_HOTSPOTS.postwarShop[3].label`：收涎
+- `SZX_HOTSPOTS.postwarShop[3].note`：收瀾鹹光餅
+- `SZX_HOTSPOTS.postwarShop[4].label`：婚嫁
+- `SZX_HOTSPOTS.postwarShop[4].note`：訂婚喜餅
+- `SZX_HOTSPOTS.postwarShop[5].label`：祝壽
+- `SZX_HOTSPOTS.postwarShop[5].note`：做壽壽桃
+- `SZX_HOTSPOTS.postwarShop[6].label`：祭祀
+- `SZX_HOTSPOTS.postwarShop[6].note`：祭祀紅龜粿
+- `SZX_HOTSPOTS.modernShop[0].label`：十字軒糕餅舖
+- `SZX_HOTSPOTS.modernShop[0].note`：延平北路的老字號
+- `SZX_HOTSPOTS.modernShop[1].label`：櫃台與糕餅托盤
+- `SZX_HOTSPOTS.modernShop[1].note`：金元寶與壽桃
+- `SZX_HOTSPOTS.modernShop[2].label`：老照片與獎狀
+- `SZX_HOTSPOTS.modernShop[2].note`：歷史展示牆
+- `SZX_HOTSPOTS.modernShop[3].label`：滿月
+- `SZX_HOTSPOTS.modernShop[3].note`：彌月紅圓
+- `SZX_HOTSPOTS.modernShop[4].label`：收涎
+- `SZX_HOTSPOTS.modernShop[4].note`：收瀾鹹光餅
+- `SZX_HOTSPOTS.modernShop[5].label`：婚嫁
+- `SZX_HOTSPOTS.modernShop[5].note`：訂婚喜餅
+- `SZX_HOTSPOTS.modernShop[6].label`：祝壽
+- `SZX_HOTSPOTS.modernShop[6].note`：做壽壽桃
+- `SZX_HOTSPOTS.modernShop[7].label`：祭祀
+- `SZX_HOTSPOTS.modernShop[7].note`：祭祀紅龜粿
+
+### `src/data/shops.js`（缺 2234）
+
+- `SHOPS[0].name`：林復振
+- `SHOPS[0].category`：南北貨商號
+- `SHOPS[0].seal`：南北貨
+- `SHOPS[0].building.hangingSign.text`：南北貨
+- `SHOPS[0].building.lanterns.text`：林
+- `SHOPS[0].buildingByEra.qing-port.sign.text`：林復振
+- `SHOPS[0].buildingByEra.banquet.sign.text`：林振源
+- `SHOPS[0].buildingByEra.modern.sign.text`：復振商店
+- `SHOPS[0].buildingByEra.postwar.sign.text`：南北雜貨
+- `SHOPS[0].buildingByEra.revival.sign.text`：林復振
+- `SHOPS[0].eraNotes.qing-port`：1853年頂下郊拚後，林右藻率眾移居大稻埕，家族在此開設「復振」、「復源」、「復興」三間商號。
+- `SHOPS[0].eraNotes.banquet`：日治時期，家族結合復振、復源兩家店號的第二個字，以「林振源」為商號名稱，從事南北貨及海陸物產進口貿易
+- `SHOPS[0].eraNotes.modern`：昭和年間林子詵過世後，其子林欽英、林欽典分號經營，店名分別為「復振英記」與「復振商店」；1933年，
+- `SHOPS[0].eraNotes.postwar`：林欽典一脈所傳承的商行，向來以南北雜貨為主要營業項目。此時期的招牌樣貌未見於本站引用的文獻，場景以「
+- `SHOPS[0].eraNotes.revival`：今日迪化街上的林復振商行由林欽典所傳承，以南北雜貨為主要營業項目；1980年代也跨足喜餅禮盒，並以祖
+- `SHOPS[0].chapters[0].tab`：大稻埕的形成
+- `SHOPS[0].chapters[0].title`：大稻埕的形成
+- `SHOPS[0].chapters[0].lead`：1853年，艋舺發生頂下郊拚，部分泉州同安人遷往大稻埕，逐漸建立新的商業聚落。
+- `SHOPS[0].chapters[0].paragraphs[0]`：「頂下郊拚」是泉州三邑郊商與同安籍郊商之間的械鬥。落敗的下郊同安人，在領袖林右藻的帶領下，輾轉移居當
+- `SHOPS[0].chapters[0].paragraphs[1]`：移居者在此落腳並開設商號，原本的荒埔逐漸發展成新的商業聚落。
+- `SHOPS[0].chapters[0].timeline[0].place`：艋舺
+- `SHOPS[0].chapters[0].timeline[0].text`：1853年，泉州三邑郊商與同安籍郊商爆發械鬥「頂下郊拚」。
+- `SHOPS[0].chapters[0].timeline[1].place`：遷徙
+- `SHOPS[0].chapters[0].timeline[1].text`：落敗的下郊同安人，由領袖林右藻率眾輾轉移居。
+- `SHOPS[0].chapters[0].timeline[2].place`：大稻埕
+- `SHOPS[0].chapters[0].timeline[2].text`：在仍為荒埔村落的大稻埕開設商號，逐漸形成商業聚落。
+- `SHOPS[0].chapters[0].glossary[0].term`：郊
+- `SHOPS[0].chapters[0].glossary[0].definition`：清代臺灣從事兩岸貿易的商人所組成的同業組織，常依往來地區命名，例如泉郊、廈郊、北郊。
+- `SHOPS[0].chapters[0].glossary[1].term`：拚
+- `SHOPS[0].chapters[0].glossary[1].definition`：拚鬥、爭鬥之意；「頂下郊拚」即郊商群體之間的械鬥。
+- `SHOPS[0].chapters[1].tab`：林復振的歷史
+- `SHOPS[0].chapters[1].title`：林復振的歷史
+- `SHOPS[0].chapters[1].lead`：林右藻家族在大稻埕建立復振、復源、復興等商號，與大稻埕早期商業發展有密切關係。
+- `SHOPS[0].chapters[1].paragraphs[0]`：林右藻被稱為「大稻埕開基人物」。家族為福建泉州同安籍移民，約於道光年間渡臺，原在艋舺地區經商；頂下郊
+- `SHOPS[0].chapters[1].paragraphs[1]`：林右藻曾親往香港、福建、廈門等地招商貿易，在大稻埕組織廈郊「金同順」，其後更聯合艋舺泉郊「金晉順」、
+- `SHOPS[0].chapters[1].paragraphs[2]`：日治時期，家族商號交由子侄輩打理。由於部分子孫轉業或遷居他處，僅存侄孫輩經營的「林復振商行」延續至今
+- `SHOPS[0].chapters[1].seals[0]`：復振
+- `SHOPS[0].chapters[1].seals[1]`：復源
+- `SHOPS[0].chapters[1].seals[2]`：復興
+- `SHOPS[0].chapters[1].facts[0].label`：創設
+- `SHOPS[0].chapters[1].facts[0].value`：林右藻及其家族
+- `SHOPS[0].chapters[1].facts[1].label`：原籍
+- `SHOPS[0].chapters[1].facts[1].value`：福建泉州同安
+- `SHOPS[0].chapters[1].facts[2].label`：商號
+- `SHOPS[0].chapters[1].facts[2].value`：復振．復源．復興
+- `SHOPS[0].chapters[1].facts[3].label`：商業組織
+- `SHOPS[0].chapters[1].facts[3].value`：組織廈郊「金同順」，並擔任三郊總長
+- `SHOPS[0].chapters[2].tab`：代表食物
+- `SHOPS[0].chapters[2].title`：代表食物｜南北貨
+- `SHOPS[0].chapters[2].intro`：南北貨泛指來自各地、經乾燥或醃漬處理，便於保存與長途運送的食材與雜貨。以下圖鑑介紹南北貨的代表品項。
+- `SHOPS[0].chapters[2].items[0].name`：香菇
+- `SHOPS[0].chapters[2].items[0].category`：山產｜菇類
+- `SHOPS[0].chapters[2].items[0].description`：香菇乾燥後香氣更為濃郁，也更耐保存與運送，是燉湯、滷味與年節料理中常見的提味食材。
+- `SHOPS[0].chapters[2].items[0].note`：1915年，林振源號（林復振家族於日治時期使用的商號）訂購的「對州魷」與「冬菇」在海運途中受潮，店東
+- `SHOPS[0].chapters[2].items[1].name`：蝦米
+- `SHOPS[0].chapters[2].items[1].category`：海味｜蝦類
+- `SHOPS[0].chapters[2].items[1].description`：小型的蝦經煮熟、曬乾後去殼製成，體積小而鮮味濃，常用於爆香、炒菜，以及油飯、粽子等料理。
+- `SHOPS[0].chapters[2].items[2].name`：烏魚子
+- `SHOPS[0].chapters[2].items[2].category`：海味｜魚卵
+- `SHOPS[0].chapters[2].items[2].description`：以烏魚的卵經鹽漬、整形、壓製與日曬製成，色澤琥珀橙紅，是冬季烏魚季的代表性海味，也常作為年節贈禮。
+- `SHOPS[0].chapters[2].items[3].name`：乾貨
+- `SHOPS[0].chapters[2].items[3].category`：南北貨總稱
+- `SHOPS[0].chapters[2].items[3].description`：泛指經日曬、風乾或鹽漬處理的食材，如干貝、魷魚、金針、木耳等，便於長途運送與儲藏。
+- `SHOPS[0].chapters[2].items[3].note`：1933年，復振英記致函長崎泰益號，除說明分號情形，也懇請對方定期告知海產什貨的行情。
+- `SHOPS[0].chapters[2].footnote`：標示「文獻小記」的內容整理自〈林復振商行〉；其餘為南北貨品項的一般介紹，並非林復振的實際貨品清單。
+- `SHOPS[0].chapters[3].tab`：文獻與歷史依據
+- `SHOPS[0].chapters[3].title`：文獻與歷史依據
+- `SHOPS[0].chapters[3].intro`：本店家介紹整理自下列資料，點選即可開啟原始網頁。
+- `SHOPS[0].chapters[3].disclaimer`：本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建；建築外觀、招牌、擺設與店家位置僅供情境想
+- `SHOPS[0].eras.postwar.chapters[3].tab`：群像：在地經營者
+- `SHOPS[0].eras.postwar.chapters[3].title`：群像：1945–1980，這條街上是誰在把飲食留下來
+- `SHOPS[0].eras.postwar.chapters[3].lead`：這個年代本站沒有單一人物可寫，改把街上各家店章節裡已經有出處的經營者行動收在一起：誰接手、誰搬廠、誰
+- `SHOPS[0].eras.postwar.chapters[3].paragraphs[0]`：為什麼放在林復振｜林復振是五個年代都在這條街上的南北貨商號；中研院臺史所檔案館的〈林復振商行〉記載，
+- `SHOPS[0].eras.postwar.chapters[3].paragraphs[1]`：茶行：第三代與搬廠｜有記名茶的官網沿革與國家文化記憶庫記載，第三代王澄清十七歲就來臺，負責精製廠與外
+- `SHOPS[0].eras.postwar.chapters[3].paragraphs[2]`：餐廳與餅舖｜波麗路的廖水來戰後一直在民生西路原址營業，1976年在隔壁開了第二店（《遠見雜誌》201
+- `SHOPS[0].eras.postwar.chapters[3].paragraphs[3]`：不具名的攤販｜慈聖宮廟口的小吃攤，中研院 GIS 專題只寫「民國50年間，因香火鼎盛，周邊攤販聚集成
+- `SHOPS[0].eras.postwar.chapters[3].paragraphs[4]`：查無而不寫｜林復振在這段時間的經營者，文獻未載。迪化街一段329號的店屋，文化部的資料只記1907年
+- `SHOPS[0].eras.postwar.chapters[3].timeline[0].text`：有記名茶遷廠到重慶北路二段64巷26號（官網沿革、國家文化記憶庫）。
+- `SHOPS[0].eras.postwar.chapters[3].timeline[1].text`：新芳春茶行改組為兩合公司（國家文化記憶庫）。
+- `SHOPS[0].eras.postwar.chapters[3].timeline[2].text`：山水亭遷到民生西路一帶、規模縮小，1955年歇業（曾品滄、林振莖）。
+- `SHOPS[0].eras.postwar.chapters[3].timeline[3].place`：民國50年間
+- `SHOPS[0].eras.postwar.chapters[3].timeline[3].text`：慈聖宮廟口攤販聚集成市集（中研院 GIS 專題，未附出處，待核）。
+- `SHOPS[0].eras.postwar.chapters[3].timeline[4].text`：新芳春第三代王國忠接手（國家文化記憶庫）。
+- `SHOPS[0].eras.postwar.chapters[3].timeline[5].text`：有記在濟南路設第一家內銷門市（官網沿革）。
+- `SHOPS[0].eras.postwar.chapters[3].timeline[6].text`：波麗路在隔壁開第二店（《遠見雜誌》2011年）。
+- `SHOPS[0].eras.postwar.chapters[3].timeline[7].text`：林華泰第三代林大村獲孝行楷模匾額（官網，家族口述）。
+- `SHOPS[0].eras.postwar.chapters[3].facts[0].label`：有姓名出處的經營者
+- `SHOPS[0].eras.postwar.chapters[3].facts[0].value`：王澄清（有記）、王連河與王國忠（新芳春）、林大村（林華泰）、廖水來（波麗路）、王井泉（山水亭）
+- `SHOPS[0].eras.postwar.chapters[3].facts[1].label`：只寫行動、不點名
+- `SHOPS[0].eras.postwar.chapters[3].facts[1].value`：慈聖宮廟口各攤（店名、攤主、年份、代數一律不寫）
+- `SHOPS[0].eras.postwar.chapters[3].facts[2].label`：待核
+- `SHOPS[0].eras.postwar.chapters[3].facts[2].value`：廟口「民國50年間」聚集；四神湯攤從迪化街口遷入；新芳春停歇的時間；林華泰分家的年份；十字軒各代接手
+- `SHOPS[0].eras.postwar.chapters[3].facts[3].label`：不寫
+- `SHOPS[0].eras.postwar.chapters[3].facts[3].value`：各店之間的師承或合作；經營者的動機；林復振、329號店屋與李亭香在這段時間的店況（查無）
+- `SHOPS[0].eras.postwar.chapters[4].tab`：文獻與歷史依據
+- `SHOPS[0].eras.postwar.chapters[4].title`：文獻與歷史依據
+- `SHOPS[0].eras.postwar.chapters[4].intro`：本店家介紹整理自下列資料，點選即可開啟原始網頁。
+- `SHOPS[0].eras.postwar.chapters[4].disclaimer`：本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建；建築外觀、招牌、擺設與店家位置僅供情境想
+- `SHOPS[1].name`：滋養豆餡舖
+- `SHOPS[1].category`：和菓子・糕餅・伴手禮
+- `SHOPS[1].seal`：和菓子
+- `SHOPS[1].summary`：1953年創立於南京西路的老店，以自家熬煮的豆餡製作和菓子與糕餅；後來才遷入迪化街與涼州街口的紅磚洋
+- `SHOPS[1].eraNotes.revival`：滋養1953年創立於南京西路，原址在南西圓環商圈一帶；今日迪化街一段247號的轉角店面，是第三代接手
+- `SHOPS[1].chapters[0].tab`：品牌歷史
+- `SHOPS[1].chapters[0].title`：品牌歷史｜從南京西路到迪化街
+- `SHOPS[1].chapters[0].lead`：滋養創立於1953年，原址在南京西路；位於迪化街一段247號的現址，是後來才遷入的。
+- `SHOPS[1].chapters[0].paragraphs[0]`：依滋養官方網站〈商店簡介〉，滋養「創立於1953年 原址為南京西路」，當年以「滋養食品」之名草創，「
+- `SHOPS[1].chapters[0].paragraphs[1]`：製菓技術方面，官網記載店家引進日本製菓技術、到京都拜師習藝，鑽研道地的和菓子手藝；專訪則記載，196
+- `SHOPS[1].chapters[0].paragraphs[2]`：專訪提到，店名取自「食物天然，最宜滋養」的原則；滋養從早年就堅持「餡料親製」，每天早起熬製豆餡，紅豆
+- `SHOPS[1].chapters[0].paragraphs[3]`：同一篇專訪（2021年）記載：原址面臨都市更新，原本打算就此收掉，最後一刻得知有機會承租迪化街現在的
+- `SHOPS[1].chapters[0].timeline[0].place`：南京西路
+- `SHOPS[1].chapters[0].timeline[0].text`：1953年創立，以「滋養食品」之名開業，原址位於南京西路（南西圓環商圈一帶）。
+- `SHOPS[1].chapters[0].timeline[1].place`：和菓子
+- `SHOPS[1].chapters[0].timeline[1].text`：引進日本製菓技術；1961年起由第二代接手，開始製作和菓子。
+- `SHOPS[1].chapters[0].timeline[2].place`：迪化街
+- `SHOPS[1].chapters[0].timeline[2].text`：原址面臨都市更新，第三代林濬彤接手，承租迪化街一段247號的轉角店面。
+- `SHOPS[1].chapters[0].facts[0].label`：店名
+- `SHOPS[1].chapters[0].facts[0].value`：滋養豆餡舖（滋養製菓）
+- `SHOPS[1].chapters[0].facts[1].label`：創立
+- `SHOPS[1].chapters[0].facts[1].value`：1953年，原址南京西路
+- `SHOPS[1].chapters[0].facts[2].label`：現址
+- `SHOPS[1].chapters[0].facts[2].value`：臺北市大同區迪化街一段247號（迪化街與涼州街口）
+- `SHOPS[1].chapters[0].facts[3].label`：營業
+- `SHOPS[1].chapters[0].facts[3].value`：和菓子、糕餅與伴手禮禮盒
+- `SHOPS[1].chapters[0].glossary[0].term`：和菓子
+- `SHOPS[1].chapters[0].glossary[0].definition`：日本傳統點心的總稱，常以豆餡、米與糯米製品、寒天等製作，造型與口味隨季節變化。
+- `SHOPS[1].chapters[0].glossary[1].term`：豆餡
+- `SHOPS[1].chapters[0].glossary[1].definition`：紅豆、白豆等豆類煮熟後加糖熬煉成的內餡，是和菓子與許多糕餅的基礎。
+- `SHOPS[1].chapters[1].tab`：建築特色
+- `SHOPS[1].chapters[1].title`：建築特色｜轉角的紅磚洋樓
+- `SHOPS[1].chapters[1].lead`：今日的滋養位在迪化街與涼州街口，是一棟二層樓的轉角街屋：灰色洗石子立面、紅磚柱與水平紅磚飾帶，屋頂上
+- `SHOPS[1].chapters[1].figures[0].caption`：迪化街與涼州街口：轉角立面與沿涼州街延伸的連棟立面（實地拍攝）
+- `SHOPS[1].chapters[1].figures[1].caption`：斜切的轉角立面：紅磚柱、三扇長窗、鐵欄杆與「滋養豆餡舖」橫帶（實地拍攝）
+- `SHOPS[1].chapters[1].figures[2].caption`：騎樓下的店面：黑色遮雨棚、淺色木作、石材與玻璃櫥窗（實地拍攝）
+- `SHOPS[1].chapters[1].paragraphs[0]`：轉角以斜切的立面面向路口，左右兩根紅磚柱一路延伸到屋頂，柱頂立著層疊的圓球裝飾；中央山牆兩側是渦卷紋
+- `SHOPS[1].chapters[1].paragraphs[1]`：一樓是連續的騎樓（亭仔腳），柱與楣樑交接處有弧形托座。騎樓沿著迪化街與涼州街兩側延伸，涼州街一側還連
+- `SHOPS[1].chapters[1].paragraphs[2]`：旅遊媒體形容這裡「店鋪的外觀是相當標準的大稻埕街屋型態，有日治的洋樓古典風格，也有巴洛克浪漫的氣息」
+- `SHOPS[1].chapters[1].paragraphs[3]`：老屋新生之後，一樓以黑色遮雨棚、淺色木作、灰色石材與大片玻璃櫥窗組成現代店面，門口掛著白色暖簾。《料
+- `SHOPS[1].chapters[1].paragraphs[4]`：請注意：本站沒有查到這棟建築的興建年代與文化資產身分，因此不標示建築年代；這棟建築也不是滋養1953
+- `SHOPS[1].chapters[1].facts[0].label`：位置
+- `SHOPS[1].chapters[1].facts[0].value`：迪化街與涼州街轉角
+- `SHOPS[1].chapters[1].facts[1].label`：形式
+- `SHOPS[1].chapters[1].facts[1].value`：二層樓轉角街屋，斜切轉角立面
+- `SHOPS[1].chapters[1].facts[2].label`：立面
+- `SHOPS[1].chapters[1].facts[2].value`：灰色洗石子、紅磚柱與水平紅磚飾帶
+- `SHOPS[1].chapters[1].facts[3].label`：裝飾
+- `SHOPS[1].chapters[1].facts[3].value`：渦卷紋山牆、球形飾物、鐵欄杆、騎樓弧形托座
+- `SHOPS[1].chapters[1].facts[4].label`：興建年代
+- `SHOPS[1].chapters[1].facts[4].value`：未查證（本站未找到可靠資料）
+- `SHOPS[1].chapters[2].tab`：代表食品
+- `SHOPS[1].chapters[2].title`：代表食品｜和菓子與糕餅
+- `SHOPS[1].chapters[2].intro`：滋養的商品以自家熬煮的豆餡為核心。以下圖鑑介紹店內的幾樣代表品項。
+- `SHOPS[1].chapters[2].items[0].name`：草莓大福
+- `SHOPS[1].chapters[2].items[0].category`：季節限定｜麻糬
+- `SHOPS[1].chapters[2].items[0].description`：把紅豆大福從中間切開，在露出的紅豆餡上放半粒鮮紅草莓，是每年冬春之際的期間限定商品。
+- `SHOPS[1].chapters[2].items[0].note`：《料理．台灣》（2021）記載：草莓大福是第三代林濬彤推出的新產品，每年只賣約三個月、12月上市，選
+- `SHOPS[1].chapters[2].items[1].name`：最中
+- `SHOPS[1].chapters[2].items[1].category`：和菓子｜米菓皮
+- `SHOPS[1].chapters[2].items[1].description`：以糯米燒製的酥脆餅皮，包入紅豆餡。專訪記載店內四季都有紅豆餡的最中。
+- `SHOPS[1].chapters[2].items[1].note`：食尚玩家的介紹提到，滋養的最中「每一份都是費心現點現做，而且採用與日本一致的作法」。
+- `SHOPS[1].chapters[2].items[2].name`：銅鑼燒
+- `SHOPS[1].chapters[2].items[2].category`：和菓子｜燒菓子
+- `SHOPS[1].chapters[2].items[2].description`：兩片鬆軟的餅皮夾入紅豆餡，是一年四季都吃得到的經典和菓子。
+- `SHOPS[1].chapters[2].items[2].note`：專訪提到，滋養把銅鑼燒「從手掌大縮小成為掌心尺寸」，從吃粗飽變成吃精巧。
+- `SHOPS[1].chapters[2].items[3].name`：羊羹
+- `SHOPS[1].chapters[2].items[3].category`：和菓子｜煉菓子
+- `SHOPS[1].chapters[2].items[3].description`：以豆餡加入寒天熬煉、凝固而成的條狀和菓子，切片後口感細緻，耐保存，也常作為伴手禮。
+- `SHOPS[1].chapters[2].items[4].name`：鳳梨酥
+- `SHOPS[1].chapters[2].items[4].category`：糕餅｜伴手禮
+- `SHOPS[1].chapters[2].items[4].description`：臺灣代表性的伴手禮糕餅：酥鬆的餅皮包著鳳梨內餡。
+- `SHOPS[1].chapters[2].items[4].note`：專訪記載，滋養堅持混合冬瓜餡的傳統鳳梨餡，但把餅皮解構成兩片長方形酥餅、塗上白巧克力隔絕濕氣，做成「
+- `SHOPS[1].chapters[2].footnote`：標示「文獻小記」的內容整理自所列資料；其餘為品項的一般介紹。季節商品與品項以店家實際供應為準。
+- `SHOPS[1].chapters[3].tab`：參考文獻
+- `SHOPS[1].chapters[3].title`：參考文獻
+- `SHOPS[1].chapters[3].intro`：本店家介紹整理自下列資料，點選即可開啟原始網頁。
+- `SHOPS[1].chapters[3].disclaimer`：滋養豆餡舖的 3D 建築依實地拍攝的照片建模：轉角立面、山牆、紅磚柱、窗戶與騎樓的比例由照片估算，並
+- `SHOPS[2].name`：永樂市場
+- `SHOPS[2].yearLabel`：1908年（現有大樓1985年開業）
+- `SHOPS[2].yearNote`：市場的起源是1908年；現在的市場大樓於1982年拆除舊市場後改建，1985年開業。
+- `SHOPS[2].category`：公有市場・布業商場
+- `SHOPS[2].seal`：市場
+- `SHOPS[2].summary`：1908年設立的公有市場；現在的大樓於1982年拆除舊市場後改建、1985年開業，一樓是生鮮與日用品
+- `SHOPS[2].eraNotes.revival`：永樂市場從1908年開始，現在的市場大樓則是1985年開業的建築。場景中的大樓依實地照片建模；一樓市
+- `SHOPS[2].chapters[0].tab`：市場歷史
+- `SHOPS[2].chapters[0].title`：市場歷史｜從1908年的公營市場到1985年的市場大樓
+- `SHOPS[2].chapters[0].lead`：永樂市場的歷史從1908年開始；現在看到的市場大樓，是1982年拆除舊市場之後改建、1985年開業的
+- `SHOPS[2].chapters[0].paragraphs[0]`：依《臺北市志》（國家圖書館「臺灣記憶」收錄的說明），1897年位於六館街（今南京西路西端）的大稻埕市
+- `SHOPS[2].chapters[0].paragraphs[1]`：1995年《聯合報》的報導記載，市場成立於1908年12月14日，「最早的永樂市場是純木造的平房，環
+- `SHOPS[2].chapters[0].paragraphs[2]`：同一篇報導引述市場的資料：「在民國七十一年三月拆除舊建築改建新屋，再於民國七十四年九月完工、同年十月
+- `SHOPS[2].chapters[0].paragraphs[3]`：新大樓「地上九樓、地下兩層」，開業時一樓經營魚肉、蔬果與雜貨，二、三樓是布匹業者，四樓是飲食類。臺北
+- `SHOPS[2].chapters[0].paragraphs[4]`：請注意：場景中的建築是現在的市場大樓（1985年開業），依實地照片建模；1908年的市場是另一棟早已
+- `SHOPS[2].chapters[0].timeline[0].text`：大稻埕市場在六館街（今南京西路西端）落成開張。
+- `SHOPS[2].chapters[0].timeline[1].text`：改設於大稻埕蘆竹腳街（市場處記載為「民國前4年成立」）。
+- `SHOPS[2].chapters[0].timeline[2].text`：大稻埕市場改名為永樂町市場（依《臺北市志》）。
+- `SHOPS[2].chapters[0].timeline[3].text`：3月拆除舊市場，原地改建綜合大樓。
+- `SHOPS[2].chapters[0].timeline[4].text`：9月完工，10月8日重新開業。
+- `SHOPS[2].chapters[0].facts[0].label`：地址
+- `SHOPS[2].chapters[0].facts[0].value`：臺北市大同區迪化街一段21號
+- `SHOPS[2].chapters[0].facts[1].label`：起源
+- `SHOPS[2].chapters[0].facts[1].value`：1908年（明治41年）
+- `SHOPS[2].chapters[0].facts[2].label`：現有大樓
+- `SHOPS[2].chapters[0].facts[2].value`：1982年拆除舊市場改建，1985年開業
+- `SHOPS[2].chapters[0].facts[3].label`：樓層
+- `SHOPS[2].chapters[0].facts[3].value`：一樓生鮮蔬果日用品；二、三樓布匹窗簾飾布（市集資訊）
+- `SHOPS[2].chapters[1].tab`：市場大樓
+- `SHOPS[2].chapters[1].title`：市場大樓｜可以走進去的一樓市場
+- `SHOPS[2].chapters[1].lead`：迪化街的街底是永樂市場大樓：一樓的騎樓與大門通往市場，二樓正面是「永樂布業商場」的大招牌。
+- `SHOPS[2].chapters[1].paragraphs[0]`：場景中的大樓依實地照片建模：一樓是粉灰色石材方柱的騎樓與玻璃大門，二樓有紅磚女兒牆與花崗石壓頂，正中
+- `SHOPS[2].chapters[1].paragraphs[1]`：從迪化街走進大門，就到了一樓市場：中央走道兩側各有四個攤位，天花板上是日光燈、電纜線槽與管線，還有指
+- `SHOPS[2].chapters[1].paragraphs[2]`：好粿緣在走道北側的第二個攤位（攤位編號1020）。走到攤位前，電腦按 E、iPad 點攤位，就能閱讀
+- `SHOPS[2].chapters[1].facts[0].label`：一樓
+- `SHOPS[2].chapters[1].facts[0].value`：門廳、中央走道、八個攤位、走道盡頭（概念配置）
+- `SHOPS[2].chapters[1].facts[1].label`：二樓以上
+- `SHOPS[2].chapters[1].facts[1].value`：只做外觀，尚未開放
+- `SHOPS[2].chapters[1].facts[2].label`：依據
+- `SHOPS[2].chapters[1].facts[2].value`：2026年實地照片（尺寸為估算）
+- `SHOPS[2].chapters[2].tab`：迪化街年貨大街
+- `SHOPS[2].chapters[2].title`：迪化街年貨大街：1996年起的春節前活動
+- `SHOPS[2].chapters[2].lead`：每年農曆春節前，迪化街一帶會辦起「年貨大街」。這是一項有起始年份的活動，而不是一條古老的街市傳統。
+- `SHOPS[2].chapters[2].paragraphs[0]`：史料｜臺北市政府工務局的新聞稿寫，迪化街年貨大街「起源於1996年農曆春節前半個月舉辦」，並說這是臺
+- `SHOPS[2].chapters[2].paragraphs[1]`：報導｜報時光2023年的文章重現了民生報1995年12月23日的報導：構想由民間的「迪化街工作室」提
+- `SHOPS[2].chapters[2].paragraphs[2]`：並列｜官方稿強調「市府首創」，報導則顯示構想來自民間、市府協辦。兩種說法本站並列，不替它們統一；比較
+- `SHOPS[2].chapters[2].paragraphs[3]`：現況｜活動大約在農曆春節前半個月舉辦，詳細的日期、範圍與串聯的商圈每年不同；本站沒有逐年核對，所以不
+- `SHOPS[2].chapters[2].paragraphs[4]`：說明｜年貨大街是市府與商家自1996年起辦理的活動。網路上有宣傳性的「第一」「百年」之類說法，本站沒
+- `SHOPS[2].chapters[2].facts[0].label`：起始
+- `SHOPS[2].chapters[2].facts[0].value`：1996年（臺北市政府新聞稿）
+- `SHOPS[2].chapters[2].facts[1].label`：構想由來
+- `SHOPS[2].chapters[2].facts[1].value`：官方稿：市府首創；報導：民間迪化街工作室提出、市府協辦（並列）
+- `SHOPS[2].chapters[2].facts[2].label`：時間
+- `SHOPS[2].chapters[2].facts[2].value`：農曆春節前約半個月（各年日期不同，不寫死）
+- `SHOPS[2].chapters[2].facts[3].label`：待核
+- `SHOPS[2].chapters[2].facts[3].value`：主辦與承辦單位、1996年實際日期與範圍、各年規模與數字
+- `SHOPS[2].chapters[2].timeline[0].place`：1995年12月
+- `SHOPS[2].chapters[2].timeline[0].text`：民生報報導：民間迪化街工作室提出構想，約50家商戶支持，市府協辦（報時光2023年重現，原報未查閱，
+- `SHOPS[2].chapters[2].timeline[1].text`：迪化街年貨大街在農曆春節前半個月首次舉辦（臺北市政府新聞稿）。
+- `SHOPS[2].chapters[2].timeline[2].place`：現在
+- `SHOPS[2].chapters[2].timeline[2].text`：每年春節前仍舉辦；各年日期與範圍以當年市府公告為準。
+- `SHOPS[2].chapters[3].tab`：過年前買南北貨
+- `SHOPS[2].chapters[3].title`：背景：年前買南北貨的習慣（與1996年的活動無關）
+- `SHOPS[2].chapters[3].lead`：年前到迪化街買南北貨，是比年貨大街更早的習慣；這一節只當背景，兩件事不能連在一起讀。
+- `SHOPS[2].chapters[3].paragraphs[0]`：背景｜BIOS monthly 2016年的文章整理：清咸豐年間移民增多、兩岸貿易熱絡，臺灣輸出米糖
+- `SHOPS[2].chapters[3].paragraphs[1]`：分開讀｜這一節說的是年前辦年貨的習慣與迪化街的批發角色；1996年的年貨大街則是市府與商家辦的活動。
+- `SHOPS[2].chapters[3].paragraphs[2]`：待補｜文章列為參考的〈大稻埕南北貨座談會紀錄〉（《臺北文獻》110期，1994年12月）本站未能取得
+- `SHOPS[2].chapters[3].facts[0].label`：性質
+- `SHOPS[2].chapters[3].facts[0].value`：二手整理的背景介紹，標待核
+- `SHOPS[2].chapters[3].facts[1].label`：不寫
+- `SHOPS[2].chapters[3].facts[1].value`：戰前至戰後的南北貨商家名單與店史（查無可靠出處）
+- `SHOPS[2].chapters[3].facts[2].label`：待補
+- `SHOPS[2].chapters[3].facts[2].value`：《臺北文獻》110期〈大稻埕南北貨座談會紀錄〉（1994）
+- `SHOPS[2].chapters[4].tab`：群像：在地經營者
+- `SHOPS[2].chapters[4].title`：群像：2000年以後，這條街上是誰在把飲食留下來
+- `SHOPS[2].chapters[4].lead`：老屋新生這個年代也沒有單一人物可寫，本站把街上各家店章節裡已經有出處的經營者行動收在一起：誰返家接班
+- `SHOPS[2].chapters[4].paragraphs[0]`：為什麼放在永樂市場｜永樂市場的故事已經承擔了年貨大街、大稻埕戲苑這類跨店家、跨街區的章節，所以本站把
+- `SHOPS[2].chapters[4].paragraphs[1]`：返家接班｜滋養豆餡舖：《料理．台灣》2021年的專訪記載，原址面臨都市更新，第三代林濬彤決定接手，承
+- `SHOPS[2].chapters[4].paragraphs[2]`：茶行的第四、五代與分家｜有記名茶的官網沿革記載，第四代王連源在2004年把廠房前半部整理為門市、二樓
+- `SHOPS[2].chapters[4].paragraphs[3]`：把老屋交出去，或租回來｜新芳春茶行：2011到2015年修復，第三代王國忠把洋樓捐給臺北市政府（公視
+- `SHOPS[2].chapters[4].paragraphs[4]`：新店與集體的活動｜導演的豆花店：紀錄片導演何明瑞2019年7月開著「導演的豆花車」到偏鄉做兒童影像教
+- `SHOPS[2].chapters[4].paragraphs[5]`：不點名與查無｜永樂米苔目：媒體整理寫「民國五十六年創立、傳承三代」（Bella儂儂2025年），本站
+- `SHOPS[2].chapters[4].timeline[0].text`：有記第四代王連源整理門市、二樓改清源堂（官網沿革）。
+- `SHOPS[2].chapters[4].timeline[1].text`：屈臣氏大藥房屋主答應出租，周奕成創立小藝埕、2011年開幕（《遠見雜誌》2013年、大藝埕官網）。
+- `SHOPS[2].chapters[4].timeline[2].text`：林華泰家族分家，林茂森在隔壁另開茶行（自由時報2014年）。
+- `SHOPS[2].chapters[4].timeline[3].text`：有記第五代王聖鈞接班（官網沿革）。
+- `SHOPS[2].chapters[4].timeline[4].text`：唐家後代把迪化街一段329號老屋捐給臺北市政府（中央社稿）。
+- `SHOPS[2].chapters[4].timeline[5].text`：新芳春修復完成、王國忠捐贈市府；2016年9月20日開放（公視、中山區公所）。
+- `SHOPS[2].chapters[4].timeline[6].text`：何明瑞的導演的豆花車登場（《500輯》）。
+- `SHOPS[2].chapters[4].timeline[7].text`：329號登錄歷史建築（文化部）；WANGTEA LAB 開幕（《臺灣工藝》）。
+- `SHOPS[2].chapters[4].timeline[8].text`：導演的豆花店核准設立（商工登記）。
+- `SHOPS[2].chapters[4].timeline[9].text`：稻舍加入老房子文化運動（中央社稿）。
+- `SHOPS[2].chapters[4].facts[0].label`：有姓名出處的經營者
+- `SHOPS[2].chapters[4].facts[0].value`：林濬彤（滋養）、邱獻德與邱易為（十字軒）、李佳陽與李榮華（李亭香）、王連源與王聖鈞（有記）、林茂森、
+- `SHOPS[2].chapters[4].facts[1].label`：只寫行動、不點名
+- `SHOPS[2].chapters[4].facts[1].value`：爐鍋咖啡的經營者；黃玉階文史館的營運單位；慈聖宮廟口各攤；年貨大街的個別商家
+- `SHOPS[2].chapters[4].facts[2].label`：待核
+- `SHOPS[2].chapters[4].facts[2].value`：年貨大街的構想由來（官方稿與報導並列）；滋養遷入的年份；李亭香的世代與接班年；永樂米苔目的創立年
+- `SHOPS[2].chapters[4].facts[3].label`：不寫
+- `SHOPS[2].chapters[4].facts[3].value`：各店之間的師承、合作或傳承；經營者的動機；老潘魷魚羹、好粿緣、林復振的現任經營者（查無）
+- `SHOPS[2].chapters[5].tab`：大稻埕戲苑
+- `SHOPS[2].chapters[5].title`：市場大樓8、9樓的戲曲場館：大稻埕戲苑
+- `SHOPS[2].chapters[5].lead`：永樂市場大樓的8、9樓是一座公立的傳統戲曲場館「大稻埕戲苑」。這裡只有文字介紹；場景中的大樓沒有做出
+- `SHOPS[2].chapters[5].paragraphs[0]`：位置｜依臺北市政府劇場整合資訊平臺的場館資料，大稻埕戲苑座落在永樂市場大樓的8、9樓，管理單位是臺北
+- `SHOPS[2].chapters[5].paragraphs[1]`：9樓劇場｜9樓是鏡框式的劇場。《PAR表演藝術》2011年的報導寫「可容納五百人」，百科條目寫506
+- `SHOPS[2].chapters[5].paragraphs[2]`：8樓曲藝場與布袋戲展｜8樓是較小的曲藝場，報導與百科都寫約100席（百科另說沒有固定席位），以掌中戲
+- `SHOPS[2].chapters[5].paragraphs[3]`：節目｜臺北市藝文推廣處的活動頁上，戲苑的節目有布袋戲、歌仔戲、崑劇與偶戲展覽；詳細的節目、票價與開放
+- `SHOPS[2].chapters[5].paragraphs[4]`：說明｜這一節寫的是現代的公立場館，不是市場的歷史。市場大樓1985年開業時各樓層的用途見「市場歷史」
+- `SHOPS[2].chapters[5].facts[0].label`：位置
+- `SHOPS[2].chapters[5].facts[0].value`：永樂市場大樓8、9樓（迪化街一段21號）
+- `SHOPS[2].chapters[5].facts[1].label`：9樓
+- `SHOPS[2].chapters[5].facts[1].value`：劇場，約500席（500／506／501–1000席三說，待核）；歌仔戲、京劇、南管、北管、客家戲、
+- `SHOPS[2].chapters[5].facts[2].label`：8樓
+- `SHOPS[2].chapters[5].facts[2].value`：曲藝場約100席（有無固定席位兩說）、布袋戲常設展區、排練室
+- `SHOPS[2].chapters[5].facts[3].label`：管理單位
+- `SHOPS[2].chapters[5].facts[3].value`：臺北市藝文推廣處（劇場整合資訊平臺）
+- `SHOPS[2].chapters[6].tab`：從延平活動中心到戲苑
+- `SHOPS[2].chapters[6].title`：從延平活動中心到大稻埕戲苑（1987—2011，開幕年份待核）
+- `SHOPS[2].chapters[6].lead`：戲苑的前身是1987年成立的「延平活動中心」；2009年更名，2010年試營運，2011年正式營運。
+- `SHOPS[2].chapters[6].paragraphs[0]`：前身｜依百科條目，1987年2月臺北市立社會教育館在「延平區行政中心9樓」成立延平活動中心。《PAR
+- `SHOPS[2].chapters[6].paragraphs[1]`：整建與更名｜百科寫2009年3月配合「大稻埕古城重現專案」整建，同年10月31日更名為「大稻埕戲苑」
+- `SHOPS[2].chapters[6].paragraphs[2]`：試營運與正式營運｜百科寫2010年3月6日開館試營運；報導寫「去年」（2010年）開始試營運、「本月
+- `SHOPS[2].chapters[6].paragraphs[3]`：管理單位｜2011年前後由臺北市立社會教育館經營；百科寫2015年11月6日社教館改制為臺北市藝文推
+- `SHOPS[2].chapters[6].paragraphs[4]`：說明｜這一節的沿革只有百科條目與專業雜誌互相支持，沒有官方沿革頁或公文。網路上另有「戲苑由北投遷來」
+- `SHOPS[2].chapters[6].facts[0].label`：前身
+- `SHOPS[2].chapters[6].facts[0].value`：延平活動中心，1987年2月成立（臺北市立社會教育館；百科）
+- `SHOPS[2].chapters[6].facts[1].label`：更名
+- `SHOPS[2].chapters[6].facts[1].value`：2009年10月31日更名為大稻埕戲苑（百科；報導寫2009年整修完成）
+- `SHOPS[2].chapters[6].facts[2].label`：試營運
+- `SHOPS[2].chapters[6].facts[2].value`：2010年（百科3月6日；報導「去年」）
+- `SHOPS[2].chapters[6].facts[3].label`：正式營運
+- `SHOPS[2].chapters[6].facts[3].value`：2011年（報導2011年3月底；2014年報導稱2011年開幕）；開幕年份以2010／2011並列
+- `SHOPS[2].chapters[6].facts[4].label`：待核
+- `SHOPS[2].chapters[6].facts[4].value`：延平區行政中心與永樂市場大樓的關係、2015年改隸日期、「大稻埕古城重現專案」內容
+- `SHOPS[2].chapters[6].timeline[0].place`：1987年2月
+- `SHOPS[2].chapters[6].timeline[0].text`：臺北市立社會教育館成立延平活動中心（百科寫在「延平區行政中心9樓」，與永樂市場大樓的關係待核）。
+- `SHOPS[2].chapters[6].timeline[1].text`：整建；10月31日更名為「大稻埕戲苑」（百科；報導寫整修於2009年完成）。
+- `SHOPS[2].chapters[6].timeline[2].text`：試營運（百科3月6日；報導寫「去年」）。
+- `SHOPS[2].chapters[6].timeline[3].text`：正式營運（報導寫2011年3月底；2014年報導稱2011年開幕）。
+- `SHOPS[2].chapters[6].timeline[4].text`：社教館改制為臺北市藝文推廣處，戲苑改隸（只有百科，日期待核）。
+- `SHOPS[2].chapters[7].tab`：大稻埕曾經的戲窟
+- `SHOPS[2].chapters[7].title`：背景：大稻埕曾經的戲窟（戲苑並非這些戲院的延續）
+- `SHOPS[2].chapters[7].lead`：日治時期的大稻埕有好幾座戲院，被稱為「戲窟」。這一節只列有出處的幾座；大稻埕戲苑是2010年代的公立
+- `SHOPS[2].chapters[7].paragraphs[0]`：淡水戲館｜《PAR表演藝術》2014年的文章寫，淡水戲館1909年建成，後來改名為臺灣新舞臺，194
+- `SHOPS[2].chapters[7].paragraphs[1]`：永樂座｜百科條目（引《臺灣大百科全書》等）寫，永樂座1921年起籌設（初名「臺北大舞台」）、1923
+- `SHOPS[2].chapters[7].paragraphs[2]`：第一劇場｜2014年的文章寫，第一劇場1935年建於太平町（今延平北路一帶），以電影與新劇為主。本站
+- `SHOPS[2].chapters[7].paragraphs[3]`：並非延續｜大稻埕戲苑是1987年延平活動中心改建、2010年代開始營運的公立場館（見「從延平活動中心
+- `SHOPS[2].chapters[7].paragraphs[4]`：館方自述｜《PAR表演藝術》2011年的報導引述館方，希望「傳承、延續大稻埕古城的戲窟文化」。這是館
+- `SHOPS[2].chapters[7].paragraphs[5]`：說明｜網路上流傳「13間消失的戲院」之類的整理，本站沒有逐間核對，只寫上面三座有專業雜誌或百科可查的
+- `SHOPS[2].chapters[7].facts[0].label`：淡水戲館
+- `SHOPS[2].chapters[7].facts[0].value`：1909年建、後改名臺灣新舞臺、1945年毀於空襲（《PAR表演藝術》2014）
+- `SHOPS[2].chapters[7].facts[1].label`：永樂座
+- `SHOPS[2].chapters[7].facts[1].value`：1924年2月17日開幕、1960年5月歇業；今迪化街一段46巷，市場對面（百科引《臺灣大百科全書》
+- `SHOPS[2].chapters[7].facts[2].label`：第一劇場
+- `SHOPS[2].chapters[7].facts[2].value`：1935年建於太平町，以電影與新劇為主（《PAR表演藝術》2014）
+- `SHOPS[2].chapters[7].facts[3].label`：與戲苑的關係
+- `SHOPS[2].chapters[7].facts[3].value`：沒有承接、同址或同團體關係；「延續戲窟文化」為館方自述
+- `SHOPS[2].chapters[8].tab`：參考資料
+- `SHOPS[2].chapters[8].title`：參考資料
+- `SHOPS[2].chapters[8].intro`：永樂市場的介紹整理自下列資料，點選即可開啟原始網頁。
+- `SHOPS[2].chapters[8].disclaimer`：永樂市場大樓的 3D 外觀依實地照片建模，比例為估算；一樓市場的平面是簡化的概念配置，攤位數量、位置
+- `SHOPS[3].name`：好粿緣
+- `SHOPS[3].category`：傳統米食・粿
+- `SHOPS[3].seal`：粿
+- `SHOPS[3].summary`：永樂市場一樓的米食攤位（攤位編號1020），販售草仔粿、紅龜粿、芋粿巧、蘿蔔糕等傳統的粿。
+- `SHOPS[3].eraNotes.revival`：好粿緣在永樂市場一樓（攤位編號1020）。本站沒有找到這個攤位的創立年份或店史資料，因此介紹以攤位上
+- `SHOPS[3].chapters[0].tab`：店家介紹
+- `SHOPS[3].chapters[0].title`：店家介紹｜永樂市場一樓的粿攤
+- `SHOPS[3].chapters[0].lead`：好粿緣是永樂市場一樓的米食攤位，鮮綠色招牌上寫著店名，攤位牌上的編號是1020。
+- `SHOPS[3].chapters[0].paragraphs[0]`：永樂市場位在迪化街一段21號，起源於1908年，現在的市場大樓於1985年開業。臺北市政府的市集資訊
+- `SHOPS[3].chapters[0].paragraphs[1]`：依實地拍攝時攤位上的價目表與品名牌：草仔粿有香菇肉、菜脯米等鹹口味，以及芝麻、花生、紅豆等甜口味；另
+- `SHOPS[3].chapters[0].paragraphs[2]`：這些粿過去常在家裡為年節與祭祀準備：農業部的〈年糕＆蘿蔔糕〉就記錄了過年前在家做菜頭粿、甜粿、發糕等
+- `SHOPS[3].chapters[0].paragraphs[3]`：本站沒有找到介紹好粿緣的新聞報導或店史資料，因此不寫創立年份、創辦人或配方。
+- `SHOPS[3].chapters[0].facts[0].label`：位置
+- `SHOPS[3].chapters[0].facts[0].value`：永樂市場一樓（攤位編號1020）
+- `SHOPS[3].chapters[0].facts[1].label`：地址
+- `SHOPS[3].chapters[0].facts[1].value`：臺北市大同區迪化街一段21號（永樂市場）
+- `SHOPS[3].chapters[0].facts[2].label`：品項
+- `SHOPS[3].chapters[0].facts[2].value`：草仔粿、紅龜粿、芋粿巧、蘿蔔糕、紫米糕等
+- `SHOPS[3].chapters[0].facts[3].label`：創立年份
+- `SHOPS[3].chapters[0].facts[3].value`：未查得資料
+- `SHOPS[3].chapters[1].tab`：代表食品
+- `SHOPS[3].chapters[1].title`：代表食品｜草仔粿、紅龜粿與米食
+- `SHOPS[3].chapters[1].intro`：好粿緣攤位上的幾樣代表米食。食物說明整理自教育部《臺灣台語常用詞辭典》與農業部、國立臺灣歷史博物館的
+- `SHOPS[3].chapters[1].items[0].name`：草仔粿
+- `SHOPS[3].chapters[1].items[0].category`：糯米｜鹹甜內餡
+- `SHOPS[3].chapters[1].items[0].description`：糯米做的粿：外皮在「粿粞」中加入艾草或鼠麴草揉成，包入內餡，墊上葉片後放進蒸籠蒸熟。
+- `SHOPS[3].chapters[1].items[0].note`：好粿緣的價目表上，草仔粿有香菇肉、菜脯米等鹹口味，以及芝麻、花生、紅豆等甜口味。
+- `SHOPS[3].chapters[1].items[1].name`：紅龜粿
+- `SHOPS[3].chapters[1].items[1].category`：糯米｜印模
+- `SHOPS[3].chapters[1].items[1].description`：糯米製成：先把粿皮染紅，用模具印上龜形的圖樣再蒸熟；內餡常見豆沙或花生。
+- `SHOPS[3].chapters[1].items[1].note`：攤位上另有綠色的艾草龜粿；價目表寫著兩者都有花生、紅豆的甜餡。
+- `SHOPS[3].chapters[1].items[2].name`：蘿蔔糕（菜頭粿）
+- `SHOPS[3].chapters[1].items[2].category`：在來米｜蘿蔔
+- `SHOPS[3].chapters[1].items[2].description`：在來米漿拌入蘿蔔絲、蝦米等配料蒸製而成，常切片煎來吃。
+- `SHOPS[3].chapters[1].items[2].note`：農業部〈年糕＆蘿蔔糕〉提到，「菜頭」與「彩頭」諧音，因此成為過年餐桌上必備的菜色。
+- `SHOPS[3].chapters[1].items[3].name`：芋粿巧
+- `SHOPS[3].chapters[1].items[3].category`：在來米｜芋頭
+- `SHOPS[3].chapters[1].items[3].description`：用芋頭、在來米、紅蔥頭、蝦米等蒸製而成，因為形狀像彎彎的弧形而得名。
+- `SHOPS[3].chapters[1].items[3].note`：教育部辭典寫作「芋粿曲」；好粿緣的價目表上寫作「芋粿巧」。
+- `SHOPS[3].chapters[1].footnote`：「文獻小記」中的攤位品項依實地拍攝時的價目表與品名牌整理；食物的材料與做法為一般說明，並非好粿緣的配
+- `SHOPS[3].chapters[2].tab`：食物文化
+- `SHOPS[3].chapters[2].title`：食物文化｜粿的材料、做法與節慶
+- `SHOPS[3].chapters[2].lead`：「粿」是糕的總稱，指用糯米或粳米等做成的食品，因為加入的原料不同而有不同的名稱（教育部《臺灣台語常用
+- `SHOPS[3].chapters[2].paragraphs[0]`：材料：農業部的資料說明，臺灣傳統的蘿蔔糕、碗粿等是用在來米做的；草仔粿、紅龜粿、菜包等則是把圓糯米磨
+- `SHOPS[3].chapters[2].paragraphs[1]`：做法：以草仔粿為例，外皮是在粿粞中加入艾草或鼠麴草揉成，包餡後用手塑形，墊上黃槿葉或月桃葉，再放進蒸
+- `SHOPS[3].chapters[2].paragraphs[2]`：節慶：草仔粿常做為清明掃墓或農曆七月普渡的供品；紅龜粿在神明誕辰、年節慶典祭祀、祖先祭拜與長輩做壽時
+- `SHOPS[3].chapters[2].timeline[0].place`：過年
+- `SHOPS[3].chapters[2].timeline[0].text`：蘿蔔糕（菜頭粿，諧音「彩頭」）、甜粿（「食甜粿，予你趁家伙」）。
+- `SHOPS[3].chapters[2].timeline[1].place`：清明
+- `SHOPS[3].chapters[2].timeline[1].text`：草仔粿是掃墓祭祖時常見的供品。
+- `SHOPS[3].chapters[2].timeline[2].place`：普渡
+- `SHOPS[3].chapters[2].timeline[2].text`：農曆七月普渡，也常以草仔粿為供品。
+- `SHOPS[3].chapters[2].timeline[3].place`：慶典
+- `SHOPS[3].chapters[2].timeline[3].text`：紅龜粿：神明誕辰、祭祀、長輩做壽，添丁時分送親友。
+- `SHOPS[3].chapters[2].glossary[0].term`：粿
+- `SHOPS[3].chapters[2].glossary[0].definition`：糕的總稱，指用糯米或粳米等做成的食品（教育部《臺灣台語常用詞辭典》）。
+- `SHOPS[3].chapters[2].glossary[1].term`：在來米
+- `SHOPS[3].chapters[2].glossary[1].definition`：臺灣傳統的蘿蔔糕、碗粿等所用的米（依農業部資料）。
+- `SHOPS[3].chapters[2].glossary[2].term`：粿模
+- `SHOPS[3].chapters[2].glossary[2].definition`：用來製作紅龜粿與紅桃粿的模具，是早期農業社會居家常見的用具（國立臺灣歷史博物館）。
+- `SHOPS[3].chapters[3].tab`：參考資料
+- `SHOPS[3].chapters[3].title`：參考資料
+- `SHOPS[3].chapters[3].intro`：好粿緣與粿食文化的介紹整理自下列資料，點選即可開啟原始網頁。
+- …另外 1834 筆
+
+### `src/data/sources.js`（缺 1443）
+
+- `SOURCES.ith-lin-fu-zhen.citation`：中央研究院臺灣史研究所檔案館，〈林復振商行〉。
+- `SOURCES.ith-lin-fu-zhen.publisher`：中央研究院臺灣史研究所檔案館
+- `SOURCES.ith-lin-fu-zhen.title`：林復振商行
+- `SOURCES.ith-lin-fu-zhen.context`：收錄於該館「館藏選粹」專文〈追溯迪化街百年老店林復振商行與乾元藥行〉。
+- `SOURCES.ith-lin-fu-zhen.records[0]`：1915年11月2日淡水林振源號致泰益號書信
+- `SOURCES.ith-lin-fu-zhen.records[1]`：1933年9月17日臺北復振英記致泰益號書信
+- `SOURCES.ith-lin-fu-zhen.recordsNote`：上列書信圖像見於原頁面，圖像來源標示為「長崎泰益號文書，中研院臺史所檔案館數位典藏」。
+- `SOURCES.nmth-jiang-shan-lou.citation`：國立臺灣歷史博物館典藏網，〈江山樓〉（典藏號 2004.055.0002）。
+- `SOURCES.nmth-jiang-shan-lou.publisher`：國立臺灣歷史博物館
+- `SOURCES.nmth-jiang-shan-lou.title`：江山樓
+- `SOURCES.nmth-jiang-shan-lou.context`：老照片藏品說明：江山樓由吳江山於1917年創立，為四層樓高的紅磚建築。
+- `SOURCES.wiki-jiang-shan-lou.citation`：維基百科，〈江山樓〉。
+- `SOURCES.wiki-jiang-shan-lou.publisher`：維基百科
+- `SOURCES.wiki-jiang-shan-lou.title`：江山樓
+- `SOURCES.wiki-jiang-shan-lou.context`：記為1917年（大正6年）由吳江山獨資設立，四層紅磚建築，1976年拆除。
+- `SOURCES.factpedia-jiang-shan-lou.citation`：求真百科，〈江山樓〉。
+- `SOURCES.factpedia-jiang-shan-lou.publisher`：求真百科
+- `SOURCES.factpedia-jiang-shan-lou.title`：江山樓
+- `SOURCES.factpedia-jiang-shan-lou.context`：記為1921年成立，同年11月20日開幕；描述為紅磚造四層樓連棟街屋（同頁詩作註解則記為1917年創
+- `SOURCES.jaung-jiang-shan-lou-2015.citation`：莊永明，〈大稻埕名酒樓之三：江山樓〉，莊永明書坊，2015年8月31日。
+- `SOURCES.jaung-jiang-shan-lou-2015.publisher`：莊永明書坊（個人部落格，作者為臺灣史作者；文末列有書名與日治報刊出處）
+- `SOURCES.jaung-jiang-shan-lou-2015.title`：大稻埕名酒樓之三：江山樓
+- `SOURCES.jaung-jiang-shan-lou-2015.context`：記1921年11月20日開業、披露宴三天；吳江山原為東薈芳合夥人，赴廈門、福州、上海考察後創立。紅磚
+- `SOURCES.nccu-thesis-jiang-shan-lou-2008.citation`：簡伃君，《江山樓及其在日治時期紳商社交生活中所扮演的角色（1921–1940）》，國立政治大學歷史學
+- `SOURCES.nccu-thesis-jiang-shan-lou-2008.publisher`：國立政治大學
+- `SOURCES.nccu-thesis-jiang-shan-lou-2008.title`：江山樓及其在日治時期紳商社交生活中所扮演的角色（1921–1940）
+- `SOURCES.nccu-thesis-jiang-shan-lou-2008.context`：摘要稱江山樓是推廣臺灣菜的重要餐廳，1920年代後代表臺灣最高烹飪水準，也是紳商社交的場所。本站只讀
+- `SOURCES.cna-taiwanese-cuisine-2020.citation`：陳凱棠，〈台菜的身世〉（引曾品滄），中央社文化+，2020年12月7日。
+- `SOURCES.cna-taiwanese-cuisine-2020.publisher`：中央通訊社
+- `SOURCES.cna-taiwanese-cuisine-2020.title`：台菜的身世
+- `SOURCES.cna-taiwanese-cuisine-2020.context`：1923年皇太子午宴十二道大菜用燕窩、鴿蛋、火雞、魚翅、螃蟹、白木耳、鱉、海參；江山樓後來印出列有1
+- `SOURCES.foodnext-chen-yuchen-2020.citation`：陳玉箴，〈1923年皇太子的臺灣料理宴〉，食力 Foodnext，2020年10月18日。
+- `SOURCES.foodnext-chen-yuchen-2020.publisher`：食力 Foodnext（作者為國立臺灣師範大學副教授）
+- `SOURCES.foodnext-chen-yuchen-2020.title`：1923年皇太子的臺灣料理宴
+- `SOURCES.foodnext-chen-yuchen-2020.context`：1923年4月24日中午在總督官邸大食堂辦臺灣料理午宴，總督府曾派人赴日試菜；十二道大菜，第七道炸春
+- `SOURCES.ziyang-about.citation`：滋養和菓子官方網站，〈商店簡介〉。
+- `SOURCES.ziyang-about.publisher`：滋養和菓子
+- `SOURCES.ziyang-about.title`：商店簡介
+- `SOURCES.ziyang-about.context`：記載「創立於1953年 原址為南京西路」、1953年草創「滋養食品」，以及引進日本製菓技術、迪化街一
+- `SOURCES.ryori-taiwan-ziyang.citation`：朱荔詡，〈滋養配方不變 大膽解構甜點〉，《料理．台灣》第55期，中華飲食文化基金會，2021年1月4
+- `SOURCES.ryori-taiwan-ziyang.publisher`：財團法人中華飲食文化基金會
+- `SOURCES.ryori-taiwan-ziyang.title`：滋養配方不變 大膽解構甜點
+- `SOURCES.ryori-taiwan-ziyang.context`：專訪第三代林濬彤：1953年成立之初的樣貌、1961年第二代開始製作和菓子、原址都市更新後遷入迪化街
+- `SOURCES.supertaste-ziyang.citation`：食尚玩家（食尚編輯部），〈IG必收！大稻埕7家美拍老屋餐廳，日治洋樓吃和菓子、中藥房喝凍檸茶〉。
+- `SOURCES.supertaste-ziyang.publisher`：食尚玩家
+- `SOURCES.supertaste-ziyang.title`：IG必收！大稻埕7家美拍老屋餐廳，日治洋樓吃和菓子、中藥房喝凍檸茶
+- `SOURCES.supertaste-ziyang.context`：描述滋養豆餡舖的街屋外觀（洋樓古典風格、紅磚牆、高高的牌樓）與現點現做的最中；原頁面未標示刊登日期。
+- `SOURCES.tcma-yongle-market.citation`：臺北市市場處，〈臺北市公有永樂市場〉（資料更新：民國113年8月7日）。
+- `SOURCES.tcma-yongle-market.publisher`：臺北市市場處
+- `SOURCES.tcma-yongle-market.title`：臺北市公有永樂市場
+- `SOURCES.tcma-yongle-market.published`：資料更新：民國113年8月7日（2024年）
+- `SOURCES.tcma-yongle-market.usage`：永樂市場的成立、改建與開業年份（臺北市市場處的官方網頁）。
+- `SOURCES.tcma-yongle-market.context`：沿革：「民國前4年成立，稱為「公設永樂町食料品小賣市場」，民國71年原市場拆除，改建綜合大樓安置原攤
+- `SOURCES.taipei-market-info-yongle.citation`：臺北市政府全球資訊網，市集資訊〈臺北市公有永樂市場〉（資料更新：民國108年2月18日）。
+- `SOURCES.taipei-market-info-yongle.publisher`：臺北市政府
+- `SOURCES.taipei-market-info-yongle.title`：臺北市公有永樂市場
+- `SOURCES.taipei-market-info-yongle.published`：資料更新：民國108年2月18日（2019年）
+- `SOURCES.taipei-market-info-yongle.usage`：永樂市場各樓層的用途（臺北市政府的市集資訊）。
+- `SOURCES.taipei-market-info-yongle.context`：介紹：「1樓生鮮蔬果日用品，2.3樓布匹窗簾飾布買賣縫製，是全台布業零售、批發中心。」
+- `SOURCES.ncl-yongle-market.citation`：國家圖書館「臺灣記憶」，〈永樂町市場攤販〉（臺北市文獻委員會提供；說明引自《臺北市志：卷六經濟志商業
+- `SOURCES.ncl-yongle-market.publisher`：國家圖書館
+- `SOURCES.ncl-yongle-market.title`：永樂町市場攤販
+- `SOURCES.ncl-yongle-market.context`：說明：1897年六館街的大稻埕市場落成，1908年（明治41年）改設於大稻埕蘆竹腳街，1933年（昭
+- `SOURCES.udn-1995-yongle-market.citation`：景小佩，〈平民的永樂市場布出名〉，《聯合報》1995年4月4日第30版（聯合報系「報時光」2024年
+- `SOURCES.udn-1995-yongle-market.publisher`：聯合報系 報時光
+- `SOURCES.udn-1995-yongle-market.title`：迪化街永樂市場 從日治時期到現代的百年布料集散地
+- `SOURCES.udn-1995-yongle-market.context`：記載市場成立於1908年12月14日；民國71年3月拆除舊建築改建，74年9月完工、10月8日重新開
+- `SOURCES.moe-guo.citation`：教育部《臺灣台語常用詞辭典》，「粿」。
+- `SOURCES.moe-guo.publisher`：教育部
+- `SOURCES.moe-guo.title`：粿
+- `SOURCES.moe-guo.published`：線上辭典（2026年10月查閱）
+- `SOURCES.moe-guo.usage`：「粿」的定義（糯米或粳米等做成的食品的總稱）。
+- `SOURCES.moe-guo.context`：釋義：「糕的總稱，指用糯米或粳米等做成的食品。因所加的原料不同而有不同的稱法。」
+- `SOURCES.moe-cao-guo.citation`：教育部《臺灣台語常用詞辭典》，「草仔粿」。
+- `SOURCES.moe-cao-guo.publisher`：教育部
+- `SOURCES.moe-cao-guo.title`：草仔粿
+- `SOURCES.moe-cao-guo.published`：線上辭典（2026年10月查閱）
+- `SOURCES.moe-cao-guo.usage`：草仔粿的材料、做法（外墊葉片、蒸籠蒸熟）與普渡、清明的用途。
+- `SOURCES.moe-cao-guo.context`：釋義：外皮以「粿粞」加入艾草或鼠麴草揉成，外墊黃槿葉或月桃葉等，以蒸籠蒸熟；常做為農曆七月普渡或清明
+- `SOURCES.moe-hong-gui.citation`：教育部《臺灣台語常用詞辭典》，「紅龜粿」。
+- `SOURCES.moe-hong-gui.publisher`：教育部
+- `SOURCES.moe-hong-gui.title`：紅龜粿
+- `SOURCES.moe-hong-gui.published`：線上辭典（2026年10月查閱）
+- `SOURCES.moe-hong-gui.usage`：紅龜粿的做法（染紅、以模具印上龜型圖樣後蒸製）與祭祀、添丁的用途。
+- `SOURCES.moe-hong-gui.context`：釋義：由糯米製成，粿皮染紅、以模具印上龜型圖樣後蒸製；常用來祭拜神明、酬神，或在添丁時分送親友。
+- `SOURCES.moe-cai-tau-guo.citation`：教育部《臺灣台語常用詞辭典》，「菜頭粿」。
+- `SOURCES.moe-cai-tau-guo.publisher`：教育部
+- `SOURCES.moe-cai-tau-guo.title`：菜頭粿
+- `SOURCES.moe-cai-tau-guo.published`：線上辭典（2026年10月查閱）
+- `SOURCES.moe-cai-tau-guo.usage`：菜頭粿（蘿蔔糕）的材料與做法。
+- `SOURCES.moe-cai-tau-guo.context`：釋義：「蘿蔔糕。在來米漿拌入炒過的蘿蔔絲、蝦米等配料，蒸製而成的食品。」
+- `SOURCES.moe-yu-guo-qiao.citation`：教育部《臺灣台語常用詞辭典》，「芋粿曲」。
+- `SOURCES.moe-yu-guo-qiao.publisher`：教育部
+- `SOURCES.moe-yu-guo-qiao.title`：芋粿曲
+- `SOURCES.moe-yu-guo-qiao.context`：釋義：「用芋頭、在來米、紅蔥頭、蝦米等，蒸製而成的一種食品。形狀如弧形而得名。」
+- `SOURCES.nmth-hong-gui-mold.citation`：國立臺灣歷史博物館典藏網，〈紅龜粿印模轉印紙張〉（登錄號 2010.003.0248）。
+- `SOURCES.nmth-hong-gui-mold.publisher`：國立臺灣歷史博物館
+- `SOURCES.nmth-hong-gui-mold.title`：紅龜粿印模轉印紙張
+- `SOURCES.nmth-hong-gui-mold.published`：典藏網頁（未標示日期；2026年10月查閱）
+- `SOURCES.nmth-hong-gui-mold.usage`：粿模的龜甲紋樣，以及紅龜粿在祭祀、年節與做壽的用途。
+- `SOURCES.nmth-hong-gui-mold.context`：說明：粿模為早期農業社會居家常見之模具；紅龜粿與紅桃粿在神明誕辰、年節慶典祭祀、祖先祭拜與長輩做壽都
+- `SOURCES.moa-guo-rice.citation`：李誠紘、吳以健、王柏蓉、鄭佳綺，〈「粿」然如此製粿稻米品種介紹〉，《臺中區農情月刊》第285期，20
+- `SOURCES.moa-guo-rice.publisher`：農業部 農業知識入口網
+- `SOURCES.moa-guo-rice.title`：「粿」然如此製粿稻米品種介紹
+- `SOURCES.moa-guo-rice.published`：2023年5月29日（《臺中區農情月刊》第285期）
+- `SOURCES.moa-guo-rice.usage`：製粿的米：在來米（蘿蔔糕等）與圓糯米（草仔粿、紅龜粿等）。
+- `SOURCES.moa-guo-rice.context`：說明蘿蔔糕、碗粿等以在來米製成；圓糯米磨粉後製成草仔粿、紅龜粿、菜包等。
+- `SOURCES.moa-cao-guo.citation`：農業部食農教育資訊整合平臺，〈美味與傳統完美結合的草仔粿〉（資料來源：臺南區農業改良場，2023年4
+- `SOURCES.moa-cao-guo.publisher`：農業部
+- `SOURCES.moa-cao-guo.title`：美味與傳統完美結合的草仔粿
+- `SOURCES.moa-cao-guo.published`：2023年4月4日
+- `SOURCES.moa-cao-guo.usage`：草仔粿在清明節掃墓祭祖的用途。
+- `SOURCES.moa-cao-guo.context`：說明草仔粿「是閩南人與客家人在清明節掃墓祭祖時的經典糕點」。
+- `SOURCES.moa-niangao.citation`：林書帆，〈年糕＆蘿蔔糕〉，《鄉間小路》（農業知識入口網，2019年3月8日）。
+- `SOURCES.moa-niangao.publisher`：農業部 農業知識入口網
+- `SOURCES.moa-niangao.title`：年糕＆蘿蔔糕
+- `SOURCES.moa-niangao.published`：2019年3月8日
+- `SOURCES.moa-niangao.usage`：蘿蔔糕「菜頭」與「彩頭」的諧音與過年的習俗。
+- `SOURCES.moa-niangao.context`：提到「菜頭」與「彩頭」諧音，蘿蔔糕成為過年必備菜色；臺語俗諺「食甜粿，予你趁家伙」；過年前在家做菜頭
+- `SOURCES.tcooc-action-bar.citation`：臺北市商業處，〈探索再造店家（依類型）－茶飲冰品〉：導演的豆花店Action! Bar（資料更新：民
+- `SOURCES.tcooc-action-bar.publisher`：臺北市政府商業處
+- `SOURCES.tcooc-action-bar.title`：探索再造店家（依類型）－茶飲冰品
+- `SOURCES.tcooc-action-bar.context`：品牌故事：「2021年，豆花車延伸為豆花店，在迪化街小巷裡，與夢想一同落腳」；改造重點：原名「夢想基
+- `SOURCES.gcis-action-bar.citation`：經濟部商工登記公示資料，「導演的豆花店」（商業登記，登記機關：臺北市商業處）。
+- `SOURCES.gcis-action-bar.publisher`：經濟部 商工登記公示資料（政府資料開放平臺 API）
+- `SOURCES.gcis-action-bar.title`：導演的豆花店：商業登記基本資料
+- `SOURCES.gcis-action-bar.context`：核准設立日期：民國110年3月12日；地址：臺北市大同區迪化街1段224巷24號1樓；營業項目：飲料
+- `SOURCES.udn-500-action-bar.citation`：于國華，〈文化觀察者于國華／導演的豆花：認識自己、看見家園〉，聯合報系《500輯》，2024年1月2
+- `SOURCES.udn-500-action-bar.publisher`：聯合報系 500輯
+- `SOURCES.udn-500-action-bar.title`：導演的豆花：認識自己、看見家園
+- `SOURCES.udn-500-action-bar.context`：記載何明瑞與齊柏林相約「你在天上飛、我在地上跑」；2019年7月導演的豆花車登場；在迪化街區創辦「夢
+- `SOURCES.kinmen-2019-douhua-truck.citation`：李金鎗，〈導演的豆花車巡迴古寧國小〉，金門縣政府全球資訊網（轉載金門日報），2019年12月5日。
+- `SOURCES.kinmen-2019-douhua-truck.publisher`：金門縣政府
+- `SOURCES.kinmen-2019-douhua-truck.title`：導演的豆花車巡迴古寧國小
+- `SOURCES.kinmen-2019-douhua-truck.context`：介紹何明瑞是紀錄片導演、瑞齊傳播有限公司負責人與製作人，2019年入圍電視金鐘獎非戲劇類節目攝影獎；
+- `SOURCES.matsu-2025-action-bar-camp.citation`：〈「導演的豆花店」暑期兒童影像紀錄學習營7月到馬祖　21日起報名〉，《馬祖日報》，2025年3月19
+- `SOURCES.matsu-2025-action-bar-camp.publisher`：馬祖日報
+- `SOURCES.matsu-2025-action-bar-camp.title`：「導演的豆花店」暑期兒童影像紀錄學習營7月到馬祖
+- `SOURCES.matsu-2025-action-bar-camp.context`：學習營為公益性質、完全免費，每年暑期巡迴不同的偏鄉與離島；招收國小四至六年級學童，學習用影像捕捉生活
+- `SOURCES.moe-douhua.citation`：教育部《臺灣台語常用詞辭典》，「豆花」。
+- `SOURCES.moe-douhua.publisher`：教育部
+- `SOURCES.moe-douhua.title`：豆花
+- `SOURCES.moe-douhua.published`：線上辭典（2026年10月查閱）
+- `SOURCES.moe-douhua.usage`：豆花的定義（豆漿加鹽滷或石膏凝結；通常加糖水和花生）。
+- `SOURCES.moe-douhua.context`：釋義：「在豆漿中加入少量的鹽滷或石膏，使能凝結成比豆腐還嫩的食品。通常加糖水和花生，當作甜食。」
+- `SOURCES.moe-maltose.citation`：教育部《臺灣台語常用詞辭典》，「麥芽膏」。
+- `SOURCES.moe-maltose.publisher`：教育部
+- `SOURCES.moe-maltose.title`：麥芽膏
+- `SOURCES.moe-maltose.context`：釋義：「麥芽糖。由含澱粉酶的麥芽使澱粉水解而成，是一種金黃色，有黏性的糖品。」
+- `SOURCES.moe-fun-inn.citation`：教育部《臺灣台語常用詞辭典》，「粉圓」。
+- `SOURCES.moe-fun-inn.publisher`：教育部
+- `SOURCES.moe-fun-inn.title`：粉圓
+- `SOURCES.moe-fun-inn.context`：釋義：「一種用番薯粉和紅糖做成的食品。外表為圓形，煮熟後變透明狀。夏天可以涼食，冬天可以熱食。」
+- `SOURCES.moe-fun-kue.citation`：教育部《臺灣台語常用詞辭典》，「粉粿」。
+- `SOURCES.moe-fun-kue.publisher`：教育部
+- `SOURCES.moe-fun-kue.title`：粉粿
+- `SOURCES.moe-fun-kue.context`：釋義：「涼粉。用番薯粉做成的粿類食品。」
+- `SOURCES.moa-douhua-gel.citation`：任珮君、何昱圻，〈豆花凝膠機制的介紹〉，《桃園區農情月刊》第285期（農業部食農教育資訊整合平臺，2
+- `SOURCES.moa-douhua-gel.publisher`：農業部
+- `SOURCES.moa-douhua-gel.title`：豆花凝膠機制的介紹
+- `SOURCES.moa-douhua-gel.published`：2023年4月15日（《桃園區農情月刊》第285期）
+- `SOURCES.moa-douhua-gel.usage`：豆花凝結的原理（大豆蛋白與凝固劑形成凝膠）與鹽滷豆花的口感。
+- `SOURCES.moa-douhua-gel.context`：說明豆漿中的大豆蛋白和凝固劑作用形成凝膠結構；以鹽滷作為凝固劑凝結的豆花口感偏硬脆。
+- `SOURCES.moa-ice-toppings.citation`：農業部食農教育資訊整合平臺，〈美食剉冰，你要加什麼料！〉，2023年8月2日。
+- `SOURCES.moa-ice-toppings.publisher`：農業部
+- `SOURCES.moa-ice-toppings.title`：美食剉冰，你要加什麼料！
+- `SOURCES.moa-ice-toppings.context`：說明粉粿是粉漿加上山梔子煮過的水攪拌後蒸熟；粉粿黃黃的顏色來自天然色素「山梔子」，又名黃梔。
+- `SOURCES.taipei-pictorial-watson.citation`：魚夫，〈屈臣氏大樓的興衰起落〉，《台北畫刊》2017年2月號，頁56–57。
+- `SOURCES.taipei-pictorial-watson.publisher`：臺北市政府
+- `SOURCES.taipei-pictorial-watson.title`：屈臣氏大樓的興衰起落
+- `SOURCES.taipei-pictorial-watson.context`：「最早屈臣氏是臺中實業家李俊啟全權負責經營，他本來在彰化員林開設「德壽堂」」；「1928 年（一說為
+- `SOURCES.boch-opendata-assets.citation`：文化部文化資產局，文化資產開放資料：古蹟（1.1）案件清單。
+- `SOURCES.boch-opendata-assets.publisher`：文化部文化資產局
+- `SOURCES.boch-opendata-assets.title`：文化資產開放資料（古蹟）
+- `SOURCES.boch-opendata-assets.context`：2026年10月查詢古蹟（1.1.json）的案件清單，沒有找到名稱含「屈臣氏」「李俊啟」或地址為迪
+- `SOURCES.boch-opendata-historic.citation`：文化部文化資產局，文化資產開放資料：歷史建築（1.2）案件清單。
+- `SOURCES.boch-opendata-historic.publisher`：文化部文化資產局
+- `SOURCES.boch-opendata-historic.title`：文化資產開放資料（歷史建築）
+- `SOURCES.boch-opendata-historic.context`：2026年10月查詢歷史建築（1.2.json）的案件清單，同樣沒有找到名稱含「屈臣氏」「李俊啟」或
+- `SOURCES.businesstoday-2012-watson.citation`：《今周刊》，2012年10月25日報導（小藝埕與屈臣氏大藥房）。
+- `SOURCES.businesstoday-2012-watson.publisher`：今周刊
+- `SOURCES.businesstoday-2012-watson.title`：今周刊 2012年10月25日報導
+- `SOURCES.businesstoday-2012-watson.context`：「這棟洗石子外牆的三層樓平樑式結構，坐落在街角」；「二○一一年右翼內棟作為「小藝埕」，內有…藝術設計
+- `SOURCES.businesstoday-2015-dadaocheng.citation`：《今周刊》，2015年6月25日報導（大稻埕的老屋新生）。
+- `SOURCES.businesstoday-2015-dadaocheng.publisher`：今周刊
+- `SOURCES.businesstoday-2015-dadaocheng.title`：今周刊 2015年6月25日報導
+- `SOURCES.businesstoday-2015-dadaocheng.context`：報導以「這波大稻埕文藝復興風潮」形容迪化街一帶的老屋再利用。
+- `SOURCES.gvm-2013-artyard.citation`：《遠見雜誌》，2013年8月28日報導（周奕成與小藝埕）。
+- `SOURCES.gvm-2013-artyard.publisher`：遠見雜誌
+- `SOURCES.gvm-2013-artyard.title`：遠見雜誌 2013年8月28日報導
+- `SOURCES.gvm-2013-artyard.context`：「2010年周奕成好不容易獲得…「屈臣氏大藥房」屋主點頭出租，以「大稻埕上賣小藝」發想創立小藝埕，展
+- `SOURCES.artyard-about.citation`：大藝埕 ArtYard 官方網站，〈關於〉。
+- `SOURCES.artyard-about.publisher`：世代群 Sedai Group
+- `SOURCES.artyard-about.title`：大藝埕 ArtYard：關於
+- `SOURCES.artyard-about.context`：「自 2011 年的「小藝埕」至今，世代群在大稻埕經營了 10 棟藝埕系列街屋」；「大藝埕 ArtY
+- `SOURCES.ntpu-2014-dadaocheng.citation`：國立臺北大學都市計劃研究所，〈大稻埕歷史風貌特定專用區之街區再生計畫〉，2014年6月13日。
+- `SOURCES.ntpu-2014-dadaocheng.publisher`：國立臺北大學
+- `SOURCES.ntpu-2014-dadaocheng.title`：大稻埕歷史風貌特定專用區之街區再生計畫
+- `SOURCES.ntpu-2014-dadaocheng.context`：報告引用小藝埕官網：「一樓：「Bookstore 1920s」及「印花樂」 二樓：「爐鍋咖啡」 三樓
+- `SOURCES.supertaste-artyard.citation`：TVBS《食尚玩家》，大稻埕小藝埕介紹。
+- `SOURCES.supertaste-artyard.publisher`：TVBS 食尚玩家
+- `SOURCES.supertaste-artyard.title`：食尚玩家：小藝埕
+- `SOURCES.supertaste-artyard.context`：「2樓的「爐鍋咖啡」主打來自各產區、莊園的單品咖啡，還有義式濃縮和拿鐵。」；「3樓是思劇場」。
+- `SOURCES.storm-2018-luguo.citation`：《風傳媒》，2018年12月26日報導（迪化街的屈臣氏大藥房與爐鍋咖啡）。
+- `SOURCES.storm-2018-luguo.publisher`：風傳媒
+- `SOURCES.storm-2018-luguo.title`：風傳媒 2018年12月26日報導
+- `SOURCES.storm-2018-luguo.context`：「屈臣氏大藥房的二樓，有間網路上頗具知名度的爐鍋咖啡」；「所有的咖啡豆都是老闆精選各國的豆子，而且每
+- `SOURCES.storm-2015-luguo-guandu.citation`：欣台灣，〈居高臨下的窗景令人心醉！五家藏在二樓的好咖啡〉，《風傳媒》，2015年10月10日。
+- `SOURCES.storm-2015-luguo-guandu.publisher`：風傳媒
+- `SOURCES.storm-2015-luguo-guandu.title`：居高臨下的窗景令人心醉！五家藏在二樓的好咖啡
+- `SOURCES.storm-2015-luguo-guandu.context`：「位於台北藝術大學關渡校區的爐鍋咖啡，基本上是開外掛形式的二樓咖啡」。
+- `SOURCES.moa-taiwan-coffee.citation`：農業部農業知識入口網（農業試驗所），〈台灣咖啡沿革〉。
+- `SOURCES.moa-taiwan-coffee.publisher`：農業部
+- `SOURCES.moa-taiwan-coffee.title`：台灣咖啡沿革
+- `SOURCES.moa-taiwan-coffee.context`：「西元1884年(清光緒10年)臺灣咖啡樹栽培最早紀錄，始於英國茶商自馬尼拉引進一百株阿拉比卡咖啡在
+- `SOURCES.boch-bolero.citation`：文化部文化資產局，國家文化資產網：歷史建築「波麗路餐廳」（2006年5月17日登錄）。
+- `SOURCES.boch-bolero.publisher`：文化部文化資產局
+- `SOURCES.boch-bolero.title`：波麗路餐廳（歷史建築）
+- `SOURCES.boch-bolero.context`：「本店位於本市民生西路314號，初建於1920年代，後於1934年餐廳開業後進行裝修」；「「波麗路」
+- `SOURCES.mirror-2025-bolero.citation`：林亦君（文）、何宗昇（攝），〈波麗路西餐廳〉，鏡週刊，2025年5月4日更新。
+- `SOURCES.mirror-2025-bolero.publisher`：鏡週刊
+- `SOURCES.mirror-2025-bolero.title`：波麗路西餐廳
+- `SOURCES.mirror-2025-bolero.context`：1934年（昭和9年）廖水來自立門戶，原在楊承基的「維特咖啡」任主廚；店名取自樂曲〈BOLERO〉；
+- `SOURCES.foodnext-2020-bolero.citation`：魚夫，〈波麗路〉，食力 foodNEXT，2020年7月5日。
+- `SOURCES.foodnext-2020-bolero.publisher`：食力 foodNEXT
+- `SOURCES.foodnext-2020-bolero.title`：波麗路
+- `SOURCES.foodnext-2020-bolero.context`：1934年開幕，民生西路314號；招牌法國鴨子飯、附魚鬆的咖哩飯；年輕人相親的場所；廖水來設計多層鋼
+- `SOURCES.gvm-city-2024-bolero.citation`：魚夫，〈波麗路與維特咖啡〉，遠見城市，2024年11月21日。
+- `SOURCES.gvm-city-2024-bolero.publisher`：遠見城市
+- `SOURCES.gvm-city-2024-bolero.title`：波麗路與維特咖啡
+- `SOURCES.gvm-city-2024-bolero.context`：波麗路位於日治時期的太平町三丁目（約今民生西路與延平北路口）；維特咖啡1931年開於太平町三丁目；畫
+- `SOURCES.gvm-2011-bolero.citation`：王思涵，〈波麗路：保留1934年的菜色與空間〉，《遠見雜誌》2011年8月號（網頁2011年7月29
+- `SOURCES.gvm-2011-bolero.publisher`：遠見雜誌
+- `SOURCES.gvm-2011-bolero.title`：波麗路：保留1934年的菜色與空間
+- `SOURCES.gvm-2011-bolero.context`：廖水來赴日學西餐，朋友鼓勵租小店面開業；後來買下該建物，1976年於隔壁開第二店，本店一直在原址；1
+- `SOURCES.setn-2020-vite-cafe.citation`：鍾志鵬，〈維特咖啡〉，三立新聞網，2020年10月22日。
+- `SOURCES.setn-2020-vite-cafe.publisher`：三立新聞網
+- `SOURCES.setn-2020-vite-cafe.title`：維特咖啡
+- `SOURCES.setn-2020-vite-cafe.context`：維特咖啡1931年開設，經營者楊承基（楊三郎之兄），位於太平町三丁目路口二樓（今延平北路與南京西路口
+- `SOURCES.newtalk-2024-shanshuiting.citation`：林衡哲，〈王井泉與山水亭〉，新頭殼 Newtalk，2024年4月26日。
+- `SOURCES.newtalk-2024-shanshuiting.publisher`：新頭殼 Newtalk
+- `SOURCES.newtalk-2024-shanshuiting.title`：王井泉與山水亭
+- `SOURCES.newtalk-2024-shanshuiting.context`：王井泉在大稻埕經營山水亭臺菜餐廳，常客有林茂生、陳逸松、張文環、呂赫若、吳新榮等，陳逸松出資協助創辦
+- `SOURCES.wiki-bolero.citation`：維基百科，〈波麗路西餐廳〉（無腳註，只作對照）。
+- `SOURCES.wiki-bolero.publisher`：維基百科
+- `SOURCES.wiki-bolero.title`：波麗路西餐廳
+- `SOURCES.wiki-bolero.context`：1934年創立，民生西路314號；店名取自拉威爾〈Boléro〉；1947年畫家顏雲連重新設計改建；
+- `SOURCES.moe-coffee.citation`：教育部《國語辭典簡編本》，「咖啡」。
+- `SOURCES.moe-coffee.publisher`：教育部
+- `SOURCES.moe-coffee.title`：咖啡
+- `SOURCES.moe-coffee.context`：「種子為咖啡原料，焙乾後研成細末可沖泡為飲料，有興奮神經的效果。」
+- `SOURCES.nca-pour-over.context`："hand-pour water over coffee grounds in a filter"（
+- `SOURCES.nca-espresso.context`："uses high pressure to force nearly boiling water 
+- `SOURCES.nca-cold-brew.context`："coffee made using room-temperature or cooler wate
+- `SOURCES.foodnext-cold-brew.citation`：《食力 foodNEXT》，2017年10月20日（冷萃咖啡與冰滴咖啡的差別）。
+- `SOURCES.foodnext-cold-brew.publisher`：食力 foodNEXT
+- `SOURCES.foodnext-cold-brew.title`：食力 2017年10月20日報導
+- `SOURCES.foodnext-cold-brew.context`：冷萃：「注入冷水，於低溫環境中浸泡至少約12小時」；冰滴：「利用5度C以下的冰水混合物…滴入咖啡粉…
+- `SOURCES.moe-jiu-hi-kenn.citation`：教育部《臺灣台語常用詞辭典》，「鰇魚羹」。
+- `SOURCES.moe-jiu-hi-kenn.publisher`：教育部
+- `SOURCES.moe-jiu-hi-kenn.title`：鰇魚羹
+- `SOURCES.moe-jiu-hi-kenn.published`：線上辭典（2026年10月查閱）
+- `SOURCES.moe-jiu-hi-kenn.usage`：魷魚羹的定義與台語讀音（jiû-hî-kenn）。
+- `SOURCES.moe-jiu-hi-kenn.context`：釋義：「一種小吃，用魷魚作成的羹湯。」
+- `SOURCES.moe-jiu-hi.citation`：教育部《臺灣台語常用詞辭典》，「鰇魚」。
+- `SOURCES.moe-jiu-hi.publisher`：教育部
+- `SOURCES.moe-jiu-hi.title`：鰇魚
+- `SOURCES.moe-jiu-hi.published`：線上辭典（2026年10月查閱）
+- `SOURCES.moe-jiu-hi.usage`：魷魚曬成乾、做為提鮮食材的說明。
+- `SOURCES.moe-jiu-hi.context`：釋義：「魷魚。……時常從腹腔剖開，去除內臟後曝曬成乾，做為料理的提鮮食材之一。」
+- `SOURCES.moe-kenn.citation`：教育部《臺灣台語常用詞辭典》，「羹」。
+- `SOURCES.moe-kenn.publisher`：教育部
+- `SOURCES.moe-kenn.title`：羹
+- `SOURCES.moe-kenn.published`：線上辭典（2026年10月查閱）
+- `SOURCES.moe-kenn.usage`：「羹」的定義（異用字「焿」）。
+- `SOURCES.moe-kenn.context`：釋義：「芶芡而成的濃稠湯汁。」用例「花枝羹」；異用字「焿」。
+- `SOURCES.moe-biau-khau.citation`：教育部《臺灣台語常用詞辭典》，「廟口」。
+- `SOURCES.moe-biau-khau.publisher`：教育部
+- `SOURCES.moe-biau-khau.title`：廟口
+- `SOURCES.moe-biau-khau.published`：線上辭典（2026年10月查閱）
+- `SOURCES.moe-biau-khau.usage`：「廟口」的定義與用例。
+- `SOURCES.moe-biau-khau.context`：釋義：「廟門口、廟前廣場。」用例：「廟口的榕樹跤不時都有一寡人佇遐泡茶、開講。」（廟口的榕樹下經常都
+- `SOURCES.moe-tiam-sim-tann.citation`：教育部《臺灣台語常用詞辭典》，「點心擔」。
+- `SOURCES.moe-tiam-sim-tann.publisher`：教育部
+- `SOURCES.moe-tiam-sim-tann.title`：點心擔
+- `SOURCES.moe-tiam-sim-tann.published`：線上辭典（2026年10月查閱）
+- `SOURCES.moe-tiam-sim-tann.usage`：小吃攤的台語說法。
+- `SOURCES.moe-tiam-sim-tann.context`：釋義：「賣點心小吃的攤販。」
+- `SOURCES.moe-sa-te.citation`：教育部《臺灣台語常用詞辭典》，「沙茶」。
+- `SOURCES.moe-sa-te.publisher`：教育部
+- `SOURCES.moe-sa-te.title`：沙茶
+- `SOURCES.moe-sa-te.published`：線上辭典（2026年10月查閱）
+- `SOURCES.moe-sa-te.usage`：沙茶醬的一般說明（不是老潘的配方）。
+- `SOURCES.moe-sa-te.context`：釋義：「用扁魚、蒜酥、麻粉和各種香料調製而成的一種調味料。多用於吃火鍋時的沾醬。」
+- `SOURCES.moe-hi-soo.citation`：教育部《臺灣台語常用詞辭典》，「魚酥」。
+- `SOURCES.moe-hi-soo.publisher`：教育部
+- `SOURCES.moe-hi-soo.title`：魚酥
+- `SOURCES.moe-hi-soo.published`：線上辭典（2026年10月查閱）
+- `SOURCES.moe-hi-soo.usage`：魚酥的一般說明（不是老潘的配方）。
+- `SOURCES.moe-hi-soo.context`：釋義之一：「一種臺灣常見的魚肉加工食品。將魚肉、魚骨打成漿，加入麵粉、地瓜粉和其他醬料混合，再切成條
+- `SOURCES.moe-tian-bu-la.citation`：教育部《重編國語辭典修訂本》，「甜不辣」。
+- `SOURCES.moe-tian-bu-la.publisher`：教育部
+- `SOURCES.moe-tian-bu-la.title`：甜不辣
+- `SOURCES.moe-tian-bu-la.published`：線上辭典（2026年10月查閱）
+- `SOURCES.moe-tian-bu-la.usage`：甜不辣的一般說明（不是老潘的配方）。
+- `SOURCES.moe-tian-bu-la.context`：釋義：「一種日式食品。為日語てんぷら的音譯。……今日臺灣一般所指的甜不辣，是指條狀或扁平狀的炸魚漿。
+- `SOURCES.wiki-ci-sheng-gong.citation`：維基百科，〈大稻埕慈聖宮〉。
+- `SOURCES.wiki-ci-sheng-gong.publisher`：維基百科
+- `SOURCES.wiki-ci-sheng-gong.title`：大稻埕慈聖宮
+- `SOURCES.wiki-ci-sheng-gong.published`：2026年9月25日修訂的版本
+- `SOURCES.wiki-ci-sheng-gong.usage`：慈聖宮的現址、1910年遷建，以及廟前的小吃攤。
+- `SOURCES.wiki-ci-sheng-gong.context`：「1910年，日本政府實施市區改正，廟宇遷移」，1914年重建完成；「今址位於保安街49巷17號」；
+- `SOURCES.mirror-2025-squid.citation`：裴偉，〈裴社長小吃手記6／萬華大稻埕的魷魚美食〉，《鏡週刊》，2025年8月。
+- `SOURCES.mirror-2025-squid.publisher`：鏡週刊
+- `SOURCES.mirror-2025-squid.title`：裴社長小吃手記6／萬華大稻埕的魷魚美食
+- `SOURCES.mirror-2025-squid.published`：2025年8月（網頁顯示2025年8月28日最後更新）
+- `SOURCES.mirror-2025-squid.usage`：專欄作者對魷魚羹興起的說法（不是學術考證）。
+- `SOURCES.mirror-2025-squid.context`：「魷魚羹在70年代於萬華、大稻埕一帶興起，除了因為港口聚眾、喜歡這一味的人多，供貨源頭迪化街就在附近
+- `SOURCES.mirror-2026-squid.citation`：裴偉，〈裴社長小吃手記／老台北才懂的魷刃有魚〉，《鏡週刊》，2026年1月2日。
+- `SOURCES.mirror-2026-squid.publisher`：鏡週刊
+- `SOURCES.mirror-2026-squid.title`：裴社長小吃手記／老台北才懂的魷刃有魚
+- `SOURCES.mirror-2026-squid.published`：2026年1月2日（網頁顯示的發布時間）
+- `SOURCES.mirror-2026-squid.usage`：專欄作者對迪化街南北貨與乾魷魚的說法（不是學術考證）。
+- `SOURCES.mirror-2026-squid.context`：「早期的大稻埕是航運港口，因為河港的條件，成為北部南北貨的集散地。」；「來自日本北海道、韓國，後來是
+- `SOURCES.fb-pannoodles.citation`：老潘魷魚羹 Pannoodles house，Facebook 粉絲專頁「關於」。
+- `SOURCES.fb-pannoodles.title`：老潘魷魚羹 Pannoodles house
+- `SOURCES.fb-pannoodles.published`：店家頁面（未標示日期；2026年10月查閱）
+- `SOURCES.fb-pannoodles.usage`：店家頁面的名稱。頁面上沒有創立年份，本站不填寫。
+- `SOURCES.fb-pannoodles.context`：頁面名稱：「老潘魷魚羹 Pannoodles house」。
+- `SOURCES.puddings-2023-pannoodles.citation`：Pudding’s Life，〈台北迪化街美食│老潘魷魚羮》老店口味沙茶魷魚焿.甜不辣~大稻埕永樂市
+- `SOURCES.puddings-2023-pannoodles.title`：台北迪化街美食│老潘魷魚羮》老店口味沙茶魷魚焿.甜不辣~大稻埕永樂市場對面
+- `SOURCES.puddings-2023-pannoodles.published`：2023年（使用者提供的實訪年份；本次無法開啟頁面核對發表日期）
+- `SOURCES.puddings-2023-pannoodles.usage`：只支持該次實訪的記錄：店在「大稻埕永樂市場對面」，品項有沙茶魷魚羹與甜不辣。不當成最新的價格、營業時
+- `SOURCES.puddings-2023-pannoodles.context`：依文章標題。本次開發時網站阻擋自動讀取，沒有逐句核對內文；文中的圖片未確認使用權，本站沒有使用。
+- `SOURCES.walkerland-2021-laopan.citation`：WalkerLand窩客島，〈【台北美食￭大同區】老潘魷魚羹 x 肉羹麵、魚酥麵&甜不辣〉，2021
+- `SOURCES.walkerland-2021-laopan.publisher`：WalkerLand窩客島
+- `SOURCES.walkerland-2021-laopan.title`：老潘魷魚羹 x 肉羹麵、魚酥麵&甜不辣
+- `SOURCES.walkerland-2021-laopan.published`：2021年2月19日
+- `SOURCES.walkerland-2021-laopan.usage`：只支持該次的食記：地址、魚酥、甜不辣、沙茶調味與褪色的招牌。
+- `SOURCES.walkerland-2021-laopan.context`：地址「台北市大同區迪化街一段30號」；「整體就是以沙茶最為主要的調味」；「魚酥很新鮮的酥脆」；「招牌
+- `SOURCES.andrewplus-laopan.citation`：安魯魯的筆記本，〈老潘魷魚羹 迪化街美食〉。
+- `SOURCES.andrewplus-laopan.publisher`：安魯魯的筆記本
+- `SOURCES.andrewplus-laopan.title`：老潘魷魚羹 迪化街美食
+- `SOURCES.andrewplus-laopan.published`：2024年1月26日發表（2026年9月19日更新）
+- `SOURCES.andrewplus-laopan.usage`：只支持該篇食記：門口的攤車、桌上的調味料、品名「乾拌沙茶生魷魚」「沙茶魷魚羹米粉」與「內用區有冷氣開
+- `SOURCES.andrewplus-laopan.context`：地址「103台北市大同區迪化街一段30號」；「攤車在外頭」；「內用區有冷氣開放」；「桌子上的醋、胡椒
+- `SOURCES.fonfood-laopan.citation`：瘋美食 FonFood，「老潘魷魚羹」店家頁面（網友食記摘錄）。
+- `SOURCES.fonfood-laopan.publisher`：瘋美食 FonFood
+- `SOURCES.fonfood-laopan.title`：老潘魷魚羹
+- `SOURCES.fonfood-laopan.published`：頁面彙整的食記多為2017年前後
+- `SOURCES.fonfood-laopan.usage`：只用來核對品名「魚酥羮」「魷魚羮」（網友食記的摘錄，不是店家公告的菜單）。
+- `SOURCES.fonfood-laopan.context`：頁面的官方菜單欄「目前沒有資訊」；彙整的食記摘錄中出現「魚酥羮」「肉羮湯」「魷魚羮」等品名。
+- `SOURCES.moe-bi-thai-bak.citation`：教育部《臺灣台語常用詞辭典》，「目」（ba̍k）。
+- `SOURCES.moe-bi-thai-bak.publisher`：教育部
+- `SOURCES.moe-bi-thai-bak.title`：目
+- `SOURCES.moe-bi-thai-bak.published`：線上辭典（2026年10月查閱）
+- `SOURCES.moe-bi-thai-bak.usage`：「米篩目」（米苔目）的台語寫法、讀音與詞義。
+- `SOURCES.moe-bi-thai-bak.context`：「目」的第三個義項是「細孔」，用例：「米篩目」（bí-thai-ba̍k），「米篩的網目，也指篩出的
+- `SOURCES.tvbs-2013-temple-food.citation`：食尚玩家編輯部，〈美食雙雄廟口大飽走!大稻埕-霞海城隍廟.慈聖宮〉，《食尚玩家》，2013年4月26
+- `SOURCES.tvbs-2013-temple-food.publisher`：食尚玩家（TVBS）
+- `SOURCES.tvbs-2013-temple-food.title`：美食雙雄廟口大飽走!大稻埕-霞海城隍廟.慈聖宮
+- `SOURCES.tvbs-2013-temple-food.published`：2013年4月26日（網頁的店家資訊卡另有較新的地址）
+- `SOURCES.tvbs-2013-temple-food.usage`：只支持該次的報導：舊址、位置的描述與當時「40年老店」的說法（不當成查證過的開業年份）。
+- `SOURCES.tvbs-2013-temple-food.context`：「在永樂市場與霞海城隍廟間的巷子中，每到假日必排隊的40年老店「永樂米苔目」」；文中的地址是「台北市
+- `SOURCES.tvbs-2013-apang.citation`：食尚玩家編輯部，〈一日北高 阿龐ㄟ國定呷飽日(上)〉，《食尚玩家》，2013年11月27日。
+- `SOURCES.tvbs-2013-apang.publisher`：食尚玩家（TVBS）
+- `SOURCES.tvbs-2013-apang.title`：一日北高 阿龐ㄟ國定呷飽日(上)
+- `SOURCES.tvbs-2013-apang.published`：2013年11月27日
+- `SOURCES.tvbs-2013-apang.usage`：只支持該次節目整理的品項：米苔目、嘴邊肉、脆腸（不代表現在的菜單）。
+- `SOURCES.tvbs-2013-apang.context`：標題「正宗古早味 手作米苔目」；店家「永樂米苔目」，標籤與描述「米苔目,嘴邊肉,脆腸」。
+- `SOURCES.bella-2021-yongle-market.citation`：Bella儂儂，〈大稻埕美食數不完！8間永樂市場美食，不只生魚片連雞捲都有，澎湃的道地好料都在這！〉
+- `SOURCES.bella-2021-yongle-market.publisher`：Bella儂儂
+- `SOURCES.bella-2021-yongle-market.title`：大稻埕美食數不完！8間永樂市場美食
+- `SOURCES.bella-2021-yongle-market.published`：2021年10月2日（網頁顯示2024年7月16日更新）
+- `SOURCES.bella-2021-yongle-market.usage`：只支持該次的整理：民樂街的地址、湯頭與小菜的品項（不當成最新的價格或菜單）。
+- `SOURCES.bella-2021-yongle-market.context`：「帶點油蔥和韭菜香的米苔目，配上嘴邊肉、豬皮、油豆腐、菜頭…一堆小菜」；「吃完還能無限加大骨湯」；地
+- `SOURCES.bella-2025-dadaocheng.citation`：Bella儂儂，〈大稻埕美食地圖！8間「必吃老店」懶人包，從永樂市場吃到迪化街，一篇就夠〉，2025
+- `SOURCES.bella-2025-dadaocheng.publisher`：Bella儂儂
+- `SOURCES.bella-2025-dadaocheng.title`：大稻埕美食地圖！8間「必吃老店」懶人包
+- `SOURCES.bella-2025-dadaocheng.published`：2025年8月10日
+- `SOURCES.bella-2025-dadaocheng.usage`：媒體對店史的說法（創立年份、搬遷）與當次提到的品項；創立年份本站未核實。
+- `SOURCES.bella-2025-dadaocheng.context`：「從民國五十六年創立至今，已傳承三代」；「搬遷到民樂街後，永樂米苔目的環境更加寬敞明亮」；「湯頭以大
+- `SOURCES.judicial-2024-tcda.citation`：臺灣桃園地方法院，〈公告臺灣桃園地方法院113年度法登社字第35號社團法人臺灣文化事業發展協會設立登
+- `SOURCES.judicial-2024-tcda.title`：公告臺灣桃園地方法院113年度法登社字第35號社團法人臺灣文化事業發展協會設立登記
+- `SOURCES.judicial-2024-tcda.publisher`：臺灣桃園地方法院（司法院網站刊登）
+- `SOURCES.judicial-2024-tcda.published`：2024年5月16日（民國113年5月16日）
+- `SOURCES.judicial-2024-tcda.supports[0]`：協會正式名稱
+- `SOURCES.judicial-2024-tcda.supports[1]`：內政部許可設立日期 2023-10-18
+- `SOURCES.judicial-2024-tcda.supports[2]`：法人設立登記日期 2024-05-16
+- `SOURCES.judicial-2024-tcda.supports[3]`：宗旨摘要
+- `SOURCES.judicial-2024-tcda.usage`：只支持協會的名稱、許可與登記日期及宗旨。公告沒有提到黃玉階、元珍豆醬店或文史館，不能用來說明協會與文
+- `SOURCES.judicial-2024-tcda.context`：登記事項：內政部112年10月18日台內團字第1120044388號函許可；113年5月16日登記於
+- `SOURCES.tcmb-huang-yujie.citation`：國家文化記憶庫，〈黃玉階〉（建檔單位：衛生福利部國家中醫藥研究所）。
+- `SOURCES.tcmb-huang-yujie.title`：黃玉階
+- `SOURCES.tcmb-huang-yujie.publisher`：文化部國家文化記憶庫；建檔單位：衛生福利部國家中醫藥研究所
+- `SOURCES.tcmb-huang-yujie.published`：頁面未標示日期（2026年10月查閱）
+- `SOURCES.tcmb-huang-yujie.supports[0]`：生卒年 1850–1918
+- `SOURCES.tcmb-huang-yujie.supports[1]`：1882年遷居大稻埕
+- `SOURCES.tcmb-huang-yujie.supports[2]`：經營醬菜業
+- `SOURCES.tcmb-huang-yujie.supports[3]`：漢醫救治霍亂、鼠疫等疫病
+- …另外 1043 筆
+
+### `src/data/squidSoupLayout.js`（缺 11）
+
+- `LAO_PAN_HOTSPOTS[0].label`：老潘魷魚羹
+- `LAO_PAN_HOTSPOTS[0].note`：迪化街一段30號，永樂市場對面
+- `LAO_PAN_HOTSPOTS[1].label`：料理檯
+- `LAO_PAN_HOTSPOTS[1].note`：湯鍋、玻璃展示罩與疊放的碗
+- `LAO_PAN_HOTSPOTS[2].label`：四道展示餐點
+- `LAO_PAN_HOTSPOTS[2].note`：沙茶魷魚羹、魚酥羹、甜不辣、乾拌沙茶生魷魚
+- `SQUID_SOUP_THEME.title`：魷魚羹飲食文化
+- `TEMPLE_STALL_HOTSPOTS[0].label`：廟口的魷魚羹攤
+- `TEMPLE_STALL_HOTSPOTS[0].note`：飲食文化情境示意
+- `TEMPLE_STALL_HOTSPOTS[1].label`：一碗魷魚羹
+- `TEMPLE_STALL_HOTSPOTS[1].note`：攤台上展示的一碗（示意）
+
+### `src/data/templeSnackLayout.js`（缺 12）
+
+- `DOUHUA_STALL_HOTSPOTS[0].label`：廟口的豆花攤
+- `DOUHUA_STALL_HOTSPOTS[0].note`：飲食文化情境示意
+- `DOUHUA_STALL_HOTSPOTS[1].label`：兩碗豆花
+- `DOUHUA_STALL_HOTSPOTS[1].note`：推車上展示的原味糖水豆花與花生豆花（示意）
+- `DOUHUA_THEME.title`：豆花甜食文化
+- `DOUHUA_THEME.related[0].relation`：同類食物的參訪對照，沒有品牌傳承關係
+- `KUEH_STALL_HOTSPOTS[0].label`：廟口的糕粿攤
+- `KUEH_STALL_HOTSPOTS[0].note`：飲食文化情境示意
+- `KUEH_STALL_HOTSPOTS[1].label`：四種傳統米食
+- `KUEH_STALL_HOTSPOTS[1].note`：托盤與木板上的草仔粿、紅龜粿、芋粿與蘿蔔糕（示意）
+- `KUEH_THEME.title`：糕粿米食文化
+- `KUEH_THEME.related[0].relation`：同類食物的參訪對照，沒有品牌傳承關係
+
+### `src/data/wangJingQuanData.js`（缺 31）
+
+- `WANG_JINGQUAN_PERSON_CHAPTER.tab`：人物：王井泉
+- `WANG_JINGQUAN_PERSON_CHAPTER.title`：人物：王井泉——從維特的經理到山水亭的主人
+- `WANG_JINGQUAN_PERSON_CHAPTER.lead`：背景章提到的山水亭，主人是王井泉。這一節把他在1930–1945年之間的行動排出來：維特酒家的經理、
+- `WANG_JINGQUAN_PERSON_CHAPTER.paragraphs[0]`：出身｜1905年6月4日，王井泉生於臺北大龍峒的商人家庭（林振莖；曾品滄記大龍峒商人家庭）。1918
+- `WANG_JINGQUAN_PERSON_CHAPTER.paragraphs[1]`：波麗路｜離開維特後他到日本考察餐飲業；1935年與廖水來、藍火樹在迪化街開設西式茶室（林振莖）。曾品
+- `WANG_JINGQUAN_PERSON_CHAPTER.paragraphs[2]`：山水亭｜1930年代末，他在延平北路一帶一幢街屋的二樓開設臺菜餐館「山水亭」。開業年各資料不一：曾品
+- `WANG_JINGQUAN_PERSON_CHAPTER.paragraphs[3]`：文人往來｜曾品滄列出的常客有陳逸松、張文環、楊三郎、楊千鶴、國分直一、池田敏雄、吳新榮、王育德，呂赫
+- `WANG_JINGQUAN_PERSON_CHAPTER.paragraphs[4]`：戰時與之後｜1943年5月黃旺成的日記記載，節米日山水亭的1.5元定食仍有飯；1944到1945年空
+- `WANG_JINGQUAN_PERSON_CHAPTER.timeline[0].text`：6月4日生於臺北大龍峒（林振莖）。
+- `WANG_JINGQUAN_PERSON_CHAPTER.timeline[1].text`：任維特酒家經理（林振莖、臺灣記憶；維特的經營者與他的角色各說不同，待核）。
+- `WANG_JINGQUAN_PERSON_CHAPTER.timeline[2].text`：與廖水來、藍火樹在迪化街開設西式茶室；協助廖水來創設波麗路（曾品滄）。
+- `WANG_JINGQUAN_PERSON_CHAPTER.timeline[3].text`：開設山水亭（曾品滄1937年；林振莖引王古勳回憶1938年3月3日；臺灣記憶1939年；三說並列，待
+- `WANG_JINGQUAN_PERSON_CHAPTER.timeline[4].text`：與張文環、陳逸松、黃得時等組啟文社，創刊《台灣文學》，社址設於山水亭。
+- `WANG_JINGQUAN_PERSON_CHAPTER.timeline[5].text`：厚生演劇研究會成立，會址設於山水亭；9月在永樂座演出《閹雞》。
+- `WANG_JINGQUAN_PERSON_CHAPTER.timeline[6].text`：空襲期間山水亭仍營業（曾品滄）。
+- `WANG_JINGQUAN_PERSON_CHAPTER.timeline[7].text`：1945年以後：山水亭遷至民生西路一帶、規模縮小；1955年歇業。
+- `WANG_JINGQUAN_PERSON_CHAPTER.timeline[8].text`：5月19日病逝（臺灣記憶）。
+- `WANG_JINGQUAN_PERSON_CHAPTER.facts[0].label`：生卒
+- `WANG_JINGQUAN_PERSON_CHAPTER.facts[0].value`：1905年6月4日—1965年5月19日（享年兩說不同，本站不寫）
+- `WANG_JINGQUAN_PERSON_CHAPTER.facts[1].label`：維特酒家
+- `WANG_JINGQUAN_PERSON_CHAPTER.facts[1].value`：1931–1934年任經理（林振莖、臺灣記憶）；開設主體與王井泉的角色各說不同，待核
+- `WANG_JINGQUAN_PERSON_CHAPTER.facts[2].label`：山水亭開業年
+- `WANG_JINGQUAN_PERSON_CHAPTER.facts[2].value`：1937（曾品滄）／1938年3月3日（林振莖引王古勳回憶）／1939（臺灣記憶）並列，待核
+- `WANG_JINGQUAN_PERSON_CHAPTER.facts[3].label`：山水亭位置
+- `WANG_JINGQUAN_PERSON_CHAPTER.facts[3].value`：延平北路一帶街屋二樓；町名太平町（曾品滄、莊永明）／永樂町（林振莖）並列；門牌查無，不寫
+- `WANG_JINGQUAN_PERSON_CHAPTER.facts[4].label`：《台灣文學》
+- `WANG_JINGQUAN_PERSON_CHAPTER.facts[4].value`：1941年啟文社創刊，王井泉任負責人、張文環任編輯；社址設於山水亭
+- `WANG_JINGQUAN_PERSON_CHAPTER.facts[5].label`：代表菜
+- `WANG_JINGQUAN_PERSON_CHAPTER.facts[5].value`：東坡刈包、鳳尾蝦、雞腳凍、椰子餅、菜脯蛋、醬冬瓜、滷肝；掛爐烤鴨、羔燒羊肉、紅燒魚（曾品滄一篇，單一
+- `WANG_JINGQUAN_TIMELINE_EVENTS[0].text`：王井泉與張文環、陳逸松、黃得時等組啟文社，創刊《台灣文學》季刊，社址設於山水亭。
+- `WANG_JINGQUAN_TIMELINE_EVENTS[1].text`：厚生演劇研究會成立，會址設於山水亭；9月在永樂座演出《閹雞》等劇。
+
+### `src/data/xiyuanData.js`（缺 58）
+
+- `XIKU_BACKGROUND_CHAPTER.tab`：大稻埕曾經的戲窟
+- `XIKU_BACKGROUND_CHAPTER.title`：背景：大稻埕曾經的戲窟（戲苑並非這些戲院的延續）
+- `XIKU_BACKGROUND_CHAPTER.lead`：日治時期的大稻埕有好幾座戲院，被稱為「戲窟」。這一節只列有出處的幾座；大稻埕戲苑是2010年代的公立
+- `XIKU_BACKGROUND_CHAPTER.paragraphs[0]`：淡水戲館｜《PAR表演藝術》2014年的文章寫，淡水戲館1909年建成，後來改名為臺灣新舞臺，194
+- `XIKU_BACKGROUND_CHAPTER.paragraphs[1]`：永樂座｜百科條目（引《臺灣大百科全書》等）寫，永樂座1921年起籌設（初名「臺北大舞台」）、1923
+- `XIKU_BACKGROUND_CHAPTER.paragraphs[2]`：第一劇場｜2014年的文章寫，第一劇場1935年建於太平町（今延平北路一帶），以電影與新劇為主。本站
+- `XIKU_BACKGROUND_CHAPTER.paragraphs[3]`：並非延續｜大稻埕戲苑是1987年延平活動中心改建、2010年代開始營運的公立場館（見「從延平活動中心
+- `XIKU_BACKGROUND_CHAPTER.paragraphs[4]`：館方自述｜《PAR表演藝術》2011年的報導引述館方，希望「傳承、延續大稻埕古城的戲窟文化」。這是館
+- `XIKU_BACKGROUND_CHAPTER.paragraphs[5]`：說明｜網路上流傳「13間消失的戲院」之類的整理，本站沒有逐間核對，只寫上面三座有專業雜誌或百科可查的
+- `XIKU_BACKGROUND_CHAPTER.facts[0].label`：淡水戲館
+- `XIKU_BACKGROUND_CHAPTER.facts[0].value`：1909年建、後改名臺灣新舞臺、1945年毀於空襲（《PAR表演藝術》2014）
+- `XIKU_BACKGROUND_CHAPTER.facts[1].label`：永樂座
+- `XIKU_BACKGROUND_CHAPTER.facts[1].value`：1924年2月17日開幕、1960年5月歇業；今迪化街一段46巷，市場對面（百科引《臺灣大百科全書》
+- `XIKU_BACKGROUND_CHAPTER.facts[2].label`：第一劇場
+- `XIKU_BACKGROUND_CHAPTER.facts[2].value`：1935年建於太平町，以電影與新劇為主（《PAR表演藝術》2014）
+- `XIKU_BACKGROUND_CHAPTER.facts[3].label`：與戲苑的關係
+- `XIKU_BACKGROUND_CHAPTER.facts[3].value`：沒有承接、同址或同團體關係；「延續戲窟文化」為館方自述
+- `XIYUAN_HISTORY_CHAPTER.tab`：從延平活動中心到戲苑
+- `XIYUAN_HISTORY_CHAPTER.title`：從延平活動中心到大稻埕戲苑（1987—2011，開幕年份待核）
+- `XIYUAN_HISTORY_CHAPTER.lead`：戲苑的前身是1987年成立的「延平活動中心」；2009年更名，2010年試營運，2011年正式營運。
+- `XIYUAN_HISTORY_CHAPTER.paragraphs[0]`：前身｜依百科條目，1987年2月臺北市立社會教育館在「延平區行政中心9樓」成立延平活動中心。《PAR
+- `XIYUAN_HISTORY_CHAPTER.paragraphs[1]`：整建與更名｜百科寫2009年3月配合「大稻埕古城重現專案」整建，同年10月31日更名為「大稻埕戲苑」
+- `XIYUAN_HISTORY_CHAPTER.paragraphs[2]`：試營運與正式營運｜百科寫2010年3月6日開館試營運；報導寫「去年」（2010年）開始試營運、「本月
+- `XIYUAN_HISTORY_CHAPTER.paragraphs[3]`：管理單位｜2011年前後由臺北市立社會教育館經營；百科寫2015年11月6日社教館改制為臺北市藝文推
+- `XIYUAN_HISTORY_CHAPTER.paragraphs[4]`：說明｜這一節的沿革只有百科條目與專業雜誌互相支持，沒有官方沿革頁或公文。網路上另有「戲苑由北投遷來」
+- `XIYUAN_HISTORY_CHAPTER.facts[0].label`：前身
+- `XIYUAN_HISTORY_CHAPTER.facts[0].value`：延平活動中心，1987年2月成立（臺北市立社會教育館；百科）
+- `XIYUAN_HISTORY_CHAPTER.facts[1].label`：更名
+- `XIYUAN_HISTORY_CHAPTER.facts[1].value`：2009年10月31日更名為大稻埕戲苑（百科；報導寫2009年整修完成）
+- `XIYUAN_HISTORY_CHAPTER.facts[2].label`：試營運
+- `XIYUAN_HISTORY_CHAPTER.facts[2].value`：2010年（百科3月6日；報導「去年」）
+- `XIYUAN_HISTORY_CHAPTER.facts[3].label`：正式營運
+- `XIYUAN_HISTORY_CHAPTER.facts[3].value`：2011年（報導2011年3月底；2014年報導稱2011年開幕）；開幕年份以2010／2011並列
+- `XIYUAN_HISTORY_CHAPTER.facts[4].label`：待核
+- `XIYUAN_HISTORY_CHAPTER.facts[4].value`：延平區行政中心與永樂市場大樓的關係、2015年改隸日期、「大稻埕古城重現專案」內容
+- `XIYUAN_HISTORY_CHAPTER.timeline[0].place`：1987年2月
+- `XIYUAN_HISTORY_CHAPTER.timeline[0].text`：臺北市立社會教育館成立延平活動中心（百科寫在「延平區行政中心9樓」，與永樂市場大樓的關係待核）。
+- `XIYUAN_HISTORY_CHAPTER.timeline[1].text`：整建；10月31日更名為「大稻埕戲苑」（百科；報導寫整修於2009年完成）。
+- `XIYUAN_HISTORY_CHAPTER.timeline[2].text`：試營運（百科3月6日；報導寫「去年」）。
+- `XIYUAN_HISTORY_CHAPTER.timeline[3].text`：正式營運（報導寫2011年3月底；2014年報導稱2011年開幕）。
+- `XIYUAN_HISTORY_CHAPTER.timeline[4].text`：社教館改制為臺北市藝文推廣處，戲苑改隸（只有百科，日期待核）。
+- `XIYUAN_TIMELINE_EVENT.text`：大稻埕戲苑在永樂市場大樓8、9樓正式營運（2010年試營運；前身為1987年的延平活動中心，開幕年份
+- `XIYUAN_VENUE_CHAPTER.tab`：大稻埕戲苑
+- `XIYUAN_VENUE_CHAPTER.title`：市場大樓8、9樓的戲曲場館：大稻埕戲苑
+- `XIYUAN_VENUE_CHAPTER.lead`：永樂市場大樓的8、9樓是一座公立的傳統戲曲場館「大稻埕戲苑」。這裡只有文字介紹；場景中的大樓沒有做出
+- `XIYUAN_VENUE_CHAPTER.paragraphs[0]`：位置｜依臺北市政府劇場整合資訊平臺的場館資料，大稻埕戲苑座落在永樂市場大樓的8、9樓，管理單位是臺北
+- `XIYUAN_VENUE_CHAPTER.paragraphs[1]`：9樓劇場｜9樓是鏡框式的劇場。《PAR表演藝術》2011年的報導寫「可容納五百人」，百科條目寫506
+- `XIYUAN_VENUE_CHAPTER.paragraphs[2]`：8樓曲藝場與布袋戲展｜8樓是較小的曲藝場，報導與百科都寫約100席（百科另說沒有固定席位），以掌中戲
+- `XIYUAN_VENUE_CHAPTER.paragraphs[3]`：節目｜臺北市藝文推廣處的活動頁上，戲苑的節目有布袋戲、歌仔戲、崑劇與偶戲展覽；詳細的節目、票價與開放
+- `XIYUAN_VENUE_CHAPTER.paragraphs[4]`：說明｜這一節寫的是現代的公立場館，不是市場的歷史。市場大樓1985年開業時各樓層的用途見「市場歷史」
+- `XIYUAN_VENUE_CHAPTER.facts[0].label`：位置
+- `XIYUAN_VENUE_CHAPTER.facts[0].value`：永樂市場大樓8、9樓（迪化街一段21號）
+- `XIYUAN_VENUE_CHAPTER.facts[1].label`：9樓
+- `XIYUAN_VENUE_CHAPTER.facts[1].value`：劇場，約500席（500／506／501–1000席三說，待核）；歌仔戲、京劇、南管、北管、客家戲、
+- `XIYUAN_VENUE_CHAPTER.facts[2].label`：8樓
+- `XIYUAN_VENUE_CHAPTER.facts[2].value`：曲藝場約100席（有無固定席位兩說）、布袋戲常設展區、排練室
+- `XIYUAN_VENUE_CHAPTER.facts[3].label`：管理單位
+- `XIYUAN_VENUE_CHAPTER.facts[3].value`：臺北市藝文推廣處（劇場整合資訊平臺）

@@ -9,10 +9,11 @@ import { useT } from '../i18n/useT.js'
 
 const MODE_ORDER = ['smooth', 'fine']
 
-function specs(q) {
+function specs(q, t) {
+  const dpr = t('settings.spec.dpr', { dpr: q.dpr.toFixed(2) })
   return q.id === 'smooth'
-    ? [`解析度最高 ×${q.dpr.toFixed(2)}`, `陰影貼圖 ${q.shadowMapSize}`, '關閉景深、光暈與環境遮蔽', '精簡遠景裝飾與蒸氣']
-    : [`解析度最高 ×${q.dpr.toFixed(2)}`, `陰影貼圖 ${q.shadowMapSize}（柔和陰影）`, '環境遮蔽、輕微光暈與景深', '完整的遠景與街景裝飾']
+    ? [dpr, t('settings.spec.shadow', { size: q.shadowMapSize }), t('settings.spec.smooth1'), t('settings.spec.smooth2')]
+    : [dpr, t('settings.spec.shadowSoft', { size: q.shadowMapSize }), t('settings.spec.fine1'), t('settings.spec.fine2')]
 }
 
 function GearIcon() {
@@ -176,13 +177,13 @@ export function SettingsMenu() {
         <GearIcon />
       </button>
       {open && (
-        <div id="quality-panel" className="hud-quality__panel paper" role="dialog" aria-label="設定" data-scrollable>
+        <div id="quality-panel" className="hud-quality__panel paper" role="dialog" aria-label={t('settings.dialog')} data-scrollable>
           <EraSection touch={touch} />
           <ViewModeSection />
           <p className="hud-menu__heading">
             <span>{t('settings.quality')}</span>
           </p>
-          <div className="quality-options" role="radiogroup" aria-label="畫質模式">
+          <div className="quality-options" role="radiogroup" aria-label={t('settings.qualityMode')}>
             {MODE_ORDER.map((id) => {
               const q = getQualitySettings(id)
               const active = mode === id
@@ -201,7 +202,7 @@ export function SettingsMenu() {
                     <small>{q.hint}</small>
                   </span>
                   <span className="quality-option__specs">
-                    {specs(q).map((line) => (
+                    {specs(q, t).map((line) => (
                       <span key={line}>{line}</span>
                     ))}
                   </span>
