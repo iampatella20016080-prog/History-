@@ -13,27 +13,23 @@
 
 | 年代 | 音檔 |
 | --- | --- |
-| 港口商街（qing-port） | `river-lap.mp3`、`wharf-calls.mp3`、`oars.mp3`、`street-murmur.mp3` |
-| 酒樓繁華（banquet） | `river-lap.mp3`、`street-murmur.mp3`、`gong-distant.mp3` |
-| 摩登大稻埕（modern） | `river-lap.mp3`、`street-murmur.mp3`、`bicycle-bell.mp3`、`gramophone.mp3` |
-| 庶民生活（postwar） | `river-lap.mp3`、`street-murmur.mp3`、`vendor-calls.mp3`、`trishaw.mp3`、`radio.mp3` |
-| 老屋新生（revival） | `river-lap.mp3`、`street-murmur.mp3`、`scooter.mp3` |
+| 港口商街（qing-port） | `river-lap.mp3`、`oars.mp3` |
+| 酒樓繁華（banquet） | `river-lap.mp3`、`gong-distant.mp3` |
+| 摩登大稻埕（modern） | `river-lap.mp3`、`bicycle-bell.mp3`、`gramophone.mp3` |
+| 庶民生活（postwar） | `river-lap.mp3`、`trishaw.mp3`、`radio.mp3` |
+| 老屋新生（revival） | `river-lap.mp3` |
 
 ## 音檔
 
 | 音檔 | 循環 | 大小 | 來源 | 剪輯 | 情境示意 |
 | --- | --- | --- | --- | --- | --- |
 | `river-lap.mp3`（河水拍岸） | 12 秒 | 110 KB | ceich93〈Water_Lapping_River.wav〉 | 剪 10–24 秒（沒有人聲、車聲的段落）；去掉 120 Hz 以下的風噪；尾端 2 秒交叉淡化接回開頭成 12 秒循環。 | 情境示意：美國哈德遜河的卵石岸，不是淡水河；只取河水拍岸的聲響。 |
-| `wharf-calls.mp3`（碼頭出力的悶喊） | 16 秒 | 141 KB | ShangusBurger（Shane Vincent）〈CRWDBatl_Crowd Grunting, Exerting, Metered, Rowing_ShaneVincent_GSC24_XY-AKG214-96k.wav〉 | 剪 1.2–12.4 秒的八次出力；帶通 90 Hz–2.5 kHz 營造距離感；放在 16 秒循環的開頭，其餘留白。 | 情境示意：工作室錄的群眾出力聲，不是清末碼頭；只用無詞的悶喊，不放任何語言的吆喝內容。 |
 | `oars.mp3`（船槳與水花） | 12 秒 | 110 KB | ilmari_freesound〈2021-08-30-rowing-boat-009.wav〉 | 剪 8–22 秒的划槳、槳架摩擦與水花（避開 23 秒處最大聲的一下）；去掉 60 Hz 以下；交叉淡化成 12 秒循環。 | 情境示意：芬蘭湖上的木划艇，不是淡水河上的舢舨。 |
-| `street-murmur.mp3`（街上人聲） | 18 秒 | 157 KB | ilmari_freesound〈2022-03-13-muzha-market-ambience-zoom-h5-clippy.wav〉 | 剪 20–40 秒（沒有突出的敲擊聲）；帶通 100 Hz–6 kHz，讓人聲只剩嘈雜感；交叉淡化成 18 秒循環。 | 情境示意：2022 年臺北木柵市場的人聲，五個年代共用；用自動語音辨識（Whisper）檢查沒有辨識出清楚的句子。 |
 | `gong-distant.mp3`（遠處的鑼鼓） | 16 秒 | 141 KB | Jor92〈Chinese Hong Kong folk drums and gongs beating 02〉 | 剪 15–33 秒的連續段落；帶通 120 Hz–1.8 kHz，做成遠處傳來的鑼鼓；交叉淡化成 16 秒循環。 | 情境示意：香港醒獅的鑼鼓，不是日治時期大稻埕的演出；實際的樂器與曲目待核。 |
 | `bicycle-bell.mp3`（腳踏車鈴） | 14 秒 | 126 KB | submergent〈bicycle_rideby_stereo_01〉＋trpete〈Traditional Bicycle Bell.wav〉 | 腳踏車滑行經過（4.2 秒）放在第 1 秒；車鈴單響（1.6–4.6 秒）放在第 2.6 秒、連響（19.2–22.6 秒）放在第 9 秒；14 秒循環，接點落在無聲處。 | 情境示意：英國傳統車鈴與現代腳踏車，不是 1930 年代臺灣的錄音。 |
 | `gramophone.mp3`（留聲機） | 26 秒 | 219 KB | 作曲：蕭邦（1810–1849）；演奏：拉赫曼尼諾夫（1873–1943）；Victor 唱片 1008（B-24644，第 8 次錄音），1923-12-27〈Mazurka in C sharp minor, op. 63, no. 3 (1923 recording)〉＋thaighaudio〈071416 Victor Victrola playing a record end loop.wav〉 | 唱片剪 2.5–24.5 秒，前後淡入 1 秒、淡出 2.5 秒，放在第 2 秒；Victrola 唱針雜音（1.5–13.5 秒）反覆交叉淡化接成連續底噪，比音樂小 14 dB；兩者帶通 250 Hz–4.5 kHz 模擬喇叭留聲機；26 秒循環，接點只有唱針雜音。 | 情境示意：1934 年開業的波麗路西餐廳以 78 轉電唱機播古典樂（見 docs/research/bolero.md），這裡用年代相近、已是公有領域的 1923 年唱片；不是當年大稻埕實際播放的那一張。 |
-| `vendor-calls.mp3`（市場攤位的人聲） | 16 秒 | 141 KB | ilmari_freesound〈2022-03-13-muzha-market-ambience-zoom-h5-clippy.wav〉 | 剪同一段錄音裡較熱鬧的 135–153 秒（攤位前的人聲與交易聲）；帶通 100 Hz–7 kHz；交叉淡化成 16 秒循環。 | 情境示意：2022 年臺北木柵市場，不是 1945–1980 年的慈聖宮廟口；找不到授權清楚的臺灣叫賣錄音，改用聽不出清楚句子的市場人聲（Whisper 檢查）。 |
 | `trishaw.mp3`（三輪車） | 12 秒 | 110 KB | submergent〈bicycle_rideby_stereo_01〉＋RutgerMuller〈Japan_Matsudo_Bicycle_Bell_2.wav〉 | 腳踏車滑行經過放慢到 0.8 倍（較重、較慢）、音量提高，放在第 0.8 秒；松戶的車鈴兩段（降低音量）（1.5–3.8、6.7–8.7 秒）放在第 2.4、8.2 秒；12 秒循環，接點落在無聲處。 | 情境示意：用腳踏車與日本車鈴組成三輪車經過的聲音，沒有找到授權清楚的三輪車錄音。 |
 | `radio.mp3`（收音機） | 20 秒 | 173 KB | 作曲：巴哈（1685–1750）；演奏：克萊斯勒、津巴利斯特（小提琴），Walter B. Rogers 指揮；Victor 唱片 76028（C-15560，第 4 次錄音），1915-01-04〈Concerto for two violins Part 1 (1915 recording)〉＋Anellide〈German Radio Saba_AM.wav〉 | 唱片剪 40–56 秒，帶通 300 Hz–3.4 kHz 模擬調幅收音機，前後淡入 1.5 秒、淡出 2 秒，放在第 2 秒；SABA 收音機 AM 底噪（1–23 秒，沒有電台內容）帶通 200 Hz–4 kHz、比音樂小 12 dB，交叉淡化成 20 秒循環；接點只有底噪。 | 情境示意：收音機播放的內容用公有領域的 1915 年古典樂唱片代替，不是當年臺灣電台的節目；收音機雜訊錄自德國 SABA 真空管收音機（機種年代未查證）。 |
-| `scooter.mp3`（機車） | 26 秒 | 219 KB | kyles〈scooters pass by slow and medium speed.flac〉 | 剪 1–29 秒（兩輛機車在第 5、22 秒經過）；去掉 50 Hz 以下的風噪；交叉淡化成 26 秒循環。 | 情境示意：錄音地點未註明，不是迪化街。 |
 
 ## 原始錄音
 
@@ -47,16 +43,6 @@
 - 下載：Freesound 免登入的高品質預覽 MP3（128 kbps）；原始檔需要登入才能下載
 - 用在：`river-lap.mp3`
 
-### CRWDBatl_Crowd Grunting, Exerting, Metered, Rowing_ShaneVincent_GSC24_XY-AKG214-96k.wav
-
-- 作者：ShangusBurger（Shane Vincent）
-- 網址：https://freesound.org/people/ShangusBurger/sounds/763822/
-- 授權：CC0 1.0（公眾領域貢獻宣告）（https://creativecommons.org/publicdomain/zero/1.0/）
-- 原始檔名：CRWDBatl_Crowd Grunting, Exerting, Metered, Rowing_ShaneVincent_GSC24_XY-AKG214-96k.wav
-- 錄音：GameSoundCon 2024 的群眾錄音：一群人依節奏一起出力的悶喊，像同步划大船（無詞；上傳於 2024-11-06）
-- 下載：Freesound 免登入的高品質預覽 MP3（128 kbps）；原始檔需要登入才能下載
-- 用在：`wharf-calls.mp3`
-
 ### 2021-08-30-rowing-boat-009.wav
 
 - 作者：ilmari_freesound
@@ -66,16 +52,6 @@
 - 錄音：芬蘭塞馬湖（Lake Saimaa）上的舊木划艇，2021-08-30
 - 下載：Freesound 免登入的高品質預覽 MP3（128 kbps）；原始檔需要登入才能下載
 - 用在：`oars.mp3`
-
-### 2022-03-13-muzha-market-ambience-zoom-h5-clippy.wav
-
-- 作者：ilmari_freesound
-- 網址：https://freesound.org/people/ilmari_freesound/sounds/623986/
-- 授權：CC0 1.0（公眾領域貢獻宣告）（https://creativecommons.org/publicdomain/zero/1.0/）
-- 原始檔名：2022-03-13-muzha-market-ambience-zoom-h5-clippy.wav
-- 錄音：臺北木柵市場，週六的熱鬧時段，2022-03-13
-- 下載：Freesound 免登入的高品質預覽 MP3（128 kbps）；原始檔需要登入才能下載
-- 用在：`street-murmur.mp3`、`vendor-calls.mp3`
 
 ### Chinese Hong Kong folk drums and gongs beating 02
 
@@ -156,13 +132,3 @@
 - 錄音：德國 SABA 2000 Transeuropa 真空管收音機在 AM 波段選台的雜訊，錄於比利時布魯塞爾（上傳於 2023-05-09）
 - 下載：Freesound 免登入的高品質預覽 MP3（128 kbps）；原始檔需要登入才能下載
 - 用在：`radio.mp3`
-
-### scooters pass by slow and medium speed.flac
-
-- 作者：kyles
-- 網址：https://freesound.org/people/kyles/sounds/450702/
-- 授權：CC0 1.0（公眾領域貢獻宣告）（https://creativecommons.org/publicdomain/zero/1.0/）
-- 原始檔名：scooters pass by slow and medium speed.flac
-- 錄音：機車以慢速、中速經過（地點未註明；上傳於 2018-12-06）
-- 下載：Freesound 免登入的高品質預覽 MP3（128 kbps）；原始檔需要登入才能下載
-- 用在：`scooter.mp3`

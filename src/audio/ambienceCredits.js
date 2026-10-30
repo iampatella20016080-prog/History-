@@ -26,16 +26,6 @@ export const AMBIENCE_SOURCES = {
     downloaded: FREESOUND_PREVIEW,
     downloadedEn: FREESOUND_PREVIEW_EN,
   },
-  fs763822: {
-    title: 'CRWDBatl_Crowd Grunting, Exerting, Metered, Rowing_ShaneVincent_GSC24_XY-AKG214-96k.wav',
-    author: 'ShangusBurger（Shane Vincent）',
-    url: 'https://freesound.org/people/ShangusBurger/sounds/763822/',
-    ...CC0,
-    originalFile: 'CRWDBatl_Crowd Grunting, Exerting, Metered, Rowing_ShaneVincent_GSC24_XY-AKG214-96k.wav',
-    recorded: 'GameSoundCon 2024 的群眾錄音：一群人依節奏一起出力的悶喊，像同步划大船（無詞；上傳於 2024-11-06）',
-    downloaded: FREESOUND_PREVIEW,
-    downloadedEn: FREESOUND_PREVIEW_EN,
-  },
   fs585316: {
     title: '2021-08-30-rowing-boat-009.wav',
     author: 'ilmari_freesound',
@@ -44,16 +34,6 @@ export const AMBIENCE_SOURCES = {
     originalFile: '2021-08-30-rowing-boat-009.wav',
     recorded: '芬蘭塞馬湖（Lake Saimaa）上的舊木划艇，2021-08-30',
     recordedEn: 'An old wooden rowing boat on Lake Saimaa, Finland, 2021-08-30',
-    downloaded: FREESOUND_PREVIEW,
-    downloadedEn: FREESOUND_PREVIEW_EN,
-  },
-  fs623986: {
-    title: '2022-03-13-muzha-market-ambience-zoom-h5-clippy.wav',
-    author: 'ilmari_freesound',
-    url: 'https://freesound.org/people/ilmari_freesound/sounds/623986/',
-    ...CC0,
-    originalFile: '2022-03-13-muzha-market-ambience-zoom-h5-clippy.wav',
-    recorded: '臺北木柵市場，週六的熱鬧時段，2022-03-13',
     downloaded: FREESOUND_PREVIEW,
     downloadedEn: FREESOUND_PREVIEW_EN,
   },
@@ -153,16 +133,6 @@ export const AMBIENCE_SOURCES = {
     downloaded: FREESOUND_PREVIEW,
     downloadedEn: FREESOUND_PREVIEW_EN,
   },
-  fs450702: {
-    title: 'scooters pass by slow and medium speed.flac',
-    author: 'kyles',
-    url: 'https://freesound.org/people/kyles/sounds/450702/',
-    ...CC0,
-    originalFile: 'scooters pass by slow and medium speed.flac',
-    recorded: '機車以慢速、中速經過（地點未註明；上傳於 2018-12-06）',
-    downloaded: FREESOUND_PREVIEW,
-    downloadedEn: FREESOUND_PREVIEW_EN,
-  },
 }
 
 /** 每個輸出音檔（public/audio/ambience/<id>.mp3）的來源與剪輯 */
@@ -174,22 +144,12 @@ export const AMBIENCE_CREDITS = {
     context: '情境示意：美國哈德遜河的卵石岸，不是淡水河；只取河水拍岸的聲響。',
     contextEn: 'Illustrative: a pebbly bank of the Hudson River in the USA, not the Tamsui River; only the sound of water lapping the shore is used.',
   },
-  'wharf-calls': {
-    sources: ['fs763822'],
-    edits: '剪 1.2–12.4 秒的八次出力；帶通 90 Hz–2.5 kHz 營造距離感；放在 16 秒循環的開頭，其餘留白。',
-    context: '情境示意：工作室錄的群眾出力聲，不是清末碼頭；只用無詞的悶喊，不放任何語言的吆喝內容。',
-  },
   oars: {
     sources: ['fs585316'],
     edits: '剪 8–22 秒的划槳、槳架摩擦與水花（避開 23 秒處最大聲的一下）；去掉 60 Hz 以下；交叉淡化成 12 秒循環。',
     editsEn: 'Cut from 8–22 s of oar strokes, oarlock rubbing and splashes (avoiding the loudest knock at 23 s); everything below 60 Hz removed; cross-faded into a 12-second loop.',
     context: '情境示意：芬蘭湖上的木划艇，不是淡水河上的舢舨。',
     contextEn: 'Illustrative: a wooden rowing boat on a Finnish lake, not a sampan on the Tamsui River.',
-  },
-  'street-murmur': {
-    sources: ['fs623986'],
-    edits: '剪 20–40 秒（沒有突出的敲擊聲）；帶通 100 Hz–6 kHz，讓人聲只剩嘈雜感；交叉淡化成 18 秒循環。',
-    context: '情境示意：2022 年臺北木柵市場的人聲，五個年代共用；用自動語音辨識（Whisper）檢查沒有辨識出清楚的句子。',
   },
   'gong-distant': {
     sources: ['fs792545'],
@@ -212,11 +172,6 @@ export const AMBIENCE_CREDITS = {
     context: '情境示意：1934 年開業的波麗路西餐廳以 78 轉電唱機播古典樂（見 docs/research/bolero.md），這裡用年代相近、已是公有領域的 1923 年唱片；不是當年大稻埕實際播放的那一張。',
     contextEn: 'Illustrative: the Bolero Western restaurant, opened in 1934, played classical music on a 78 rpm electric record player (see docs/research/bolero.md); here a 1923 record of similar date, now in the public domain, is used, not the one actually played in Dadaocheng at the time.',
   },
-  'vendor-calls': {
-    sources: ['fs623986'],
-    edits: '剪同一段錄音裡較熱鬧的 135–153 秒（攤位前的人聲與交易聲）；帶通 100 Hz–7 kHz；交叉淡化成 16 秒循環。',
-    context: '情境示意：2022 年臺北木柵市場，不是 1945–1980 年的慈聖宮廟口；找不到授權清楚的臺灣叫賣錄音，改用聽不出清楚句子的市場人聲（Whisper 檢查）。',
-  },
   trishaw: {
     sources: ['fs826604', 'fs364806'],
     edits: '腳踏車滑行經過放慢到 0.8 倍（較重、較慢）、音量提高，放在第 0.8 秒；松戶的車鈴兩段（降低音量）（1.5–3.8、6.7–8.7 秒）放在第 2.4、8.2 秒；12 秒循環，接點落在無聲處。',
@@ -230,11 +185,6 @@ export const AMBIENCE_CREDITS = {
     editsEn: 'The record cut from 40–56 s, band-passed 300 Hz–3.4 kHz to imitate an AM radio, faded in over 1.5 s and out over 2 s, placed at 2 s; the SABA radio’s AM noise bed (1–23 s, with no station content) band-passed 200 Hz–4 kHz and 12 dB quieter than the music, cross-faded into a 20-second loop; the join contains only the noise bed.',
     context: '情境示意：收音機播放的內容用公有領域的 1915 年古典樂唱片代替，不是當年臺灣電台的節目；收音機雜訊錄自德國 SABA 真空管收音機（機種年代未查證）。',
     contextEn: 'Illustrative: what the radio plays is replaced by a public-domain 1915 classical record, not a programme of a Taiwanese station of the time; the radio noise was recorded from a German SABA valve radio (model date unverified).',
-  },
-  scooter: {
-    sources: ['fs450702'],
-    edits: '剪 1–29 秒（兩輛機車在第 5、22 秒經過）；去掉 50 Hz 以下的風噪；交叉淡化成 26 秒循環。',
-    context: '情境示意：錄音地點未註明，不是迪化街。',
   },
 }
 

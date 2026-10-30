@@ -1,5 +1,5 @@
 import { CylinderGeometry, TorusGeometry } from 'three'
-import { DOUHUA_STALL, DOUHUA_STALL_HOTSPOTS, DOUHUA_STALL_NPCS } from '../../data/templeSnackLayout.js'
+import { DOUHUA_STALL, DOUHUA_STALL_HOTSPOTS, DOUHUA_STALL_NPCS, TEMPLE_STALL_MARKER_Y } from '../../data/templeSnackLayout.js'
 import { conditionTint } from './condition.js'
 import { shade } from './props.js'
 import { bowlStack } from './squidSoupWares.js'
@@ -169,7 +169,7 @@ export function buildTempleDouhuaStall(b, cfg = {}, detail = b) {
   return {
     groundHeight: S.canopy.height,
     topHeight: S.canopy.height + 0.15,
-    anchors: { prompt: local(...stall.prompt), marker: local(0, S.canopy.height + 1.3, 0) },
+    anchors: { prompt: local(...stall.prompt), marker: local(0, TEMPLE_STALL_MARKER_Y, 0) },
     // 觀賞模式聚焦攤位：從通道斜看推車、豆花桶與布幌
     focus: { center: toWorld(0, 0.25), forward: dir(0, 1), width: 2.2, height: 2.2, viewHeight: 1.1, maxDistance: 4.8, maxPitch: 0.45, maxYawOffset: 0.7 },
     subStores: [

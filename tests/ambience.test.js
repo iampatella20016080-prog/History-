@@ -30,7 +30,7 @@ describe('環境音：聲音清單', () => {
   test('每個年代都有清單，且只用音檔表裡的聲音、音檔都存在且夠小', () => {
     for (const era of ERAS) {
       const list = ERA_AMBIENCE[era.id]
-      assert.ok(list?.length >= 3, `${era.id} 至少三種環境聲`)
+      assert.ok(list?.length >= 1, `${era.id} 至少有河水聲`)
       assert.equal(new Set(list.map((e) => e.sound)).size, list.length, `${era.id} 的聲音不重複`)
       for (const entry of list) assert.ok(AMBIENCE_SOUNDS[entry.sound], `${era.id}: ${entry.sound}`)
     }
@@ -53,17 +53,21 @@ describe('環境音：聲音清單', () => {
     assert.deepEqual(new Set(ambienceSoundIds()), new Set(Object.keys(AMBIENCE_SOUNDS)), '沒有沒用到的音檔')
   })
 
-  test('年代正確性：留聲機只在摩登、收音機只在庶民生活、機車只在老屋新生、港口商街沒有機械聲', () => {
+  test('年代正確性：留聲機只在摩登、收音機只在庶民生活、港口商街沒有機械聲；移除的四個聲音都不在了', () => {
     const where = (sound) => ERAS.filter((e) => ERA_AMBIENCE[e.id].some((x) => x.sound === sound)).map((e) => e.id)
     assert.deepEqual(where('gramophone'), ['modern'])
     assert.deepEqual(where('radio'), ['postwar'])
-    assert.deepEqual(where('scooter'), ['revival'])
     assert.deepEqual(where('trishaw'), ['postwar'])
     assert.deepEqual(where('bicycle-bell'), ['modern'])
-    assert.deepEqual(where('wharf-calls'), ['qing-port'])
     assert.deepEqual(where('oars'), ['qing-port'])
     assert.deepEqual(where('gong-distant'), ['banquet'])
-    assert.deepEqual(ERA_AMBIENCE['qing-port'].map((e) => e.sound).sort(), ['oars', 'river-lap', 'street-murmur', 'wharf-calls'])
+    assert.deepEqual(ERA_AMBIENCE['qing-port'].map((e) => e.sound).sort(), ['oars', 'river-lap'])
+    assert.deepEqual(ERA_AMBIENCE.revival.map((e) => e.sound), ['river-lap'], '老屋新生只剩河水，不用其他聲音補上')
+    for (const removed of ['wharf-calls', 'street-murmur', 'vendor-calls', 'scooter']) {
+      assert.deepEqual(where(removed), [], `${removed} 已移除`)
+      assert.ok(!AMBIENCE_SOUNDS[removed] && !AMBIENCE_CREDITS[removed], `${removed} 不在音檔表與來源記錄`)
+      assert.ok(!existsSync(join(PUBLIC, `audio/ambience/${removed}.mp3`)) && !existsSync(join(PUBLIC, `audio/ambience/synth/${removed}.mp3`)), `${removed} 的音檔與備援都刪掉`)
+    }
   })
 
   test('錨點在可走的街道、廣場或河岸一帶（不在街道以外很遠的地方）', () => {
@@ -165,13 +169,11 @@ describe('環境音：距離與聲軌上限', () => {
     assert.ok(Math.abs(distanceGain(25, 10, 40) - 0.5) < 1e-9)
   })
 
-  test('走近河岸時水聲變大、走到街尾幾乎聽不到；人聲底噪處處相同', () => {
+  test('走近河岸時水聲變大、走到街尾幾乎聽不到', () => {
     const river = ERA_AMBIENCE['qing-port'].find((e) => e.sound === 'river-lap')
-    const murmur = ERA_AMBIENCE['qing-port'].find((e) => e.sound === 'street-murmur')
     assert.equal(entryGain(river, { x: -47, z: 0 }), 1)
     assert.ok(entryGain(river, { x: -30, z: 0 }) < entryGain(river, { x: -40, z: 0 }))
     assert.equal(entryGain(river, { x: 30, z: 0 }), 0)
-    assert.equal(entryGain(murmur, { x: -47, z: 0 }), entryGain(murmur, { x: 30, z: 0 }))
   })
 
   test('planTracks：同時聲軌不超過上限，聲音大的優先；出生點附近只播應該聽到的', () => {
@@ -182,9 +184,9 @@ describe('環境音：距離與聲軌上限', () => {
           assert.ok(targets.size <= MAX_TRACKS)
           for (const g of targets.values()) assert.ok(g >= MIN_AUDIBLE && g <= 1)
         }
-    const { targets } = planTracks({ eraId: 'postwar', pos: { x: 4, z: 7 }, max: 2 })
+    const { targets } = planTracks({ eraId: 'postwar', pos: { x: -12, z: -4 }, max: 2 })
     assert.equal(targets.size, 2)
-    assert.ok(targets.has('vendor-calls'), '廟埕中央先聽到攤販叫賣')
+    assert.ok(targets.has('radio') && targets.has('trishaw') && !targets.has('river-lap'), '街屋列中段先聽到收音機與三輪車，遠處的河水排在後面')
     const spawn = planTracks({ eraId: 'qing-port', pos: { x: 13, z: 0.7 } })
     assert.ok(!spawn.targets.has('oars'), '出生點聽不到河岸的船槳')
   })
@@ -195,8 +197,8 @@ describe('環境音：距離與聲軌上限', () => {
     assert.equal(plan.start.length, 1)
     const full = planTracks({ eraId: 'postwar', pos: { x: 4, z: 7 }, live: ['a', 'b', 'c', 'd'], max: 4 })
     assert.deepEqual(full.start, [])
-    const again = planTracks({ eraId: 'postwar', pos: { x: 4, z: 7 }, live: ['vendor-calls'], max: 4 })
-    assert.ok(!again.start.includes('vendor-calls'), '已在播的不重複建立')
+    const again = planTracks({ eraId: 'postwar', pos: { x: 4, z: 7 }, live: ['trishaw'], max: 4 })
+    assert.ok(!again.start.includes('trishaw'), '已在播的不重複建立')
   })
 
   test('總音量與淡入淡出時間', () => {
@@ -286,7 +288,7 @@ describe('環境音管理器', () => {
     assert.equal(t.ctxs.length, 1)
     const info = t.manager.inspect()
     assert.equal(info.status, 'playing')
-    assert.ok(info.playingTracks.includes('vendor-calls'))
+    assert.ok(info.playingTracks.includes('trishaw'))
     assert.ok(info.playingTracks.length <= MAX_TRACKS)
     for (const s of t.sources) {
       assert.equal(s.loop, true)
@@ -315,14 +317,14 @@ describe('環境音管理器', () => {
     t.game.setState({ started: true, eraId: 'qing-port' })
     await t.flush()
     const before = t.manager.inspect()
-    assert.ok(before.playingTracks.includes('wharf-calls'))
+    assert.ok(before.playingTracks.includes('oars'))
     assert.ok(before.masterTarget > 0)
     t.game.setState({ transitioning: true })
     assert.equal(t.manager.inspect().masterTarget, 0)
     t.game.setState({ eraId: 'banquet' })
     await t.flush()
     const mid = t.manager.inspect()
-    assert.ok(!mid.playingTracks.includes('wharf-calls'), '港口的吆喝在新年代停掉')
+    assert.ok(!mid.playingTracks.includes('oars'), '港口的船槳在新年代停掉')
     const started = mid.startedCount
     t.game.setState({ transitioning: false })
     await t.flush()
@@ -392,28 +394,28 @@ describe('環境音管理器', () => {
         decodeAudioData: (data) => (data.bad ? Promise.reject(new Error('decode')) : Promise.resolve({ from: data.url })),
       }),
       resolveUrl: (f) => f,
-      // 河水的真實錄音解碼失敗、人聲的真實錄音下載失敗，其餘正常
+      // 河水的真實錄音解碼失敗、留聲機的真實錄音下載失敗，其餘正常
       fetchAudio: async (url) => {
         fetched.push(url)
-        if (url === AMBIENCE_SOUNDS['street-murmur'].file) throw new Error('404')
+        if (url === AMBIENCE_SOUNDS.gramophone.file) throw new Error('404')
         return { slice: () => ({ url, bad: url === AMBIENCE_SOUNDS['river-lap'].file }) }
       },
       setInterval: () => 1,
       clearInterval() {},
-      getPosition: () => ({ x: -40, z: 0 }),
+      getPosition: () => ({ x: -20, z: -4 }),
     })
-    const game = createStore(() => ({ started: false, transitioning: false, eraId: 'qing-port', mode: 'explore' }))
+    const game = createStore(() => ({ started: false, transitioning: false, eraId: 'modern', mode: 'explore' }))
     manager.connect(game)
     game.setState({ started: true })
     for (let i = 0; i < 12; i++) await new Promise((r) => setImmediate(r))
     const state = manager.inspect()
     assert.equal(state.status, 'playing')
-    assert.deepEqual(state.fallbacks.sort(), ['river-lap', 'street-murmur'])
+    assert.deepEqual(state.fallbacks.sort(), ['gramophone', 'river-lap'])
     assert.ok(fetched.includes(AMBIENCE_SOUNDS['river-lap'].fallback.file))
     const loopOf = (id) => sources.find((s) => s.buffer.from === AMBIENCE_SOUNDS[id].file || s.buffer.from === AMBIENCE_SOUNDS[id].fallback.file)
     assert.equal(loopOf('river-lap').loopEnd, LOOP_PAD + AMBIENCE_SOUNDS['river-lap'].fallback.duration)
-    assert.equal(loopOf('wharf-calls').loopEnd, LOOP_PAD + AMBIENCE_SOUNDS['wharf-calls'].duration)
-    assert.equal(loopOf('wharf-calls').buffer.from, AMBIENCE_SOUNDS['wharf-calls'].file, '其餘仍用真實錄音')
+    assert.equal(loopOf('bicycle-bell').loopEnd, LOOP_PAD + AMBIENCE_SOUNDS['bicycle-bell'].duration)
+    assert.equal(loopOf('bicycle-bell').buffer.from, AMBIENCE_SOUNDS['bicycle-bell'].file, '其餘仍用真實錄音')
     manager.disconnect()
   })
 

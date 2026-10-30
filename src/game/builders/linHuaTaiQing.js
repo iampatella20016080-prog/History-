@@ -102,6 +102,8 @@ export function buildLinHuaTaiQing(b, cfg = {}, detail = null) {
   const ridge = (result.ridgeHeight ?? 5.6) + 0.4
   for (const s of [-1, 1]) b.addBlocker(s < 0 ? -half : half - wallT, s < 0 ? -half + wallT : half, 0, ridge, -depth, 0)
   b.addBlocker(-half, half, 0, ridge, -depth, -depth + wallT)
+  // 店內後牆以後（後進）不開放：鏡頭停在店內後牆前面，不退到後牆外（畫面審查）
+  b.addBlocker(-half, half, 0, ceiling, -depth, room.minZ)
   b.addBlocker(-half, door.minX, 0, result.groundHeight ?? 3.3, -wallT, 0)
   b.addBlocker(door.maxX, half, 0, result.groundHeight ?? 3.3, -wallT, 0)
   b.addBlocker(door.minX, door.maxX, 2.45, result.groundHeight ?? 3.3, -wallT, 0)

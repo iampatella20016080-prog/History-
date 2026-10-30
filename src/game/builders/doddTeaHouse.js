@@ -155,6 +155,8 @@ export function buildDoddTeaHouse(b, cfg = {}) {
   const openingH = 2.7
   for (const s of [-1, 1]) b.addBlocker(s < 0 ? -half : half - wallT, s < 0 ? -half + wallT : half, 0, top + 1.1, -depth, 0)
   b.addBlocker(-half, half, 0, top + 1.1, -depth, -depth + wallT)
+  // 店內後牆以後不開放：鏡頭停在店內後牆前面，不退到後牆外（畫面審查）
+  b.addBlocker(-half, half, 0, ceiling, -depth, room.minZ)
   b.addBlocker(-half, door.minX, 0, groundH, -wallT, 0)
   b.addBlocker(door.maxX, half, 0, groundH, -wallT, 0)
   b.addBlocker(door.minX, door.maxX, openingH, groundH, -wallT, 0)

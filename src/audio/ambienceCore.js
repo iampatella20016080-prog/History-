@@ -3,7 +3,7 @@
  *
  * - AMBIENCE_SOUNDS：音檔表。`file` 是剪成循環的真實錄音（CC0／公有領域，來源與剪輯見 ambienceCredits.js 與
  *   public/audio/ambience/CREDITS.md）；`fallback` 是第 9 階段程式合成的示意音，只在真實錄音載入或解碼失敗時使用
- * - ERA_AMBIENCE：每個年代的聲音清單。`bed` 是整條街都聽得到的底噪；`spot` 有位置，
+ * - ERA_AMBIENCE：每個年代的聲音清單。`bed` 是整條街都聽得到的底噪（目前沒有使用）；`spot` 有位置，
  *   依人物到錨點的距離調整音量（內圈全音量、外圈 0，之間平滑下降），只用 gain，不用 PannerNode
  * - planTracks：依年代與人物位置算出每個聲軌的目標音量，並限制同時播放的聲軌數（iPad Safari）
  */
@@ -36,16 +36,12 @@ const sound = (id, duration, synthDuration, label, labelEn) => ({
 
 export const AMBIENCE_SOUNDS = {
   'river-lap': sound('river-lap', 12, 10, '河水拍岸', 'River lapping at the bank'),
-  'wharf-calls': sound('wharf-calls', 16, 12, '碼頭出力的悶喊', 'Muffled shouts of labourers on the wharf'),
   oars: sound('oars', 12, 10, '船槳與水花', 'Oars and splashes'),
-  'street-murmur': sound('street-murmur', 18, 12, '街上人聲', 'Street murmur'),
   'gong-distant': sound('gong-distant', 16, 14, '遠處的鑼鼓', 'Distant gongs and drums'),
   'bicycle-bell': sound('bicycle-bell', 14, 12, '腳踏車鈴', 'Bicycle bell'),
   gramophone: sound('gramophone', 26, 12, '留聲機', 'Gramophone'),
-  'vendor-calls': sound('vendor-calls', 16, 12, '市場攤位的人聲', 'Voices from market stalls'),
   trishaw: sound('trishaw', 12, 10, '三輪車', 'Trishaw'),
   radio: sound('radio', 20, 12, '收音機', 'Radio'),
-  scooter: sound('scooter', 26, 12, '機車', 'Scooter'),
 }
 
 // 錨點座標（世界座標，街道沿 X 軸，西側 x < -44.6 是淡水河；見 game/config.js）
@@ -53,46 +49,37 @@ const RIVER_BANK = { x: -47, z: 0 }
 const PLAZA_WEST = { x: -38, z: 0 }
 const STREET_MID = { x: 0, z: 0 }
 const STREET_EAST = { x: 28, z: -4 }
-const TEMPLE_COURT = { x: 4, z: 7 } // 慈聖宮廟埕（squidSoupLayout 的 TEMPLE_COURT）
 const SHOP_ROW = { x: -12, z: -4 }
 
-const bed = (sound, gain) => ({ sound, mode: 'bed', gain })
 const spot = (sound, gain, anchor, inner, outer) => ({ sound, mode: 'spot', gain, anchor, inner, outer })
 
 /**
  * 每個年代的聲音。年代正確性（待核與依據見 docs/research/ambience-sources.md，每個錄音的「情境示意」說明見 ambienceCredits.js）：
- * - 留聲機：只放在摩登（1930–1945）；收音機：庶民生活（1945–1980）；機車：老屋新生（2000–）
- * - 港口商街沒有任何機械聲、電聲；酒樓繁華只有人聲與遠處的鑼鼓
+ * - 留聲機：只放在摩登（1930–1945）；收音機：庶民生活（1945–1980）
+ * - 港口商街沒有任何機械聲、電聲；酒樓繁華只有河水與遠處的鑼鼓
+ * - 碼頭吆喝、街上人聲、廟埕叫賣、機車四個聲音已移除（使用者決定），不用其他聲音補上；老屋新生只剩河岸廣場的水聲
  */
 export const ERA_AMBIENCE = {
   'qing-port': [
     spot('river-lap', 1.0, RIVER_BANK, 14, 52),
-    spot('wharf-calls', 0.9, RIVER_BANK, 8, 44),
     spot('oars', 0.8, RIVER_BANK, 6, 36),
-    bed('street-murmur', 0.28),
   ],
   banquet: [
     spot('river-lap', 0.55, RIVER_BANK, 8, 40),
-    bed('street-murmur', 0.5),
     spot('gong-distant', 0.8, STREET_EAST, 24, 70),
   ],
   modern: [
     spot('river-lap', 0.45, RIVER_BANK, 8, 38),
-    bed('street-murmur', 0.4),
     spot('bicycle-bell', 0.7, STREET_MID, 26, 60),
     spot('gramophone', 0.85, SHOP_ROW, 8, 30),
   ],
   postwar: [
     spot('river-lap', 0.4, RIVER_BANK, 8, 36),
-    bed('street-murmur', 0.45),
-    spot('vendor-calls', 0.95, TEMPLE_COURT, 10, 34),
     spot('trishaw', 0.95, STREET_MID, 20, 54), // 錄音有輪子喀噠的尖峰，平均音量較低，gain 調高
     spot('radio', 0.7, SHOP_ROW, 6, 22),
   ],
   revival: [
     spot('river-lap', 0.4, PLAZA_WEST, 8, 36),
-    bed('street-murmur', 0.4),
-    spot('scooter', 0.65, STREET_MID, 24, 64),
   ],
 }
 

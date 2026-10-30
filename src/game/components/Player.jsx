@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { CanvasTexture, MeshBasicMaterial, SRGBColorSpace } from 'three'
 import { LAYERS, PLAYER } from '../config.js'
 import { groundAt, hasLevel, resolvePlayerPosition } from '../collision.js'
+import { cameraTooCloseToCharacter } from '../viewerCamera.js'
 import { moveInput } from '../input.js'
 import { cameraState, playerState } from '../runtime.js'
 import { RIG } from '../character/outfitBuilder.js'
@@ -204,7 +205,8 @@ export function Player({ collision, shopModels }) {
     if (root.current) {
       root.current.position.set(pos.x, pos.y + 0.004, pos.z)
       root.current.rotation.y = playerState.heading
-      root.current.visible = st.viewMode !== 'viewer'
+      // 鏡頭貼著人物時不畫人物（否則近裁切面會切開模型）
+      root.current.visible = st.viewMode !== 'viewer' && !cameraTooCloseToCharacter(state.camera.position, pos)
       root.current.userData.outfit = outfitRef.current.id
     }
 
