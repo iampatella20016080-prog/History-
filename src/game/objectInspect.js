@@ -67,6 +67,22 @@ export function updateInspect(state, dt, { speed = 2.2, spinSpeed = 0.25 } = {})
   return { ...state, yaw, actions }
 }
 
+/** 檢視時器物至少放大到這個取景半徑（公尺）：很小的器物（手鐲、銅錢、入場券）像拿放大鏡看 */
+export const INSPECT_MIN_RADIUS = 0.3
+
+/** 器物的放大倍率（取景半徑不到 INSPECT_MIN_RADIUS 時等比放大） */
+export function inspectScale(radius) {
+  return Math.max(1, INSPECT_MIN_RADIUS / radius)
+}
+
+/**
+ * 鏡頭到器物中心的距離：依取景半徑與縮放，但不比「近裁切面＋器物半徑」近——
+ * 放大到最大時鏡頭也不會穿進器物（近裁切面 0.3 公尺，見 config.js 的 CAMERA.near）。
+ */
+export function inspectViewDistance(radius, zoom, near) {
+  return Math.max((radius * 3.4) / zoom, near + radius * 1.05)
+}
+
 /** 這件器物記進探索手記的條目 id */
 export function objectJournalId(objectId) {
   return `object:${objectId}`

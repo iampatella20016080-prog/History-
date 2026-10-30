@@ -2276,6 +2276,314 @@ SOURCES['foodnext-2023-japan-wedding'] = {
   usage: '日本的婚禮與慶事常用紅白饅頭等慶事菓子（日本的習俗；臺灣是否有同樣的用法，本站查無）。',
 }
 
+/* ── 第 12 階段：主題路線「廟口的一餐」（查證紀錄 docs/research/temple-meal-route.md） ── */
+SOURCES['stat-gov-hawker-survey'] = {
+  id: 'stat-gov-hawker-survey',
+  citation: '行政院主計總處，〈攤販經營概況調查〉簡介，中華民國統計資訊網。',
+  publisher: '行政院主計總處',
+  title: '攤販經營概況調查：簡介',
+  url: 'https://www.stat.gov.tw/cp.aspx?n=2848',
+  published: '線上資料（2026年10月查閱）',
+  usage: '攤販是由過去農業社會的「市集」「廟會」延續產生的經濟活動。',
+}
+SOURCES['twreporter-2021-snack-bowl'] = {
+  id: 'twreporter-2021-snack-bowl',
+  citation: '包子逸，《小吃碗上外太空》（有鹿文化）書摘，《報導者》，2021年5月19日。',
+  publisher: '報導者',
+  title: '《小吃碗上外太空》書摘',
+  url: 'https://www.twreporter.org/a/bookreview-taipei-goldshsu-bowl-and-plate',
+  published: '2021年5月19日',
+  usage: '白底青花碗是老派小吃常見的食器；鶯歌日用碗盤 1950 年代起步、靠手工轆轤與手繪，1960 年代引進閃光釉；早年圓環小吃攤的碗容易混淆，後來有在碗上燒店號的服務；1970 年代政府推動免洗餐具。',
+  context: '書摘的主角是一家現存的餐具商號，本站只取產業的一般情形，不寫商號。',
+}
+SOURCES['taiwanceramics-yingge-bowl'] = {
+  id: 'taiwanceramics-yingge-bowl',
+  citation: '台灣碗盤博物館藏，「鶯歌手繪魚紋碗公」，館藏編號 TW-5-01-00-0-B-0030。',
+  publisher: '台灣碗盤博物館',
+  title: '鶯歌手繪魚紋碗公',
+  url: 'https://english.taiwanceramics.com.tw/?p=2544',
+  published: '線上典藏（2026年10月查閱）',
+  usage: '碗的形制依據：陶製，1945–1964 年，口徑 20.5、高 8.5 公分，碗內以藍色與紅褐色手繪鯉魚與水草、碗口飾有花邊；同館另藏胭脂紅蝦紋小碗（約 18.5 × 5.8 公分）等戰後鶯歌碗。',
+}
+SOURCES['gvm-2017-mitaimu'] = {
+  id: 'gvm-2017-mitaimu',
+  citation: '魚夫，〈米苔目、米篩目和老鼠粄〉，《遠見雜誌》，2017年11月3日。',
+  publisher: '遠見雜誌',
+  title: '米苔目、米篩目和老鼠粄',
+  url: 'https://www.gvm.com.tw/article/40754',
+  published: '2017年11月3日',
+  usage: '作者的說法：臺語「米苔目」音譯自客語「米篩目」；陳年在來米漿加番薯粉揉成「米胎」，在竹製米篩目板上用力搓揉，穿過孔洞成為米條；傳統器具另有槓桿壓榨、鐵片或瓢器鑽孔等形式。',
+}
+SOURCES['stust-2021-douhua'] = {
+  id: 'stust-2021-douhua',
+  citation: '方子毓，〈豆花(1)：話說這一碗白花花的「擣灰」！〉，《南台通識電子報》第92期，南臺科技大學通識教育中心，2021年1月15日。',
+  publisher: '南臺科技大學通識教育中心',
+  title: '豆花(1)：話說這一碗白花花的「擣灰」！',
+  url: 'https://genedu.stust.edu.tw/Sysid/genedu/621GEP/GEP10/gep1092_13.pdf',
+  published: '2021年1月15日',
+  usage: '作者的兒時回憶：扁擔掛兩個大桶，分裝豆花與冰涼糖水（冬天換熱糖水），孩子捧碗拿湯匙、拿五圓硬幣或十元紙鈔等待；民國七〇年代後挑擔漸被推車與鈴聲取代；剛開始加料時印象中只有紅豆。',
+  context: '生活回憶，不是特定地點的紀錄；作者以臺南的經驗起筆，本站只取挑擔叫賣的一般情形。',
+}
+SOURCES['tfam-carrying-pole-1231'] = {
+  id: 'tfam-carrying-pole-1231',
+  citation: '台灣民俗文物館（臺中市民俗公園）典藏，「籮筐擔」，登錄號1231，國家文化記憶庫／數位典藏聯合目錄。',
+  publisher: '台灣民俗文物館',
+  title: '籮筐擔',
+  url: 'https://catalog.digitalarchives.tw/item/00/32/a4/16.html',
+  published: '數位典藏（2026年10月查閱）',
+  usage: '竹扁擔的形制依據：以一片剖開的竹子做成的扁擔，長 151.4、寬 7 公分，兩端烤彎略往上翹以免繩子滑落。',
+}
+
+/* ── 第 12 階段：主題路線「老屋裡的新生活」（查證紀錄 docs/research/old-house-route.md） ── */
+SOURCES['nmth-winnower-2000-003-0001'] = {
+  id: 'nmth-winnower-2000-003-0001',
+  citation: '國立臺灣歷史博物館典藏，「風鼓車」，登錄號2000.003.0001。',
+  publisher: '國立臺灣歷史博物館',
+  title: '風鼓車',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2000.003.0001',
+  published: '典藏網（2026年10月查閱）',
+  usage: '風鼓 3D 模型的形制依據與用法：木質，長77.2×寬139.8×高129.1公分、36公斤；風鼓斗、風鼓掩、風鼓櫃、風鼓肚與風鼓葉、風鼓手、頭皂與二皂；倒入風乾的穀粒、搖風鼓手、抽開風鼓掩，飽滿的穀粒從頭皂二皂流出，空殼雜物被吹出風鼓口；館方引臺灣總督府殖產局《臺灣之農具》（1921）。',
+}
+SOURCES['nmth-motor-winnower'] = {
+  id: 'nmth-motor-winnower',
+  citation: '國立臺灣歷史博物館典藏，「風鼓車製造情形」（照片），登錄號2010.006.0093.0065。',
+  publisher: '國立臺灣歷史博物館',
+  title: '風鼓車製造情形',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2010.006.0093.0065',
+  published: '典藏網（2026年10月查閱）',
+  usage: '說明傳統風鼓車的把手是人力手搖，改良的風鼓車在外面裝設馬達、齒輪及皮帶；照片推測年份 1961–1965。',
+  context: '照片的年份不是馬達改良版出現的年份，本站只寫「1960 年代前期的照片拍到改良版」。',
+}
+SOURCES['nmth-rice-ledger'] = {
+  id: 'nmth-rice-ledger',
+  citation: '國立臺灣歷史博物館典藏，「瑞興號米店帳冊」，登錄號2010.015.0220.0067。',
+  publisher: '國立臺灣歷史博物館',
+  title: '瑞興號米店帳冊',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2010.015.0220.0067',
+  published: '典藏網（2026年10月查閱）',
+  usage: '帳冊 3D 模型的形制依據：19.8×19.1×1.4公分、206.5公克，棉線裝訂、前後藍色封面，日本時代；內頁有「庚申」（館方對照同套「大正九年庚申」，約1920年）；所屬的「瑞興號及錦瑞號米店帳冊」全套72冊。',
+}
+SOURCES['nmth-cake-mould-2012-019-0010'] = {
+  id: 'nmth-cake-mould-2012-019-0010',
+  citation: '國立臺灣歷史博物館典藏，「酒瓶形單面雕桃形壽字紋帶柄餅印」，登錄號2012.019.0010。',
+  publisher: '國立臺灣歷史博物館',
+  title: '酒瓶形單面雕桃形壽字紋帶柄餅印',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2012.019.0010',
+  published: '典藏網（2026年10月查閱）',
+  usage: '餅印 3D 模型的形制依據：木質，22.1×11.7×3.1公分、146公克，推測1960–1980年；單面雕刻，桃形外圈、中央刻「壽」、周圍桃葉與花草；用來製作神誕或壽慶的糕餅；柄尾的紅絲帶是捐贈者後加。',
+}
+SOURCES['moa-baozhong-weekly'] = {
+  id: 'moa-baozhong-weekly',
+  citation: '〈文山包種茶 清香最誘人〉，《農業周刊》第15卷第34期，頁4（農業部農業知識入口網收錄）。',
+  publisher: '農業部 農業知識入口網',
+  title: '文山包種茶 清香最誘人',
+  url: 'https://kmweb.moa.gov.tw/redirect_files.php?id=157370',
+  published: '約1987年（文中稱1885年為「102年前」；2026年10月查閱掃描版）',
+  usage: '包種茶的名稱由來：用方形福建毛邊紙2張內外相襯，放入茶葉4兩，包成長方形的四方包，包外蓋上茶名及行號印章，因此稱為「包種」。',
+  context: '同文的創製者與年份（王義程、1885 年南港大坑）用「相傳」，本站不採。',
+}
+SOURCES['nmth-xfc-tea-tin'] = {
+  id: 'nmth-xfc-tea-tin',
+  citation: '國立臺灣歷史博物館典藏，「新芳春茶行包種茶茶罐」，登錄號2019.031.0393。',
+  publisher: '國立臺灣歷史博物館',
+  title: '新芳春茶行包種茶茶罐',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2019.031.0393',
+  published: '典藏網（2026年10月查閱）',
+  usage: '茶罐 3D 模型的形制依據：金屬方罐，8.6×8.5×9.5公分、199.5公克，推測1932–1945年；一面貼紙，印「合資會社新芳春茶行」與「品名」、手寫「包種茶」；編目說明1932年改組合資會社，主要經營包種茶外銷東南亞。',
+  context: '編目說明另寫王連河1919年在大稻埕獨資開設新芳春茶行，與其他來源的創立年份不一（見 xin-fang-chun.md），本站不寫創立年份。',
+}
+SOURCES['nmth-pharmacy-flyer'] = {
+  id: 'nmth-pharmacy-flyer',
+  citation: '國立臺灣歷史博物館典藏，「義乾泰藥房廣告單」，登錄號2003.006.0290。',
+  publisher: '國立臺灣歷史博物館',
+  title: '義乾泰藥房廣告單',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2003.006.0290',
+  published: '典藏網（2026年10月查閱）',
+  usage: '日本時代「藥局」與「藥房」的差別：依1896年的取締規則，藥局須由藥劑師開設、調劑；藥房（藥種商）向官廳申請即可販賣洋藥與漢藥成藥，門口須掛寫有店名、地址與管理人的標誌。',
+}
+SOURCES['nmth-medicine-bottles'] = {
+  id: 'nmth-medicine-bottles',
+  citation: '國立臺灣歷史博物館典藏，「藥瓶」2004.028.5685、「褐色小藥瓶」2019.036.0022.0002。',
+  publisher: '國立臺灣歷史博物館',
+  title: '藥瓶、褐色小藥瓶',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2019.036.0022.0002',
+  published: '典藏網（2026年10月查閱）',
+  usage: '藥瓶 3D 模型的形制依據：透明玻璃瓶配木蓋（2004.028.5685，3.6×3.6×7.9公分，年代不明，https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2004.028.5685）；褐色玻璃小藥瓶附蓋（2019.036.0022.0002，2.6×2.6×4.4公分，1926–1965年間）。',
+}
+SOURCES['aat-apothecary-bottle'] = {
+  id: 'aat-apothecary-bottle',
+  citation: '藝術與建築索引典，「藥鋪瓶」（AAT 300378929），中央研究院數位文化中心。',
+  publisher: '中央研究院',
+  title: '藥鋪瓶',
+  url: 'http://aat.teldap.tw/AATFullDisplay/300378929',
+  published: '線上索引典（2026年10月查閱）',
+  usage: '藥鋪瓶的一般形制：通常為玻璃製，配玻璃瓶塞、軟木瓶塞也常見，內容物的名稱以標籤貼示或烙鑄在瓶身上；頸部較寬、多為陶瓷的是「藥罐」。',
+}
+
+/* ── 第 12 階段：主題路線「今日報紙」（查證紀錄 docs/research/news-route.md） ── */
+SOURCES['hkdp-1890-11-29'] = {
+  id: 'hkdp-1890-11-29',
+  citation: 'Hong Kong Daily Press, 29 November 1890（社論；Internet Archive 掃描與自動辨識文字）。',
+  publisher: 'Hong Kong Daily Press（Internet Archive 典藏）',
+  title: 'Hong Kong Daily Press, 1890-11-29',
+  url: 'https://archive.org/stream/NPDP18901129/NPDP18901129_djvu.txt',
+  published: '1890年11月29日（2026年10月查閱）',
+  usage: '社論討論英國代理領事因淡水住處整修，在大稻埕租屋、升英國旗並照會巡撫；清方官員認為淡水才是北部的通商口岸，外國人在大稻埕居住與通商只是被默許；社論認為這件事迫使雙方表態。',
+  context: '自動辨識文字有錯字與斷句（人名也有誤認），本站只改寫大意、不引原文；社論對條約用語的解讀，摘要讀取時出現不同理解，本站不寫社論的結論。',
+}
+SOURCES['cai-2019-chenghuang'] = {
+  id: 'cai-2019-chenghuang',
+  citation: '蔡孟儒，《《臺灣民報》系報刊中的城隍信仰論述與創作分析》，國立臺灣大學臺灣文學研究所碩士論文，2019（DOI：10.6342/NTU201903936），頁33–35。',
+  publisher: '國立臺灣大學',
+  title: '《臺灣民報》系報刊中的城隍信仰論述與創作分析',
+  url: 'https://tdr.lib.ntu.edu.tw/bitstream/123456789/620/1/ntu-108-1.pdf',
+  published: '2019年',
+  usage: '引《臺灣民報》1929年6月23日〈迷信趣談 城隍吃牲醴？巡查擒八將！〉（批評迎城隍「其行列的低級單純」）與同日小言〈可憐的少女們〉（藝閣上的少女將近二百人，自正午起被扛遊行到七點多鐘，熱度九十六七度）；轉引《臺灣日日新報》1918年6月19日〈稻江準備迎城隍〉（投書建議城隍祭引進商號贊助的藝閣）與1927年6月13日〈久しぶりの晴天に 大賑ひの城隍廟祭 どの汽車も滿員の盛況〉。',
+}
+SOURCES['song-2012-yingshen'] = {
+  id: 'song-2012-yingshen',
+  citation: '宋光宇，〈1920 年代迎神賽會與臺北商業體系的形成〉，《宗教哲學》第62期，2012，頁113–147（經蔡孟儒 2019 轉引）。',
+  publisher: '宗教哲學',
+  title: '1920 年代迎神賽會與臺北商業體系的形成',
+  url: 'https://tdr.lib.ntu.edu.tw/bitstream/123456789/620/1/ntu-108-1.pdf',
+  published: '2012年（本站經蔡孟儒 2019 碩士論文頁35轉引，原文未直接查閱）',
+  usage: '1917年後藝閣兼具廣告機能；該年六月大稻埕商人推出化妝遊行，各商號以藝閣宣傳商品，遊行隊伍高達五千人。',
+}
+SOURCES['allen-2005-expo'] = {
+  id: 'allen-2005-expo',
+  citation: 'Joseph R. Allen, “Exhibiting the Colony, Suggesting the Nation: The Taiwan Exposition, 1935,” MLA Convention paper, 2005.',
+  publisher: 'Case Western Reserve University（會議論文全文）',
+  title: 'Exhibiting the Colony, Suggesting the Nation: The Taiwan Exposition, 1935',
+  url: 'https://case.edu/affil/sce/Texts_2005/Allen%20MLA%202005%20w%20illustrations.pdf',
+  published: '2005年（2026年10月查閱）',
+  usage: '博覽會除了三個主要會場，另有第四個會場由地方商界倡議，設在臺灣人商號集中的大稻埕；介紹南方的展館都在大稻埕會場，由臺灣人商人而不是殖民當局組織經營。作者引程佳惠（2004）頁40–42。',
+}
+SOURCES['wiki-1935-expo'] = {
+  id: 'wiki-1935-expo',
+  citation: '維基百科，〈始政四十周年記念臺灣博覽會〉（大稻埕分場段落）。',
+  publisher: '維基百科',
+  title: '始政四十周年記念臺灣博覽會',
+  url: 'https://zh.wikipedia.org/zh-tw/%E5%A7%8B%E6%94%BF%E5%9B%9B%E5%8D%81%E5%91%A8%E5%B9%B4%E8%A8%98%E5%BF%B5%E8%87%BA%E7%81%A3%E5%8D%9A%E8%A6%BD%E6%9C%83',
+  published: '線上百科（2026年10月查閱）',
+  usage: '大稻埕分場：今太平國小北邊空地、4,000坪，原本沒有規劃、由大稻埕的臺灣人要求設置；展館有南方館、暹邏館、菲律賓館、福建省特產物介紹所、馬產館、演藝館；大稻埕商家聘請京劇團分五輪演出。',
+  context: '這一段沒有逐句註腳（條目的參考資料有程佳惠 2004 等），屬網路百科、可信度較低；本站只取與 Allen 2005 一致的大意，展館名稱標待核。',
+}
+SOURCES['nmth-expo-ticket-2009-011-0281'] = {
+  id: 'nmth-expo-ticket-2009-011-0281',
+  citation: '國立臺灣歷史博物館典藏，「始政四十周年記念臺灣博覽會團體入場券」，登錄號2009.011.0281。',
+  publisher: '國立臺灣歷史博物館',
+  title: '始政四十周年記念臺灣博覽會團體入場券',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2009.011.0281',
+  published: '典藏網（2026年10月查閱）',
+  usage: '入場券 3D 模型的形制依據：紙質，9.1×13.6公分、1.6公克；正面印編號、大人小人與費用，背面注意事項，各會場有打洞記號，第一、第二會場、分場與夜間會場都可以用；博覽會1935年10月10日至11月28日，分場之一在大稻埕迪化街附近。',
+}
+SOURCES['udn-1968-pedicab'] = {
+  id: 'udn-1968-pedicab',
+  citation: '〈人力三輪客車 今起禁行北市〉，《聯合報》1968年6月25日第3版（「報時光」2022年5月12日轉載）。',
+  publisher: '聯合報系 報時光',
+  title: '人力三輪客車 今起禁行北市',
+  url: 'https://time.udn.com/udntime/story/122390/6308783',
+  published: '1968年6月25日（轉載2022年5月12日）',
+  usage: '1968年6月25日起人力三輪客車全面禁止在臺北市區行駛；營業三輪車收購價每輛三千元、1964年8月提高為六千元，最後一天自行轉業者每輛共可領一萬二千元；約八百人已輔導轉為計程車司機、約七百人等待訓練；全市原剩891輛，已收購826輛、65輛未繳車。',
+  context: '報導寫的是臺北市全市，沒有大稻埕專屬的記載。',
+}
+SOURCES['taipei-gov-2009-p098018'] = {
+  id: 'taipei-gov-2009-p098018',
+  citation: '臺北市政府公告，府都規字第09803474000號（民國98年8月11日），修訂「大稻埕歷史風貌特定專用區容積移轉作業要點」。',
+  publisher: '臺北市政府',
+  title: '修訂大稻埕歷史風貌特定專用區容積移轉作業要點公告',
+  url: 'https://webgis.udd.gov.taipei/book/P098018.pdf',
+  published: '2009年8月11日',
+  usage: '計畫緣起：大稻埕歷史風貌特定專用區都市計畫於民國89年1月27日公告實施（89年2月1日零時起生效），訂定容積移轉作業要點，允許配合歷史性建築物及傳統街區風貌保存的基地，將可建築容積之一部分或全部移轉至另一宗基地，保障土地所有權人權益；至98年3月底共申請240件、移出101,739.64平方公尺，尚約七成可移轉容積未申請。',
+}
+
+/* ── 第 12 階段：主題路線「軼事系列」（查證紀錄 docs/research/folklore-route.md） ── */
+SOURCES['ntu-kua-zhou-cheng-1951'] = {
+  id: 'ntu-kua-zhou-cheng-1951',
+  citation: '《周成過臺灣歌 上本》（卷端題名：周成過臺灣新歌），竹林書局，新竹，民國40年6月；國立臺灣大學圖書館「歌仔冊與唸歌」數位典藏，楊雲萍文庫，索書號539.1208 4614 v.622。',
+  publisher: '國立臺灣大學圖書館',
+  title: '周成過臺灣歌 上本',
+  url: 'https://dl.lib.ntu.edu.tw/s/kua-a-tsheh/item/691854',
+  published: '1951年6月（2026年10月查閱詮釋資料）',
+  usage: '歌仔冊 3D 模型的形制依據（4葉、16公分）與故事大意：館方分類「時事新編」、內容時代標清代；主角泉州人周成，妻子月裡為他籌船費來臺，周成在臺北的茶行生意發達，卻迷戀郭仔麵、聽信她毒死尋夫來臺的妻子，月裡向閻王申冤，兇手一一遭報應；正直的王根曾勸周成打拼。',
+  context: '館方影像、全文與詮釋資料限非營利學術研究使用，本站不轉載唱詞，只改寫館方摘要的大意。',
+}
+SOURCES['tfam-bowed-shoes-0346'] = {
+  id: 'tfam-bowed-shoes-0346',
+  citation: '台灣民俗文物館（臺中市民俗公園）典藏，「弓鞋」，登錄號0346，國家文化記憶庫／數位典藏聯合目錄。',
+  publisher: '台灣民俗文物館',
+  title: '弓鞋',
+  url: 'https://catalog.digitalarchives.tw/item/00/32/a2/16.html',
+  published: '數位典藏（2026年10月查閱）',
+  usage: '弓鞋 3D 模型的形制依據：清末民初，布製，長11、寬4.8、高5公分，120公克；尖頭、高跟、高鞋面，紅布繡花（日文說明寫黑布，記載不一）；纏足的閩南籍婦女所穿，主要是富裕人家。',
+}
+SOURCES['nmth-rice-sieve-2005-008-1708'] = {
+  id: 'nmth-rice-sieve-2005-008-1708',
+  citation: '國立臺灣歷史博物館典藏，「米篩」，登錄號2005.008.1708。',
+  publisher: '國立臺灣歷史博物館',
+  title: '米篩',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2005.008.1708',
+  published: '典藏網（2026年10月查閱）',
+  usage: '米篩 3D 模型的形制依據與用途：竹篾與厚竹片編製（登錄的材質欄寫木質，與描述不一），長74.2×寬73.6×高7.4公分、1.53公斤，日本時代至戰後；圓盤狀、面大而淺、「壓一挑一」四角孔，口緣以粗竹條夾住內外兩側、尾端以籐皮返折纏繞；篩選米穀豆類、收成後篩出稻穀；婚俗的八卦米篩迎娶時遮在新娘頭頂避邪。',
+}
+SOURCES['ylps-fazhugong'] = {
+  id: 'ylps-fazhugong',
+  citation: '臺北市大同區永樂國民小學，「大稻埕主題式網頁」：法主公廟。',
+  publisher: '臺北市永樂國小',
+  title: '大稻埕主題式網頁：法主公廟',
+  url: 'https://dadaochen.ylps.tp.edu.tw/content.php?titlename=far&output_menu=true',
+  published: '學校網頁（2026年10月查閱）',
+  usage: '法主公的傳說：宋朝時福建永春州九龍潭的石牛洞有能化為人形的千年大蛇，張氏三兄弟入洞制服；乞龜還龜：信徒向法主公祈求，翌年連本帶利、一隻還兩隻（龜指紅龜粿）。',
+  context: '學校的鄉土教材網頁，傳說的部分本站標坊間傳說。',
+}
+SOURCES['zhao-1992-taipei-streets'] = {
+  id: 'zhao-1992-taipei-streets',
+  citation: '趙莒玲，《臺北市古街之旅》，臺北市政府新聞處，1992，頁62–63（經維基百科〈大稻埕〉轉引）。',
+  publisher: '臺北市政府新聞處',
+  title: '臺北市古街之旅',
+  url: 'https://zh.wikipedia.org/zh-tw/%E5%A4%A7%E7%A8%BB%E5%9F%95',
+  published: '1992年（本站經維基百科轉引，原書未直接查閱）',
+  usage: '法主公廟的大龜會：信徒許願登錄後拿取紅龜粿（乞龜），隔年還兩隻；三年未還，廟方把名字寫在紅紙上張貼，俗稱「龜上壁」。',
+}
+
+/* ── 第 12 階段：主題路線「街坊故事」（查證紀錄 docs/research/neighbour-route.md） ── */
+SOURCES['nmth-glazed-jar-2005-010-0340'] = {
+  id: 'nmth-glazed-jar-2005-010-0340',
+  citation: '國立臺灣歷史博物館典藏，「醬釉帶蓋筒形罐」，登錄號2005.010.0340。',
+  publisher: '國立臺灣歷史博物館',
+  title: '醬釉帶蓋筒形罐',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2005.010.0340',
+  published: '典藏網（2026年10月查閱）',
+  usage: '陶罐 3D 模型的形制依據：日本時代，臺灣南投，陶瓷，高15.3、徑15.4公分、872.8公克；器身上寬下窄、上下各兩道陰刻弦紋，橙紅胎拉坯成形、外施醬釉，笠式平沿蓋、蓋紐為回首坐臥的獅形；多用於儲存食物。',
+}
+SOURCES['nmth-snack-basket-2000-001-0010'] = {
+  id: 'nmth-snack-basket-2000-001-0010',
+  citation: '國立臺灣歷史博物館典藏，「墨繪竹編點心籃組」，登錄號2000.001.0010。',
+  publisher: '國立臺灣歷史博物館',
+  title: '墨繪竹編點心籃組',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2000.001.0010',
+  published: '典藏網（2026年10月查閱）',
+  usage: '點心籃 3D 模型的形制依據與用途：推測日治時期或戰後初期，竹篾編製（材質欄登錄為木質），長50.5、寬40.5、高74.3公分、3.3公斤；一組三件：頂蓋（中央隆起、墨繪多層六邊形）、中隔層（壁高約9公分、底下米字竹條）、提籃（提把6細1粗竹條、頂端藤圈、中央藤環穿扁擔，外壁墨書福祿壽變體字與花卉藤蔓）；農忙時盛裝點心或飯菜，下層放菜或點心、上層放碗筷。',
+}
+SOURCES['nmth-apothecary-scale-2011-025-0249'] = {
+  id: 'nmth-apothecary-scale-2011-025-0249',
+  citation: '國立臺灣歷史博物館典藏，「戥秤組合」，登錄號2011.025.0249。',
+  publisher: '國立臺灣歷史博物館',
+  title: '戥秤組合',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2011.025.0249',
+  published: '典藏網（2026年10月查閱）',
+  usage: '戥秤 3D 模型的形制依據與用途：日本時代（依秤盤底的「台」字徽紋推定），整組8.1×24.7×3.5公分、131.6公克；琵琶形木盒兩個凹槽收秤與秤陀；戥秤約20公分、徑約0.5公分，一端包金屬、黑色秤星、兩條紫繩提紐、紫繩連金屬秤盤；鐘形秤陀刻「官二」、頂端小耳繫紅繩；秤金銀珠寶或藥材等微量貴重物品，至今仍是中藥行的器具。',
+}
+SOURCES['nmth-silver-bracelet-2003-014-0152'] = {
+  id: 'nmth-silver-bracelet-2003-014-0152',
+  citation: '國立臺灣歷史博物館典藏，「繩紋銀手鐲」，登錄號2003.014.0152.0002。',
+  publisher: '國立臺灣歷史博物館',
+  title: '繩紋銀手鐲',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2003.014.0152.0002',
+  published: '典藏網（2026年10月查閱）',
+  usage: '手鐲 3D 模型的形制依據：清代或日本時代，銀，直徑6.1、高0.6公分、17.8公克；數條銀條相互交織繞成圓環、開口處可套入手腕，造型簡樸無紋飾；臺灣民間稱為「繩索環」「索仔環」「腳車藤」。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

@@ -140,6 +140,11 @@ export const NPC_LOOKS = {
   revivalElderWoman: { era: 'revival', hair: 'bun', hairColor: '#c4beb6', top: { kind: 'long', color: '#a8667a', trim: '#93576a' }, bottom: '#3a3b44', shoes: ['#3c3a38', '#2c2a28'], extras: { strap: '#6a4a3a' } },
   revivalShopper: { era: 'revival', hair: 'bob', top: { kind: 'shirt', color: '#d9c7a0', trim: '#c4b28c' }, bottom: '#4b5568', shoes: ['#f1efe9', '#d8d4ca'], extras: { strap: '#8a6a4a' } },
   revivalYoung: { era: 'revival', hair: 'short', top: { kind: 'shirt', color: '#f0ece2', trim: '#d8d2c4' }, bottom: '#2f3a52', shoes: ['#2c2c30', '#e9e5dc'] },
+  // 1895–1930：主題路線「街坊故事」的街坊（第 12 階段；歷史情境重建，虛構的人物）
+  banquetShopHand: { era: 'banquet', skin: '#d6aa80', hair: 'short', top: { kind: 'long', color: '#5f6b5a', trim: '#4f5a4b' }, bottom: '#3a3632', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#cbbf9f' } },
+  banquetTeaSorter: { era: 'banquet', skin: '#e0bb93', hair: 'bun', top: { kind: 'long', color: '#7a6a8a', trim: '#665877' }, bottom: '#3a3f4c', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#e0d6bf' } },
+  banquetApprentice: { era: 'banquet', skin: '#d8ad84', hair: 'short', top: { kind: 'long', color: '#a08a62', trim: '#8a764f' }, bottom: '#45403a', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#d6cbb0' } },
+  banquetGrandma: { era: 'banquet', skin: '#d9b28c', hair: 'bun', hairColor: '#bdb7ae', top: { kind: 'long', color: '#3f4656', trim: '#343a48' }, bottom: '#2f2c2a', shoes: ['#2a2622', '#2a2622'] },
 }
 
 /* ───────────── 姿勢 ───────────── */

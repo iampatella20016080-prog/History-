@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { Color, Euler, MeshToonMaterial, Quaternion, Vector3 } from 'three'
 import { buildInspectObject, inspectPartTransform } from '../builders/inspectObjects.js'
 import { inspectRuntime, resetInspectRuntime } from '../inspectRuntime.js'
-import { inspectActionT, updateInspect } from '../objectInspect.js'
+import { inspectActionT, inspectScale, inspectViewDistance, updateInspect } from '../objectInspect.js'
 import { QUALITY_MODES } from '../quality.js'
 import { getMaterials } from '../rendering/materials.js'
 import { renderState } from '../runtime.js'
@@ -62,13 +62,15 @@ export function ObjectStage() {
     if (!group || !object) return
     inspectRuntime.value = updateInspect(inspectRuntime.value, Math.min(delta, 0.1))
     const state = inspectRuntime.value
-    // 距離依縮放：器物大小（radius）取景
-    const distance = (object.radius * 3.4) / state.zoom
+    // 很小的器物等比放大再取景；距離依縮放，但不比「近裁切面＋器物半徑」近（objectInspect.js）
+    const scale = inspectScale(object.radius)
+    const distance = inspectViewDistance(object.radius * scale, state.zoom, camera.near)
     camera.position.copy(STAGE).addScaledVector(VIEW_DIR, distance)
     // 器物稍微偏上（底下留給說明卡片）：鏡頭的注視點往下移一點
     _target.copy(STAGE).addScaledVector(_up, -distance * 0.13)
     camera.lookAt(_target)
     group.position.copy(STAGE)
+    group.scale.setScalar(scale)
     // 旋轉：先對齊鏡頭，再依拖曳的 pitch／yaw 轉動器物本身
     group.quaternion.copy(camera.quaternion).multiply(_rot.setFromEuler(_euler.set(state.pitch, state.yaw, 0, 'XYZ')))
     // 景深的焦點放在器物上
