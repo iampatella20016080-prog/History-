@@ -1,4 +1,4 @@
-import { KUEH_STALL, KUEH_STALL_HOTSPOTS, KUEH_STALL_NPCS } from '../../data/templeSnackLayout.js'
+import { KUEH_STALL, KUEH_STALL_HOTSPOTS, KUEH_STALL_NPCS, TEMPLE_STALL_MARKER_Y } from '../../data/templeSnackLayout.js'
 import { conditionTint } from './condition.js'
 import { shade } from './props.js'
 import { contactShadow } from './contactShadow.js'
@@ -167,7 +167,7 @@ export function buildTempleKuehStall(b, cfg = {}, detail = b) {
   return {
     groundHeight: S.sign.y + S.sign.height / 2,
     topHeight: S.sign.y + S.sign.height / 2 + 0.1,
-    anchors: { prompt: local(...stall.prompt), marker: local(0, S.sign.y + 1.2, 0) },
+    anchors: { prompt: local(...stall.prompt), marker: local(0, TEMPLE_STALL_MARKER_Y, 0) },
     // 觀賞模式聚焦攤位：從通道看矮桌、托盤、蒸籠與橫牌
     focus: { center: toWorld(0, 0.2), forward: dir(0, 1), width: 2.0, height: 2.2, viewHeight: 1.0, maxDistance: 4.6, maxPitch: 0.5, maxYawOffset: 0.7 },
     subStores: [

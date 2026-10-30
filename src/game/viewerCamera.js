@@ -196,6 +196,16 @@ export function indoorFollow(pitch, distance, k, shot) {
   }
 }
 
+/**
+ * 鏡頭離人物太近（在室內貼著牆，跟隨鏡頭被拉到人物背後幾十公分）時人物先不畫：
+ * 近裁切面 0.3 公尺會把肩膀與後腦切開，畫面裡看得到人物模型的裡面（畫面審查）。
+ * camera、p 是世界座標（p 是人物腳下）；水平距離小於 CHARACTER_CLEAR、高度在人物身高範圍內就算太近。
+ */
+export const CHARACTER_CLEAR = 0.7
+export function cameraTooCloseToCharacter(camera, p, height = 1.9) {
+  return Math.hypot(camera.x - p.x, camera.z - p.z) < CHARACTER_CLEAR && camera.y > p.y - 0.2 && camera.y < p.y + height + 0.3
+}
+
 /** 由 yaw／pitch 算出「注視點 → 鏡頭」的單位方向 */
 export function orbitDirection(yaw, pitch, out = { x: 0, y: 0, z: 0 }) {
   const cosPitch = Math.cos(pitch)

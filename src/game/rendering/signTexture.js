@@ -28,7 +28,7 @@ import { DISPLAY_FONT, registerFontTexture } from './fonts.js'
  *
  * 橫式招牌依舊日習慣由右至左書寫（modern 除外）；直式招牌由上而下。
  */
-const STYLES = {
+export const SIGN_STYLES = {
   lacquer: { bg: '#2f221a', bg2: '#3e2c22', border: '#b8924f', text: '#e4c074', shadow: 'rgba(0,0,0,0.6)', grain: 'rgba(255,220,170,0.06)' },
   wood: { bg: '#a98159', bg2: '#94704b', border: '#5a3f2b', text: '#21160f', shadow: 'rgba(255,238,205,0.28)', grain: 'rgba(60,35,20,0.17)' },
   red: { bg: '#9d3b2a', bg2: '#873123', border: '#d9b46a', text: '#f2d99c', shadow: 'rgba(40,10,5,0.5)', grain: 'rgba(255,200,170,0.07)' },
@@ -201,8 +201,8 @@ function drawFrets(g, cw, ch, m, color) {
 const PAINTED_INKS = ['#a8301f', '#2e4a7a', '#a8301f', '#2a231e']
 
 function resolveStyle(style, text) {
-  if (style === 'modern') return text.length % 2 === 0 ? STYLES.modernLight : STYLES.modern
-  return STYLES[style] ?? STYLES.wood
+  if (style === 'modern') return text.length % 2 === 0 ? SIGN_STYLES.modernLight : SIGN_STYLES.modern
+  return SIGN_STYLES[style] ?? SIGN_STYLES.wood
 }
 
 function goldFill(g, y0, y1) {
@@ -310,7 +310,7 @@ function drawSign(g, cw, ch, text, style, vertical) {
     size = Math.min(cw * (s.letters ? 0.86 : 0.64), (inner / n) * 0.9)
     chars.forEach((char, i) => positions.push([char, cw / 2, m * 2 + (inner * (i + 0.5)) / n]))
   } else {
-    const display = s.ltr ? chars : chars.slice().reverse()
+    const display = signDisplayOrder(chars, s.ltr)
     const pad = s.letters ? m * 0.5 : m * 2
     const inner = cw - pad * 2
     const heightFactor = s.sizeH ?? (s.letters ? 0.86 : s.ltr ? 0.5 : 0.6)
@@ -351,6 +351,34 @@ function drawSign(g, cw, ch, text, style, vertical) {
 }
 
 /* ───────────── 招牌圖集：一個年代的所有招牌共用一張貼圖、一次繪製 ───────────── */
+
+/**
+ * 橫式招牌的字序：由右往左讀的招牌（傳統的橫匾）把字倒過來排，但英文與數字（例如寶順洋行的「Dodd & Co.」）
+ * 維持由左往右的閱讀順序，整段當成一個字放進倒過來的序列裡。ltr 的招牌照原本的順序。
+ */
+export function signDisplayOrder(chars, ltr = false) {
+  if (ltr) return chars
+  const runs = []
+  for (const char of chars) {
+    const latin = /[A-Za-z0-9]/.test(char)
+    const last = runs.at(-1)
+    // 英文詞之間的空白與標點（& . ' -）接在同一段英文裡
+    if (last?.latin && (latin || /[ &.'’-]/.test(char))) last.chars.push(char)
+    else runs.push({ latin, chars: [char] })
+  }
+  // 英文段落尾端的空白還給中文那一側（當作英文與中文之間的間隔）
+  const out = []
+  for (const run of runs.reverse()) {
+    if (!run.latin) {
+      out.push(...run.chars)
+      continue
+    }
+    const trailing = []
+    while (run.chars.at(-1) === ' ') trailing.push(run.chars.pop())
+    out.push(...trailing, ...run.chars)
+  }
+  return out
+}
 
 export function signKey({ text, style = 'wood', vertical = false, width, height }) {
   return `${text}|${style}|${vertical ? 1 : 0}|${(width / height).toFixed(2)}`
