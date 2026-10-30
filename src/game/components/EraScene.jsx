@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { transitionState } from '../transition.js'
 import { QUALITY_MODES } from '../quality.js'
+import { motionEnabled } from '../motion.js'
 import { playerState } from '../runtime.js'
 import { getInteriorMaterials } from '../rendering/materials.js'
 import { interiorAmount } from '../viewerCamera.js'
@@ -115,9 +116,9 @@ function InteriorZone({ world, zones, detail }) {
   )
 }
 
-/** 整條街共用的風：每個影格更新一次（布幡、遮雨棚、煙、落葉讀同一組值） */
+/** 整條街共用的風：每個影格更新一次（布幡、遮雨棚、煙、落葉讀同一組值；流暢畫質 uMotion = 0） */
 function WindClock() {
-  useFrame((state) => updateWind(state.clock.elapsedTime))
+  useFrame((state) => updateWind(state.clock.elapsedTime, motionEnabled(useGameStore.getState().qualityMode)))
   return null
 }
 
@@ -127,6 +128,7 @@ function WindClock() {
  */
 export function EraScene({ world }) {
   const detail = useGameStore((state) => QUALITY_MODES[state.qualityMode]?.detail ?? true)
+  const motion = useGameStore((state) => motionEnabled(state.qualityMode))
   // 通知轉場狀態機：這個年代的街景已經掛載到場景中
   useLayoutEffect(() => {
     transitionState.mountedWorld = world
@@ -149,8 +151,8 @@ export function EraScene({ world }) {
       <TextLanterns lanterns={world.textLanterns} />
       <GlowLayer glows={world.glows} pools={world.pools} />
       <SteamLayer steam={world.steam} />
-      {/* 榕樹下的落葉（一次繪製；流暢模式減量） */}
-      <LeafLayer trees={world.leafTrees ?? []} />
+      {/* 榕樹下的落葉（一次繪製）：只在精緻畫質建立，流暢畫質不建立也不畫 */}
+      {motion && <LeafLayer trees={world.leafTrees ?? []} />}
       <WindClock />
       {/* 店裡的小動物（老潘的黑白貓）：跟著這個年代的街景掛載與卸載 */}
       <CatLayer cats={world.cats} />

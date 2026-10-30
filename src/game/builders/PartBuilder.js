@@ -159,10 +159,13 @@ export class PartBuilder {
     this.steam.push({ position: [p.x, p.y, p.z], strength })
   }
 
-  /** 爐灶與香爐的煙（和蒸氣一起畫，顏色較灰、升得較高、會被風吹斜） */
-  addSmoke(x, y, z, strength = 1) {
+  /**
+   * 爐灶與香爐的煙（和蒸氣一起畫，顏色較灰、升得較高、會被風吹斜；只在精緻畫質）。
+   * smoothAsSteam：流暢畫質畫成原本的蒸氣（香爐原本就有蒸氣）；否則流暢畫質不畫。
+   */
+  addSmoke(x, y, z, strength = 1, { smoothAsSteam = false } = {}) {
     const p = this.transformPoint(x, y, z)
-    this.steam.push({ position: [p.x, p.y, p.z], strength, kind: 'smoke' })
+    this.steam.push({ position: [p.x, p.y, p.z], strength, kind: 'smoke', ...(smoothAsSteam && { smoothAsSteam }) })
   }
 
   /** 榕樹的落葉範圍：樹冠中心（本地座標）、樹冠下緣高度 top、半徑與地面高度 */

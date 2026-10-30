@@ -1,14 +1,13 @@
 /**
  * 畫面動態的端對端測試（真實瀏覽器，透過 Playwright 操作網頁；需要開發版的 window.__DDC__）
  *
- * 兩種畫質（流暢 low、精緻 high）× 五個年代，檢查新動態都在場景裡、而且真的在動：
- * - 河面材質是加了波紋與反光的版本（river-water），時間 uniform 會前進
- * - 船的倒影網格存在（流暢模式至少有近處的船）
- * - 落葉網格存在、份量 > 0（流暢模式比精緻模式少）
- * - 燈籠的實例矩陣隔幾個影格會改變（有燈籠的年代）
- * - 遮雨棚材質是隨風的版本（awning-sway）；風力 uniform 會變化
- * - 蒸氣網格裡有煙（香爐、煤球爐；有廟埕的年代）
- * 另外量一個影格的繪製呼叫，不能超過 README 寫的每個年代 390 次。
+ * 畫面動態只在精緻畫質（使用者 2026-10-30 決定）。兩種畫質（流暢 low、精緻 high）× 五個年代：
+ * - 精緻：河面材質是加了波紋與反光的版本（river-water）、船的倒影、落葉網格存在並在動、
+ *   遮雨棚與煙的 uMotion = 1、蒸氣網格裡有煙（有廟埕的年代）
+ * - 流暢：河面是原本的靜態材質、沒有倒影與落葉網格、uMotion = 0（布幡固定幅度、遮雨棚不動、煙畫成蒸氣）
+ * - 兩種畫質：燈籠的實例矩陣隔幾個影格會改變（有燈籠的年代）
+ * 另外量一個影格的繪製呼叫，不能超過 README 寫的每個年代 390 次；
+ * 環境變數 EXPECT_SMOOTH_CALLS='{"qing-port":123,...}' 可以要求流暢畫質的數字和 #53 之前一模一樣。
  *
  * 用法：
  *   npm run dev -- --host 127.0.0.1 --port 5173
@@ -23,6 +22,7 @@ const ERA_IDS = (process.env.ERAS ?? 'qing-port,banquet,modern,postwar,revival')
 const QUALITIES = (process.env.QUALITIES ?? 'low,high').split(',')
 const TIMEOUT = 240000
 const DRAW_CALL_LIMIT = 390
+const EXPECT_SMOOTH_CALLS = process.env.EXPECT_SMOOTH_CALLS ? JSON.parse(process.env.EXPECT_SMOOTH_CALLS) : null
 
 async function loadPlaywright() {
   const name = process.env.PLAYWRIGHT_MODULE ?? 'playwright'
@@ -43,7 +43,7 @@ async function run() {
     executablePath: process.env.CHROMIUM_EXECUTABLE || undefined,
     args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
   })
-  const leafCounts = {}
+  const drawCalls = {}
   for (const quality of QUALITIES) {
     const page = await browser.newPage({ viewport: { width: 1024, height: 700 } })
     const errors = []
@@ -66,7 +66,7 @@ async function run() {
       const sample = () =>
         page.evaluate(() => {
           const d = window.__DDC__
-          const out = { reflections: 0, leaves: null, water: null, awning: null, lanterns: null, smoke: 0, wind: null }
+          const out = { reflections: 0, leaves: null, water: null, still: false, awning: null, lanterns: null, smoke: 0, wind: null, motion: null }
           d.scene.traverse((o) => {
             if (o.name === 'boat-reflection') out.reflections++
             if (o.name === 'falling-leaves') out.leaves = { visible: o.visible, count: o.material.uniforms.uCount.value, time: o.material.uniforms.uTime.value }
@@ -75,9 +75,13 @@ async function run() {
             }
             const key = o.material?.customProgramCacheKey?.()
             if (key === 'river-water') out.water = true
+            if (o.isMesh && o.material?.isMeshToonMaterial && o.material.map && o.geometry?.type === 'PlaneGeometry' && o.geometry.parameters?.width === 1100 && key !== 'river-water') out.still = true
             if (key === 'awning-sway') out.awning = true
             if (o.geometry?.attributes?.aKind) out.smoke = Array.from(o.geometry.attributes.aKind.array).filter((k) => k > 0.5).length
-            if (o.material?.uniforms?.uSmokePuffs) out.wind = o.material.uniforms.uWind.value
+            if (o.material?.uniforms?.uSmokePuffs) {
+              out.wind = o.material.uniforms.uWind.value
+              out.motion = o.material.uniforms.uMotion?.value ?? null
+            }
           })
           return out
         })
@@ -87,13 +91,19 @@ async function run() {
       await page.waitForFunction((goal) => (window.__DDC__.frameCount ?? 0) >= goal, start + 3, { timeout: 60000 })
       const b = await sample()
 
-      record(`${tag}：河面是加了波紋與反光的材質`, a.water === true)
-      record(`${tag}：船的倒影`, a.reflections > 0, `${a.reflections} 艘`)
-      record(`${tag}：落葉網格存在並在動`, !!a.leaves && a.leaves.count > 0 && b.leaves.time > a.leaves.time, a.leaves ? `每棵 ${a.leaves.count} 片` : '沒有')
-      leafCounts[tag] = a.leaves?.count ?? 0
+      if (quality === 'high') {
+        record(`${tag}：河面是加了波紋與反光的材質`, a.water === true)
+        record(`${tag}：船的倒影`, a.reflections > 0, `${a.reflections} 艘`)
+        record(`${tag}：落葉網格存在並在動`, !!a.leaves && a.leaves.count > 0 && b.leaves.time > a.leaves.time, a.leaves ? `每棵 ${a.leaves.count} 片` : '沒有')
+      } else {
+        record(`${tag}：河面是原本的靜態材質`, a.water === null && a.still, `river-water ${a.water}, still ${a.still}`)
+        record(`${tag}：沒有船的倒影`, a.reflections === 0, `${a.reflections}`)
+        record(`${tag}：沒有落葉網格`, a.leaves === null)
+      }
+      if (a.motion !== null) record(`${tag}：uMotion（精緻 1、流暢 0）`, a.motion === (quality === 'high' ? 1 : 0), `${a.motion}`)
       if (a.lanterns) record(`${tag}：燈籠的實例矩陣隨時間改變（擺動）`, a.lanterns.some((v, i) => Math.abs(v - b.lanterns[i]) > 1e-6))
       if (a.awning !== null) record(`${tag}：遮雨棚材質隨風`, a.awning === true)
-      if (['banquet', 'modern', 'postwar', 'revival'].includes(eraId)) record(`${tag}：廟埕的香煙（煙）`, a.smoke > 0, `${a.smoke} 個頂點`)
+      if (quality === 'high' && ['banquet', 'modern', 'postwar', 'revival'].includes(eraId)) record(`${tag}：廟埕的香煙（煙）`, a.smoke > 0, `${a.smoke} 個頂點`)
       if (a.wind !== null) record(`${tag}：風力在 0.25–1`, a.wind >= 0.25 && a.wind <= 1, a.wind.toFixed(3))
 
       // 一個影格的繪製呼叫（法線、色彩、陰影與後製全部加起來）
@@ -115,16 +125,16 @@ async function run() {
         return calls
       })
       record(`${tag}：一個影格的繪製呼叫 ≤ ${DRAW_CALL_LIMIT}`, calls <= DRAW_CALL_LIMIT, `${calls}`)
+      drawCalls[tag] = calls
+      if (quality === 'low' && EXPECT_SMOOTH_CALLS?.[eraId] != null) {
+        record(`${tag}：繪製呼叫和 #53 之前相同`, calls === EXPECT_SMOOTH_CALLS[eraId], `${calls}（之前 ${EXPECT_SMOOTH_CALLS[eraId]}）`)
+      }
       await page.evaluate(() => delete window.__DDC__.cameraOverride)
     }
     record(`${quality}：沒有頁面錯誤`, errors.length === 0, errors.slice(0, 3).join(' | '))
     await page.close()
   }
-  if (QUALITIES.includes('low') && QUALITIES.includes('high')) {
-    for (const eraId of ERA_IDS) {
-      record(`${eraId}：流暢模式的落葉比精緻模式少，但不是 0`, leafCounts[`${eraId}/low`] > 0 && leafCounts[`${eraId}/low`] < leafCounts[`${eraId}/high`])
-    }
-  }
+  console.log(`繪製呼叫：${JSON.stringify(drawCalls)}`)
   await browser.close()
   const failed = results.filter((r) => !r.ok)
   console.log(`\n${results.length - failed.length}／${results.length} 通過`)

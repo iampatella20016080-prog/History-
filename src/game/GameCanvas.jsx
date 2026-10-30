@@ -1,4 +1,4 @@
-import { Component, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Component, Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { CAMERA, PALETTE } from './config.js'
 import { World } from './World.jsx'
@@ -6,6 +6,7 @@ import { setAtmosphere } from './atmosphere.js'
 import { QualityController } from './components/QualityController.jsx'
 import { FlickerDebug } from './components/FlickerDebug.jsx'
 import { getQualitySettings } from './quality.js'
+import { parseStatsParam } from '../stats/statsMath.js'
 import { loadEraWorld, prefetchEraWorld, setDisplayedEra } from './world/worldManager.js'
 import { ERAS, getEra, getEraIndex } from '../data/eras.js'
 import { useGameStore } from '../state/useGameStore.js'
@@ -36,6 +37,10 @@ class CanvasErrorBoundary extends Component {
     return this.props.children
   }
 }
+
+// ?stats=1 才動態載入效能浮層，沒有參數時完全不載入
+const statsEnabled = typeof window !== 'undefined' && parseStatsParam(window.location.search)
+const StatsOverlay = statsEnabled ? lazy(() => import('../stats/StatsOverlay.jsx')) : null
 
 /** 3D 畫布：先讓介面顯示，再產生目前年代的街景（Web Worker），並在閒置時預先產生下一個年代 */
 export function GameCanvas() {
@@ -98,6 +103,11 @@ export function GameCanvas() {
         }}
       >
         <QualityController />
+        {statsEnabled && (
+          <Suspense fallback={null}>
+            <StatsOverlay />
+          </Suspense>
+        )}
         <FlickerDebug />
         {world && <World world={world} promptLayer={promptLayer} onSwap={swapWorld} />}
       </Canvas>

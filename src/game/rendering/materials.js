@@ -164,21 +164,22 @@ export function getMaterials() {
 /**
  * 遮雨棚隨風：沿法線輕輕起伏（頂點著色器，不增加繪製呼叫）。前緣的垂邊（法線水平）擺得較大，
  * 斜面（法線朝上）只有微微起伏；相位依世界座標，一排遮雨棚像被同一陣風吹過。
- * 幅度只有幾公分，輪廓線（法線趟不跑這段）仍然對得上。
+ * 幅度只有幾公分，輪廓線（法線趟不跑這段）仍然對得上。只在精緻畫質（uMotion = 1）擺動，流暢畫質不動。
  */
 function swayingAwning(material) {
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uTime = windUniforms.uTime
     shader.uniforms.uWind = windUniforms.uWind
+    shader.uniforms.uMotion = windUniforms.uMotion
     shader.vertexShader = shader.vertexShader
-      .replace('#include <common>', '#include <common>\nuniform float uTime;\nuniform float uWind;')
+      .replace('#include <common>', '#include <common>\nuniform float uTime;\nuniform float uWind;\nuniform float uMotion;')
       .replace(
         '#include <begin_vertex>',
         `#include <begin_vertex>
         {
           vec3 wp = (modelMatrix * vec4(transformed, 1.0)).xyz;
           float flap = 1.0 - abs(objectNormal.y);
-          float amp = mix(0.006, 0.03, flap) * (0.4 + uWind);
+          float amp = mix(0.006, 0.03, flap) * (0.4 + uWind) * uMotion;
           float wave = sin(uTime * 2.3 + wp.x * 1.3 + wp.z * 0.7) * 0.7 + sin(uTime * 4.1 + wp.x * 2.9) * 0.3;
           transformed += objectNormal * amp * wave;
         }`,
