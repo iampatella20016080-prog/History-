@@ -215,7 +215,8 @@ describe('流暢畫質和 #53 之前相同', () => {
     test(`${era.id}：街景批次、遠景批次、招牌、布幡、燈籠數不變`, () => {
       const world = buildEraWorldSync(era.id)
       const pre = PRE_MOTION[era.id]
-      assert.equal(world.batches.length, pre.batches)
+      // #57（細部）之後每個年代的街景多一批接地暗影（contact），和畫面動態無關，比對時扣掉
+      assert.equal(world.batches.filter((batch) => batch.material !== 'contact').length, pre.batches)
       assert.equal((world.detailBatches ?? []).length, pre.detailBatches)
       assert.equal(world.signs.length, pre.signs)
       assert.equal(world.banners.length, pre.banners)
