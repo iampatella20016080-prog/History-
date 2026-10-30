@@ -12,7 +12,16 @@ import { pottedPlant, stool } from '../src/game/builders/props.js'
 import { buildShophouse } from '../src/game/builders/shophouse.js'
 import { SILL_GAP, planWeathering } from '../src/game/builders/weathering.js'
 import { MATERIAL_TILE } from '../src/game/rendering/materials.js'
-import { SURFACE_VARIATION, SURFACE_VARIATION_GLSL, hash12, unitCell, unitState } from '../src/game/rendering/surfaceVariation.js'
+import {
+  SURFACE_VARIATION,
+  SURFACE_VARIATION_GLSL,
+  applySurfaceVariation,
+  hash12,
+  setSurfaceVariationEnabled,
+  surfaceVariationEnabled,
+  unitCell,
+  unitState,
+} from '../src/game/rendering/surfaceVariation.js'
 import { createEraLayout } from '../src/game/world/eraLayout.js'
 import { buildEraWorldSync } from '../src/game/world/buildWorld.js'
 import { TEMPLE_STALL } from '../src/data/squidSoupLayout.js'
@@ -23,8 +32,14 @@ import { DOUHUA_STALL } from '../src/data/templeSnackLayout.js'
  * 1. 榕樹與盆栽的外緣不規則、露出粗枝
  * 2. 大面積地磚與牆面的明暗、色相、補丁與破磚（打破重複感）
  * 3. 灰泥牆的水漬從窗臺下開始往下流
- * 4. 柱腳與家具的接地暗影做進模型（兩種畫質都看得到）
+ * 4. 柱腳與家具的接地暗影做進模型
+ * 使用者 2026-10-30 決定：這些效果都只在精緻畫質啟用；流暢畫質與細部之前相同（qualityVariants.test.js）。
  */
+
+/** 精緻畫質看到的零件：兩種畫質都有的，加上 variant 'fine' 的（不含被取代的 'smooth'） */
+function fineGroup(builder, material) {
+  return (builder.groups.get(material) ?? []).filter((g) => g.userData.variant !== 'smooth')
+}
 
 function eachVertex(g, fn) {
   const pos = g.attributes.position
@@ -67,6 +82,7 @@ describe('細部：不規則的葉團與粗枝', () => {
     const b = new PartBuilder()
     buildTree(b, [0, 0, 0], { scale: 0.9, seed: 301, banyan: true, groundRadius: 0.95 })
     const limbs = b.groups.get('wood')[1]
+    assert.equal(limbs.userData.variant, 'fine', '粗枝只在精緻畫質')
     let reach = 0
     eachVertex(limbs, (x, y, z) => {
       const d = Math.hypot(x, z)
@@ -76,7 +92,9 @@ describe('細部：不規則的葉團與粗枝', () => {
     })
     assert.ok(reach > 2.0, `粗枝伸到 ${reach.toFixed(2)} m`)
     // 外緣參差：每團葉叢到自己中心的距離有明顯的起伏
-    for (const g of b.groups.get('plain')) {
+    assert.equal(fineGroup(b, 'plain').length, 14, '精緻畫質十四團不規則葉團')
+    assert.equal(b.groups.get('plain').filter((g) => g.userData.variant === 'smooth').length, 14, '流暢畫質維持十四顆圓球')
+    for (const g of fineGroup(b, 'plain')) {
       g.computeBoundingBox()
       const c = g.boundingBox.getCenter(g.boundingBox.min.clone())
       const rs = []
@@ -89,7 +107,7 @@ describe('細部：不規則的葉團與粗枝', () => {
     const clearings = [TEMPLE_STALL.clearing, DOUHUA_STALL.clearing]
     const b = new PartBuilder()
     buildTree(b, [3.6, 0, -2.4], { scale: 0.9, seed: 301, banyan: true, clearing: clearings, groundRadius: 0.95 })
-    for (const g of [...b.groups.get('plain'), b.groups.get('wood')[1]]) {
+    for (const g of [...fineGroup(b, 'plain'), b.groups.get('wood')[1]]) {
       eachVertex(g, (x, y, z) => {
         for (const c of clearings) {
           if (x > c.minX && x < c.maxX && z > c.minZ && z < c.maxZ) assert.ok(y >= c.top, `(${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)})`)
@@ -98,11 +116,14 @@ describe('細部：不規則的葉團與粗枝', () => {
     }
   })
 
-  test('盆栽：葉叢不規則，主幹分出細枝；仍只用 plain 與 wood（加上接地暗影）', () => {
+  test('盆栽：精緻畫質葉叢不規則，主幹分出細枝；流暢畫質維持原本的四顆圓球；仍只用 plain 與 wood（加上接地暗影）', () => {
     const b = new PartBuilder()
     pottedPlant(b, [0, 0, 0], { seed: 41, size: 1.1 })
-    assert.ok(b.groups.get('wood').length >= 3, '主幹加上細枝')
+    assert.ok(fineGroup(b, 'wood').length >= 3, '主幹加上細枝')
     assert.deepEqual([...b.groups.keys()].sort(), ['contact', 'plain', 'wood'])
+    const smoothLeaves = b.groups.get('plain').filter((g) => g.userData.variant === 'smooth')
+    assert.equal(smoothLeaves.length, 4)
+    assert.ok(b.groups.get('wood').every((g) => g.userData.variant !== 'smooth'), '主幹兩種畫質都有')
   })
 })
 
@@ -152,6 +173,26 @@ describe('細部：大面積地磚與牆面的變化', () => {
     assert.ok(differs > 0)
   })
 
+  test('只在精緻畫質：預設停用，停用時不改著色器；切換時重新編譯套用過的材質', () => {
+    assert.equal(surfaceVariationEnabled(), false, '預設停用（觸控裝置一開始就不編譯）')
+    const material = applySurfaceVariation({ userData: {}, needsUpdate: false }, SURFACE_VARIATION.pavers)
+    const other = { userData: {}, needsUpdate: false }
+    const shader = () => ({ uniforms: {}, vertexShader: '#include <common>\n#include <begin_vertex>', fragmentShader: '#include <common>\n#include <color_fragment>' })
+    const off = shader()
+    material.onBeforeCompile(off)
+    assert.equal(off.fragmentShader, shader().fragmentShader, '流暢畫質的著色器與原本相同')
+    const offKey = material.customProgramCacheKey()
+    setSurfaceVariationEnabled(true, [{ material, other }])
+    assert.equal(material.needsUpdate, true)
+    assert.equal(other.needsUpdate, false)
+    const on = shader()
+    material.onBeforeCompile(on)
+    assert.match(on.fragmentShader, /surfNoise/)
+    assert.ok(on.uniforms.uSurfVar)
+    assert.notEqual(material.customProgramCacheKey(), offKey, '兩種著色器各自快取')
+    setSurfaceVariationEnabled(false)
+  })
+
   test('幅度溫和：明暗與色相都在 10% 左右以內', () => {
     for (const [key, c] of Object.entries(SURFACE_VARIATION)) {
       assert.ok(c.tone <= 0.1 && c.hue <= 0.04, key)
@@ -170,7 +211,7 @@ describe('細部：水漬從窗臺下開始', () => {
   test('每道水漬的上緣都貼著某一扇窗的窗臺，寬度不超過窗寬，往下流', () => {
     for (let seed = 1; seed < 40; seed++) {
       const plan = planWeathering({ eraId: 'postwar', condition: 'aged', seed, surfaces: [wall], openings: windows })
-      for (const s of plan.stains.filter((item) => item.kind === 'streak')) {
+      for (const s of plan.sillStreaks) {
         const o = windows.find((w) => Math.abs(s.sill - (w.y - w.height / 2 - SILL_GAP)) < 1e-9 && Math.abs(s.x - w.x) <= w.width / 2)
         assert.ok(o, '水漬在窗下')
         assert.ok(Math.abs(s.y + s.height / 2 - s.sill) < 1e-9, '上緣在窗臺')
@@ -182,16 +223,29 @@ describe('細部：水漬從窗臺下開始', () => {
     }
   })
 
-  test('沒有窗的牆面（騎樓下的牆柱）沒有水漬', () => {
+  test('沒有窗的牆面（騎樓下的牆柱）沒有窗臺下的水漬', () => {
     for (let seed = 1; seed < 30; seed++) {
       const plan = planWeathering({ eraId: 'postwar', condition: 'aged', seed, surfaces: [{ x0: -0.25, x1: 0.25, y0: 0.4, y1: 3.2, z: 0 }] })
-      assert.equal(plan.stains.filter((s) => s.kind === 'streak').length, 0)
+      assert.equal(plan.sillStreaks.length, 0)
+    }
+  })
+
+  test('原本的規劃（流暢畫質）不變；窗臺下的水漬不和其他風化痕跡與海報重疊', () => {
+    const overlap = (a, b) => Math.abs(a.x - b.x) * 2 < a.width + b.width && Math.abs(a.y - b.y) * 2 < a.height + b.height
+    for (let seed = 1; seed < 40; seed++) {
+      const plan = planWeathering({ eraId: 'postwar', condition: 'aged', seed, surfaces: [wall], openings: windows })
+      // 原本的水漬仍從牆頂往下（流暢畫質），每一道最多換成一道窗臺下的水漬
+      for (const s of plan.stains.filter((item) => item.kind === 'streak')) assert.ok(s.y + s.height / 2 > wall.y1 - 0.2)
+      assert.ok(plan.sillStreaks.length <= plan.stains.filter((item) => item.kind === 'streak').length)
+      const others = [...plan.stains.filter((item) => item.kind !== 'streak'), ...plan.posters]
+      for (const s of plan.sillStreaks) assert.ok(!others.some((o) => overlap(s, o)))
     }
   })
 
   test('街上的一般建築：水漬都從窗臺下開始；庶民生活仍有不少水漬', () => {
     const BUILDERS = { minnan: buildShophouse, baroque: buildArcadeBuilding, deco: buildArcadeBuilding, postwar: buildArcadeBuilding }
     let streaks = 0
+    let before = 0
     for (const eraId of ['postwar', 'modern']) {
       const layout = createEraLayout(ERAS.find((era) => era.id === eraId))
       for (const building of layout.buildings) {
@@ -201,13 +255,15 @@ describe('細部：水漬從窗臺下開始', () => {
         b.weatherLog = []
         builder(b, { ...building.config }, new PartBuilder())
         const plan = b.weatherLog[0]
-        for (const s of plan.stains.filter((item) => item.kind === 'streak')) {
+        for (const s of plan.sillStreaks) {
           assert.ok(Number.isFinite(s.sill))
           if (eraId === 'postwar') streaks++
         }
+        if (eraId === 'postwar') before += plan.stains.filter((item) => item.kind === 'streak').length
       }
     }
-    assert.ok(streaks > 20, `庶民生活的水漬 ${streaks}`)
+    // 沒有窗的牆面（騎樓下的牆柱）與窗臺下放不下的水漬不畫（窗下的空間有限，約原本的五分之一）
+    assert.ok(streaks > 12 && streaks >= before / 6, `庶民生活的水漬 ${streaks}／原本 ${before}`)
   })
 })
 
@@ -253,12 +309,15 @@ describe('細部：接地暗影', () => {
     assert.ok(rg.boundingBox.max.z - rg.boundingBox.min.z > 0.6, '旋轉 45 度後在 z 方向也有長度')
   })
 
-  test('每個年代的街景都有接地暗影，放在主要批次（兩種畫質都畫），只多一批', () => {
+  test('每個年代的街景都有接地暗影，只在精緻畫質才顯示的細部批次（流暢畫質不畫），只多一批', () => {
     for (const era of ERAS) {
       const world = buildEraWorldSync(era.id)
-      assert.equal(world.batches.filter((batch) => batch.material === 'contact').length, 1, era.id)
-      assert.ok(!world.detailBatches.some((batch) => batch.material === 'contact'), `${era.id} 不在細部`)
+      assert.equal(world.detailBatches.filter((batch) => batch.material === 'contact').length, 1, era.id)
+      assert.ok(!world.batches.some((batch) => batch.material === 'contact'), `${era.id} 不在主要批次`)
     }
+    const b = new PartBuilder()
+    contactShadow(b, 0, 0, 0, 0.5)
+    assert.ok(b.groups.get('contact').every((g) => g.userData.variant === 'fine'))
   })
 
   test('騎樓柱與亭仔腳木柱的柱腳都有暗影，貼在騎樓步道上', () => {

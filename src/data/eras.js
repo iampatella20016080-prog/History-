@@ -37,6 +37,8 @@ export const ERAS = [
       lines: { color: '#2b211a', strength: 0.82 },
       glow: 0.12,
       riverMist: 0.35,
+      // 空氣遠近感（精緻畫質）：清末河港偏濕，貼地的水氣較濃；午後太陽高，光束幾乎看不到
+      air: { density: 0.0062, start: 14, heightFalloff: 0.07, max: 0.66, desaturate: 0.42, horizon: 0.35, sunScatter: 0.35, rays: 0.35 },
     },
     buildingStyle: {
       rebuild: {},
@@ -99,6 +101,8 @@ export const ERAS = [
       glow: 1.0,
       lanternGlow: 0.75, // 燈籠、燈泡與光暈的亮度調降約 25%
       riverMist: 0.25,
+      // 空氣遠近感（精緻畫質）：傍晚的暮色往藍紫退，朝夕陽的方向偏暖；斜陽穿過騎樓與巷口的光束最明顯
+      air: { density: 0.006, start: 12, heightFalloff: 0.05, max: 0.6, desaturate: 0.45, horizon: 0.3, sunScatter: 0.75, rays: 0.95 },
     },
     buildingStyle: {
       rebuild: { minnan: { baroque: 0.55 } },
@@ -158,6 +162,8 @@ export const ERAS = [
       lines: { color: '#2a1d18', strength: 0.8 },
       glow: 0.62,
       riverMist: 0.2,
+      // 空氣遠近感（精緻畫質）：黃昏前的暖色薄霧；太陽仍低，光束次於酒樓繁華
+      air: { density: 0.0055, start: 14, heightFalloff: 0.045, max: 0.6, desaturate: 0.45, horizon: 0.5, sunScatter: 0.65, rays: 0.75 },
     },
     buildingStyle: {
       rebuild: { minnan: { deco: 0.38, baroque: 0.12 } },
@@ -204,6 +210,8 @@ export const ERAS = [
       lines: { color: '#2d241c', strength: 0.82 },
       glow: 0.08,
       riverMist: 0.15,
+      // 空氣遠近感（精緻畫質）：午後偏乾的空氣，霧較淡；太陽高，不出現光束
+      air: { density: 0.0045, start: 16, heightFalloff: 0.045, max: 0.55, desaturate: 0.45, horizon: 0.5, sunScatter: 0.4, rays: 0.15 },
     },
     buildingStyle: {
       rebuild: { minnan: { postwar: 0.3 }, baroque: { postwar: 0.18 }, deco: { postwar: 0.1 } },
@@ -250,6 +258,8 @@ export const ERAS = [
       lines: { color: '#2f2822', strength: 0.74 },
       glow: 0.42,
       riverMist: 0.1,
+      // 空氣遠近感（精緻畫質）：現代的晴天最清透，只在街尾略微退色
+      air: { density: 0.0032, start: 18, heightFalloff: 0.04, max: 0.48, desaturate: 0.35, horizon: 0.6, sunScatter: 0.3, rays: 0 },
     },
     buildingStyle: {
       rebuild: {},

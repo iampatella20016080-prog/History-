@@ -18,6 +18,8 @@ import {
 import { FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass.js'
 import { LAYERS, PALETTE } from '../config.js'
 import { atmosphere } from '../atmosphere.js'
+import { DEFAULT_LINE_FADE } from '../aerial.js'
+import { createAirPass } from './airPass.js'
 import { getQualitySettings } from '../quality.js'
 import { useGameStore } from '../../state/useGameStore.js'
 import { renderState } from '../runtime.js'
@@ -29,6 +31,7 @@ import { transitionState } from '../transition.js'
  * 1. 法線＋深度：以 MeshNormalMaterial 覆寫全場景，取得法線與深度
  * 2. 色彩：正常渲染（卡通材質、陰影）
  * 3. 輪廓：依深度二階差分與法線差異描出細黑線，遠處線條淡出
+ * 3b. 空氣遠近感與斜陽光束（只在精緻畫質，見 airPass.js）
  * 4. 輸出：輕微景深（遠景柔焦）、年代調色、暗角、紙張顆粒，最後轉為 sRGB
  *
  * 年代轉場：霧氣（以流動的雜訊形成柔和的霧團）＋「水墨暈染」顯影——
@@ -343,7 +346,7 @@ function createPipeline(gl, initialQuality) {
       uFar: { value: 900 },
       uLineColor: { value: new Color(PALETTE.ink) },
       uLineStrength: { value: 0.88 },
-      uFade: { value: new Vector2(38, 150) },
+      uFade: { value: new Vector2(...DEFAULT_LINE_FADE) },
       uAO: { value: quality.ao },
       uProjScale: { value: 500 },
     },
@@ -414,6 +417,19 @@ function createPipeline(gl, initialQuality) {
   const brightQuad = new FullScreenQuad(brightMaterial)
   const blurQuad = new FullScreenQuad(blurMaterial)
   let bloom = null
+  let air = null
+
+  // 空氣與光束（只在精緻畫質）：接在輪廓之後，後面的光暈、轉場擷取與輸出改讀它的結果
+  function setAir(enabled) {
+    if (enabled === Boolean(air)) return
+    air?.dispose()
+    air = enabled ? createAirPass(quality, { colorType, inputTexture: compositeTarget.texture, depthTexture: normalTarget.depthTexture }) : null
+    if (air && current.x > 0) air.resize(current.x, current.y)
+    const output = air ? air.texture : compositeTarget.texture
+    finalMaterial.uniforms.tInput.value = output
+    copyMaterial.uniforms.tInput.value = output
+    brightMaterial.uniforms.tInput.value = output
+  }
 
   function createBloom() {
     const make = () => {
@@ -471,10 +487,12 @@ function createPipeline(gl, initialQuality) {
     finalMaterial.uniforms.uBloom.value = next.bloom
     if (next.bloom > 0 && !bloom) createBloom()
     else if (next.bloom <= 0) disposeBloom()
+    setAir(Boolean(next.air))
     const data = typeof document !== 'undefined' ? document.documentElement.dataset : {}
     data.msaa = String(colorTarget.samples)
     data.ao = String(next.ao)
     data.bloom = String(next.bloom)
+    data.air = air ? '1' : '0'
   }
 
   const size = new Vector2()
@@ -493,6 +511,7 @@ function createPipeline(gl, initialQuality) {
     edgeMaterial.uniforms.uTexel.value.set(1 / width, 1 / height)
     finalMaterial.uniforms.uTexel.value.set(1 / width, 1 / height)
     finalMaterial.uniforms.uAspect.value = width / Math.max(1, height)
+    air?.resize(width, height)
   }
 
   function updateUniforms(camera, dpr) {
@@ -506,6 +525,7 @@ function createPipeline(gl, initialQuality) {
     edge.uLineColor.value.copy(a.lineColor)
     edge.uLineStrength.value = a.lineStrength
     edge.uProjScale.value = current.y / (2 * Math.tan((camera.fov * Math.PI) / 360))
+    edge.uFade.value.set(...(air ? air.update(camera, a) : DEFAULT_LINE_FADE))
     const u = finalMaterial.uniforms
     u.uFocus.value = renderState.focusDistance
     u.uMaxBlur.value = 3.6 * dpr * renderState.blurStrength
@@ -559,6 +579,7 @@ function createPipeline(gl, initialQuality) {
     // 3. 輪廓
     gl.setRenderTarget(compositeTarget)
     edgeQuad.render(gl)
+    if (air) air.render(gl)
 
     // 轉場：保存目前畫面
     if (transitionState.snapshotRequested) {
@@ -590,6 +611,7 @@ function createPipeline(gl, initialQuality) {
     finalQuad.dispose()
     copyQuad.dispose()
     disposeBloom()
+    air?.dispose()
     brightMaterial.dispose()
     blurMaterial.dispose()
     brightQuad.dispose()

@@ -228,8 +228,7 @@ describe('情境人物與道具：效能', () => {
       for (const m of ['plain', 'wood', 'cloth']) if (scenesForEra(era.id).some((s) => s.anchor.added)) assert.ok(materials.has(m), `${era.id} ${m}`)
     }
     // 加入情境前（第 9 階段灰泥牆、碼頭之後）各年代的批次數：依材質合併，每種材質一批，情境不增加批次
-    // 細部階段的接地暗影（contact 材質）每個年代多一批
-    const before = { 'qing-port': 16, banquet: 21, modern: 26, postwar: 28, revival: 38 }
+    const before = { 'qing-port': 15, banquet: 20, modern: 25, postwar: 27, revival: 37 }
     for (const era of ERAS) {
       assert.ok(worlds[era.id].batches.length <= before[era.id], `${era.id} ${worlds[era.id].batches.length}`)
       assert.equal(worlds[era.id].batches.length, new Set(worlds[era.id].batches.map((b) => b.material)).size, era.id)

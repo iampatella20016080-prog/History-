@@ -5,7 +5,7 @@ import { Box3, BufferAttribute, BufferGeometry, Sphere, Vector3 } from 'three'
  * BufferGeometry 拆成 TypedArray（可轉移，不需複製），主執行緒再組回 BufferGeometry。
  */
 function packBatches(list, transfer) {
-  return list.map(({ material, geometry }) => {
+  return list.map(({ material, geometry, smoothOnly }) => {
     const attributes = {}
     for (const [name, attribute] of Object.entries(geometry.attributes)) {
       attributes[name] = { array: attribute.array, itemSize: attribute.itemSize }
@@ -15,6 +15,7 @@ function packBatches(list, transfer) {
     const { min, max } = geometry.boundingBox
     return {
       material,
+      ...(smoothOnly ? { smoothOnly } : {}),
       attributes,
       sphere: [center.x, center.y, center.z, radius],
       box: [min.x, min.y, min.z, max.x, max.y, max.z],
@@ -30,14 +31,14 @@ export function packWorld(world) {
 }
 
 function unpackBatches(list) {
-  return list.map(({ material, attributes, sphere, box }) => {
+  return list.map(({ material, smoothOnly, attributes, sphere, box }) => {
     const geometry = new BufferGeometry()
     for (const [name, { array, itemSize }] of Object.entries(attributes)) {
       geometry.setAttribute(name, new BufferAttribute(array, itemSize))
     }
     geometry.boundingSphere = new Sphere(new Vector3(sphere[0], sphere[1], sphere[2]), sphere[3])
     geometry.boundingBox = new Box3(new Vector3(box[0], box[1], box[2]), new Vector3(box[3], box[4], box[5]))
-    return { material, geometry }
+    return smoothOnly ? { material, geometry, smoothOnly } : { material, geometry }
   })
 }
 

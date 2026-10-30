@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { getQualitySettings } from '../quality.js'
-import { setShopGlowEnabled } from '../rendering/materials.js'
+import { setShopGlowEnabled, setSurfaceDetail } from '../rendering/materials.js'
 import { useGameStore } from '../../state/useGameStore.js'
 import { getMaterials, peekInteriorMaterials } from '../rendering/materials.js'
 import { setRelief } from '../rendering/relief.js'
@@ -37,6 +37,9 @@ export function QualityController() {
     setShopGlowEnabled(settings.shopGlow)
     data.shopGlow = settings.shopGlow ? 'on' : 'off'
   }, [settings, setDpr])
+
+  // 地磚與牆面的大尺度變化只在精緻畫質（流暢畫質的著色器與原本相同）；在第一次繪製之前套用
+  useLayoutEffect(() => setSurfaceDetail(settings.detail), [settings])
 
   // 材質凹凸：只在精緻畫質接上法線貼圖（流暢畫質的材質與著色器維持原樣）
   useEffect(() => {

@@ -13,7 +13,8 @@
  * 環境變數：PLAYWRIGHT_MODULE、CHROMIUM_EXECUTABLE、OUT（輸出資料夾，預設 docs/lookbook/latest）、
  *           ERAS（逗號分隔）、QUALITIES（預設 low,high）、TIME（固定動畫時間，秒；預設 12）、
  *           SET（shop-glow：只拍店內透光的店面視角，見 SHOP_GLOW_VIEWS）
- *           SET（details：改拍細部的近景——榕樹、大面積地面、灰泥牆、騎樓柱腳）
+ *           SET（details：改拍細部的近景——榕樹、大面積地面、灰泥牆、騎樓柱腳；
+ *                air：空氣遠近感與光束——街道往兩頭的遠景、河岸，酒樓繁華與摩登加拍騎樓）
  *           SET=relief：材質凹凸與河面倒映——斜光下的牆面、屋瓦、地磚、河岸三個角度
  */
 import { createRequire } from 'node:module'
@@ -92,7 +93,26 @@ export const RELIEF_VIEWS = [
   ['river-along', '沿著河岸', [-47.5, 2.6, 16], [-49, 0.2, -12]],
 ]
 
-const VIEW_SETS = { details: DETAIL_VIEWS, relief: RELIEF_VIEWS }
+/** 空氣遠近感與光束（第 9 階段追加）：往東、往西（夕陽方向）的街道遠景與河岸 */
+export const AIR_VIEWS = [
+  COMMON_VIEWS[2],
+  ['street-west', '街道遠景（往河邊）', [32, 2.2, 0.4], [-20, 3.4, 0.0]],
+  COMMON_VIEWS[1],
+]
+
+/** 騎樓（北側洋樓的亭仔腳，往西看向夕陽） */
+export const AIR_ARCADE_VIEWS = {
+  banquet: [['arcade', '騎樓', [26, 1.6, -2.9], [4, 3.2, 0.5]]],
+  modern: [['arcade', '騎樓', [26, 1.6, -2.9], [4, 3.2, 0.5]]],
+}
+
+function viewsFor(eraId) {
+  if (SET === 'shop-glow') return SHOP_GLOW_VIEWS[eraId] ?? []
+  if (SET === 'details') return DETAIL_VIEWS
+  if (SET === 'relief') return RELIEF_VIEWS
+  if (SET === 'air') return [...AIR_VIEWS, ...(AIR_ARCADE_VIEWS[eraId] ?? [])]
+  return [...COMMON_VIEWS, ...(ERA_VIEWS[eraId] ?? [])]
+}
 
 async function loadPlaywright() {
   const name = process.env.PLAYWRIGHT_MODULE ?? 'playwright'
@@ -189,7 +209,7 @@ async function run() {
       await page.locator('.intro__start').click({ timeout: 60000 }).catch(() => page.locator('.intro__start').click({ force: true }))
       await page.waitForFunction(() => document.querySelector('.hud.is-started'), null, { timeout: 30000 })
       await page.waitForTimeout(1500)
-      const views = SET === 'shop-glow' ? (SHOP_GLOW_VIEWS[eraId] ?? []) : (VIEW_SETS[SET] ?? [...COMMON_VIEWS, ...(ERA_VIEWS[eraId] ?? [])])
+      const views = viewsFor(eraId)
       for (const [id, , position, target] of views) {
         await shoot(`${eraId}-${id}-${quality}`, position, target)
       }
