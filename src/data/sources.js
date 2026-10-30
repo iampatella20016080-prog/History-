@@ -2546,6 +2546,44 @@ SOURCES['zhao-1992-taipei-streets'] = {
   usage: '法主公廟的大龜會：信徒許願登錄後拿取紅龜粿（乞龜），隔年還兩隻；三年未還，廟方把名字寫在紅紙上張貼，俗稱「龜上壁」。',
 }
 
+/* ── 第 12 階段：主題路線「街坊故事」（查證紀錄 docs/research/neighbour-route.md） ── */
+SOURCES['nmth-glazed-jar-2005-010-0340'] = {
+  id: 'nmth-glazed-jar-2005-010-0340',
+  citation: '國立臺灣歷史博物館典藏，「醬釉帶蓋筒形罐」，登錄號2005.010.0340。',
+  publisher: '國立臺灣歷史博物館',
+  title: '醬釉帶蓋筒形罐',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2005.010.0340',
+  published: '典藏網（2026年10月查閱）',
+  usage: '陶罐 3D 模型的形制依據：日本時代，臺灣南投，陶瓷，高15.3、徑15.4公分、872.8公克；器身上寬下窄、上下各兩道陰刻弦紋，橙紅胎拉坯成形、外施醬釉，笠式平沿蓋、蓋紐為回首坐臥的獅形；多用於儲存食物。',
+}
+SOURCES['nmth-snack-basket-2000-001-0010'] = {
+  id: 'nmth-snack-basket-2000-001-0010',
+  citation: '國立臺灣歷史博物館典藏，「墨繪竹編點心籃組」，登錄號2000.001.0010。',
+  publisher: '國立臺灣歷史博物館',
+  title: '墨繪竹編點心籃組',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2000.001.0010',
+  published: '典藏網（2026年10月查閱）',
+  usage: '點心籃 3D 模型的形制依據與用途：推測日治時期或戰後初期，竹篾編製（材質欄登錄為木質），長50.5、寬40.5、高74.3公分、3.3公斤；一組三件：頂蓋（中央隆起、墨繪多層六邊形）、中隔層（壁高約9公分、底下米字竹條）、提籃（提把6細1粗竹條、頂端藤圈、中央藤環穿扁擔，外壁墨書福祿壽變體字與花卉藤蔓）；農忙時盛裝點心或飯菜，下層放菜或點心、上層放碗筷。',
+}
+SOURCES['nmth-apothecary-scale-2011-025-0249'] = {
+  id: 'nmth-apothecary-scale-2011-025-0249',
+  citation: '國立臺灣歷史博物館典藏，「戥秤組合」，登錄號2011.025.0249。',
+  publisher: '國立臺灣歷史博物館',
+  title: '戥秤組合',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2011.025.0249',
+  published: '典藏網（2026年10月查閱）',
+  usage: '戥秤 3D 模型的形制依據與用途：日本時代（依秤盤底的「台」字徽紋推定），整組8.1×24.7×3.5公分、131.6公克；琵琶形木盒兩個凹槽收秤與秤陀；戥秤約20公分、徑約0.5公分，一端包金屬、黑色秤星、兩條紫繩提紐、紫繩連金屬秤盤；鐘形秤陀刻「官二」、頂端小耳繫紅繩；秤金銀珠寶或藥材等微量貴重物品，至今仍是中藥行的器具。',
+}
+SOURCES['nmth-silver-bracelet-2003-014-0152'] = {
+  id: 'nmth-silver-bracelet-2003-014-0152',
+  citation: '國立臺灣歷史博物館典藏，「繩紋銀手鐲」，登錄號2003.014.0152.0002。',
+  publisher: '國立臺灣歷史博物館',
+  title: '繩紋銀手鐲',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2003.014.0152.0002',
+  published: '典藏網（2026年10月查閱）',
+  usage: '手鐲 3D 模型的形制依據：清代或日本時代，銀，直徑6.1、高0.6公分、17.8公克；數條銀條相互交織繞成圓環、開口處可套入手腕，造型簡樸無紋飾；臺灣民間稱為「繩索環」「索仔環」「腳車藤」。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }
