@@ -15,7 +15,8 @@ import {
 /**
  * 環境音管理（與背景音樂分開：自己的 AudioContext、開關與音量；全站只有一個，不屬於任何 3D 元件）
  *
- * - 每個年代一組環境聲（見 ambienceCore.js）；位置相關的聲音依人物距離調整 gain，每 0.25 秒更新一次，
+ * - 每個年代一組環境聲（見 ambienceCore.js），音檔是剪成循環的真實錄音；載入或解碼失敗時改用合成的備援音檔。
+ *   位置相關的聲音依人物距離調整 gain，每 0.25 秒更新一次，
  *   同時最多 4 個聲軌（iPad Safari），其餘的等有空位或距離變近時才建立。
  * - 年代轉場：開始轉場（store.transitioning）就把總音量淡出；街景換上後（store.eraId 改變）
  *   停掉不屬於新年代的聲軌，兩個年代共有的聲音（河水、人聲）不中斷；轉場結束後總音量淡入。
@@ -140,15 +141,22 @@ export function createAmbienceManager(env = {}) {
     })
   }
 
+  /** 先載入真實錄音；載入或解碼失敗時改用合成的備援音檔。回傳 { buffer, duration（循環長度）, fallback } */
   function loadBuffer(id) {
     if (buffers.has(id)) return Promise.resolve(buffers.get(id))
     if (loading.has(id)) return loading.get(id)
     const sound = AMBIENCE_SOUNDS[id]
+    const fetchDecode = async (file) => decode((await fetchAudio(resolveUrl(file))).slice(0))
     const promise = (async () => {
-      const data = await fetchAudio(resolveUrl(sound.file))
-      const buffer = await decode(data.slice(0))
-      buffers.set(id, buffer)
-      return buffer
+      let entry
+      try {
+        entry = { buffer: await fetchDecode(sound.file), duration: sound.duration, fallback: false }
+      } catch (error) {
+        if (!sound.fallback) throw error
+        entry = { buffer: await fetchDecode(sound.fallback.file), duration: sound.fallback.duration, fallback: true }
+      }
+      buffers.set(id, entry)
+      return entry
     })()
     loading.set(id, promise)
     const done = () => loading.delete(id)
@@ -186,9 +194,8 @@ export function createAmbienceManager(env = {}) {
     const track = { id, starting: true }
     tracks.set(id, track)
     try {
-      const buffer = await loadBuffer(id)
+      const { buffer, duration } = await loadBuffer(id)
       if (tracks.get(id) !== track || !ctx) return
-      const sound = AMBIENCE_SOUNDS[id]
       const gain = ctx.createGain()
       gain.gain.value = 0
       gain.connect(master)
@@ -196,7 +203,7 @@ export function createAmbienceManager(env = {}) {
       source.buffer = buffer
       source.loop = true
       source.loopStart = LOOP_PAD
-      source.loopEnd = LOOP_PAD + sound.duration
+      source.loopEnd = LOOP_PAD + duration
       source.connect(gain)
       source.start(now(), LOOP_PAD)
       track.source = source
@@ -407,6 +414,7 @@ export function createAmbienceManager(env = {}) {
       playingTracks: [...tracks.values()].filter((t) => t.source && t.stopAt === undefined).map((t) => t.id),
       startedCount,
       cached: [...buffers.keys()],
+      fallbacks: [...buffers].filter(([, e]) => e.fallback).map(([id]) => id),
     }
   }
 
