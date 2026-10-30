@@ -1,0 +1,110 @@
+{
+  "before": {
+    "qing-port/high": {
+      "calls": 282,
+      "meshes": 159,
+      "lightPools": false
+    },
+    "banquet/high": {
+      "calls": 237,
+      "meshes": 123,
+      "lightPools": false
+    },
+    "modern/high": {
+      "calls": 250,
+      "meshes": 121,
+      "lightPools": false
+    },
+    "postwar/high": {
+      "calls": 288,
+      "meshes": 146,
+      "lightPools": false
+    },
+    "revival/high": {
+      "calls": 274,
+      "meshes": 169,
+      "lightPools": false
+    }
+  },
+  "after": {
+    "qing-port/high": {
+      "calls": 282,
+      "meshes": 159,
+      "lightPools": false
+    },
+    "banquet/high": {
+      "calls": 238,
+      "meshes": 123,
+      "lightPools": true
+    },
+    "modern/high": {
+      "calls": 251,
+      "meshes": 121,
+      "lightPools": true
+    },
+    "postwar/high": {
+      "calls": 288,
+      "meshes": 146,
+      "lightPools": false
+    },
+    "revival/high": {
+      "calls": 275,
+      "meshes": 169,
+      "lightPools": true
+    }
+  },
+  "before-low": {
+    "qing-port/low": {
+      "calls": 253,
+      "meshes": 131,
+      "lightPools": false
+    },
+    "banquet/low": {
+      "calls": 216,
+      "meshes": 101,
+      "lightPools": false
+    },
+    "modern/low": {
+      "calls": 232,
+      "meshes": 107,
+      "lightPools": false
+    },
+    "postwar/low": {
+      "calls": 254,
+      "meshes": 125,
+      "lightPools": false
+    },
+    "revival/low": {
+      "calls": 236,
+      "meshes": 147,
+      "lightPools": false
+    }
+  },
+  "after-low": {
+    "qing-port/low": {
+      "calls": 253,
+      "meshes": 131,
+      "lightPools": false
+    },
+    "banquet/low": {
+      "calls": 216,
+      "meshes": 101,
+      "lightPools": false
+    },
+    "modern/low": {
+      "calls": 232,
+      "meshes": 107,
+      "lightPools": false
+    },
+    "postwar/low": {
+      "calls": 254,
+      "meshes": 125,
+      "lightPools": false
+    },
+    "revival/low": {
+      "calls": 236,
+      "meshes": 147,
+      "lightPools": false
+    }
+  }
+}
