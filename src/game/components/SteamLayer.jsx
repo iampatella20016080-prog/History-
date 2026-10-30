@@ -12,6 +12,8 @@ import { useGameStore } from '../../state/useGameStore.js'
  * 蒸氣與煙：從蒸籠、湯鍋裊裊上升的白色蒸氣，以及香爐、煤球爐的灰色煙（kind: 'smoke'）——
  * 煙升得較高、散得較開、壽命較長，會被風吹斜（風是整條街共用的，見 rendering/wind.js）。
  * 全部在著色器中運算，蒸氣與煙在同一個網格（一次繪製）。
+ * 煙與風只在精緻畫質（uMotion = 1）；流暢畫質回到第 9 階段之前：香爐的煙畫成原本的蒸氣、
+ * 煤球爐的煙（之前沒有）移到畫面外，蒸氣不受風影響。
  */
 const PUFFS = 6
 
@@ -26,16 +28,18 @@ const VERTEX = /* glsl */ `
   uniform float uSmokePuffs;
   uniform float uWind;
   uniform vec2 uWindDir;
+  uniform float uMotion;
   varying vec2 vCorner;
   varying float vAlpha;
   varying float vKind;
   void main() {
     float strength = aParams.x;
-    float smoke = aKind;
+    // aKind：0 蒸氣、1 煙（流暢畫質畫成蒸氣）、2 煙（流暢畫質不畫）
+    float smoke = step(0.5, aKind) * uMotion;
     float life = fract(uTime * mix(0.23, 0.12, smoke) + aParams.y);
     vec3 drift = vec3(sin(life * 3.0 + aParams.y * 9.0) * 0.22, life * mix(1.7, 3.4, smoke), cos(life * 2.3 + aParams.y * 5.0) * 0.16) * life;
     // 風把煙吹斜（越高越斜）；蒸氣只受一點影響
-    drift.xz += uWindDir * uWind * life * life * mix(0.35, 1.6, smoke);
+    drift.xz += uWindDir * uWind * life * life * mix(0.35, 1.6, smoke) * uMotion;
     vec4 mv = modelViewMatrix * vec4(aCenter + drift * vec3(1.0, strength, 1.0), 1.0);
     float size = (0.16 + life * mix(0.62, 1.1, smoke)) * (0.6 + strength * 0.4);
     mv.xy += aCorner * size;
@@ -43,6 +47,7 @@ const VERTEX = /* glsl */ `
     // 流暢模式減量：蒸氣隔一個略過；煙只畫前 uSmokePuffs 團（移到畫面外）
     if (smoke < 0.5 && uPuffs < 5.5 && mod(aPuff, 2.0) > 0.5) gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
     if (smoke > 0.5 && aPuff >= uSmokePuffs) gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
+    if (uMotion < 0.5 && aKind > 1.5) gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
     vCorner = aCorner;
     vKind = smoke;
     vAlpha = sin(life * 3.14159) * mix(0.3, 0.22, smoke) * min(strength, 1.0) * (1.0 - smoothstep(30.0, 70.0, -mv.z));
@@ -79,6 +84,7 @@ const uniforms = {
   uSmokePuffs: { value: PUFFS },
   uWind: windUniforms.uWind,
   uWindDir: windUniforms.uWindDir,
+  uMotion: windUniforms.uMotion,
 }
 const _white = new Color('#fbf7ef')
 const _smoke = new Color('#a29c94')
@@ -100,7 +106,7 @@ export function SteamLayer({ steam }) {
           corner.set([cx, cy], v * 2)
           params.set([source.strength ?? 1, phase], v * 2)
           puff[v] = p
-          kind[v] = source.kind === 'smoke' ? 1 : 0
+          kind[v] = source.kind === 'smoke' ? (source.smoothAsSteam ? 1 : 2) : 0
           v++
         }
       }
