@@ -1,5 +1,6 @@
 import { shopYearText } from '../data/shops.js'
 import { useGameStore } from '../state/useGameStore.js'
+import { useT } from '../i18n/useT.js'
 
 /**
  * 走近已開放的店家時，浮現在店面上方的店名提示（以 drei Html 投影到 3D 位置）。
@@ -7,6 +8,7 @@ import { useGameStore } from '../state/useGameStore.js'
  * 未開放的店家不顯示提示；建築觀賞模式與器物檢視時也不顯示。
  */
 export function ShopPrompt({ shop, hotspot = null }) {
+  const t = useT()
   const visible = useGameStore(
     (state) =>
       state.started &&
@@ -41,13 +43,13 @@ export function ShopPrompt({ shop, hotspot = null }) {
             </>
           )}
         </span>
-        {shop.reconstruction && <span className="shop-prompt__note">歷史情境重建</span>}
+        {shop.reconstruction && <span className="shop-prompt__note">{t('common.reconstruction')}</span>}
         <span className="shop-prompt__action">
           {touch ? (
-            '點店面探索'
+            t('shopPrompt.tap')
           ) : (
             <>
-              按 <kbd>E</kbd> 探索
+              {t('shopPrompt.pressPre')}<kbd>E</kbd>{t('shopPrompt.pressPost')}
             </>
           )}
         </span>

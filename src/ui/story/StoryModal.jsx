@@ -4,8 +4,7 @@ import { getShop, shopYearText } from '../../data/shops.js'
 import { useGameStore } from '../../state/useGameStore.js'
 import { usePresence } from '../usePresence.js'
 import { CHAPTER_VIEWS } from './chapters.jsx'
-
-const NUMERALS = ['壹', '貳', '參', '肆', '伍', '陸', '柒', '捌']
+import { useT } from '../../i18n/useT.js'
 
 function Corner({ className }) {
   return (
@@ -22,6 +21,7 @@ function Corner({ className }) {
  * 米白紙張質感、深褐色字體與細緻邊框；可用分頁、上一頁／下一頁或鍵盤左右鍵切換章節。
  */
 export function StoryModal() {
+  const t = useT()
   const mode = useGameStore((state) => state.mode)
   const eraId = useGameStore((state) => state.eraId)
   const activeShopId = useGameStore((state) => state.activeShopId)
@@ -118,15 +118,15 @@ export function StoryModal() {
             <p className="story__meta">
               {shopYearText(shop) ? `${shopYearText(shop)}｜` : ''}
               {shop.category}
-              {shop.reconstruction && <span className="story__badge">歷史情境重建</span>}
+              {shop.reconstruction && <span className="story__badge">{t('story.reconstruction')}</span>}
             </p>
           </div>
           <button type="button" className="story__close" onClick={closeShop}>
-            <span aria-hidden="true">✕</span> <span className="story__close-label">關閉</span> <kbd>Esc</kbd>
+            <span aria-hidden="true">✕</span> <span className="story__close-label">{t('common.close')}</span> <kbd>Esc</kbd>
           </button>
         </header>
 
-        <nav ref={tabs} className="story__tabs" role="tablist" aria-label="店家介紹章節">
+        <nav ref={tabs} className="story__tabs" role="tablist" aria-label={t('story.chaptersLabel')}>
           {chapters.map((item, i) => (
             <button
               key={item.id}
@@ -136,7 +136,7 @@ export function StoryModal() {
               className={`story__tab${i === index ? ' is-active' : ''}`}
               onClick={() => setChapter(i)}
             >
-              <span className="story__tab-number">{NUMERALS[i] ?? i + 1}</span>
+              <span className="story__tab-number">{i < 8 ? t(`numeral.${i + 1}`) : i + 1}</span>
               {item.tab}
             </button>
           ))}
@@ -154,7 +154,7 @@ export function StoryModal() {
           {index === 0 && eraNote && era && (
             <aside className="era-note">
               <p className="era-note__label">
-                此時期的{shop.name}・{era.yearRange}
+                {t('story.eraNote', { name: shop.name, range: era.yearRange })}
               </p>
               <p className="era-note__text">{eraNote}</p>
             </aside>
@@ -170,10 +170,10 @@ export function StoryModal() {
 
         <footer className="story__footer">
           <button type="button" className="story__nav" disabled={index === 0} onClick={() => setChapter(index - 1)}>
-            ‹ 上一頁
+            {t('story.prev')}
           </button>
           <span className="story__pager">
-            第 {index + 1} 頁／共 {chapters.length} 頁
+            {t('story.pager', { n: index + 1, total: chapters.length })}
           </span>
           <button
             type="button"
@@ -181,7 +181,7 @@ export function StoryModal() {
             disabled={index === chapters.length - 1}
             onClick={() => setChapter(index + 1)}
           >
-            下一頁 ›
+            {t('story.next')}
           </button>
         </footer>
       </section>

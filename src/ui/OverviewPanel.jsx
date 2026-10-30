@@ -71,8 +71,8 @@ export function OverviewPanel() {
             </header>
             <nav className="story__tabs" role="tablist" aria-label={t('overview.tabs')}>
               {[
-                ['timeline', '壹', t('overview.tab.timeline')],
-                ['map', '貳', t('overview.tab.map')],
+                ['timeline', t('numeral.1'), t('overview.tab.timeline')],
+                ['map', t('numeral.2'), t('overview.tab.map')],
               ].map(([id, numeral, label]) => (
                 <button key={id} type="button" role="tab" aria-selected={tab === id} className={`story__tab${tab === id ? ' is-active' : ''}`} onClick={() => setTab(id)}>
                   <span className="story__tab-number">{numeral}</span>
@@ -119,6 +119,7 @@ function SourceLinks({ sourceIds }) {
 }
 
 function TimelineItem({ item }) {
+  const t = useT()
   return (
     <li className={`overview-event is-${item.kind}${item.status === 'coming-soon' ? ' is-soon' : ''}`}>
       <span className="overview-event__year">{item.year}</span>
@@ -127,8 +128,8 @@ function TimelineItem({ item }) {
           <>
             <span className="overview-event__name">
               {item.name}
-              {item.heritage && <span className="menu-shop__note is-heritage">文化據點</span>}
-              {item.status === 'coming-soon' && <span className="menu-shop__badge">即將開放</span>}
+              {item.heritage && <span className="menu-shop__note is-heritage">{t('overview.heritage')}</span>}
+              {item.status === 'coming-soon' && <span className="menu-shop__badge">{t('overview.soon')}</span>}
             </span>
             <span className="overview-event__meta">{item.label}</span>
             <EraChips eraIds={item.eraIds} />
@@ -145,11 +146,12 @@ function TimelineItem({ item }) {
 }
 
 function Timeline() {
+  const t = useT()
   const { groups, between, undated } = getTimelineByEra()
   return (
     <article className="chapter chapter--text">
-      <h3 className="chapter__title">年表</h3>
-      <p className="chapter__lead">店家的年份依各店的文獻；年份記載不一的店家，括號裡寫明說法。灰色的項目是還在準備中的店家。</p>
+      <h3 className="chapter__title">{t('overview.timeline')}</h3>
+      <p className="chapter__lead">{t('overview.timelineLead')}</p>
       {groups.map(({ era, items }, index) => (
         <section key={era.id} className="overview-era">
           <h4 className="overview-era__title">
@@ -160,11 +162,11 @@ function Timeline() {
             {items.map((item) => (
               <TimelineItem key={`${item.kind}-${item.shopId ?? item.year}-${item.text ?? ''}`} item={item} />
             ))}
-            {items.length === 0 && <li className="overview-event is-empty">這個年代沒有有年份的項目。</li>}
+            {items.length === 0 && <li className="overview-event is-empty">{t('overview.emptyEra')}</li>}
           </ol>
           {index === groups.length - 2 && between.length > 0 && (
             <>
-              <h4 className="overview-era__title is-between">1980–2000｜兩個年代之間</h4>
+              <h4 className="overview-era__title is-between">{t('overview.between')}</h4>
               <ol className="overview-events">
                 {between.map((item) => (
                   <TimelineItem key={`${item.kind}-${item.shopId ?? item.year}-${item.text ?? ''}`} item={item} />
@@ -176,7 +178,7 @@ function Timeline() {
       ))}
       {undated.length > 0 && (
         <section className="overview-era">
-          <h4 className="overview-era__title is-between">沒有創立年份的店家與情境攤位</h4>
+          <h4 className="overview-era__title is-between">{t('overview.undated')}</h4>
           <ul className="overview-undated">
             {undated.map((item) => (
               <li key={item.shopId}>
@@ -192,21 +194,22 @@ function Timeline() {
 }
 
 function ComparisonMap() {
+  const t = useT()
   const [selected, setSelected] = useState(null)
   const place = MAP_PLACES.find((item) => item.id === selected) ?? null
   const unmapped = getUnmappedShops()
   return (
     <article className="chapter chapter--text">
-      <h3 className="chapter__title">對照地圖</h3>
+      <h3 className="chapter__title">{t('overview.mapTitle')}</h3>
       <p className="chapter__lead">
-        遊戲裡的街是情境示意，店家的位置不是真實的相對位置。這張簡化的街道圖依文獻裡的門牌標出每家店真正在哪裡（不按比例；虛線圈是文獻只寫到巷名或門牌未核實的地點）。
+        {t('overview.mapLead')}
       </p>
-      <svg className="overview-map" viewBox="0 0 100 100" role="img" aria-label="大稻埕街道示意圖與店家位置">
+      <svg className="overview-map" viewBox="0 0 100 100" role="img" aria-label={t('overview.mapLabel')}>
         {MAP_STREETS.map((street) => (
           <g key={street.id}>
             <polyline points={street.points.map((p) => p.join(',')).join(' ')} className={`overview-map__street is-${street.kind ?? 'street'}`} />
             <text x={street.points[0][0] + (street.points[0][0] === street.points[1][0] ? 0.8 : 0)} y={street.points[0][1] + (street.points[0][1] === street.points[1][1] ? -0.8 : 2.4)} className="overview-map__label">
-              {street.name}
+              {street.name} {/* TODO(en-data) MAP_STREETS[].name */}
             </text>
           </g>
         ))}
@@ -223,7 +226,7 @@ function ComparisonMap() {
             <h4 className="overview-place__name">{place.name}</h4>
             <p className="overview-place__address">
               {place.address}
-              {place.precision === 'approx' && <span className="menu-shop__badge">位置示意</span>}
+              {place.precision === 'approx' && <span className="menu-shop__badge">{t('overview.approx')}</span>}
             </p>
             <ul className="overview-place__shops">
               {getPlaceShops(place).map((shop) => (
@@ -233,13 +236,13 @@ function ComparisonMap() {
             <SourceLinks sourceIds={place.sourceIds} />
           </>
         ) : (
-          <p className="overview-place__hint">點地圖上的地點，看門牌與對應的店家。</p>
+          <p className="overview-place__hint">{t('overview.mapHint')}</p>
         )}
       </div>
       {unmapped.length > 0 && (
         <p className="chapter__source">
-          <span className="chapter__source-label">地圖上沒有標示</span>
-          {unmapped.map((shop) => shop.name).join('、')}：本站引用的文獻沒有這些店家的門牌（或建築已不存在）。
+          <span className="chapter__source-label">{t('overview.unmappedLabel')}</span>
+          {t('overview.unmapped', { names: unmapped.map((shop) => shop.name).join(t('common.listSep')) })} {/* TODO(en-data) shop.name */}
         </p>
       )}
     </article>
