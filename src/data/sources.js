@@ -2497,6 +2497,55 @@ SOURCES['taipei-gov-2009-p098018'] = {
   usage: '計畫緣起：大稻埕歷史風貌特定專用區都市計畫於民國89年1月27日公告實施（89年2月1日零時起生效），訂定容積移轉作業要點，允許配合歷史性建築物及傳統街區風貌保存的基地，將可建築容積之一部分或全部移轉至另一宗基地，保障土地所有權人權益；至98年3月底共申請240件、移出101,739.64平方公尺，尚約七成可移轉容積未申請。',
 }
 
+/* ── 第 12 階段：主題路線「軼事系列」（查證紀錄 docs/research/folklore-route.md） ── */
+SOURCES['ntu-kua-zhou-cheng-1951'] = {
+  id: 'ntu-kua-zhou-cheng-1951',
+  citation: '《周成過臺灣歌 上本》（卷端題名：周成過臺灣新歌），竹林書局，新竹，民國40年6月；國立臺灣大學圖書館「歌仔冊與唸歌」數位典藏，楊雲萍文庫，索書號539.1208 4614 v.622。',
+  publisher: '國立臺灣大學圖書館',
+  title: '周成過臺灣歌 上本',
+  url: 'https://dl.lib.ntu.edu.tw/s/kua-a-tsheh/item/691854',
+  published: '1951年6月（2026年10月查閱詮釋資料）',
+  usage: '歌仔冊 3D 模型的形制依據（4葉、16公分）與故事大意：館方分類「時事新編」、內容時代標清代；主角泉州人周成，妻子月裡為他籌船費來臺，周成在臺北的茶行生意發達，卻迷戀郭仔麵、聽信她毒死尋夫來臺的妻子，月裡向閻王申冤，兇手一一遭報應；正直的王根曾勸周成打拼。',
+  context: '館方影像、全文與詮釋資料限非營利學術研究使用，本站不轉載唱詞，只改寫館方摘要的大意。',
+}
+SOURCES['tfam-bowed-shoes-0346'] = {
+  id: 'tfam-bowed-shoes-0346',
+  citation: '台灣民俗文物館（臺中市民俗公園）典藏，「弓鞋」，登錄號0346，國家文化記憶庫／數位典藏聯合目錄。',
+  publisher: '台灣民俗文物館',
+  title: '弓鞋',
+  url: 'https://catalog.digitalarchives.tw/item/00/32/a2/16.html',
+  published: '數位典藏（2026年10月查閱）',
+  usage: '弓鞋 3D 模型的形制依據：清末民初，布製，長11、寬4.8、高5公分，120公克；尖頭、高跟、高鞋面，紅布繡花（日文說明寫黑布，記載不一）；纏足的閩南籍婦女所穿，主要是富裕人家。',
+}
+SOURCES['nmth-rice-sieve-2005-008-1708'] = {
+  id: 'nmth-rice-sieve-2005-008-1708',
+  citation: '國立臺灣歷史博物館典藏，「米篩」，登錄號2005.008.1708。',
+  publisher: '國立臺灣歷史博物館',
+  title: '米篩',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2005.008.1708',
+  published: '典藏網（2026年10月查閱）',
+  usage: '米篩 3D 模型的形制依據與用途：竹篾與厚竹片編製（登錄的材質欄寫木質，與描述不一），長74.2×寬73.6×高7.4公分、1.53公斤，日本時代至戰後；圓盤狀、面大而淺、「壓一挑一」四角孔，口緣以粗竹條夾住內外兩側、尾端以籐皮返折纏繞；篩選米穀豆類、收成後篩出稻穀；婚俗的八卦米篩迎娶時遮在新娘頭頂避邪。',
+}
+SOURCES['ylps-fazhugong'] = {
+  id: 'ylps-fazhugong',
+  citation: '臺北市大同區永樂國民小學，「大稻埕主題式網頁」：法主公廟。',
+  publisher: '臺北市永樂國小',
+  title: '大稻埕主題式網頁：法主公廟',
+  url: 'https://dadaochen.ylps.tp.edu.tw/content.php?titlename=far&output_menu=true',
+  published: '學校網頁（2026年10月查閱）',
+  usage: '法主公的傳說：宋朝時福建永春州九龍潭的石牛洞有能化為人形的千年大蛇，張氏三兄弟入洞制服；乞龜還龜：信徒向法主公祈求，翌年連本帶利、一隻還兩隻（龜指紅龜粿）。',
+  context: '學校的鄉土教材網頁，傳說的部分本站標坊間傳說。',
+}
+SOURCES['zhao-1992-taipei-streets'] = {
+  id: 'zhao-1992-taipei-streets',
+  citation: '趙莒玲，《臺北市古街之旅》，臺北市政府新聞處，1992，頁62–63（經維基百科〈大稻埕〉轉引）。',
+  publisher: '臺北市政府新聞處',
+  title: '臺北市古街之旅',
+  url: 'https://zh.wikipedia.org/zh-tw/%E5%A4%A7%E7%A8%BB%E5%9F%95',
+  published: '1992年（本站經維基百科轉引，原書未直接查閱）',
+  usage: '法主公廟的大龜會：信徒許願登錄後拿取紅龜粿（乞龜），隔年還兩隻；三年未還，廟方把名字寫在紅紙上張貼，俗稱「龜上壁」。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

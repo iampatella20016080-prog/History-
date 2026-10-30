@@ -4,6 +4,7 @@ import { PASTRY_OBJECTS } from './routes/pastryRoute.js'
 import { TEMPLE_MEAL_OBJECTS } from './routes/templeMealRoute.js'
 import { OLD_HOUSE_OBJECTS } from './routes/oldHouseRoute.js'
 import { NEWS_OBJECTS } from './routes/newsRoute.js'
+import { FOLKLORE_OBJECTS } from './routes/folkloreRoute.js'
 
 /**
  * 器物 3D 檢視的器物資料（第 10 階段）：標題、說明、小動作與出處。
@@ -89,6 +90,7 @@ export const INSPECT_OBJECTS = {
   ...TEMPLE_MEAL_OBJECTS,
   ...OLD_HOUSE_OBJECTS,
   ...NEWS_OBJECTS,
+  ...FOLKLORE_OBJECTS,
 }
 
 export function getInspectObject(id) {
