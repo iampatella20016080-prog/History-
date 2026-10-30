@@ -1,4 +1,5 @@
 import { Color, MathUtils, Vector3 } from 'three'
+import { AIR_KEYS, airValues } from './aerial.js'
 
 /**
  * 年代氛圍（光線、天空、霧氣、調色、燈火）
@@ -79,6 +80,8 @@ export function gradeValues(lighting) {
 }
 
 for (const key of MATERIAL_VALUE_KEYS) NUMBER_KEYS.push([`value_${key}`, (l) => materialValues(l)[key]])
+// 空氣遠近感與光束（精緻畫質，見 aerial.js）：current.air_density 等，換年代時一起過渡
+for (const key of AIR_KEYS) NUMBER_KEYS.push([`air_${key}`, (l) => airValues(l)[key]])
 
 function snapshot(lighting) {
   const state = {}

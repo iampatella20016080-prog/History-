@@ -30,7 +30,7 @@ import { getQualitySettings, QUALITY_MODES } from '../src/game/quality.js'
 import { buildEraInteriorSync, buildEraWorldSync } from '../src/game/world/buildWorld.js'
 
 /** 改動前（main a8a83f5，含細部的接地暗影批次）各年代依材質合併的街景批次數 */
-const BATCHES_BEFORE = { 'qing-port': 16, banquet: 21, modern: 26, postwar: 28, revival: 38 }
+const BATCHES_BEFORE = { 'qing-port': 15, banquet: 20, modern: 25, postwar: 27, revival: 37 }
 
 describe('店內後牆的明暗', () => {
   test('中間比左右兩側亮', () => {

@@ -46,7 +46,9 @@ const coolness = (hex) => {
 describe('光線：其他年代不變', () => {
   for (const id of ['qing-port', 'postwar', 'revival']) {
     test(`${id} 的光線設定和修改前完全相同`, () => {
-      assert.deepEqual(getEra(id).lighting, DAYLIGHT[id])
+      // air 是精緻畫質後製的空氣遠近感參數（tests/aerial.test.js），不影響既有的光線設定
+      const { air, ...lighting } = getEra(id).lighting
+      assert.deepEqual(lighting, DAYLIGHT[id])
     })
     test(`${id} 沒有分離色調與材質明度設定（調色結果和修改前相同）`, () => {
       const grade = gradeValues(getEra(id).lighting)
@@ -216,7 +218,8 @@ describe('流暢畫質和 #53 之前相同', () => {
       const world = buildEraWorldSync(era.id)
       const pre = PRE_MOTION[era.id]
       assert.equal(world.batches.length, pre.batches)
-      assert.equal((world.detailBatches ?? []).length, pre.detailBatches)
+      // 細部批次只在精緻畫質畫（EraScene 的 visible={detail}）；細部（#57）把接地暗影併進這裡，多一批不影響流暢畫質
+      assert.ok((world.detailBatches ?? []).length >= pre.detailBatches)
       assert.equal(world.signs.length, pre.signs)
       assert.equal(world.banners.length, pre.banners)
       assert.equal(world.lanterns.length, pre.lanterns)

@@ -2,7 +2,8 @@
  * 打破大面積地磚與牆面的重複感（第 9 階段・細部）。
  *
  * 手繪貼圖每 1–4 公尺重複一次，一整條街鋪滿時一眼看得出是同一張圖。這裡在卡通材質的片段著色器裡
- * 依「世界座標」疊上三層變化，不新增材質、不增加繪製呼叫：
+ * 依「世界座標」疊上三層變化，不新增材質、不增加繪製呼叫。只在精緻畫質啟用（setSurfaceVariationEnabled）：
+ * 流暢畫質（iPad）的著色器和原本相同，不多做雜訊運算。
  *
  * 1. 大尺度的明暗與色相：約 5–14 公尺一個起伏的低頻雜訊，偏暖或偏冷幾個百分點
  * 2. 補丁：雜訊超過門檻的幾公尺大的不規則區塊整片換一個色調（柏油補過的路面、重新抹過的灰泥）
@@ -135,6 +136,27 @@ const GLSL_APPLY = /* glsl */ `
 }
 `
 
+let enabled = false
+
+/** 目前是否啟用（精緻畫質） */
+export function surfaceVariationEnabled() {
+  return enabled
+}
+
+/**
+ * 啟用或停用表面變化：materialSets 裡套用過的材質重新編譯（兩種著色器各自快取，之後切換不再編譯）。
+ * 預設停用，觸控裝置（預設流暢畫質）一開始就不編譯這段著色器。
+ */
+export function setSurfaceVariationEnabled(on, materialSets = []) {
+  if (enabled === on) return
+  enabled = on
+  for (const set of materialSets) {
+    for (const material of Object.values(set ?? {})) {
+      if (material?.userData?.surfaceVariation) material.needsUpdate = true
+    }
+  }
+}
+
 /**
  * 在卡通材質上加上表面變化（onBeforeCompile；同一段著色器的材質共用程式，各自的 uniform 不同）。
  * 設定放在 material.userData.surfaceVariation，複製材質（室內）時一起帶過去。
@@ -147,10 +169,11 @@ export function applySurfaceVariation(material, config) {
 }
 
 function surfaceVariationKey() {
-  return 'surface-variation'
+  return enabled ? 'surface-variation' : 'surface-variation-off'
 }
 
 function surfaceVariationCompile(shader) {
+  if (!enabled) return
   const cfg = this.userData.surfaceVariation
   const grid = cfg.grid
   shader.uniforms.uSurfVar = { value: [cfg.tone, cfg.hue, 1 / cfg.scale, cfg.patch ?? 0] }

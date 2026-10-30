@@ -3,10 +3,10 @@ import { PlaneGeometry } from 'three'
 /**
  * 接地暗影（第 9 階段・細部）：柱腳與家具底下一片柔和的暗影，做進模型裡。
  *
- * 流暢模式（觸控裝置的預設）沒有細部陰影，柱子和桌椅看起來像浮在地上。這裡在物件底下鋪一片
- * 貼地的薄片，用 contact 材質（半透明，見 materials.js）畫出來，三層疊起來中間深四周淡：
- * - 兩種畫質都看得到，不靠即時陰影；薄片不投射也不接收陰影、不描輪廓線
- * - 整條街（或一個室內）的暗影依材質合併成一個網格，每個年代只多一個繪製批次
+ * 在物件底下鋪一片貼地的薄片，用 contact 材質（半透明，見 materials.js）畫出來，三層疊起來中間深四周淡：
+ * - 只在精緻畫質出現（variant 'fine'，見 qualityVariants.js）；流暢畫質（iPad）維持原本的樣子與繪製呼叫
+ * - 不靠即時陰影；薄片不投射也不接收陰影、不描輪廓線
+ * - 整條街（或一個室內）的暗影依材質合併成一個網格，精緻畫質每個年代只多一個繪製批次
  * - 半透明疊在任何地面上都是「變暗」，石板、柏油、木地板都適用
  */
 
@@ -43,14 +43,16 @@ export function contactDarkness(layers) {
  * maxZ：地面在 +z 方向的邊緣（例如騎樓步道的前緣），暗影不超出去懸在半空中。
  */
 export function contactShadow(b, x, y, z, width, depth = width, { spread = contactSpread(width, depth), maxZ = Infinity } = {}) {
-  for (const [k, lift] of CONTACT_RINGS) {
-    const w = width + spread * k * 2
-    const z0 = z - depth / 2 - spread * k
-    const z1 = Math.min(z + depth / 2 + spread * k, maxZ)
-    if (z1 - z0 < 0.02) continue
-    b.add('contact', new PlaneGeometry(w, z1 - z0), {
-      position: [x, y + CONTACT_LIFT + lift, (z0 + z1) / 2],
-      rotation: [-Math.PI / 2, 0, 0],
-    })
-  }
+  b.variant('fine', () => {
+    for (const [k, lift] of CONTACT_RINGS) {
+      const w = width + spread * k * 2
+      const z0 = z - depth / 2 - spread * k
+      const z1 = Math.min(z + depth / 2 + spread * k, maxZ)
+      if (z1 - z0 < 0.02) continue
+      b.add('contact', new PlaneGeometry(w, z1 - z0), {
+        position: [x, y + CONTACT_LIFT + lift, (z0 + z1) / 2],
+        rotation: [-Math.PI / 2, 0, 0],
+      })
+    }
+  })
 }

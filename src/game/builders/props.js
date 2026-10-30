@@ -388,19 +388,27 @@ export function planter(b, position, { seed = 1, small = false } = {}) {
   b.box('earth', [w - 0.08, 0.04, 0.34], [x, y + 0.42, z], { tint: '#6d5640' })
   const greens = ['#7f9268', '#8fa276', '#6f845d', '#9aa97f']
   if (!small && rng() < 0.6) {
-    // 小樹：主幹在上段分成兩根枝，各撐一團不規則的葉叢，枝從葉叢之間露出來
     b.cylinder('wood', 0.04, 0.05, 1.0, 5, [x, y + 0.9, z], { tint: '#7a6450' })
-    const tops = [
-      [x - 0.08, y + 1.5, z - 0.04, 0.42, 0.9],
-      [x + 0.2, y + 1.33, z + 0.1, 0.3, 1],
-    ]
-    b.add('wood', limbGeometry([[x, y + 1.3, z], [x - 0.05, y + 1.45, z - 0.03], [x - 0.14, y + 1.72, z - 0.08]], [0.04, 0.03, 0.016]), { tint: '#7a6450' })
-    b.add('wood', limbGeometry([[x, y + 1.25, z], [x + 0.14, y + 1.33, z + 0.07], [x + 0.32, y + 1.4, z + 0.16]], [0.035, 0.025, 0.014]), { tint: '#7a6450' })
-    tops.forEach(([cx, cy, cz, r, squash], k) => {
-      const g = lumpyClump(r, seed * 7 + k, { satellites: 1, outward: k ? 0.5 : 2.6 })
-      g.scale(1, squash, 1)
-      g.translate(cx, cy, cz)
-      b.add('plain', g, { tint: pick(rng, greens) })
+    const tints = [pick(rng, greens), pick(rng, greens)]
+    // 流暢畫質：原本的兩顆圓球
+    b.variant('smooth', () => {
+      b.add('plain', new IcosahedronGeometry(0.42, 1), { position: [x, y + 1.55, z], scale: [1, 0.9, 1], tint: tints[0] })
+      b.add('plain', new IcosahedronGeometry(0.3, 1), { position: [x + 0.18, y + 1.35, z + 0.1], tint: tints[1] })
+    })
+    // 精緻畫質：主幹在上段分成兩根枝，各撐一團不規則的葉叢，枝從葉叢之間露出來
+    b.variant('fine', () => {
+      const tops = [
+        [x - 0.08, y + 1.5, z - 0.04, 0.42, 0.9],
+        [x + 0.2, y + 1.33, z + 0.1, 0.3, 1],
+      ]
+      b.add('wood', limbGeometry([[x, y + 1.3, z], [x - 0.05, y + 1.45, z - 0.03], [x - 0.14, y + 1.72, z - 0.08]], [0.04, 0.03, 0.016]), { tint: '#7a6450' })
+      b.add('wood', limbGeometry([[x, y + 1.25, z], [x + 0.14, y + 1.33, z + 0.07], [x + 0.32, y + 1.4, z + 0.16]], [0.035, 0.025, 0.014]), { tint: '#7a6450' })
+      tops.forEach(([cx, cy, cz, r, squash], k) => {
+        const g = lumpyClump(r, seed * 7 + k, { satellites: 1, outward: k ? 0.5 : 2.6 })
+        g.scale(1, squash, 1)
+        g.translate(cx, cy, cz)
+        b.add('plain', g, { tint: tints[k] })
+      })
     })
   } else {
     const count = small ? 2 : 4
@@ -422,7 +430,8 @@ export function pottedPlant(b, position, { seed = 1, size = 1, potTint = '#7c4a3
   b.cylinder('plain', 0.27 * size, 0.27 * size, 0.05 * size, 12, [x, y + 0.43 * size, z], { tint: shade(potTint, 0.85) })
   b.cylinder('wood', 0.03 * size, 0.045 * size, 0.6 * size, 5, [x, y + 0.7 * size, z], { tint: '#6c5440' })
   const greens = ['#5f7a52', '#6c8a5c', '#56704a']
-  // 葉叢不規則（缺口與外緣的小葉團），主幹上段分出細枝伸到外側的葉叢，從葉叢之間露出來
+  // 精緻畫質：葉叢不規則（缺口與外緣的小葉團），主幹上段分出細枝伸到外側的葉叢，從葉叢之間露出來；
+  // 流暢畫質維持原本的圓球
   const stemTop = y + 0.95 * size
   for (let i = 0; i < 4; i++) {
     const a = (i / 4) * Math.PI * 2 + rng()
@@ -431,14 +440,17 @@ export function pottedPlant(b, position, { seed = 1, size = 1, potTint = '#7c4a3
     const cy = y + (0.95 + rng() * 0.25) * size
     const cz = z + Math.sin(a) * 0.16 * size
     const tint = pick(rng, greens)
-    const g = lumpyClump(r, seed * 13 + i, { satellites: i % 2 ? 1 : 0, outward: a })
-    g.scale(1, 0.75, 1)
-    g.translate(cx, cy, cz)
-    b.add('plain', g, { tint })
-    if (i % 2 === 0) {
-      const reach = 0.16 + r / size * 0.9
-      b.add('wood', limbGeometry([[x, stemTop - 0.18 * size, z], [x + Math.cos(a) * 0.1 * size, stemTop - 0.08 * size, z + Math.sin(a) * 0.1 * size], [x + Math.cos(a) * reach * size, cy - 0.02 * size, z + Math.sin(a) * reach * size]], [0.026 * size, 0.018 * size, 0.009 * size]), { tint: '#6c5440' })
-    }
+    b.variant('smooth', () => b.add('plain', new IcosahedronGeometry(r, 1), { position: [cx, cy, cz], scale: [1, 0.75, 1], tint }))
+    b.variant('fine', () => {
+      const g = lumpyClump(r, seed * 13 + i, { satellites: i % 2 ? 1 : 0, outward: a })
+      g.scale(1, 0.75, 1)
+      g.translate(cx, cy, cz)
+      b.add('plain', g, { tint })
+      if (i % 2 === 0) {
+        const reach = 0.16 + r / size * 0.9
+        b.add('wood', limbGeometry([[x, stemTop - 0.18 * size, z], [x + Math.cos(a) * 0.1 * size, stemTop - 0.08 * size, z + Math.sin(a) * 0.1 * size], [x + Math.cos(a) * reach * size, cy - 0.02 * size, z + Math.sin(a) * reach * size]], [0.026 * size, 0.018 * size, 0.009 * size]), { tint: '#6c5440' })
+      }
+    })
   }
 }
 
@@ -447,10 +459,13 @@ export function flowerPot(b, position, { seed = 1 } = {}) {
   const rng = createRng(seed)
   const [x, y, z] = position
   b.cylinder('plain', 0.17, 0.13, 0.3, 10, [x, y + 0.15, z], { tint: pick(rng, ['#b9653f', '#a75a3c', '#e6dccb']) })
-  const leaves = lumpyClump(0.19, seed * 5 + 1, { satellites: 1, outward: seed * 2.4 })
-  leaves.scale(1, 0.7, 1)
-  leaves.translate(x, y + 0.38, z)
-  b.add('plain', leaves, { tint: '#6f8a5c' })
+  b.variant('smooth', () => b.add('plain', new IcosahedronGeometry(0.19, 1), { position: [x, y + 0.38, z], scale: [1, 0.7, 1], tint: '#6f8a5c' }))
+  b.variant('fine', () => {
+    const leaves = lumpyClump(0.19, seed * 5 + 1, { satellites: 1, outward: seed * 2.4 })
+    leaves.scale(1, 0.7, 1)
+    leaves.translate(x, y + 0.38, z)
+    b.add('plain', leaves, { tint: '#6f8a5c' })
+  })
   const flowers = ['#d9504a', '#f2c94c', '#f4efe6', '#d97aa0']
   for (let i = 0; i < 6; i++) {
     const a = rng() * Math.PI * 2

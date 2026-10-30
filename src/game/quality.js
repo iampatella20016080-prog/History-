@@ -1,10 +1,10 @@
 /**
  * 畫質設定：兩種可隨時切換的模式（右上角齒輪）。
  *
- * - smooth 流暢（適合 iPad）：解析度上限 1.25、陰影貼圖 1024、關閉景深／光暈／環境遮蔽、
+ * - smooth 流暢（適合 iPad）：解析度上限 1.25、陰影貼圖 1024、關閉景深／光暈／環境遮蔽／空氣遠近感與光束、
  *          減少遠景裝飾與蒸氣粒子；保留基本陰影、漫畫描邊與所有年代建築。
  * - fine   精緻（適合電腦）：解析度上限 1.75（不超過裝置像素比）、陰影貼圖 2048、柔和陰影、
- *          適量環境遮蔽、非常輕微的光暈與輕微景深、完整的遠景裝飾、燈光落點（燈照到地面與牆上，lightPools.js）。
+ *          適量環境遮蔽、非常輕微的光暈與輕微景深、空氣遠近感與斜陽光束、完整的遠景裝飾、燈光落點（燈照到地面與牆上，lightPools.js）。
  *
  * 觸控裝置預設「流暢」、桌面電腦預設「精緻」；使用者的選擇記在 localStorage。
  * 切換後由 QualityController、Lighting、ToonRenderer 與各場景元件立即套用，不需要重新整理。
@@ -23,6 +23,7 @@ export const QUALITY_MODES = {
     dofTaps: 0,
     ao: 0,
     bloom: 0,
+    air: false,
     detail: false,
     // 店內透光（後牆漸層、假室內）：細節美觀類只在精緻畫質啟用，流暢畫質維持平面發光
     shopGlow: false,
@@ -40,6 +41,7 @@ export const QUALITY_MODES = {
     dofTaps: 12,
     ao: 0.4,
     bloom: 0.16,
+    air: true,
     detail: true,
     shopGlow: true,
     lightPools: true,

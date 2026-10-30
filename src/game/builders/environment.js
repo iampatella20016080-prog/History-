@@ -409,7 +409,7 @@ function banyanRoots(b, detail, { x, y, z, scale, trunkH, seed, clearings, groun
 }
 
 /**
- * 榕樹的粗枝：從樹幹上段往外斜伸，穿過下層兩團葉叢之間的空隙露出來，末端再分出一根細枝。
+ * 榕樹的粗枝（精緻畫質）：從樹幹上段往外斜伸，穿過下層兩團葉叢之間的空隙露出來，末端再分出一根細枝。
  * 全部合併成一個木作幾何（緊接在樹幹之後），經過攤位留空範圍上方太低的枝不產生。
  */
 function banyanLimbs(b, { x, y, z, scale, trunkH, seed, clearings, angles }) {
@@ -484,8 +484,8 @@ export function buildTree(
     }
     return
   }
-  // 多層樹冠：每一層的葉叢與下一層錯開半格。葉團是不規則的形狀（缺口與外緣的小葉團，見 foliage.js），
-  // 形狀用另一組亂數，原本的位置、半徑與顏色不變
+  // 多層樹冠：每一層的葉叢與下一層錯開半格。精緻畫質的葉團是不規則的形狀（缺口與外緣的小葉團，見 foliage.js），
+  // 形狀用另一組亂數，原本的位置、半徑與顏色不變；流暢畫質維持圓球（見 qualityVariants.js）
   const lowerAngles = []
   BANYAN_LAYERS.forEach((layer, k) => {
     for (let i = 0; i < layer.count; i++) {
@@ -509,15 +509,19 @@ export function buildTree(
         g.translate(bx, by, bz)
         return g
       }
-      let g = clump(satellites)
-      if (satellites && dipsIntoClearing(g, clearings)) {
-        g.dispose()
-        g = clump(0)
-      }
-      b.add('plain', g, { tint })
+      // 流暢畫質：原本的圓球葉團
+      b.variant('smooth', () => b.add('plain', new IcosahedronGeometry(r, 1), { position: [bx, by, bz], scale: [1, layer.squash, 1], rotation: [0, spin, 0], tint }))
+      b.variant('fine', () => {
+        let g = clump(satellites)
+        if (satellites && dipsIntoClearing(g, clearings)) {
+          g.dispose()
+          g = clump(0)
+        }
+        b.add('plain', g, { tint })
+      })
     }
   })
-  banyanLimbs(b, { x, y, z, scale, trunkH, seed, clearings, angles: lowerAngles })
+  b.variant('fine', () => banyanLimbs(b, { x, y, z, scale, trunkH, seed, clearings, angles: lowerAngles }))
   banyanRoots(b, detail, { x, y, z, scale, trunkH, seed, clearings, groundRadius, floorY })
   // 落葉從下層樹冠的下緣飄下來（components/LeafLayer.jsx）；落在石座外的地面
   b.addLeafTree?.(x, z, { top: y + trunkH + 0.2 * scale, radius: 2.4 * scale, ground: y })
