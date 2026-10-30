@@ -4,9 +4,8 @@ import { ERAS } from '../data/eras.js'
 import { MAP_PLACES, MAP_STREETS, getPlaceShops, getTimelineByEra, getUnmappedShops } from '../data/overview.js'
 import { getSource } from '../data/sources.js'
 import { useGameStore } from '../state/useGameStore.js'
-import { useT } from '../i18n/useT.js'
+import { useLocalizer, useT } from '../i18n/useT.js'
 
-const ERA_TITLE = Object.fromEntries(ERAS.map((era) => [era.id, era.title]))
 
 /**
  * 「年表與地圖」總覽：右上角的按鈕打開全頁的紙張視窗，兩個分頁——
@@ -19,6 +18,7 @@ export function OverviewPanel() {
   const transitioning = useGameStore((state) => state.transitioning)
   const toggleMenu = useGameStore((state) => state.toggleMenu)
   const t = useT()
+  const L = useLocalizer()
 
   useEffect(() => {
     if (!open) return undefined
@@ -92,12 +92,14 @@ export function OverviewPanel() {
 }
 
 function EraChips({ eraIds }) {
+  const L = useLocalizer()
+  const eraTitle = Object.fromEntries(L(ERAS).map((era) => [era.id, era.title]))
   if (!eraIds?.length) return null
   return (
     <span className="overview-chips">
       {eraIds.map((id) => (
         <span key={id} className="overview-chip">
-          {ERA_TITLE[id]}
+          {eraTitle[id]}
         </span>
       ))}
     </span>
@@ -120,6 +122,7 @@ function SourceLinks({ sourceIds }) {
 
 function TimelineItem({ item }) {
   const t = useT()
+  const L = useLocalizer()
   return (
     <li className={`overview-event is-${item.kind}${item.status === 'coming-soon' ? ' is-soon' : ''}`}>
       <span className="overview-event__year">{item.year}</span>
@@ -147,6 +150,7 @@ function TimelineItem({ item }) {
 
 function Timeline() {
   const t = useT()
+  const L = useLocalizer()
   const { groups, between, undated } = getTimelineByEra()
   return (
     <article className="chapter chapter--text">
@@ -195,6 +199,7 @@ function Timeline() {
 
 function ComparisonMap() {
   const t = useT()
+  const L = useLocalizer()
   const [selected, setSelected] = useState(null)
   const place = MAP_PLACES.find((item) => item.id === selected) ?? null
   const unmapped = getUnmappedShops()
@@ -209,7 +214,7 @@ function ComparisonMap() {
           <g key={street.id}>
             <polyline points={street.points.map((p) => p.join(',')).join(' ')} className={`overview-map__street is-${street.kind ?? 'street'}`} />
             <text x={street.points[0][0] + (street.points[0][0] === street.points[1][0] ? 0.8 : 0)} y={street.points[0][1] + (street.points[0][1] === street.points[1][1] ? -0.8 : 2.4)} className="overview-map__label">
-              {street.name} {/* TODO(en-data) MAP_STREETS[].name */}
+              {L(street).name}
             </text>
           </g>
         ))}

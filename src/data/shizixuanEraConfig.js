@@ -10,9 +10,9 @@ export const SHIZIXUAN_ID = 'shizixuan'
 export const shizixuanEraConfig = {
   qingPort: { era: 'qing-port', active: false },
   banquet: { era: 'banquet', active: false },
-  1930: { era: 'modern', active: true, variant: 'earlyShop', label: '糕餅店初創', name: '十字軒（糕餅店）' },
-  1945: { era: 'postwar', active: true, variant: 'postwarShop', label: '漢餅與喜慶糕點', name: '十字軒餅舖' },
-  2000: { era: 'revival', active: true, variant: 'modernShop', label: '延平北路的老字號', name: '十字軒糕餅舖' },
+  1930: { era: 'modern', active: true, variant: 'earlyShop', label: '糕餅店初創', labelEn: 'The pastry shop begins', name: '十字軒（糕餅店）', nameEn: 'Shizixuan (pastry shop)' },
+  1945: { era: 'postwar', active: true, variant: 'postwarShop', label: '漢餅與喜慶糕點', labelEn: 'Han-style cakes and celebration pastries', name: '十字軒餅舖', nameEn: 'Shizixuan Cake Shop' },
+  2000: { era: 'revival', active: true, variant: 'modernShop', label: '延平北路的老字號', labelEn: 'A long-established shop on Yanping North Road', name: '十字軒糕餅舖', nameEn: 'Shizixuan Pastry Shop' },
 }
 
 /** 年代 id → 這個年代的版本設定 */

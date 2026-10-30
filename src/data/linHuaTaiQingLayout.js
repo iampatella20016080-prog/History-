@@ -80,8 +80,8 @@ const at = (x, y, z) => {
 export const LHT_HOTSPOTS = [
   {
     id: 'front',
-    label: '林華泰茶行',
-    note: '1883 年起做毛茶的篩選與精製',
+    label: '林華泰茶行', labelEn: 'Lin Huatai Tea Hong',
+    note: '1883 年起做毛茶的篩選與精製', noteEn: 'From 1883, sorting and refining crude tea',
     chapter: 'tea-port',
     level: 0,
     radius: 2.6,
@@ -91,8 +91,8 @@ export const LHT_HOTSPOTS = [
   },
   {
     id: 'scale',
-    label: '秤茶桌',
-    note: '毛茶論擔論斤計價，桿秤上的秤錘移到刻度就知道重量',
+    label: '秤茶桌', labelEn: 'Tea-weighing table',
+    note: '毛茶論擔論斤計價，桿秤上的秤錘移到刻度就知道重量', noteEn: 'Crude tea is priced by the picul and the catty; slide the weight along the steelyard to the mark and you know the weight',
     chapter: 'tea-scale',
     level: 0,
     radius: 1.8,
@@ -102,8 +102,8 @@ export const LHT_HOTSPOTS = [
   },
   {
     id: 'roasting',
-    label: '焙茶區',
-    note: '店後的焙坑與焙籠：毛茶再篩選、烘焙，才能出售或外銷',
+    label: '焙茶區', labelEn: 'Tea-firing area',
+    note: '店後的焙坑與焙籠：毛茶再篩選、烘焙，才能出售或外銷', noteEn: 'The firing pits and baskets at the back: crude tea is sorted again and fired before it can be sold or exported',
     chapter: 'workshop',
     level: 0,
     radius: 2.0,

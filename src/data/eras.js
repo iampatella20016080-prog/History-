@@ -17,14 +17,18 @@ export const ERAS = [
     chapter: 'Chapter 01',
     yearRange: '1853–1895',
     title: '港口商街',
+    titleEn: 'Harbour Merchant Street',
     description: '清末移民、茶葉、南北貨與港口貿易',
+    descriptionEn: 'Late-Qing migrants, tea, dried goods and harbour trade',
     mood: '古樸典雅、熙來攘往，像一幅清末商街的風俗畫。',
+    moodEn: 'Rustic and elegant, bustling with people, like a genre painting of a late-Qing commercial street.',
     palette: {
       accent: '#a9442f',
       scene: ['#c9973f', '#a85a3e', '#5b3d29', '#8fa996'], // 琥珀金、赭紅、深木棕、柔和青綠
     },
     lighting: {
       timeOfDay: '午後斜陽',
+      timeOfDayEn: 'Slanting afternoon sun',
       sun: { azimuth: 228, elevation: 44, color: '#ffeccc', intensity: 2.6 },
       hemi: { sky: '#e4ecea', ground: '#c9ae86', intensity: 1.7 },
       ambient: { color: '#fff3e2', intensity: 0.16 },
@@ -46,6 +50,7 @@ export const ERAS = [
       signStyles: ['wood', 'lacquer', 'red', 'wood'],
       hangingSignStyles: ['wood', 'cloth', 'red'],
       signWords: ['茶', '米', '布', '油', '糖', '藥材', '雜貨', '竹器', '海味', '陶器', '香燭', '金紙', '豆', '油紙'],
+      signWordsEn: ['tea', 'rice', 'cloth', 'oil', 'sugar', 'medicinal herbs', 'sundries', 'bamboo ware', 'dried seafood', 'pottery', 'incense and candles', 'joss paper', 'beans', 'oiled paper'],
       banners: 0.35,
       lanterns: 0.32,
     },
@@ -65,14 +70,18 @@ export const ERAS = [
     chapter: 'Chapter 02',
     yearRange: '1895–1930',
     title: '酒樓繁華',
+    titleEn: 'Banquet Hall Boom',
     description: '酒樓、宴席、仕紳社交與城市繁榮',
+    descriptionEn: 'Banquet halls, feasts, gentry socialising and urban prosperity',
     mood: '傍晚入夜，暖黃燈火從窗內灑出，繁華而典雅。',
+    moodEn: 'Dusk turning to night, warm yellow lamplight spilling from the windows, lively and refined.',
     palette: {
       accent: '#8e2f2c',
       scene: ['#7c2a2a', '#b08a4a', '#2f4a3c', '#f2e6cf'], // 酒紅、古銅金、深綠、暖白
     },
     lighting: {
       timeOfDay: '傍晚入夜',
+      timeOfDayEn: 'Dusk turning to night',
       // 第 9 階段調光：陽光略強、半球光減弱，讓直射與背光的立面分得出來；地面反光改成中性的暗灰，不再整片偏紅
       sun: { azimuth: 262, elevation: 6, color: '#ffa872', intensity: 0.95 },
       hemi: { sky: '#8e9bd2', ground: '#57535e', intensity: 1.85 },
@@ -110,6 +119,7 @@ export const ERAS = [
       signStyles: ['gold', 'lacquer', 'red', 'gold'],
       hangingSignStyles: ['red', 'lacquer', 'wood'],
       signWords: ['茶行', '布莊', '銀樓', '漢藥', '洋服', '料理', '旅館', '海產', '雜貨', '茶館', '米商'],
+      signWordsEn: ['tea firm', 'cloth shop', 'silversmith', 'herbal medicine', 'Western clothing', 'restaurant', 'inn', 'seafood', 'sundries', 'teahouse', 'rice merchant'],
       banners: 0.1,
       lanterns: 0.7,
     },
@@ -130,14 +140,18 @@ export const ERAS = [
     chapter: 'Chapter 03',
     yearRange: '1930–1945',
     title: '摩登大稻埕',
+    titleEn: 'Modern Dadaocheng',
     description: 'Art Deco 建築、西餐、咖啡與新文化',
+    descriptionEn: 'Art Deco architecture, Western cuisine, coffee and new culture',
     mood: '黃昏的金色光線，咖啡館與西餐廳的窗內透出暖光，浪漫而時髦。',
+    moodEn: 'Golden evening light, with warm glows from the windows of cafes and Western restaurants, romantic and fashionable.',
     palette: {
       accent: '#2f6b5a',
       scene: ['#f1e8d6', '#2f6b5a', '#7a2e33', '#d6b77a'], // 奶油白、祖母綠、酒紅、香檳金
     },
     lighting: {
       timeOfDay: '黃昏',
+      timeOfDayEn: 'Twilight',
       // 第 9 階段調光：太陽稍強、半球光減弱並去掉地面的橘紅反光，加一道冷色補光，背光面偏藍灰
       sun: { azimuth: 252, elevation: 14, color: '#ffcb8c', intensity: 2.15 },
       hemi: { sky: '#c3c6de', ground: '#8a8178', intensity: 1.5 },
@@ -171,6 +185,7 @@ export const ERAS = [
       signStyles: ['letters', 'deco', 'lacquer', 'letters'],
       hangingSignStyles: ['deco', 'red', 'lacquer'],
       signWords: ['喫茶', '洋食', '寫真館', '洋服', '化粧品', '時計', '書店', '藥局', '茶行', '布行', '百貨'],
+      signWordsEn: ['tea room', 'Western food', 'photo studio', 'Western clothing', 'cosmetics', 'clocks and watches', 'bookshop', 'pharmacy', 'tea firm', 'cloth shop', 'department store'],
       banners: 0.05,
       lanterns: 0.2,
     },
@@ -190,14 +205,18 @@ export const ERAS = [
     chapter: 'Chapter 04',
     yearRange: '1945–1980',
     title: '庶民生活',
+    titleEn: 'Everyday Life',
     description: '市場、廟口、小吃與日常生活',
+    descriptionEn: 'Markets, temple forecourts, street snacks and daily life',
     mood: '午後陽光穿過榕樹，蒸氣裊裊，像一張活起來的老照片。',
+    moodEn: 'Afternoon sun through banyan trees and curling steam, like an old photograph come to life.',
     palette: {
       accent: '#b5652c',
       scene: ['#8a5a36', '#c97b3c', '#3f5a48', '#9b948a'], // 焦糖棕、復古橘、墨綠、暖灰
     },
     lighting: {
       timeOfDay: '午後',
+      timeOfDayEn: 'Afternoon',
       sun: { azimuth: 214, elevation: 50, color: '#fff0d6', intensity: 2.55 },
       hemi: { sky: '#dfe6df', ground: '#b49f82', intensity: 1.6 },
       ambient: { color: '#fff1dc', intensity: 0.15 },
@@ -219,6 +238,7 @@ export const ERAS = [
       signStyles: ['painted', 'painted', 'wood', 'red'],
       hangingSignStyles: ['vertical', 'vertical', 'red'],
       signWords: ['冰果室', '電器行', '西藥房', '照相館', '五金行', '布行', '鐘錶行', '米店', '雜貨店', '麵店', '旅社', '茶行', '南北貨'],
+      signWordsEn: ['ice and fruit parlour', 'electrical shop', 'Western pharmacy', 'photo studio', 'hardware shop', 'cloth shop', 'clock and watch shop', 'rice shop', 'general store', 'noodle shop', 'guesthouse', 'tea firm', 'dried goods from north and south'],
       banners: 0.05,
       lanterns: 0.12,
     },
@@ -237,15 +257,20 @@ export const ERAS = [
     order: 5,
     chapter: 'Chapter 05',
     yearRange: '2000–現在',
+    yearRangeEn: '2000–present',
     title: '老屋新生',
+    titleEn: 'Old Houses, New Life',
     description: '老屋再生、歷史保存與當代飲食文化',
+    descriptionEn: 'Old-house revitalisation, heritage conservation and contemporary food culture',
     mood: '明亮柔和的自然光，修復的老屋裡透出溫暖燈光，清新而優雅。',
+    moodEn: 'Bright, soft natural light, with warm lamplight inside restored old houses, fresh and graceful.',
     palette: {
       accent: '#6f8a6e',
       scene: ['#f4efe2', '#9fb39a', '#c7a77c', '#d8b56a'], // 象牙白、鼠尾草綠、淺木色、暖金
     },
     lighting: {
       timeOfDay: '明亮白日',
+      timeOfDayEn: 'Bright daylight',
       sun: { azimuth: 200, elevation: 58, color: '#fff8ec', intensity: 2.45 },
       hemi: { sky: '#e8f0ee', ground: '#cdbfa2', intensity: 1.75 },
       ambient: { color: '#fffaf0', intensity: 0.18 },
@@ -268,6 +293,7 @@ export const ERAS = [
       signStyles: ['modern', 'modern', 'letters', 'wood'],
       hangingSignStyles: ['modern', 'wood', 'cloth'],
       signWords: ['咖啡', '茶館', '選物', '甜點', '書店', '茶行', '南北貨', '食堂', '手作', '藝文'],
+      signWordsEn: ['coffee', 'teahouse', 'curated goods', 'desserts', 'bookshop', 'tea firm', 'dried goods from north and south', 'canteen', 'handicrafts', 'arts and culture'],
       banners: 0.1,
       lanterns: 0.15,
     },

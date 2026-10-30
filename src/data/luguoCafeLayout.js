@@ -81,8 +81,8 @@ export function artYardToWorld(x, z) {
 export const LUGUO_HOTSPOTS = [
   {
     id: 'art-yard',
-    label: '小藝埕（屈臣氏大藥房舊址）',
-    note: '轉角塔樓的立面保留「A.S. WATSON & CO.」字樣',
+    label: '小藝埕（屈臣氏大藥房舊址）', labelEn: 'Xiaoyicheng (former site of the Watson\'s Pharmacy)',
+    note: '轉角塔樓的立面保留「A.S. WATSON & CO.」字樣', noteEn: 'The corner tower façade keeps the lettering "A.S. WATSON & CO."',
     chapter: 'building',
     // 迪化街上、轉角塔樓前；連同離開時的緩衝（0.7 m），不和稻舍、永樂市場的互動範圍重疊
     point: [2.4, 3.6],
@@ -93,8 +93,8 @@ export const LUGUO_HOTSPOTS = [
   },
   {
     id: 'stairs',
-    label: '樓梯入口',
-    note: '從巷子側的騎樓走上二樓',
+    label: '樓梯入口', labelEn: 'Staircase entrance',
+    note: '從巷子側的騎樓走上二樓', noteEn: 'Walk up to the first floor from the arcade on the lane side',
     chapter: 'luguo',
     point: [3.6, -13.2],
     level: 0,
@@ -104,8 +104,8 @@ export const LUGUO_HOTSPOTS = [
   },
   {
     id: 'window',
-    label: '窗邊座位',
-    note: '三組木格窗面對小巷',
+    label: '窗邊座位', labelEn: 'Window seats',
+    note: '三組木格窗面對小巷', noteEn: 'Three timber-lattice windows face the small lane',
     chapter: 'art-yard',
     point: [1.4, -7.6],
     level: 1,
@@ -115,8 +115,8 @@ export const LUGUO_HOTSPOTS = [
   },
   {
     id: 'bar',
-    label: '咖啡吧檯',
-    note: '手沖、義式咖啡與烘焙咖啡豆',
+    label: '咖啡吧檯', labelEn: 'Coffee bar',
+    note: '手沖、義式咖啡與烘焙咖啡豆', noteEn: 'Pour-over, espresso and roasted coffee beans',
     chapter: 'coffee',
     point: [-0.75, -1.0],
     level: 1,
@@ -126,8 +126,8 @@ export const LUGUO_HOTSPOTS = [
   },
   {
     id: 'gacha',
-    label: '紅色扭蛋機',
-    note: '裝著咖啡器具的迷你模型（依實地照片）',
+    label: '紅色扭蛋機', labelEn: 'Red capsule-toy machine',
+    note: '裝著咖啡器具的迷你模型（依實地照片）', noteEn: 'Miniature models of coffee equipment (based on on-site photographs)',
     chapter: 'coffee',
     point: [LUGUO_CAFE.gacha.x, LUGUO_CAFE.gacha.z + 0.95],
     level: 1,

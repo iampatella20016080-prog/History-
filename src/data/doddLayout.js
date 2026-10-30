@@ -100,8 +100,8 @@ const at = (x, y, z) => {
 export const DODD_HOTSPOTS = [
   {
     id: 'front',
-    label: '寶順洋行',
-    note: '英商陶德的洋行：臺灣烏龍茶外銷的起點',
+    label: '寶順洋行', labelEn: 'Dodd & Co. (Boshun hong)',
+    note: '英商陶德的洋行：臺灣烏龍茶外銷的起點', noteEn: 'John Dodd\'s British hong: the starting point of Taiwan\'s oolong tea exports',
     chapter: 'dodd',
     level: 0,
     radius: 2.6,
@@ -111,8 +111,8 @@ export const DODD_HOTSPOTS = [
   },
   {
     id: 'picking',
-    label: '揀茶桌',
-    note: '婦女坐在大竹篩前挑出茶枝與壞葉，按件計酬',
+    label: '揀茶桌', labelEn: 'Tea-sorting table',
+    note: '婦女坐在大竹篩前挑出茶枝與壞葉，按件計酬', noteEn: 'Women sit before large bamboo sieves picking out twigs and spoiled leaves, paid by the piece',
     chapter: 'street',
     level: 0,
     radius: 1.9,
@@ -122,8 +122,8 @@ export const DODD_HOTSPOTS = [
   },
   {
     id: 'roasting',
-    label: '焙茶區',
-    note: '磚臺上的焙坑燒著炭火，茶在焙籠裡烘上八到十個小時',
+    label: '焙茶區', labelEn: 'Tea-firing area',
+    note: '磚臺上的焙坑燒著炭火，茶在焙籠裡烘上八到十個小時', noteEn: 'Charcoal burns in the firing pits on the brick platform, and the tea is fired in baskets for eight to ten hours',
     chapter: 'refinery',
     level: 0,
     radius: 2.0,
@@ -133,8 +133,8 @@ export const DODD_HOTSPOTS = [
   },
   {
     id: 'packing',
-    label: '裝箱檯',
-    note: '茶趁熱裝進鉛襯的木箱焊封，等著挑去碼頭',
+    label: '裝箱檯', labelEn: 'Packing bench',
+    note: '茶趁熱裝進鉛襯的木箱焊封，等著挑去碼頭', noteEn: 'The tea is packed while still warm into lead-lined wooden chests, soldered shut and carried to the wharf',
     chapter: 'tea-chest',
     level: 0,
     radius: 1.9,

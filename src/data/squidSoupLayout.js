@@ -12,7 +12,7 @@
  */
 export const SQUID_SOUP_THEME = {
   id: 'squid-soup',
-  title: '魷魚羹飲食文化',
+  title: '魷魚羹飲食文化', titleEn: 'Squid soup food culture',
   /** 年代 id → 這個年代的版本（店家 id） */
   versions: { postwar: 'temple-squid-stall', revival: 'lao-pan-squid-soup' },
 }
@@ -85,8 +85,8 @@ export const TEMPLE_STALL_SITE = (() => {
 export const TEMPLE_STALL_HOTSPOTS = [
   {
     id: 'stall',
-    label: '廟口的魷魚羹攤',
-    note: '飲食文化情境示意',
+    label: '廟口的魷魚羹攤', labelEn: 'Temple-front squid soup stall',
+    note: '飲食文化情境示意', noteEn: 'Illustrative food-culture scene',
     chapter: 'temple-food',
     point: [-0.16, 1.45],
     level: 0,
@@ -96,8 +96,8 @@ export const TEMPLE_STALL_HOTSPOTS = [
   },
   {
     id: 'bowl',
-    label: '一碗魷魚羹',
-    note: '攤台上展示的一碗（示意）',
+    label: '一碗魷魚羹', labelEn: 'A bowl of squid soup',
+    note: '攤台上展示的一碗（示意）', noteEn: 'A bowl displayed on the stall counter (illustrative)',
     chapter: 'bowl',
     clickOnly: true,
     point: [TEMPLE_STALL.bowl.x, 0.4],
@@ -190,8 +190,8 @@ export function laoPanTable(id) {
 export const LAO_PAN_HOTSPOTS = [
   {
     id: 'storefront',
-    label: '老潘魷魚羹',
-    note: '迪化街一段30號，永樂市場對面',
+    label: '老潘魷魚羹', labelEn: 'Lao Pan Squid Soup',
+    note: '迪化街一段30號，永樂市場對面', noteEn: 'No. 30, Section 1, Dihua Street, opposite Yongle Market',
     chapter: 'shop',
     point: [0.6, 1.0],
     level: 0,
@@ -201,8 +201,8 @@ export const LAO_PAN_HOTSPOTS = [
   },
   {
     id: 'counter',
-    label: '料理檯',
-    note: '湯鍋、玻璃展示罩與疊放的碗',
+    label: '料理檯', labelEn: 'Cooking counter',
+    note: '湯鍋、玻璃展示罩與疊放的碗', noteEn: 'Soup pots, a glass display case and stacked bowls',
     chapter: 'market',
     point: [-1.1, 1.95],
     level: 0,
@@ -212,8 +212,8 @@ export const LAO_PAN_HOTSPOTS = [
   },
   {
     id: 'foods',
-    label: '四道展示餐點',
-    note: '沙茶魷魚羹、魚酥羹、甜不辣、乾拌沙茶生魷魚',
+    label: '四道展示餐點', labelEn: 'Four dishes on display',
+    note: '沙茶魷魚羹、魚酥羹、甜不辣、乾拌沙茶生魷魚', noteEn: 'Sha-cha squid soup, fish-crisp soup, tempura (tian-bu-la) and dry-tossed sha-cha raw squid',
     chapter: 'foods',
     point: [0.45, -2.6],
     level: 0,

@@ -4,7 +4,7 @@ import { getShop, shopYearText } from '../../data/shops.js'
 import { useGameStore } from '../../state/useGameStore.js'
 import { usePresence } from '../usePresence.js'
 import { CHAPTER_VIEWS } from './chapters.jsx'
-import { useT } from '../../i18n/useT.js'
+import { useLocalizer, useT } from '../../i18n/useT.js'
 
 function Corner({ className }) {
   return (
@@ -22,6 +22,7 @@ function Corner({ className }) {
  */
 export function StoryModal() {
   const t = useT()
+  const L = useLocalizer()
   const mode = useGameStore((state) => state.mode)
   const eraId = useGameStore((state) => state.eraId)
   const activeShopId = useGameStore((state) => state.activeShopId)
@@ -83,7 +84,7 @@ export function StoryModal() {
   if (!mounted || !shop) return null
   const View = CHAPTER_VIEWS[chapter.type] ?? CHAPTER_VIEWS.text
   const sourcesIndex = chapters.findIndex((item) => item.type === 'sources')
-  const era = getEra(eraId)
+  const era = L(getEra(eraId))
   const eraNote = shop.eraNotes?.[eraId]
 
   return (

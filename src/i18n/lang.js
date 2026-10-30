@@ -69,3 +69,38 @@ export function pick(obj, key, lang) {
   }
   return obj[key] ?? ''
 }
+
+const localizeCache = { en: new WeakMap() }
+
+/**
+ * 整份資料的在地化：英文模式下，把每個 `key` 換成同層的 `keyEn`（字串對字串、陣列對陣列），
+ * 並移除 `keyEn` 欄位本身。回傳新物件（依物件快取，同一份資料同一語言只算一次）；
+ * 中文模式直接回傳原物件。只用在純資料（店家、年代、路線節點），不要用在含 Three 物件的結構。
+ */
+export function localize(data, lang) {
+  if (lang !== 'en' || data == null || typeof data !== 'object') return data
+  const cached = localizeCache.en.get(data)
+  if (cached) return cached
+  let result
+  if (Array.isArray(data)) {
+    result = data.map((item) => localize(item, lang))
+  } else if (Object.getPrototypeOf(data) !== Object.prototype) {
+    return data
+  } else {
+    result = {}
+    for (const [key, value] of Object.entries(data)) {
+      if (key.endsWith('En') && key.length > 2 && sameShape(data[key.slice(0, -2)], value)) continue
+      const en = data[`${key}En`]
+      if (en !== undefined && en !== '' && sameShape(value, en)) result[key] = en
+      else result[key] = localize(value, lang)
+    }
+  }
+  localizeCache.en.set(data, result)
+  return result
+}
+
+function sameShape(zh, en) {
+  if (typeof zh === 'string') return typeof en === 'string'
+  if (Array.isArray(zh)) return Array.isArray(en) && en.every((item) => typeof item === 'string') && zh.every((item) => typeof item === 'string')
+  return false
+}

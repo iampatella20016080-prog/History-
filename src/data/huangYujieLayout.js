@@ -78,9 +78,9 @@ export const MUSEUM = {
   jarCounter: { minX: 1.55, maxX: 2.175, minZ: -3.4, maxZ: -2.14, height: 0.78 },
   /** 櫃台上的陶缸（x、z 是缸的中心；label 是缸身紅色菱形紙上的字） */
   counterJars: [
-    { x: 1.87, z: -2.46, r: 0.25, h: 0.6, cover: 'red', label: '醬' },
-    { x: 1.88, z: -2.98, r: 0.26, h: 0.66, cover: 'open', label: '醋' },
-    { x: 1.72, z: -3.26, r: 0.15, h: 0.36, cover: 'burlap', label: '醋' },
+    { x: 1.87, z: -2.46, r: 0.25, h: 0.6, cover: 'red', label: '醬', labelEn: 'Soy sauce' },
+    { x: 1.88, z: -2.98, r: 0.26, h: 0.66, cover: 'open', label: '醋', labelEn: 'Vinegar' },
+    { x: 1.72, z: -3.26, r: 0.15, h: 0.36, cover: 'burlap', label: '醋', labelEn: 'Vinegar' },
   ],
   jarRack: { minX: 1.7, maxX: 2.175, minZ: -3.95, maxZ: -3.44 },
   jarArea: { minX: 1.33, maxX: 2.175, minZ: -3.98, maxZ: -2.1 },
@@ -195,8 +195,8 @@ export const MUSEUM_ROUTE = [
 export const HUANG_YUJIE_HOTSPOTS = [
   {
     id: 'facade',
-    label: '黃玉階文史館',
-    note: '紅磚拱窗的歷史街屋（元珍豆醬店）',
+    label: '黃玉階文史館', labelEn: 'Huang Yujie Museum of Culture and History',
+    note: '紅磚拱窗的歷史街屋（元珍豆醬店）', noteEn: 'A historic red-brick shophouse with arched windows (Yuanzhen Bean-Sauce Shop)',
     chapter: 'museum',
     point: [0, -0.95],
     level: 0,
@@ -206,8 +206,8 @@ export const HUANG_YUJIE_HOTSPOTS = [
   },
   {
     id: 'portrait',
-    label: '黃玉階與大稻埕',
-    note: '人物展示牆',
+    label: '黃玉階與大稻埕', labelEn: 'Huang Yujie and Dadaocheng',
+    note: '人物展示牆', noteEn: 'Display wall on the man and his life',
     chapter: 'huang',
     point: [-0.95, -3.0],
     level: 0,
@@ -217,8 +217,8 @@ export const HUANG_YUJIE_HOTSPOTS = [
   },
   {
     id: 'board',
-    label: '社會改革與初等教育',
-    note: '文史展板',
+    label: '社會改革與初等教育', labelEn: 'Social reform and primary education',
+    note: '文史展板', noteEn: 'History display boards',
     chapter: 'reform',
     point: [-1.45, -5.6],
     level: 0,
@@ -228,8 +228,8 @@ export const HUANG_YUJIE_HOTSPOTS = [
   },
   {
     id: 'jar-area',
-    label: '元珍豆醬店與飲食生活',
-    note: '醬缸與商號陳列',
+    label: '元珍豆醬店與飲食生活', labelEn: 'Yuanzhen Bean-Sauce Shop and food life',
+    note: '醬缸與商號陳列', noteEn: 'Sauce vats and shop displays',
     chapter: 'yuanzhen',
     point: [0.85, -2.95],
     level: 0,
@@ -239,8 +239,8 @@ export const HUANG_YUJIE_HOTSPOTS = [
   },
   {
     id: 'tea',
-    label: '日常器物與商號生活',
-    note: '茶席與舊式器物',
+    label: '日常器物與商號生活', labelEn: 'Everyday objects and shop life',
+    note: '茶席與舊式器物', noteEn: 'A tea setting and old-style objects',
     chapter: 'objects',
     point: [-1.05, -7.95],
     level: 0,
@@ -250,8 +250,8 @@ export const HUANG_YUJIE_HOTSPOTS = [
   },
   {
     id: 'plaque',
-    label: '「元珍」匾額',
-    note: '二樓窗下的黑底金字匾額',
+    label: '「元珍」匾額', labelEn: 'The "Yuanzhen" plaque',
+    note: '二樓窗下的黑底金字匾額', noteEn: 'A black plaque with gold lettering beneath the first-floor window',
     chapter: 'yuanzhen',
     clickOnly: true,
     point: [0, -0.95],
@@ -262,8 +262,8 @@ export const HUANG_YUJIE_HOTSPOTS = [
   },
   {
     id: 'jars',
-    label: '陶醬缸',
-    note: '入口一側的展示物',
+    label: '陶醬缸', labelEn: 'Earthenware sauce vat',
+    note: '入口一側的展示物', noteEn: 'An exhibit beside the entrance',
     chapter: 'yuanzhen',
     clickOnly: true,
     point: [-1.4, -3.0],
@@ -274,8 +274,8 @@ export const HUANG_YUJIE_HOTSPOTS = [
   },
   {
     id: 'beams',
-    label: '老屋的木梁',
-    note: '裸露的木梁與修補構件',
+    label: '老屋的木梁', labelEn: 'Timber beams of the old house',
+    note: '裸露的木梁與修補構件', noteEn: 'Exposed timber beams and repaired members',
     chapter: 'museum',
     clickOnly: true,
     point: [0, -5.0],
@@ -286,8 +286,8 @@ export const HUANG_YUJIE_HOTSPOTS = [
   },
   {
     id: 'shelves',
-    label: '木製展示架',
-    note: '舊商號的包裝、器物與文獻',
+    label: '木製展示架', labelEn: 'Wooden display rack',
+    note: '舊商號的包裝、器物與文獻', noteEn: 'Packaging, objects and documents from an old shop',
     chapter: 'objects',
     clickOnly: true,
     point: [1.2, -5.8],
@@ -298,8 +298,8 @@ export const HUANG_YUJIE_HOTSPOTS = [
   },
   {
     id: 'study',
-    label: '「學貫中西」匾額',
-    note: '後牆的小展桌',
+    label: '「學貫中西」匾額', labelEn: 'The "Learned in East and West" plaque',
+    note: '後牆的小展桌', noteEn: 'A small display table at the back wall',
     chapter: 'huang',
     clickOnly: true,
     point: [0.85, -8.0],

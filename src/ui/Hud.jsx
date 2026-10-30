@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { getEra } from '../data/eras.js'
 import { getShopsByEra } from '../data/shops.js'
 import { useGameStore } from '../state/useGameStore.js'
-import { useT } from '../i18n/useT.js'
+import { useLocalizer, useT } from '../i18n/useT.js'
 import { LicensesPanel } from './LicensesPanel.jsx'
 import { ChapterCard } from './ChapterCard.jsx'
 import { EraNotice } from './EraNotice.jsx'
@@ -59,6 +59,7 @@ const HINTS = {
 
 function ControlsHint({ touch, viewer }) {
   const t = useT()
+  const L = useLocalizer()
   const [state, setState] = useState(() => loadControlsState(touch))
   const { collapsed } = state
   const touchRef = useRef(touch)
@@ -133,6 +134,7 @@ function ControlsHint({ touch, viewer }) {
 
 function ObjectiveHint({ shops, touch }) {
   const t = useT()
+  const L = useLocalizer()
   const started = useGameStore((state) => state.started)
   const visited = useGameStore((state) => state.visited)
   const mode = useGameStore((state) => state.mode)
@@ -163,6 +165,7 @@ function ObjectiveHint({ shops, touch }) {
 /** 建築觀賞模式的工具列（下方中央）：隱藏介面、返回探索 */
 function ViewerBar() {
   const t = useT()
+  const L = useLocalizer()
   const setViewMode = useGameStore((state) => state.setViewMode)
   const setUiHidden = useGameStore((state) => state.setUiHidden)
   return (
@@ -186,6 +189,7 @@ function ViewerBar() {
 /** 隱藏介面時：右上角的隱形觸發區，點一下（或按 Esc）重新顯示介面 */
 function RevealUi() {
   const t = useT()
+  const L = useLocalizer()
   const setUiHidden = useGameStore((state) => state.setUiHidden)
   return (
     <button
@@ -213,7 +217,8 @@ export function Hud() {
   const viewer = useGameStore((state) => state.viewMode === 'viewer')
   const uiHidden = useGameStore((state) => state.uiHidden)
   const lang = useGameStore((state) => state.lang)
-  const era = getEra(eraId)
+  const L = useLocalizer()
+  const era = L(getEra(eraId))
   useEffect(() => {
     document.documentElement.lang = lang
   }, [lang])

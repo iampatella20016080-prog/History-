@@ -8,7 +8,12 @@ import { EXEMPT_KEYS, walk } from '../tools/i18n/walk.mjs'
  * 已完成英文化的資料檔：每個中文字串欄位都要有非空的 `*En` 對應。
  * 每個英文版 PR 補完一批，就把檔名加進這裡；全部補完後改成掃描 src/data 全部。
  */
-const COMPLETE = ['teaRoute.js', 'talk.js', 'qingPortTalk.js', 'routes.js']
+const COMPLETE = [
+  'teaRoute.js', 'talk.js', 'qingPortTalk.js', 'routes.js',
+  'routes/folkloreRoute.js', 'routes/neighbourRoute.js', 'routes/newsRoute.js', 'routes/oldHouseRoute.js', 'routes/pastryRoute.js', 'routes/templeMealRoute.js',
+  'eras.js', 'licenses.js', 'doddLayout.js', 'huangYujieLayout.js', 'linHuaTaiQingLayout.js', 'luguoCafeLayout.js',
+  'riceAndShineEraConfig.js', 'riceAndShineLayout.js', 'shizixuanEraConfig.js', 'shizixuanLayout.js', 'squidSoupLayout.js', 'templeSnackLayout.js',
+]
 
 for (const name of COMPLETE) {
   test(`英文版：${name} 的中文字串都有英文對應`, async () => {

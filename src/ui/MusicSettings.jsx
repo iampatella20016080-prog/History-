@@ -1,13 +1,14 @@
 import { useStore } from 'zustand'
 import { audioManager } from '../audio/AudioManager.js'
 import { getMusicTrack } from '../audio/musicTracks.js'
-import { useT } from '../i18n/useT.js'
+import { useLocalizer, useT } from '../i18n/useT.js'
 
 const STATUS_KEYS = ['idle', 'loading', 'playing', 'blocked', 'paused', 'off', 'error', 'unsupported']
 
 /** 設定面板中的「背景音樂：開／關」與音量（選擇記在這台裝置上） */
 export function MusicSettings() {
   const t = useT()
+  const L = useLocalizer()
   const enabled = useStore(audioManager.store, (s) => s.enabled)
   const volume = useStore(audioManager.store, (s) => s.volume)
   const status = useStore(audioManager.store, (s) => s.status)
@@ -52,8 +53,7 @@ export function MusicSettings() {
       </label>
       <p className="music-settings__status">
         {STATUS_KEYS.includes(status) ? t(`music.status.${status}`) : ''}
-        {/* TODO(en-data) track.title */}
-        {status === 'playing' && track ? t('music.playingTrack', { title: track.title }) : ''}
+        {status === 'playing' && track ? t('music.playingTrack', { title: L(track).title }) : ''}
         {(status === 'blocked' || status === 'error') && (
           <button type="button" className="button-ghost music-settings__retry" onClick={() => audioManager.retry()}>
             {status === 'blocked' ? t('music.enable') : t('music.retry')}
@@ -68,6 +68,7 @@ export function MusicSettings() {
 /** 音樂被瀏覽器阻擋或載入失敗時，畫面上的簡短提示（可點擊） */
 export function MusicNotice() {
   const t = useT()
+  const L = useLocalizer()
   const status = useStore(audioManager.store, (s) => s.status)
   if (status === 'blocked') {
     return (
