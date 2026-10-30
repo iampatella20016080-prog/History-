@@ -26,8 +26,9 @@ function banyan({ x = 0, z = 0, scale = 0.9, seed = 301, clearing = null, ground
   return { b, detail }
 }
 
-// 第一個木作是樹幹，其餘是氣根
-const roots = (builder) => builder.groups.get('wood').slice(1)
+// 第一個木作是樹幹，第二個是合併的粗枝（細部階段），其餘是氣根
+const limbs = (builder) => builder.groups.get('wood')[1]
+const roots = (builder) => builder.groups.get('wood').slice(2)
 const verts = (list) => list.reduce((sum, g) => sum + g.attributes.position.count, 0)
 
 function eachVertex(g, fn) {
@@ -156,10 +157,11 @@ describe('榕樹：空地、碰撞與效能預算', () => {
       for (const m of ['wood', 'plain', 'stone']) assert.ok(world.batches.some((batch) => batch.material === m), `${era.id}：${m}`)
       assert.ok(world.detailBatches.some((batch) => batch.material === 'wood'), `${era.id}：細部的氣根和其他木作合併`)
     }
-    // 一棵榕樹（含石座）的頂點數
+    // 一棵榕樹（含石座）的頂點數：細部階段的不規則葉團（外緣兩層用較細的網格，起伏才圓滑）與粗枝
+    // 約多 5,600 個頂點，一個年代三棵約多 1.7 萬（街景約 50 萬），不增加網格
     const { b, detail } = banyan({ withDetail: true })
     const main = [...b.groups.values()].flat()
-    assert.ok(verts(main) < 6000, `街景 ${verts(main)}`)
+    assert.ok(verts(main) < 11000, `街景 ${verts(main)}`)
     assert.ok(verts(detail.groups.get('wood')) < 1500, `細部 ${verts(detail.groups.get('wood'))}`)
   })
 })

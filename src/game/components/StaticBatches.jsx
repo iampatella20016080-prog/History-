@@ -3,9 +3,9 @@ import { LAYERS } from '../config.js'
 import { getMaterials } from '../rendering/materials.js'
 
 /** 這些材質不投射陰影（地面、玻璃、發光面），省下陰影貼圖的繪製 */
-const NO_SHADOW_CAST = new Set(['earth', 'asphalt', 'pavers', 'glass', 'glassWarm', 'glassClear', 'windowLit', 'bulb'])
+const NO_SHADOW_CAST = new Set(['earth', 'asphalt', 'pavers', 'glass', 'glassWarm', 'glassClear', 'windowLit', 'bulb', 'contact'])
 /** 半透明的材質放在 NO_OUTLINE 圖層：不擋住後方物件的輪廓線 */
-const NO_OUTLINE = new Set(['glassClear'])
+const NO_OUTLINE = new Set(['glassClear', 'contact'])
 
 /**
  * 依材質合併後的靜態網格（整條街只需二十多次繪製呼叫）。

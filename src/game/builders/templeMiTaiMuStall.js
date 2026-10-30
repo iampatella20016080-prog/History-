@@ -3,6 +3,7 @@ import { conditionTint } from './condition.js'
 import { blanchedGreens, chopsticks, dinerPlace, friedTofu, miTaiMuSoup, noodleBasin, sauceDish } from './miTaiMuWares.js'
 import { shade } from './props.js'
 import { bigPot, bowlStack, ladle, soupSpoon } from './squidSoupWares.js'
+import { contactShadow } from './contactShadow.js'
 
 /**
  * 1945–1980「庶民生活」：慈聖宮廟埕的米苔目攤（飲食文化情境示意，不是特定的店家，也不是永樂米苔目的前身）。
@@ -35,6 +36,7 @@ function counter(b, tint) {
   const { half, depth, height } = S.counter
   const top = counterTop()
   const back = -depth
+  contactShadow(b, 0, G, back / 2, half * 2, depth)
   b.box('wood', [half * 2, height - 0.02, depth], [0, G + (height - 0.02) / 2, back / 2], { tint: tint(PAINT) })
   // 正面的兩片門板與木條、磨舊的下緣
   for (const s of [-1, 1]) {
@@ -120,6 +122,7 @@ function tables(b, detail, tint) {
   for (const [i, table] of S.tables.entries()) {
     const t = S.tableHalf
     b.box('wood', [t * 2, 0.035, t * 2], [table.x, G + h, table.z], { tint: tint('#9a5a3c') })
+    contactShadow(b, table.x, G, table.z, t * 2 - 0.06)
     for (const sx of [-1, 1]) {
       for (const sz of [-1, 1]) b.box('wood', [0.04, h, 0.04], [table.x + sx * (t - 0.04), G + h / 2, table.z + sz * (t - 0.04)], { tint: tint(WOOD_DARK) })
     }
@@ -129,6 +132,7 @@ function tables(b, detail, tint) {
     for (const sz of [-1, 1]) {
       const z = table.z + sz * S.stoolOffset
       b.box('wood', [0.3, 0.04, 0.26], [table.x, STOOL_TOP - 0.02, z], { tint: tint(shade(WOOD, 1.12)) })
+      contactShadow(b, table.x, G, z, 0.26, 0.2)
       for (const lx of [-0.11, 0.11]) {
         for (const lz of [-0.09, 0.09]) b.box('wood', [0.035, STOOL_TOP - G - 0.04, 0.035], [table.x + lx, G + (STOOL_TOP - G - 0.04) / 2, z + lz], { tint: tint(WOOD_DARK) })
       }

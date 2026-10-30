@@ -174,7 +174,10 @@ describe('鏡頭、距離切換與除錯開關', () => {
     const sign = readFileSync(new URL('../src/game/components/SignLayer.jsx', import.meta.url), 'utf8')
     assert.match(sign, /SIGN_LIFT = 0\.006/)
     assert.match(sign, /material\.polygonOffset = true/)
+    // 材質裡只有接地暗影（貼地的半透明薄片，細部階段）開 polygonOffset
     const materials = readFileSync(new URL('../src/game/rendering/materials.js', import.meta.url), 'utf8')
-    assert.doesNotMatch(materials, /polygonOffset/)
+    const contact = materials.slice(materials.indexOf('contact: new MeshBasicMaterial'), materials.indexOf('}),', materials.indexOf('contact: new MeshBasicMaterial')))
+    assert.match(contact, /polygonOffset: true/)
+    assert.doesNotMatch(materials.replace(contact, ''), /polygonOffset/)
   })
 })

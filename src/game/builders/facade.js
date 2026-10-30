@@ -1,5 +1,6 @@
 import { Path, Shape, SphereGeometry, TorusGeometry } from 'three'
 import { shade } from './props.js'
+import { contactShadow } from './contactShadow.js'
 
 /**
  * 立面零件庫：各年代建築共用的窗、欄杆、簷口、柱、山頭、遮篷、櫥窗與招牌板。
@@ -198,8 +199,9 @@ export function pilaster(b, { x, y0, y1, z = 0, width = 0.3, tint = '#f6efe0', m
   b.box(mat, [width + 0.1, 0.12, 0.16], [x, y1 - 0.06, z + 0.08], { tint: shade(tint, 0.96) })
 }
 
-/** 騎樓柱（亭仔腳）：柱身、柱礎與柱頭 */
-export function arcadeColumn(b, { x, z, height, width = 0.5, mat = 'brick', tint = '#ffffff', capTint = '#f3ebdc', round = false }) {
+/** 騎樓柱（亭仔腳）：柱身、柱礎與柱頭；floorY 有給時在柱礎四周鋪接地暗影（floorMaxZ 是步道前緣） */
+export function arcadeColumn(b, { x, z, height, width = 0.5, mat = 'brick', tint = '#ffffff', capTint = '#f3ebdc', round = false, floorY = null, floorMaxZ = Infinity }) {
+  if (floorY != null) contactShadow(b, x, floorY, z, width + 0.12, width + 0.12, { maxZ: floorMaxZ })
   if (round) {
     b.cylinder(mat, width / 2, width / 2, height - 0.5, 14, [x, 0.3 + (height - 0.5) / 2, z], { tint, grime: 0.2 })
   } else {
