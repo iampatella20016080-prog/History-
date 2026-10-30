@@ -4,6 +4,7 @@ import { PASTRY_BUILDERS } from './routeObjects/pastryObjects.js'
 import { TEMPLE_MEAL_BUILDERS } from './routeObjects/templeMealObjects.js'
 import { OLD_HOUSE_BUILDERS } from './routeObjects/oldHouseObjects.js'
 import { NEWS_BUILDERS } from './routeObjects/newsObjects.js'
+import { FOLKLORE_BUILDERS } from './routeObjects/folkloreObjects.js'
 
 /**
  * 器物 3D 檢視的程式建模（第 10 階段）：對照照片與文獻建模，不用 AI 生成的模型。
@@ -18,7 +19,7 @@ import { NEWS_BUILDERS } from './routeObjects/newsObjects.js'
 const box = (x, y, z) => new BoxGeometry(x, y, z)
 
 /* 第 12 階段主題路線的器物（每條路線一個檔案，接受 { detail }）：builders/routeObjects/*.js */
-const ROUTE_BUILDERS = { ...PASTRY_BUILDERS, ...TEMPLE_MEAL_BUILDERS, ...OLD_HOUSE_BUILDERS, ...NEWS_BUILDERS }
+const ROUTE_BUILDERS = { ...PASTRY_BUILDERS, ...TEMPLE_MEAL_BUILDERS, ...OLD_HOUSE_BUILDERS, ...NEWS_BUILDERS, ...FOLKLORE_BUILDERS }
 
 /* ── 顏色 ── */
 const PINE = '#c8a66c'
