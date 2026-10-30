@@ -342,18 +342,22 @@ def scooter(D=12):
     return normalize(out, -25)
 
 
+def traffic_hum(D=12):
+    n = n_of(D)
+    base = lowpass(noise(n), 260) * 1.0 + bandpass(noise(n), 260, 900) * 0.35
+    swell = 0.55 + 0.45 * np.clip(lowpass(noise(n), 0.4) / 0.2, -1, 1)
+    return normalize(base * swell, -27)
+
+
 SOUNDS = {
     'river-lap': river_lap,
-    'wharf-calls': wharf_calls,
     'oars': oars,
-    'street-murmur': babble,
     'gong-distant': gong_distant,
     'bicycle-bell': bicycle_bell,
     'gramophone': gramophone,
-    'vendor-calls': vendor_calls,
     'trishaw': trishaw,
     'radio': radio,
-    'scooter': scooter,
+    'traffic-hum': traffic_hum,
 }
 
 

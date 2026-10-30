@@ -28,16 +28,13 @@ const GEN = 'tools/music/generate_ambience.py（numpy 濾波雜訊與加法合�
 /** 音檔：duration 是循環區間長度（秒），檔案實際長度為 duration + 2 */
 export const AMBIENCE_SOUNDS = {
   'river-lap': { file: 'audio/ambience/river-lap.mp3', duration: 10, label: '河水拍岸', source: GEN },
-  'wharf-calls': { file: 'audio/ambience/wharf-calls.mp3', duration: 12, label: '碼頭吆喝', source: GEN },
   oars: { file: 'audio/ambience/oars.mp3', duration: 10, label: '船槳與水花', source: GEN },
-  'street-murmur': { file: 'audio/ambience/street-murmur.mp3', duration: 12, label: '街上人聲', source: GEN },
   'gong-distant': { file: 'audio/ambience/gong-distant.mp3', duration: 14, label: '遠處的鑼鼓與絃音', source: GEN },
   'bicycle-bell': { file: 'audio/ambience/bicycle-bell.mp3', duration: 12, label: '腳踏車鈴', source: GEN },
   gramophone: { file: 'audio/ambience/gramophone.mp3', duration: 12, label: '留聲機', source: GEN },
-  'vendor-calls': { file: 'audio/ambience/vendor-calls.mp3', duration: 12, label: '攤販叫賣', source: GEN },
   trishaw: { file: 'audio/ambience/trishaw.mp3', duration: 10, label: '三輪車', source: GEN },
   radio: { file: 'audio/ambience/radio.mp3', duration: 12, label: '收音機', source: GEN },
-  scooter: { file: 'audio/ambience/scooter.mp3', duration: 12, label: '機車', source: GEN },
+  'traffic-hum': { file: 'audio/ambience/traffic-hum.mp3', duration: 12, label: '遠處車流', source: GEN },
 }
 
 // 錨點座標（世界座標，街道沿 X 軸，西側 x < -44.6 是淡水河；見 game/config.js）
@@ -59,32 +56,25 @@ const spot = (sound, gain, anchor, inner, outer) => ({ sound, mode: 'spot', gain
 export const ERA_AMBIENCE = {
   'qing-port': [
     spot('river-lap', 1.0, RIVER_BANK, 14, 52),
-    spot('wharf-calls', 0.9, RIVER_BANK, 8, 44),
     spot('oars', 0.8, RIVER_BANK, 6, 36),
-    bed('street-murmur', 0.20),
   ],
   banquet: [
     spot('river-lap', 0.55, RIVER_BANK, 8, 40),
-    bed('street-murmur', 0.35),
     spot('gong-distant', 0.45, STREET_EAST, 24, 70),
   ],
   modern: [
     spot('river-lap', 0.45, RIVER_BANK, 8, 38),
-    bed('street-murmur', 0.28),
     spot('bicycle-bell', 0.55, STREET_MID, 26, 60),
     spot('gramophone', 0.45, SHOP_ROW, 8, 30),
   ],
   postwar: [
     spot('river-lap', 0.4, RIVER_BANK, 8, 36),
-    bed('street-murmur', 0.20),
-    spot('vendor-calls', 0.95, TEMPLE_COURT, 10, 34),
     spot('trishaw', 0.55, STREET_MID, 20, 54),
     spot('radio', 0.4, SHOP_ROW, 6, 22),
   ],
   revival: [
     spot('river-lap', 0.4, PLAZA_WEST, 8, 36),
-    bed('street-murmur', 0.28),
-    spot('scooter', 0.65, STREET_MID, 24, 64),
+    spot('traffic-hum', 0.6, STREET_EAST, 30, 90),
   ],
 }
 

@@ -30,7 +30,7 @@ describe('環境音：聲音清單', () => {
   test('每個年代都有清單，且只用音檔表裡的聲音、音檔都存在且夠小', () => {
     for (const era of ERAS) {
       const list = ERA_AMBIENCE[era.id]
-      assert.ok(list?.length >= 3, `${era.id} 至少三種環境聲`)
+      assert.ok(list?.length >= 2, `${era.id} 至少兩種環境聲`)
       assert.equal(new Set(list.map((e) => e.sound)).size, list.length, `${era.id} 的聲音不重複`)
       for (const entry of list) assert.ok(AMBIENCE_SOUNDS[entry.sound], `${era.id}: ${entry.sound}`)
     }
@@ -51,13 +51,13 @@ describe('環境音：聲音清單', () => {
     const where = (sound) => ERAS.filter((e) => ERA_AMBIENCE[e.id].some((x) => x.sound === sound)).map((e) => e.id)
     assert.deepEqual(where('gramophone'), ['modern'])
     assert.deepEqual(where('radio'), ['postwar'])
-    assert.deepEqual(where('scooter'), ['revival'])
+    assert.deepEqual(where('traffic-hum'), ['revival'])
+    for (const gone of ['scooter', 'wharf-calls', 'vendor-calls', 'street-murmur']) assert.deepEqual(where(gone), [], `${gone} 太假，已移除`)
     assert.deepEqual(where('trishaw'), ['postwar'])
     assert.deepEqual(where('bicycle-bell'), ['modern'])
-    assert.deepEqual(where('wharf-calls'), ['qing-port'])
     assert.deepEqual(where('oars'), ['qing-port'])
     assert.deepEqual(where('gong-distant'), ['banquet'])
-    assert.deepEqual(ERA_AMBIENCE['qing-port'].map((e) => e.sound).sort(), ['oars', 'river-lap', 'street-murmur', 'wharf-calls'])
+    assert.deepEqual(ERA_AMBIENCE['qing-port'].map((e) => e.sound).sort(), ['oars', 'river-lap'])
   })
 
   test('錨點在可走的街道、廣場或河岸一帶（不在街道以外很遠的地方）', () => {
@@ -85,13 +85,11 @@ describe('環境音：距離與聲軌上限', () => {
     assert.ok(Math.abs(distanceGain(25, 10, 40) - 0.5) < 1e-9)
   })
 
-  test('走近河岸時水聲變大、走到街尾幾乎聽不到；人聲底噪處處相同', () => {
+  test('走近河岸時水聲變大、走到街尾聽不到', () => {
     const river = ERA_AMBIENCE['qing-port'].find((e) => e.sound === 'river-lap')
-    const murmur = ERA_AMBIENCE['qing-port'].find((e) => e.sound === 'street-murmur')
     assert.equal(entryGain(river, { x: -47, z: 0 }), 1)
     assert.ok(entryGain(river, { x: -30, z: 0 }) < entryGain(river, { x: -40, z: 0 }))
     assert.equal(entryGain(river, { x: 30, z: 0 }), 0)
-    assert.equal(entryGain(murmur, { x: -47, z: 0 }), entryGain(murmur, { x: 30, z: 0 }))
   })
 
   test('planTracks：同時聲軌不超過上限，聲音大的優先；出生點附近只播應該聽到的', () => {
@@ -102,21 +100,21 @@ describe('環境音：距離與聲軌上限', () => {
           assert.ok(targets.size <= MAX_TRACKS)
           for (const g of targets.values()) assert.ok(g >= MIN_AUDIBLE && g <= 1)
         }
-    const { targets } = planTracks({ eraId: 'postwar', pos: { x: 4, z: 7 }, max: 2 })
+    const { targets } = planTracks({ eraId: 'postwar', pos: { x: -12, z: -4 }, max: 2 })
     assert.equal(targets.size, 2)
-    assert.ok(targets.has('vendor-calls'), '廟埕中央先聽到攤販叫賣')
+    assert.ok(targets.has('trishaw') || targets.has('radio'), '街屋列中段聽得到收音機或三輪車')
     const spawn = planTracks({ eraId: 'qing-port', pos: { x: 13, z: 0.7 } })
     assert.ok(!spawn.targets.has('oars'), '出生點聽不到河岸的船槳')
   })
 
   test('planTracks：含淡出中的聲軌也算進上限，不會超過', () => {
     const live = ['a', 'b', 'c']
-    const plan = planTracks({ eraId: 'postwar', pos: { x: 4, z: 7 }, live, max: 4 })
-    assert.equal(plan.start.length, 1)
-    const full = planTracks({ eraId: 'postwar', pos: { x: 4, z: 7 }, live: ['a', 'b', 'c', 'd'], max: 4 })
+    const plan = planTracks({ eraId: 'postwar', pos: { x: -12, z: -4 }, live, max: 4 })
+    assert.ok(plan.start.length >= 1 && plan.start.length <= 1)
+    const full = planTracks({ eraId: 'postwar', pos: { x: -12, z: -4 }, live: ['a', 'b', 'c', 'd'], max: 4 })
     assert.deepEqual(full.start, [])
-    const again = planTracks({ eraId: 'postwar', pos: { x: 4, z: 7 }, live: ['vendor-calls'], max: 4 })
-    assert.ok(!again.start.includes('vendor-calls'), '已在播的不重複建立')
+    const again = planTracks({ eraId: 'postwar', pos: { x: 4, z: 7 }, live: ['radio'], max: 4 })
+    assert.ok(!again.start.includes('radio'), '已在播的不重複建立')
   })
 
   test('總音量與淡入淡出時間', () => {
@@ -145,7 +143,7 @@ class FakeParam {
   }
 }
 
-function setup({ pos = { x: 4, z: 7 }, storage = {}, allowResume = true } = {}) {
+function setup({ pos = { x: -12, z: -4 }, storage = {}, allowResume = true } = {}) {
   const ctxs = []
   const sources = []
   const mem = { ...storage }
@@ -207,7 +205,7 @@ describe('環境音管理器', () => {
     assert.equal(t.ctxs.length, 1)
     const info = t.manager.inspect()
     assert.equal(info.status, 'playing')
-    assert.ok(info.playingTracks.includes('vendor-calls'))
+    assert.ok(info.playingTracks.includes('radio'))
     assert.ok(info.playingTracks.length <= MAX_TRACKS)
     for (const s of t.sources) {
       assert.equal(s.loop, true)
@@ -236,14 +234,14 @@ describe('環境音管理器', () => {
     t.game.setState({ started: true, eraId: 'qing-port' })
     await t.flush()
     const before = t.manager.inspect()
-    assert.ok(before.playingTracks.includes('wharf-calls'))
+    assert.ok(before.playingTracks.includes('oars'))
     assert.ok(before.masterTarget > 0)
     t.game.setState({ transitioning: true })
     assert.equal(t.manager.inspect().masterTarget, 0)
     t.game.setState({ eraId: 'banquet' })
     await t.flush()
     const mid = t.manager.inspect()
-    assert.ok(!mid.playingTracks.includes('wharf-calls'), '港口的吆喝在新年代停掉')
+    assert.ok(!mid.playingTracks.includes('oars'), '港口的船槳在新年代停掉')
     const started = mid.startedCount
     t.game.setState({ transitioning: false })
     await t.flush()

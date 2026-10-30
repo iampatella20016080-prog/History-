@@ -8,10 +8,10 @@
 ## 新增：環境音——每個年代一組場景聲（第 9 階段）
 
 - 與背景音樂分開：設定選單的「環境音」有自己的開關與音量（記在 localStorage 的 `ddc.ambience.*`，預設開、音量 35%，背景音樂播放中時再退讓到 55%），自己的 AudioContext，同樣在「開始探索」時解鎖；被瀏覽器阻擋時顯示「啟用環境音」，下一次點擊或按鍵也會恢復。
-- 每個年代一組聲音：港口商街有河水、碼頭吆喝、船槳；酒樓繁華有人聲與遠處的鑼鼓絃音；摩登有腳踏車鈴與留聲機；庶民生活有廟埕的攤販叫賣、三輪車、收音機；老屋新生有機車與河岸廣場的水聲。五個年代都有街上人聲底噪。
+- 每個年代一組聲音：港口商街有河水與船槳；酒樓繁華有遠處的鑼鼓絃音；摩登有腳踏車鈴與留聲機；庶民生活有三輪車與收音機；老屋新生有遠處的車流；五個年代河岸附近都聽得到水聲。人聲（街上嗡嗡聲、碼頭吆喝、攤販叫賣）與機車聲合成後太假，已移除，不放假聲音，之後有授權清楚的真實錄音再加。
 - 位置相關的聲音依人物距離調整 gain（不用 PannerNode）：走近河岸水聲變大、走進廟埕才聽到叫賣；同時最多 4 個聲軌（iPad Safari）。
 - 年代轉場時開始就淡出，換上新街景後淡入；兩個年代共有的聲音不中斷。閱讀店家故事時降到 45%。
-- 11 個音檔（合計約 1.0 MB）**全部是程式合成**（`tools/music/generate_ambience.py`），沒有第三方音檔，是示意音而非真實錄音；來源、年代依據與待核項目見 `docs/research/ambience-sources.md`。**尚未在 iPad 實機試聽。**
+- 8 個音檔（合計約 0.7 MB）**全部是程式合成**（`tools/music/generate_ambience.py`），沒有第三方音檔，是示意音而非真實錄音；來源、年代依據與待核項目見 `docs/research/ambience-sources.md`。**尚未在 iPad 實機試聽。**
 - 程式：純邏輯 `src/audio/ambienceCore.js`（聲音清單、距離→音量、聲軌上限、淡入淡出時間）、`src/audio/AmbienceManager.js`、`src/ui/AmbienceSettings.jsx`；測試 `tests/ambience.test.js`。
 
 ## 新增：酒樓繁華與摩登的光線、畫面動態（第 9 階段）
@@ -1006,7 +1006,7 @@ node tests/e2e/era-switching.e2e.mjs http://127.0.0.1:4173/
 
 ## 測試狀態
 
-- 環境音（第 9 階段）：新增 `tests/ambience.test.js` 15 項；`npm test` 全部 747 項通過、`npm run build` 成功。另在桌面瀏覽器（開發版）實測：11 個音檔都能解碼、開始探索後解鎖並播放、走到河岸疊到 4 軌、換年代後換成新年代的聲音。**沒有在 iPad 實機驗證**（解鎖、音量平衡、循環接縫），也沒有用耳朵確認合成音的聽感。
+- 環境音（第 9 階段）：新增 `tests/ambience.test.js` 14 項；`npm test` 全部 747 項通過、`npm run build` 成功。另在桌面瀏覽器（開發版）實測：11 個音檔都能解碼、開始探索後解鎖並播放、走到河岸疊到 4 軌、換年代後換成新年代的聲音。**沒有在 iPad 實機驗證**（解鎖、音量平衡、循環接縫），也沒有用耳朵確認合成音的聽感。
 - 酒樓繁華與摩登的光線、畫面動態（第 9 階段）：新增 `tests/lightingMotion.test.js` 31 項；既有測試只改 `tests/banquet.test.js`（「其他年代沒有冷色補光」排除摩登）。單元測試 733 項全部通過、`npm run build` 成功。瀏覽器測試在 macOS 的 Playwright Chromium 141 headless（SwiftShader 軟體繪圖）執行：動態 81／81 通過，固定視角截圖兩種畫質 × 五個年代各六個視角拍了前後對照。繪製呼叫（SwiftShader、街道遠景、一個影格的總數）：流暢 251／215／231／253／235 → 254／218／235／257／238，精緻 273／231／244／282／269 → 279／236／249／287／273（依港口商街、酒樓繁華、摩登、庶民生活、老屋新生）。沒有在 iPad 實機上看過，也沒有量實機的幀率；動態只用截圖與 uniform／實例矩陣的變化驗證，沒有錄影。
 - 一箱茶的旅程・兩間室內（第 10 階段）：新增 `tests/teaInteriors.test.js` 16 項；既有測試改 `tests/yongle.test.js`、`tests/actionbar.test.js`（「其他年代沒有室內／貼近範圍」改為排除兩間茶行的地段，helpers 加 `inTeaHouseLots`）、`tests/tea.test.js`（林華泰多「器物：桿秤」章）、`tests/doddTeaHouse.test.js`（七章）、`tests/talk.test.js`（npcId 含室內人物）、`tests/inspect.test.js`（五個街上器物）。單元測試全部通過、`npm run build` 成功。已在內建瀏覽器實際走進兩間室內（揀茶女與焙茶工、茶籌與桿秤提示、觀賞模式聚焦寶順洋行立面都截圖確認）；沒有在 iPad 實機上看過。
 - 一箱茶的旅程・四個互動系統（第 10 階段）：新增 `tests/talk.test.js` 7 項、`tests/journal.test.js` 4 項、`tests/inspect.test.js` 6 項、`tests/themeRoute.test.js` 4 項；既有測試只改 `tests/doddTeaHouse.test.js`（寶順洋行多了「器物：茶箱」章節）與 `tests/liChunSheng.test.js` 不變（器物章節放在人物小節之後）。單元測試全部通過、`npm run build` 成功。已在內建瀏覽器實際操作：與挑夫對話（追問「法蘭西封港」、出處與標示顯示）、打開碼頭的茶箱與寶順洋行章節裡的茶箱（開蓋、旋轉、Esc 返回介紹視窗）、探索手記面板與「一箱茶的旅程」路線進度（4／5 節點）；沒有在 iPad 實機上看過。
