@@ -22,6 +22,7 @@ function Corner({ className }) {
  */
 export function StoryModal() {
   const t = useT()
+  const lang = useGameStore((state) => state.lang)
   const L = useLocalizer()
   const mode = useGameStore((state) => state.mode)
   const eraId = useGameStore((state) => state.eraId)
@@ -117,7 +118,7 @@ export function StoryModal() {
               {shop.name}
             </h2>
             <p className="story__meta">
-              {shopYearText(shop) ? `${shopYearText(shop)}｜` : ''}
+              {shopYearText(shop, lang) ? `${shopYearText(shop, lang)}｜` : ''}
               {shop.category}
               {shop.reconstruction && <span className="story__badge">{t('story.reconstruction')}</span>}
             </p>

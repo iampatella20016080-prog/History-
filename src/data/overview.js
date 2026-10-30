@@ -73,7 +73,7 @@ export function getTimeline() {
   const dated = []
   const undated = []
   for (const shop of SHOPS) {
-    const item = { kind: 'shop', shopId: shop.id, name: shop.name, nameEn: shop.nameEn, year: shop.year ?? null, label: shopYearText(shop), eraIds: shopEraIds(shop), status: shop.status, heritage: shop.kind === 'heritage' }
+    const item = { kind: 'shop', shopId: shop.id, name: shop.name, nameEn: shop.nameEn, year: shop.year ?? null, label: shopYearText(shop), labelEn: shopYearText(shop, 'en'), eraIds: shopEraIds(shop), status: shop.status, heritage: shop.kind === 'heritage' }
     if (typeof shop.year === 'number') dated.push(item)
     else undated.push(item)
   }

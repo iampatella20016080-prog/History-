@@ -21,8 +21,8 @@ export function StoreDirectory({ era, shops }) {
   const mode = useGameStore((state) => state.mode)
   const transitioning = useGameStore((state) => state.transitioning)
   const container = useRef(null)
-  const lang = useGameStore((state) => state.lang)
   const t = useT()
+  const lang = useGameStore((state) => state.lang)
 
   useEffect(() => {
     if (!open) return undefined
@@ -68,7 +68,7 @@ export function StoreDirectory({ era, shops }) {
                   <div className="menu-shop__info">
                     <span className="menu-shop__name">{shop.name}</span>
                     <span className="menu-shop__meta">
-                      {shopYearText(shop) ? `${shopYearText(shop)}｜` : ''}
+                      {shopYearText(shop, lang) ? `${shopYearText(shop, lang)}｜` : ''}
                       {shop.category}
                     </span>
                     {isOpen ? (

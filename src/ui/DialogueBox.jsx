@@ -3,7 +3,7 @@ import { getInspectObject } from '../data/inspectObjects.js'
 import { TALK_LABELS, currentLine, hasNextLine, remainingFollowUps, talkObjectId } from '../game/talk.js'
 import { useGameStore } from '../state/useGameStore.js'
 import { usePresence } from './usePresence.js'
-import { useT } from '../i18n/useT.js'
+import { useLocalizer, useT } from '../i18n/useT.js'
 
 /**
  * 路人對話框（畫面下方）：一次一句，可以繼續、追問或道別。
@@ -13,6 +13,7 @@ import { useT } from '../i18n/useT.js'
  */
 export function DialogueBox() {
   const t = useT()
+  const L = useLocalizer()
   const talk = useGameStore((state) => state.talk)
   const advanceTalk = useGameStore((state) => state.advanceTalk)
   const chooseTalkFollowUp = useGameStore((state) => state.chooseTalkFollowUp)
@@ -26,12 +27,13 @@ export function DialogueBox() {
   if (talk) DialogueBox.last = talk
   if (!mounted || !session) return null
 
-  const line = currentLine(session)
-  const label = line && TALK_LABELS[line.label]
-  const sources = (line?.sourceIds ?? []).map(getSource).filter(Boolean)
-  const followUps = session.stage === 'choices' ? remainingFollowUps(session) : []
+  const talkData = L(session.talk)
+  const line = L(currentLine(session))
+  const label = line && L(TALK_LABELS[line.label])
+  const sources = (line?.sourceIds ?? []).map((id) => L(getSource(id))).filter(Boolean)
+  const followUps = session.stage === 'choices' ? L(remainingFollowUps(session)) : []
   // 路人拿給你看的器物（開場說完之後）：近看就打開 3D 檢視
-  const object = talk ? getInspectObject(talkObjectId(session)) : null
+  const object = talk ? L(getInspectObject(talkObjectId(session))) : null
   const objectButton = object && (
     <button type="button" className="button-solid dialogue__choice is-object" onClick={showTalkObject}>
       {t('dialogue.look', { title: object.title })}
@@ -40,10 +42,10 @@ export function DialogueBox() {
 
   return (
     <div className="dialogue-layer" data-state={state}>
-      <section className="dialogue paper" role="dialog" aria-label={t('dialogue.label', { role: session.talk.role })}>
+      <section className="dialogue paper" role="dialog" aria-label={t('dialogue.label', { role: talkData.role })}>
         <header className="dialogue__header">
-          <span className="dialogue__role">{session.talk.role}</span>
-          <span className="dialogue__doing">{session.talk.doing}</span>
+          <span className="dialogue__role">{talkData.role}</span>
+          <span className="dialogue__doing">{talkData.doing}</span>
           <button type="button" className="dialogue__close" onClick={endTalk}>
             {t('dialogue.bye')} <kbd>Esc</kbd>
           </button>

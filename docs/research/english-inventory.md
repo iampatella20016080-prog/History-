@@ -2,7 +2,7 @@
 
 由 `node tools/i18n/inventory.mjs --write` 產生；每次補完一批要重新跑。
 
-- 資料檔中文字串：**5983**，尚無英文對應：**1446**（排除 seals、smallSign、hangingSign、lanterns、sign、signText、signLines、original、quote、taiwanese、romanization、zh、hanzi、script 等刻意保留的欄位）
+- 資料檔中文字串：**5983**，尚無英文對應：**1443**（排除 seals、smallSign、hangingSign、lanterns、sign、signText、signLines、original、quote、taiwanese、romanization、zh、hanzi、script 等刻意保留的欄位）
 - 介面元件裡仍寫死中文的行：**14**
 
 ## 資料檔
@@ -39,7 +39,7 @@
 | `src/data/shizixuanData.js` | 83 | 0 | 0 |
 | `src/data/shizixuanEraConfig.js` | 12 | 0 | 0 |
 | `src/data/shizixuanLayout.js` | 44 | 0 | 0 |
-| `src/data/shops.js` | 2205 | 3 | 39 |
+| `src/data/shops.js` | 2205 | 0 | 0 |
 | `src/data/sources.js` | 1443 | 1443 | 46605 |
 | `src/data/squidSoupLayout.js` | 11 | 0 | 0 |
 | `src/data/talk.js` | 330 | 0 | 0 |
@@ -77,12 +77,6 @@
 - L57：`console.info('[DEBUG_FLICKER] 年代群組：', eras)`
 
 ## 資料檔缺英文明細（每檔最多列 400 筆）
-
-### `src/data/shops.js`（缺 3）
-
-- `SHOPS[22].address`：保安街49巷17號
-- `SHOPS[23].address`：臺北市大同區迪化街一段329號
-- `SHOPS[24].address`：臺北市大同區延平北路二段68號
 
 ### `src/data/sources.js`（缺 1443）
 
