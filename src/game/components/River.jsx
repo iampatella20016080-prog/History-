@@ -7,7 +7,7 @@ import { getEra } from '../../data/eras.js'
 import { WHARF_BOATS } from '../../data/qingWharfLayout.js'
 import { atmosphere } from '../atmosphere.js'
 import { QUALITY_MODES } from '../quality.js'
-import { motionSettings } from '../motion.js'
+import { motionEnabled, MOTION_SETTINGS } from '../motion.js'
 import { createReflectionMaterial, patchWaterMaterial, reflectionUniforms, waterUniforms } from '../rendering/waterShader.js'
 import { useGameStore } from '../../state/useGameStore.js'
 import { PartBuilder } from '../builders/PartBuilder.js'
@@ -163,32 +163,32 @@ function RiverMist({ detail }) {
 }
 
 /**
- * 淡水河：卡通水面（貼圖緩慢流動，加上波紋、反光與燈火倒影，見 rendering/waterShader.js）、
- * 河面薄霧、各年代的船隻與船的倒影。
+ * 淡水河：卡通水面（貼圖緩慢流動）、河面薄霧、各年代的船隻。
+ * 精緻畫質的水面另外有波紋、反光與燈火倒影（rendering/waterShader.js），船也有倒影；
+ * 流暢畫質用原本的靜態水面材質、不建立倒影（兩份材質共用同一張貼圖，切換畫質時換材質，不必重新編譯）。
  */
 export function River({ eraId }) {
-  const material = useMemo(() => {
+  const materials = useMemo(() => {
     const texture = getTextures().water.clone()
     texture.needsUpdate = true
     texture.repeat.set(160, 160)
-    return patchWaterMaterial(
-      new MeshToonMaterial({
-        map: texture,
-        color: new Color('#ffffff'),
-        gradientMap: getMaterials().gradientMap,
-      }),
-    )
+    const create = () => new MeshToonMaterial({ map: texture, color: new Color('#ffffff'), gradientMap: getMaterials().gradientMap })
+    return { still: create(), rippled: patchWaterMaterial(create()) }
   }, [])
+  const motion = useGameStore((state) => motionEnabled(state.qualityMode))
+  const material = motion ? materials.rippled : materials.still
 
   useFrame((state, delta) => {
-    material.map.offset.x -= delta * 0.004
-    material.map.offset.y += delta * 0.0015
+    // 貼圖共用：移動一次就好
+    materials.still.map.offset.x -= delta * 0.004
+    materials.still.map.offset.y += delta * 0.0015
     const a = atmosphere.current
-    material.color.copy(a.water)
+    materials.still.color.copy(a.water)
+    materials.rippled.color.copy(a.water)
+    if (!motion) return
     const t = state.clock.elapsedTime
-    const motion = motionSettings(useGameStore.getState().qualityMode)
     waterUniforms.uTime.value = t
-    waterUniforms.uOctaves.value = motion.rippleOctaves
+    waterUniforms.uOctaves.value = MOTION_SETTINGS.fine.rippleOctaves
     waterUniforms.uSunDir.value.copy(a.sunDirection)
     // 反光的顏色是天空裡太陽周圍的光暈色；太陽越低（傍晚）光帶越亮、越暖
     waterUniforms.uSunColor.value.copy(a.sunGlow).lerp(a.sunColor, 0.4)
@@ -206,7 +206,6 @@ export function River({ eraId }) {
   })
 
   const detail = useGameStore((state) => QUALITY_MODES[state.qualityMode]?.detail !== false)
-  const allReflections = useGameStore((state) => motionSettings(state.qualityMode).reflections === 'all')
   const boats = BOATS[getEra(eraId)?.streetProps.boats] ?? BOATS.junks
   const width = 1100
   return (
@@ -215,11 +214,8 @@ export function River({ eraId }) {
         <planeGeometry args={[width, 1600]} />
       </mesh>
       {boats.map((boat, i) =>
-        // 流暢模式不畫遠處河面上的船
-        // 倒影：精緻模式每艘船都有，流暢模式只有近處的船（和船本身的規則相同，兩種畫質都看得到）
-        detail || (boat.position[0] > -80 && !boat.detailOnly) ? (
-          <Boat key={`${eraId}-${i}`} boat={boat} reflection={allReflections || boat.position[0] > -80} />
-        ) : null,
+        // 流暢模式不畫遠處河面上的船；倒影只在精緻畫質（每艘船都有）
+        detail || (boat.position[0] > -80 && !boat.detailOnly) ? <Boat key={`${eraId}-${i}`} boat={boat} reflection={motion} /> : null,
       )}
       <RiverMist detail={detail} />
     </group>
