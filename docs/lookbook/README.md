@@ -32,3 +32,12 @@ SET=shop-glow OUT=docs/lookbook/shop-glow-after node tests/e2e/lookbook.e2e.mjs 
 ## 材質凹凸與河面倒映（`relief/`）
 
 `SET=relief` 拍的精緻畫質前後對照（`before/` 是 main a8a83f5、`after/` 是本分支）：`wall-north`／`wall-south` 貼著兩側立面斜看（磚縫、木作）、`roof` 屋瓦、`ground` 地磚、`river` 河岸、`river-bank` 從河面看岸邊、`river-along` 沿著河岸。流暢畫質沒有任何改變，所以只拍精緻畫質。`stats.json` 的街道遠景背對河面，倒影整趟略過，數字前後相同；河岸視角多的繪製呼叫見 README。
+
+## 畫面審查（`audit/`）
+
+`SET=audit` 拍的全套視角（`tests/e2e/auditViews.mjs` 依資料產生：街道兩頭、慈聖宮、河岸、每個開放店家的店門口與按 E 的介紹鏡頭、每個室內的進門與最裡面〔遊戲本身的跟隨鏡頭〕、每位路線人物）。`after/` 是修正後的全部 164 個視角 × 兩種畫質；`before/` 是 main（43ac80c）上和問題清單有關的視角。問題清單與前後對照的說明見 `docs/research/visual-audit.md`。
+
+```bash
+SET=audit OUT=docs/lookbook/audit/after node tests/e2e/lookbook.e2e.mjs http://127.0.0.1:5173/
+ONLY='revival-.*-back' SET=audit OUT=... node tests/e2e/lookbook.e2e.mjs http://127.0.0.1:5173/   # 只重拍檔名符合的
+```

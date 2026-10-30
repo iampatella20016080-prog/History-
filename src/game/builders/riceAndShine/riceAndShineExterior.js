@@ -492,6 +492,8 @@ function registerBlockers(b, variant) {
   }
   // 兩側牆、後牆
   for (const s of [-1, 1]) b.addBlocker(s < 0 ? -half : half - wallT, s < 0 ? -half + wallT : half, 0, 7.0, -depth, 0)
+  // 騎樓上方那一段的側牆（shell 的模型有畫）：二樓臨街的前進可以走到窗邊，鏡頭不能從這裡穿到鄰屋（畫面審查）
+  for (const s of [-1, 1]) b.addBlocker(s < 0 ? -half : half - wallT, s < 0 ? -half + wallT : half, RS.arcadeCeiling, 7.0, 0, pierZ[0])
   b.addBlocker(-half, half, 0, 7.0, -depth, back.minZ)
   // 前進與後進之間（天井兩側）的牆：一樓有門洞
   for (const [z0, z1, d] of [
@@ -571,6 +573,8 @@ export function riceFurnitureBlockers(b, config) {
       if (r?.minX == null) continue
       b.addBlocker(r.minX, r.maxX, 0, r.height ?? 1, r.minZ, r.maxZ)
     }
+    // 戰後天井的晾衣繩與衣服（riceAndShineCourtyard.js）：鏡頭從店裡往後退時停在衣服前面，不穿進衣服裡（畫面審查）
+    if (variant === 'postwarRiceHouse') b.addBlocker(-2.2, 1.7, 1.65, 2.5, -7.18, -7.02)
   }
 }
 
