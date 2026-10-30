@@ -48,8 +48,10 @@ import { WANG_JINGQUAN_DISCLAIMER_TEXT, WANG_JINGQUAN_PERSON_CHAPTER, WANG_JINGQ
 import {
   OPERATORS_POSTWAR_CHAPTER,
   OPERATORS_POSTWAR_DISCLAIMER_TEXT,
+  OPERATORS_POSTWAR_DISCLAIMER_TEXT_EN,
   OPERATORS_REVIVAL_CHAPTER,
   OPERATORS_REVIVAL_DISCLAIMER_TEXT,
+  OPERATORS_REVIVAL_DISCLAIMER_TEXT_EN,
   OPERATORS_REVIVAL_SOURCE_IDS,
   withOperatorsChapter,
 } from './operatorsData.js'
@@ -61,7 +63,7 @@ import {
 function withPostwarOperators(chapters) {
   return {
     chapters,
-    eras: { postwar: { chapters: withOperatorsChapter(chapters, OPERATORS_POSTWAR_CHAPTER, OPERATORS_POSTWAR_DISCLAIMER_TEXT) } },
+    eras: { postwar: { chapters: withOperatorsChapter(chapters, OPERATORS_POSTWAR_CHAPTER, OPERATORS_POSTWAR_DISCLAIMER_TEXT, OPERATORS_POSTWAR_DISCLAIMER_TEXT_EN) } },
   }
 }
 import { RICE_AND_SHINE_ID, riceAndShineEraConfig } from './riceAndShineEraConfig.js'
@@ -135,7 +137,9 @@ function hotspotsToWorld(hotspots, toWorld) {
   return hotspots.map((hotspot) => ({
     id: hotspot.id,
     label: hotspot.label,
+    labelEn: hotspot.labelEn,
     note: hotspot.note,
+    noteEn: hotspot.noteEn,
     chapter: hotspot.chapter,
     level: hotspot.level,
     radius: hotspot.radius,
