@@ -1,6 +1,7 @@
 import { IcosahedronGeometry, SphereGeometry } from 'three'
 import { STREET } from '../config.js'
 import { PartBuilder } from '../builders/PartBuilder.js'
+import { mergeFineParts, takeFineParts } from '../builders/qualityVariants.js'
 import { buildArcadeBuilding } from '../builders/arcade.js'
 import {
   buildBackdrop,
@@ -413,8 +414,11 @@ export function* eraWorldSteps(eraId) {
   if (!hasTemple) buildTempleRoofs(b, DISTANT_TEMPLE.position, DISTANT_TEMPLE.rotationY)
   yield
 
-  // 共面的面（Z-fighting）：重複的方塊刪掉一層，重疊的較小方塊往外推幾公釐（見 builders/coplanar.js）
+  // 共面的面（Z-fighting）：重複的方塊刪掉一層，重疊的較小方塊往外推幾公釐（見 builders/coplanar.js）。
+  // 只在精緻畫質出現的細部先拿出來另外處理、併進 detail：流暢畫質的零件與處理結果和加入細部之前相同
+  const fine = takeFineParts([b, detail])
   resolveAllCoplanar([b, detail])
+  mergeFineParts(fine, [b, detail], detail)
   yield
 
   // 依材質合併（每種材質一段，避免單一影格卡頓）
@@ -491,7 +495,16 @@ export function* eraInteriorSteps(eraId, buildingId = null) {
     yield
   }
   // 外殼在街景裡可能已經往外長了 COPLANAR_DELTA：室內的面長兩倍，和外殼原本與長過的位置都錯開
+  const fine = takeFineParts([b, detail])
+  // 外殼裡精緻畫質的零件（接地暗影）不參與流暢畫質的比較
+  for (const list of takeFineParts(shells).groups.values()) {
+    for (const g of list) {
+      g.userData.discarded = true
+      g.dispose()
+    }
+  }
   resolveAllCoplanar([b, detail], { fixed: shells, delta: COPLANAR_DELTA * 2 })
+  mergeFineParts(fine, [b, detail], detail, { fixed: shells, delta: COPLANAR_DELTA * 2 })
   for (const shell of shells) {
     for (const list of shell.groups.values()) {
       for (const g of list) {

@@ -104,7 +104,7 @@ function InteriorZone({ world, zones, detail }) {
   const small = getLoadedInteriorDetail(world, zone)
   return (
     <group ref={group} name={`interior-${zone.id}`}>
-      <StaticBatches batches={batches} materials={getInteriorMaterials()} castShadow={false} receiveShadow={false} dispose={false} />
+      <StaticBatches batches={batches} materials={getInteriorMaterials()} castShadow={false} receiveShadow={false} dispose={false} fine={detail} />
       {/* 細小的擺飾：精緻模式才顯示 */}
       {small.length > 0 && (
         <group name={`interior-${zone.id}-detail`} visible={detail}>
@@ -138,7 +138,7 @@ export function EraScene({ world }) {
 
   return (
     <group name={`era-${world.eraId}`}>
-      <StaticBatches batches={world.batches} dispose={false} />
+      <StaticBatches batches={world.batches} dispose={false} fine={detail} />
       {/* 遠景與節慶裝飾：精緻模式才顯示 */}
       <group visible={detail}>
         <StaticBatches batches={world.detailBatches ?? []} dispose={false} />
