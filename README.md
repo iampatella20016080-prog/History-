@@ -766,6 +766,7 @@
 
 - 觸控裝置（iPad）預設「流暢」、桌面電腦預設「精緻」；選擇記在 localStorage，隨時可切換，立即套用到渲染器（DPR、陰影貼圖重新配置、MSAA、後製），不需要重新整理。
 - 執行中若畫面更新率過低，會在該模式的範圍內自動降低解析度、穩定後回升（`?adaptive=0` 可停用）。
+- 效能量測：網址加 `?stats=1`（正式版也有效，可在 iPad 開 Vercel 預覽實測）會在左上角顯示幀率（過去 2 秒的平均與最低）、整個影格所有 pass 加總的繪製呼叫與三角形數、渲染解析度（像素與 dpr）、畫質等級、自動降解析度是否觸發。沒有這個參數時完全不載入。浮層每 0.4 秒更新、不攔截觸控；數字同時放在 `window.__DDC_STATS__`。統計邏輯在 `src/stats/statsMath.js`，浮層在 `src/stats/StatsOverlay.jsx`（動態載入；多 pass 管線下將 `renderer.info.autoReset` 關閉並於每個影格開頭手動重設）。
 - 實際套用的數值寫在 `<html>` 的 data 屬性（`data-quality`、`data-dpr`、`data-dpr-max`、`data-shadow-map`、`data-msaa`、`data-ao`、`data-bloom`、`data-dof`、`data-detail`），方便檢查；網址參數 `?quality=smooth|fine` 可指定模式。
 
 ## 第二版內容
@@ -894,6 +895,7 @@ tests/                     # 單元測試（npm test）與瀏覽器端對端測�
 
 ```bash
 npm test   # 單元測試（Node 內建測試執行器，不需要安裝其他套件）
+# 效能量測端對端：npx vite preview --port 4173 後執行 node tests/e2e/stats.e2e.mjs http://127.0.0.1:4173/
 ```
 
 - **光線與動態**（`tests/lightingMotion.test.js`）：港口商街、庶民生活、老屋新生的光線設定和修改前的快照（`tests/fixtures/daylightLighting.json`）完全相同，也沒有分離色調與材質明度；酒樓繁華與摩登保留時刻與太陽仰角、陰影偏冷（補光、天空光、暗部色調）、亮部偏暖、不再整片偏紅、屋瓦與木作比灰泥暗、半球光減弱，酒樓仍比摩登暗、燈火比摩登亮；風力在 0.25–1 且會起伏、風向是單位向量；燈籠擺角小於約 8°、相鄰不同步、大燈籠擺得慢；落葉在樹冠範圍內且結果固定；流暢模式每一種動態都減量但不是 0；新動態的繪製呼叫上限；五個年代登記落葉、街景批次在預算內，庶民生活有煤球爐的煙
@@ -1006,6 +1008,7 @@ node tests/e2e/era-switching.e2e.mjs http://127.0.0.1:4173/
 
 ## 測試狀態
 
+- 效能量測 `?stats=1`（第 9 階段）：新增 `tests/stats.test.js` 6 項與 `tests/e2e/stats.e2e.mjs`（沒參數時不載入、五個年代 × 兩種畫質有數字）；`npm test` 全部通過、`npm run build` 成功。Playwright Chromium headless（SwiftShader，1024×700、dpr 1，一個影格所有 pass 加總）量到的繪製呼叫／三角形數，流暢：港口商街 249／438k、酒樓繁華 216／556k、摩登 192／514k、庶民生活 267／607k、老屋新生 308／706k；精緻：304／461k、272／576k、252／542k、300／664k、298／619k。三角形數含陰影與法線等多個 pass 的重複計算。**沒有在 iPad 實機驗證**（數字、浮層位置與觸控下的可見度，以及實機幀率）。
 - 環境音（第 9 階段）：新增 `tests/ambience.test.js` 14 項；`npm test` 全部 747 項通過、`npm run build` 成功。另在桌面瀏覽器（開發版）實測：11 個音檔都能解碼、開始探索後解鎖並播放、走到河岸疊到 4 軌、換年代後換成新年代的聲音。**沒有在 iPad 實機驗證**（解鎖、音量平衡、循環接縫），也沒有用耳朵確認合成音的聽感。
 - 酒樓繁華與摩登的光線、畫面動態（第 9 階段）：新增 `tests/lightingMotion.test.js` 31 項；既有測試只改 `tests/banquet.test.js`（「其他年代沒有冷色補光」排除摩登）。單元測試 733 項全部通過、`npm run build` 成功。瀏覽器測試在 macOS 的 Playwright Chromium 141 headless（SwiftShader 軟體繪圖）執行：動態 81／81 通過，固定視角截圖兩種畫質 × 五個年代各六個視角拍了前後對照。繪製呼叫（SwiftShader、街道遠景、一個影格的總數）：流暢 251／215／231／253／235 → 254／218／235／257／238，精緻 273／231／244／282／269 → 279／236／249／287／273（依港口商街、酒樓繁華、摩登、庶民生活、老屋新生）。沒有在 iPad 實機上看過，也沒有量實機的幀率；動態只用截圖與 uniform／實例矩陣的變化驗證，沒有錄影。
 - 一箱茶的旅程・兩間室內（第 10 階段）：新增 `tests/teaInteriors.test.js` 16 項；既有測試改 `tests/yongle.test.js`、`tests/actionbar.test.js`（「其他年代沒有室內／貼近範圍」改為排除兩間茶行的地段，helpers 加 `inTeaHouseLots`）、`tests/tea.test.js`（林華泰多「器物：桿秤」章）、`tests/doddTeaHouse.test.js`（七章）、`tests/talk.test.js`（npcId 含室內人物）、`tests/inspect.test.js`（五個街上器物）。單元測試全部通過、`npm run build` 成功。已在內建瀏覽器實際走進兩間室內（揀茶女與焙茶工、茶籌與桿秤提示、觀賞模式聚焦寶順洋行立面都截圖確認）；沒有在 iPad 實機上看過。

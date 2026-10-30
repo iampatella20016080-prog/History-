@@ -3507,3 +3507,22 @@ kbd {
   font-size: 0.78rem;
   opacity: 0.8;
 }
+
+/* ── 效能量測（?stats=1） ─────────────────────────── */
+
+.stats-overlay {
+  position: fixed;
+  top: max(8px, env(safe-area-inset-top));
+  left: max(8px, env(safe-area-inset-left));
+  z-index: 90;
+  margin: 0;
+  padding: 6px 9px;
+  border-radius: 6px;
+  background: rgba(20, 14, 8, 0.72);
+  color: #f4ead4;
+  font: 12px/1.45 ui-monospace, 'SF Mono', Menlo, monospace;
+  white-space: pre;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
