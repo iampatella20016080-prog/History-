@@ -64,7 +64,10 @@ test('港口商街的對話：npcId 對應碼頭的挑夫或兩間室內的人�
 })
 
 test('對話總表：talkForNpc 只在對的年代找得到對話', () => {
-  assert.equal(talksOfEra('qing-port').length, QING_PORT_TALK.length)
+  // 港口商街：第 10 階段的碼頭與茶行，加上第 12 階段主題路線在這個年代的對話
+  const routeTalks = Object.values(TALK_BY_ERA).flat().filter((talk) => talk.eraId === 'qing-port')
+  assert.equal(talksOfEra('qing-port').length, QING_PORT_TALK.length + routeTalks.length)
+  for (const talk of QING_PORT_TALK) assert.ok(talksOfEra('qing-port').includes(talk))
   assert.equal(talkForNpc('qing-port', QING_PORT_TALK[0].npcId), QING_PORT_TALK[0])
   assert.equal(talkForNpc('banquet', QING_PORT_TALK[0].npcId), null)
   assert.equal(qingPortTalkOf('沒有這個人'), null)
