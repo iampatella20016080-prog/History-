@@ -3,6 +3,7 @@ import { conditionTint } from './condition.js'
 import { shade } from './props.js'
 import { bigPot, bowlStack, ladle, soupSpoon, squidGeng, toppingTray } from './squidSoupWares.js'
 import { contactShadow } from './contactShadow.js'
+import { TEMPLE_STALL_MARKER_Y } from '../../data/templeSnackLayout.js'
 
 /**
  * 1945–1980「庶民生活」：慈聖宮廟埕旁的魷魚羹攤（飲食文化情境示意，不是特定的店家，也不是老潘的前身）。
@@ -179,7 +180,7 @@ export function buildTempleSquidStall(b, cfg = {}, detail = b) {
   return {
     groundHeight: S.canopy.height,
     topHeight: S.canopy.height + 0.2,
-    anchors: { prompt: local(...stall.prompt), marker: local(0, S.canopy.height + 1.4, 0) },
+    anchors: { prompt: local(...stall.prompt), marker: local(0, TEMPLE_STALL_MARKER_Y, 0) },
     // 觀賞模式聚焦攤位：從街邊斜看攤台、帆布棚與招牌
     focus: {
       center: toWorld(0, 0.3),

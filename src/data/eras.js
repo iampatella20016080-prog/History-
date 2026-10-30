@@ -245,6 +245,8 @@ export const ERAS = [
     streetProps: {
       ground: 'asphalt',
       lamps: 'utility',
+      // 不立第三根電線桿（x = −4）：北側林復振一帶戰後加建的鐵皮雨遮伸到離街心 1.68 公尺，燈桿會穿過去（畫面審查）
+      lampSkip: [2],
       wires: true,
       lanternStrings: false,
       items: ['foodStalls', 'bicycles', 'tricycle', 'baskets', 'stools'],

@@ -1,0 +1,357 @@
+{
+  "stats": {
+    "follow": {
+      "qing-port-lin-hua-tai-in-low": [
+        -22,
+        0,
+        -6.1
+      ],
+      "qing-port-lin-hua-tai-back-low": [
+        -21.43,
+        0,
+        -11.1
+      ],
+      "qing-port-dodd-tea-house-in-low": [
+        5.15,
+        0,
+        -6.1
+      ],
+      "qing-port-dodd-tea-house-back-low": [
+        5.47,
+        0,
+        -12.1
+      ],
+      "modern-rice-and-shine-329-in-low": [
+        29.2,
+        0,
+        6.1
+      ],
+      "modern-rice-and-shine-329-back-low": [
+        29.13,
+        0,
+        9.3
+      ],
+      "modern-shizixuan-in-low": [
+        -12.1,
+        0,
+        -5.73
+      ],
+      "modern-shizixuan-back-low": [
+        -12.1,
+        0,
+        -7.6
+      ],
+      "postwar-rice-and-shine-329-in-low": [
+        29.2,
+        0,
+        6.1
+      ],
+      "postwar-rice-and-shine-329-back-low": [
+        29.2,
+        0,
+        9.3
+      ],
+      "postwar-shizixuan-in-low": [
+        -14.4,
+        0,
+        -6.1
+      ],
+      "postwar-shizixuan-back-low": [
+        -14.4,
+        0,
+        -9.3
+      ],
+      "revival-rice-and-shine-329-in-low": [
+        29.2,
+        0,
+        5.64
+      ],
+      "revival-rice-and-shine-329-back-low": [
+        29.74,
+        0,
+        9.3
+      ],
+      "revival-rice-and-shine-329-2f-in-low": [
+        29.32,
+        3.75,
+        6.73
+      ],
+      "revival-rice-and-shine-329-2f-back-low": [
+        29.32,
+        3.75,
+        6.73
+      ],
+      "revival-yong-le-market-in-low": [
+        43.8,
+        0,
+        0
+      ],
+      "revival-yong-le-market-back-low": [
+        61.6,
+        0,
+        0
+      ],
+      "revival-action-bar-in-low": [
+        29.8,
+        0,
+        23.2
+      ],
+      "revival-action-bar-back-low": [
+        32.33,
+        0,
+        23.2
+      ],
+      "revival-huang-yujie-museum-in-low": [
+        29.8,
+        0,
+        17.88
+      ],
+      "revival-huang-yujie-museum-back-low": [
+        34.39,
+        0,
+        17.88
+      ],
+      "revival-luguo-cafe-in-low": [
+        32.6,
+        0.5,
+        -19.02
+      ],
+      "revival-luguo-cafe-back-low": [
+        29.14,
+        2,
+        -19.02
+      ],
+      "revival-lao-pan-squid-soup-in-low": [
+        33.31,
+        0,
+        6.1
+      ],
+      "revival-lao-pan-squid-soup-back-low": [
+        33.6,
+        0,
+        10.1
+      ],
+      "revival-yong-le-mi-tai-mu-in-low": [
+        17.83,
+        0,
+        -6.1
+      ],
+      "revival-yong-le-mi-tai-mu-back-low": [
+        17.83,
+        0,
+        -13.68
+      ],
+      "revival-shizixuan-in-low": [
+        -12.6,
+        0,
+        -6.1
+      ],
+      "revival-shizixuan-back-low": [
+        -12.6,
+        0,
+        -12.88
+      ],
+      "qing-port-lin-hua-tai-in-high": [
+        -22,
+        0,
+        -6.1
+      ],
+      "qing-port-lin-hua-tai-back-high": [
+        -21.43,
+        0,
+        -11.1
+      ],
+      "qing-port-dodd-tea-house-in-high": [
+        5.15,
+        0,
+        -6.1
+      ],
+      "qing-port-dodd-tea-house-back-high": [
+        5.47,
+        0,
+        -12.1
+      ],
+      "modern-rice-and-shine-329-in-high": [
+        29.2,
+        0,
+        6.1
+      ],
+      "modern-rice-and-shine-329-back-high": [
+        29.13,
+        0,
+        9.3
+      ],
+      "modern-shizixuan-in-high": [
+        -12.1,
+        0,
+        -5.73
+      ],
+      "modern-shizixuan-back-high": [
+        -12.1,
+        0,
+        -7.6
+      ],
+      "postwar-rice-and-shine-329-in-high": [
+        29.2,
+        0,
+        6.1
+      ],
+      "postwar-rice-and-shine-329-back-high": [
+        29.2,
+        0,
+        9.3
+      ],
+      "postwar-shizixuan-in-high": [
+        -14.4,
+        0,
+        -6.1
+      ],
+      "postwar-shizixuan-back-high": [
+        -14.4,
+        0,
+        -9.3
+      ],
+      "revival-rice-and-shine-329-in-high": [
+        29.2,
+        0,
+        5.64
+      ],
+      "revival-rice-and-shine-329-back-high": [
+        29.74,
+        0,
+        9.3
+      ],
+      "revival-rice-and-shine-329-2f-in-high": [
+        29.32,
+        3.75,
+        6.73
+      ],
+      "revival-rice-and-shine-329-2f-back-high": [
+        29.32,
+        3.75,
+        6.73
+      ],
+      "revival-yong-le-market-in-high": [
+        43.8,
+        0,
+        0
+      ],
+      "revival-yong-le-market-back-high": [
+        61.6,
+        0,
+        0
+      ],
+      "revival-action-bar-in-high": [
+        29.8,
+        0,
+        23.2
+      ],
+      "revival-action-bar-back-high": [
+        32.33,
+        0,
+        23.2
+      ],
+      "revival-huang-yujie-museum-in-high": [
+        29.8,
+        0,
+        17.88
+      ],
+      "revival-huang-yujie-museum-back-high": [
+        34.39,
+        0,
+        17.88
+      ],
+      "revival-luguo-cafe-in-high": [
+        32.6,
+        0.5,
+        -19.02
+      ],
+      "revival-luguo-cafe-back-high": [
+        29.14,
+        2,
+        -19.02
+      ],
+      "revival-lao-pan-squid-soup-in-high": [
+        33.31,
+        0,
+        6.1
+      ],
+      "revival-lao-pan-squid-soup-back-high": [
+        33.6,
+        0,
+        10.1
+      ],
+      "revival-yong-le-mi-tai-mu-in-high": [
+        17.83,
+        0,
+        -6.1
+      ],
+      "revival-yong-le-mi-tai-mu-back-high": [
+        17.83,
+        0,
+        -13.68
+      ],
+      "revival-shizixuan-in-high": [
+        -12.6,
+        0,
+        -6.1
+      ],
+      "revival-shizixuan-back-high": [
+        -12.6,
+        0,
+        -12.88
+      ]
+    },
+    "qing-port/low": {
+      "calls": 222,
+      "meshes": 112,
+      "lightPools": false
+    },
+    "banquet/low": {
+      "calls": 250,
+      "meshes": 112,
+      "lightPools": false
+    },
+    "modern/low": {
+      "calls": 237,
+      "meshes": 109,
+      "lightPools": false
+    },
+    "postwar/low": {
+      "calls": 269,
+      "meshes": 124,
+      "lightPools": false
+    },
+    "revival/low": {
+      "calls": 340,
+      "meshes": 163,
+      "lightPools": false
+    },
+    "qing-port/high": {
+      "calls": 248,
+      "meshes": 141,
+      "lightPools": false
+    },
+    "banquet/high": {
+      "calls": 274,
+      "meshes": 135,
+      "lightPools": true
+    },
+    "modern/high": {
+      "calls": 261,
+      "meshes": 124,
+      "lightPools": true
+    },
+    "postwar/high": {
+      "calls": 298,
+      "meshes": 142,
+      "lightPools": false
+    },
+    "revival/high": {
+      "calls": 386,
+      "meshes": 188,
+      "lightPools": true
+    }
+  },
+  "errors": []
+}

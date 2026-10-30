@@ -250,7 +250,8 @@ export function buildShophouse(b, cfg, detail = null) {
     const side = cfg.hangingSign?.side === 'right' ? -1 : 1
     const bx = side * (w / 2 - 0.36)
     b.cylinder('bamboo', 0.03, 0.03, 1.1, 5, [bx, beamY + 0.05, postZ + 0.45], { rotation: [Math.PI / 2, 0, 0], tint: '#d8c48e' })
-    b.addBanner({ text: cfg.banner.text, style: 'cloth', width: 0.5, height: 1.45, position: [bx, beamY - 0.02, postZ + 0.75], rotationY: Math.PI / 2 })
+    // 布幡的位置是中心點：掛在竹竿下面（原本中心在竹竿的高度，上半截穿過雨棚，畫面審查）
+    b.addBanner({ text: cfg.banner.text, style: 'cloth', width: 0.5, height: 1.45, position: [bx, beamY + 0.05 - 0.04 - 1.45 / 2, postZ + 0.75], rotationY: Math.PI / 2 })
   }
 
   /* ── 燈籠 ─────────────────────────────── */

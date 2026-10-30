@@ -16,6 +16,9 @@
  *           SET（details：改拍細部的近景——榕樹、大面積地面、灰泥牆、騎樓柱腳；
  *                air：空氣遠近感與光束——街道往兩頭的遠景、河岸，酒樓繁華與摩登加拍騎樓）
  *           SET=relief：材質凹凸與河面倒映——斜光下的牆面、屋瓦、地磚、河岸三個角度
+ *           SET=audit：畫面審查——街道、每個開放店家的店門口與探索鏡頭、走進室內（跟隨鏡頭）、路線人物，見 auditViews.mjs
+ *           ONLY（正規表示式，只拍檔名符合的視角；SET=audit 重拍單張用）
+ *           VIEWS（JSON：[[檔名, 鏡頭位置, 注視點], ...]，臨時指定視角，查問題時近看用；優先於 SET）
  */
 import { createRequire } from 'node:module'
 import { mkdirSync, writeFileSync } from 'node:fs'
@@ -28,6 +31,7 @@ const OUT = process.env.OUT ?? 'docs/lookbook/latest'
 const ERA_IDS = (process.env.ERAS ?? 'qing-port,banquet,modern,postwar,revival').split(',')
 const QUALITIES = (process.env.QUALITIES ?? 'low,high').split(',')
 const SET = process.env.SET ?? 'default'
+const ONLY = process.env.ONLY ? new RegExp(process.env.ONLY) : null
 const TIMEOUT = 240000
 const HIDE_UI =
   '.hud, .hud-quality, .hud-actions, .hud-controls, .hud-objective, .shop-prompt, .hud-help, .touch-controls, .prompt-layer, .dialogue-box, .controls-hint, .toast { visibility: hidden !important; }'
@@ -106,7 +110,12 @@ export const AIR_ARCADE_VIEWS = {
   modern: [['arcade', '騎樓', [26, 1.6, -2.9], [4, 3.2, 0.5]]],
 }
 
-function viewsFor(eraId) {
+async function viewsFor(eraId) {
+  if (process.env.VIEWS) return JSON.parse(process.env.VIEWS).map(([id, position, target, options]) => [id, id, position, target, options])
+  if (SET === 'audit') {
+    const [{ auditViews }, { buildEraWorldSync }] = await Promise.all([import('./auditViews.mjs'), import('../../src/game/world/buildWorld.js')])
+    return auditViews(eraId, buildEraWorldSync(eraId).interiors ?? [])
+  }
   if (SET === 'shop-glow') return SHOP_GLOW_VIEWS[eraId] ?? []
   if (SET === 'details') return DETAIL_VIEWS
   if (SET === 'relief') return RELIEF_VIEWS
@@ -139,9 +148,9 @@ async function run() {
       const start = await page.evaluate(() => window.__DDC__.frameCount ?? 0)
       await page.waitForFunction((goal) => (window.__DDC__.frameCount ?? 0) >= goal, start + n, { timeout: 60000 }).catch(() => {})
     }
-    const shoot = async (name, position, target) => {
+    const shoot = async (name, position, target, options = {}) => {
       await page.waitForFunction(() => window.__DDC__?.playerState, null, { timeout: TIMEOUT })
-      await page.evaluate(({ position, target, css }) => {
+      await page.evaluate(({ position, target, css, follow }) => {
         // 介面藏起來（每張都重新確認：開發伺服器重新載入後樣式會消失）
         if (!document.getElementById('lookbook-css')) {
           const style = document.createElement('style')
@@ -150,6 +159,18 @@ async function run() {
           document.head.append(style)
         }
         const d = window.__DDC__
+        if (follow) {
+          // 跟隨鏡頭：把人物放進去、面向 facing，鏡頭由 CameraRig 自己跟上（看得出鏡頭有沒有穿牆）
+          delete d.cameraOverride
+          const [fx, fz] = follow.facing
+          d.playerState.position.set(follow.position[0], 0, follow.position[1])
+          d.playerState.velocity.set(0, 0, 0)
+          d.playerState.level = follow.level ?? 0
+          d.playerState.heading = Math.atan2(fx, fz)
+          d.cameraState.targetYaw = d.cameraState.yaw = d.playerState.heading + Math.PI
+          d.cameraState.snap = true
+          return
+        }
         const dx = target[0] - position[0]
         const dz = target[2] - position[2]
         const len = Math.hypot(dx, dz) || 1
@@ -157,8 +178,9 @@ async function run() {
         d.playerState.position.set(position[0] - (dx / len) * 2.5, 0, position[2] - (dz / len) * 2.5)
         d.playerState.level = 0
         d.cameraOverride = { position, target }
-      }, { position, target, css: HIDE_UI })
-      await frames(40)
+      }, { position, target, css: HIDE_UI, follow: options.follow ?? null })
+      // 室內按需產生（背景執行緒），跟隨鏡頭與審查視角多等一些影格（固定鏡頭在店裡時也要等室內產生完）
+      await frames(options.follow ? 90 : SET === 'audit' ? 80 : 40)
       const png = await page.screenshot({ timeout: TIMEOUT })
       // 在網頁裡用 canvas 縮成 960 寬的 JPEG（放進 repo 的大小），另存 1/4 大小的灰階縮圖（看明度差用）
       const [color, gray] = await page.evaluate(async (b64) => {
@@ -211,9 +233,19 @@ async function run() {
       await page.locator('.intro__start').click({ timeout: 60000 }).catch(() => page.locator('.intro__start').click({ force: true }))
       await page.waitForFunction(() => document.querySelector('.hud.is-started'), null, { timeout: 30000 })
       await page.waitForTimeout(1500)
-      const views = viewsFor(eraId)
-      for (const [id, , position, target] of views) {
-        await shoot(`${eraId}-${id}-${quality}`, position, target)
+      const views = await viewsFor(eraId)
+      for (const [id, , position, target, options] of views) {
+        const name = `${eraId}-${id}-${quality}`
+        if (ONLY && !ONLY.test(name)) continue
+        await shoot(name, position, target, options)
+        if (options?.follow) {
+          // 人物實際停在哪裡（碰撞會把人物推出牆外）：寫進 stats.json 的 follow
+          stats.follow ??= {}
+          stats.follow[name] = await page.evaluate(() => {
+            const p = window.__DDC__.playerState.position
+            return [p.x, p.y, p.z].map((v) => Math.round(v * 100) / 100)
+          })
+        }
       }
       const [, , position, target] = COMMON_VIEWS[2]
       await page.evaluate(({ position, target }) => (window.__DDC__.cameraOverride = { position, target }), { position, target })

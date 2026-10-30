@@ -130,15 +130,22 @@ const FOOTPRINT = {
   pottedPlant: [0.3, 0.3],
 }
 
-/** 各年代的路燈位置（街道兩側交錯） */
-const LAMP_X = [-28, -16, -4, 8, 20, 31]
+/**
+ * 各年代的路燈位置（街道兩側交錯）。離街心 2.25 公尺：再往外，燈桿會穿過街屋的屋簷（伸到 2.48）與洋樓的簷口；
+ * 第二、五根放在地段交界，避開酒樓繁華江山樓與乾元藥行的陽臺（畫面審查）
+ */
+export const LAMP_X = [-28, -23.6, -4, 8, 21.2, 31]
+export const LAMP_Z = 2.25
 
 function streetLamps(era) {
   const style = era.streetProps.lamps
   if (!style) return []
-  const lamps = LAMP_X.map((x, i) => {
+  const skip = era.streetProps.lampSkip ?? []
+  const lamps = LAMP_X.flatMap((x, i) => {
+    // lampSkip：個別年代不立的那幾根（庶民生活的鐵皮雨遮伸到街上，見 eras.js）
+    if (skip.includes(i)) return []
     const side = i % 2 === 0 ? -1 : 1
-    return { style, position: [x, 0, side * 2.62], rotationY: side < 0 ? 0 : Math.PI }
+    return [{ style, position: [x, 0, side * LAMP_Z], rotationY: side < 0 ? 0 : Math.PI }]
   })
   // 河岸廣場
   lamps.push({ style, position: [-43.2, 0, -2.2], rotationY: -Math.PI / 2 })

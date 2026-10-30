@@ -122,10 +122,12 @@ export function buildArcadeBuilding(b, cfg, detail = null) {
   })
   if (cornerSide) roundedCorner(b, { side: cornerSide, r: cornerR, w, groundH, topY, front, wallMat, wallTint, trimTint, floors, upperH, parapetH: cfg.parapetHeight ?? 1.5 })
   const signY = groundH + 0.52
+  // 騎樓上方的橫招牌範圍：壁柱與鰭片不能從招牌前面穿過（例如酒樓繁華的王有記茶行、摩登的波麗路立體字）
+  const signSpan = cfg.sign && cfg.sign.placement !== 'parapet' ? { half: signHalfWidth(cfg, w) + 0.12, top: signY + 0.41 } : null
   if (style === 'baroque') {
-    baroqueFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, shutterTint, litChance, condition })
+    baroqueFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, shutterTint, litChance, condition, signSpan })
   } else if (style === 'deco') {
-    decoFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, condition, cornerSide, cornerR })
+    decoFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, condition, cornerSide, cornerR, signSpan })
   } else {
     postwarFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, condition })
   }
@@ -220,8 +222,14 @@ export function buildArcadeBuilding(b, cfg, detail = null) {
   return { groundHeight: groundH, topHeight: topY }
 }
 
+/** 騎樓上方橫招牌的半寬（立體字比招牌板寬 0.4） */
+function signHalfWidth(cfg, w) {
+  const sw = Math.min(w - 1.2, 0.95 + cfg.sign.text.length * 0.6)
+  return (cfg.sign.style === 'letters' ? sw + 0.4 : sw) / 2
+}
+
 /* ═══════════ 仿巴洛克立面 ═══════════ */
-function baroqueFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, shutterTint, litChance }) {
+function baroqueFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, shutterTint, litChance, signSpan = null }) {
   const count = w >= 7 ? 3 : w >= 4.8 ? 2 : 1
   const winW = Math.min(1.15, (w - 1.4) / count - 0.45)
   const spacing = (w - 0.8) / count
@@ -233,7 +241,8 @@ function baroqueFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, w
   for (let i = 0; i <= count; i++) {
     if (brick && (i === 0 || i === count)) continue
     const x = -w / 2 + 0.4 + i * spacing
-    pilaster(b, { x, y0: groundH + 0.25, y1: topY, z: front, width: 0.28, tint: trimTint })
+    const behindSign = signSpan && Math.abs(x) < signSpan.half
+    pilaster(b, { x, y0: behindSign ? signSpan.top : groundH + 0.25, y1: topY, z: front, width: 0.28, tint: trimTint })
     if (cfg.ornate) {
       for (let f = 1; f < floors; f++) {
         const ry = groundH + (f - 1) * upperH + upperH * 0.6
@@ -348,9 +357,9 @@ function balustradeParapet(b, { y, width, z, wallTint, trimTint, count }) {
 }
 
 /* ═══════════ Art Deco 立面 ═══════════ */
-function decoFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, cornerSide = 0, cornerR = 0 }) {
+function decoFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, cornerSide = 0, cornerR = 0, signSpan = null }) {
   if (cfg.decoDetail) {
-    decoDetailFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, cornerSide, cornerR })
+    decoDetailFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, cornerSide, cornerR, signSpan })
     return
   }
   const accent = trimTint
@@ -572,7 +581,7 @@ function decoRailing(b, { x, y, width, z, tint }) {
   b.add('plain', new TorusGeometry(0.17, 0.018, 5, 16), { position: [x, y + 0.07 + h * 0.54, rz], tint: STEEL })
 }
 
-function decoDetailFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, cornerSide, cornerR }) {
+function decoDetailFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, wallTint, trimTint, litChance, cornerSide, cornerR, signSpan = null }) {
   const accent = trimTint
   const cream = wallTint
   const surround = shade(cream, 1.04)
@@ -609,9 +618,11 @@ function decoDetailFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front
     for (let i = 0; i <= count; i++) {
       const x = x0 + 0.5 + bay * i
       const center = i === Math.floor(count / 2) || i === Math.ceil(count / 2)
-      const h = topY - groundH + (style === 'fins' && center ? 1.1 : 0.35)
-      b.box('stucco', [0.16, h, 0.2], [x, groundH + h / 2, front + 0.1], { tint: center ? accent : surround })
-      if (style === 'fins') for (const dx of [-0.11, 0.11]) b.box('stucco', [0.04, h - 0.4, 0.12], [x + dx, groundH + (h - 0.4) / 2 + 0.2, front + 0.06], { tint: surround })
+      // 招牌範圍裡的鰭片從招牌上緣開始
+      const y0 = signSpan && Math.abs(x) < signSpan.half ? signSpan.top : groundH
+      const h = topY - y0 + (style === 'fins' && center ? 1.1 : 0.35)
+      b.box('stucco', [0.16, h, 0.2], [x, y0 + h / 2, front + 0.1], { tint: center ? accent : surround })
+      if (style === 'fins') for (const dx of [-0.11, 0.11]) b.box('stucco', [0.04, h - 0.4, 0.12], [x + dx, y0 + (h - 0.4) / 2 + 0.2, front + 0.06], { tint: surround })
     }
   }
   // 二樓中央的幾何鐵欄杆陽臺

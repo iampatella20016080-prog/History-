@@ -208,7 +208,7 @@ export const SHOPS = [
     },
     // 按 E 探索時的鏡頭：從店面往街道前進 distance、沿街側移 side、離地 height，
     // 注視店面 lookHeight 的高度（斜角取景，鏡頭留在街道範圍內）
-    camera: { distance: 7.6, height: 4.6, side: 11, lookHeight: 3.6 },
+    camera: { distance: 7.6, height: 4.6, side: 9.4, lookHeight: 3.6 }, // side 不用 11：酒樓繁華以後鏡頭正好在 x = 8 的路燈旁（畫面審查）
 
     // ── 介紹章節 ──────────────────────────────
     // 庶民生活版本在文獻章前多一章「群像：在地經營者」（operatorsData.js）
@@ -719,7 +719,7 @@ export const SHOPS = [
       revivalEn:
         'Haoguoyuan is on the ground floor of Yongle Market (stall no. 1020). This site has not found a founding year or shop history for the stall, so the introduction rests on the items visible at the stall and on the ingredients, methods and festivals of traditional kueh.',
     },
-    camera: { distance: 3.1, height: 2.05, side: -2.3, lookHeight: 1.55 },
+    camera: { distance: 3.1, height: 2.05, side: 0.6, lookHeight: 1.55 }, // side 不用 −2.3：鏡頭會從第 12 階段路線人物（壽粿的阿伯）頭上掠過（畫面審查）
 
     // ── 介紹章節 ──────────────────────────────
     chapters: [
@@ -3478,7 +3478,7 @@ export const SHOPS = [
       revivalEn:
         'In 2004 the front half of the factory was converted into a retail shop, and the second-floor tea-sorting hall became the arts space Qingyuan Hall (清源堂). At the back of the ground floor the roasting room still roasts tea over charcoal, and more than forty roasting pits are still in use. Since 2008 Qingyuan Hall has hosted nanguan music performances on Saturday afternoons. The fifth generation, Wang Shengjun, took over in 2012 and at the end of 2020 opened WANGTEA LAB next door.',
     },
-    camera: { distance: 6, height: 4.2, side: -4, lookHeight: 3.2 },
+    camera: { distance: 5, height: 4.2, side: -4, lookHeight: 3.2 }, // distance 不用 6：路燈往街心移了以後，鏡頭會貼著 x = 8 那盞路燈的燈頭（畫面審查）
     chapters: [
       {
         id: 'baozhong-nanyang',
@@ -4373,6 +4373,8 @@ export const SHOPS = [
     position: { x: 4, z: 4.5 },
     facing: 'north',
     interaction: { radius: 5 },
+    // 預設的 distance 9 會把鏡頭放進對街（北側）的店屋裡：改站在街心，看廟埕與廟門（畫面審查）
+    camera: { distance: 7, height: 2.8, side: 0, lookHeight: 3.6 },
     chapters: CI_SHENG_CHAPTERS.heritage,
     hotspots: hotspotsToWorld(ciShengHotspots('banquet'), templeCourtToWorld),
     eraNotes: CI_SHENG_ERA_NOTES,
