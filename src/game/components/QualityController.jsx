@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { getQualitySettings } from '../quality.js'
-import { setSurfaceDetail } from '../rendering/materials.js'
+import { setShopGlowEnabled, setSurfaceDetail } from '../rendering/materials.js'
 import { useGameStore } from '../../state/useGameStore.js'
 
 const WINDOW = 1.6 // 秒
@@ -13,7 +13,7 @@ const adaptiveEnabled = typeof window === 'undefined' || new URLSearchParams(win
  * 畫質模式的解析度控制：
  * - 切換模式時立即把渲染解析度（DPR）設為該模式的上限（不超過裝置像素比）
  * - 執行中畫面太慢時在該模式的範圍內逐步降低、穩定流暢時再回升（年代轉場期間不調整）
- * - 把實際的設定寫在 <html> 的 data 屬性上，方便檢查（data-quality、data-dpr、data-dpr-max）
+ * - 把實際的設定寫在 <html> 的 data 屬性上，方便檢查（data-quality、data-dpr、data-dpr-max、data-shop-glow）
  * 網址加上 ?adaptive=0 可停用自動調整（量測實際設定用）。
  */
 export function QualityController() {
@@ -31,6 +31,9 @@ export function QualityController() {
     data.dprMax = String(settings.dpr)
     data.dof = String(settings.dofTaps)
     data.detail = settings.detail ? 'full' : 'reduced'
+    // 店內透光只在精緻畫質：切換時 windowLit、glassWarm 重新編譯（不加材質、不加批次）
+    setShopGlowEnabled(settings.shopGlow)
+    data.shopGlow = settings.shopGlow ? 'on' : 'off'
   }, [settings, setDpr])
 
   // 地磚與牆面的大尺度變化只在精緻畫質（流暢畫質的著色器與原本相同）；在第一次繪製之前套用

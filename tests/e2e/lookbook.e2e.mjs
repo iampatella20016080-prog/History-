@@ -12,6 +12,7 @@
  *
  * 環境變數：PLAYWRIGHT_MODULE、CHROMIUM_EXECUTABLE、OUT（輸出資料夾，預設 docs/lookbook/latest）、
  *           ERAS（逗號分隔）、QUALITIES（預設 low,high）、TIME（固定動畫時間，秒；預設 12）、
+ *           SET（shop-glow：只拍店內透光的店面視角，見 SHOP_GLOW_VIEWS）
  *           SET（details：改拍細部的近景——榕樹、大面積地面、灰泥牆、騎樓柱腳）
  */
 import { createRequire } from 'node:module'
@@ -24,6 +25,7 @@ const BASE_URL = process.argv[2] ?? 'http://127.0.0.1:5173/'
 const OUT = process.env.OUT ?? 'docs/lookbook/latest'
 const ERA_IDS = (process.env.ERAS ?? 'qing-port,banquet,modern,postwar,revival').split(',')
 const QUALITIES = (process.env.QUALITIES ?? 'low,high').split(',')
+const SET = process.env.SET ?? 'default'
 const TIMEOUT = 240000
 const HIDE_UI =
   '.hud, .hud-quality, .hud-actions, .hud-controls, .hud-objective, .shop-prompt, .hud-help, .touch-controls, .prompt-layer, .dialogue-box, .controls-hint, .toast { visibility: hidden !important; }'
@@ -46,6 +48,26 @@ export const ERA_VIEWS = {
   modern: [storefront('bolero', '波麗路', 24.3, 'north'), storefront('xin-fang-chun', '新芳春茶行', -27, 'south'), storefront('shizixuan', '十字軒', -14.4, 'north')],
   postwar: [storefront('you-ji', '有記名茶', 11.6, 'north'), storefront('bolero', '波麗路', 24.3, 'north'), storefront('rice-and-shine', '迪化街329號', 29.2, 'south')],
   revival: [storefront('luguo', '爐鍋咖啡', 30.2, 'north'), storefront('lao-pan', '老潘魷魚羹', 33.4, 'south'), storefront('zi-yang', '滋養豆餡舖', -30.5, 'north')],
+}
+
+/**
+ * 店內透光（SET=shop-glow）：一般街屋的店面，正面一張（看漸層與層架陰影）、斜看一張（看視差）。
+ * 正面的注視點比店門口視角低，看得到店內深處。
+ */
+function glowViews(id, x, side) {
+  const s = side === 'north' ? 1 : -1
+  return [
+    [`${id}-front`, `${id} 正面`, [x, 1.6, 2.4 * s], [x, 1.5, -6 * s]],
+    [`${id}-oblique`, `${id} 斜看`, [x + 3.2, 1.6, 2.6 * s], [x - 1.2, 1.4, -4 * s]],
+  ]
+}
+
+export const SHOP_GLOW_VIEWS = {
+  'qing-port': [...glowViews('minnan-open', -31.8, 'north'), ...glowViews('minnan-south', 12.0, 'south')],
+  banquet: [...glowViews('minnan-open', -7.8, 'north'), ...glowViews('arcade', -27.0, 'south'), ...glowViews('baroque', 11.6, 'north')],
+  modern: [...glowViews('minnan-open', -2.0, 'north'), ...glowViews('minnan-south', -5.0, 'south')],
+  postwar: [...glowViews('shutter', -31.8, 'north'), ...glowViews('baroque', 11.6, 'north')],
+  revival: [...glowViews('glass', 5.2, 'north'), ...glowViews('minnan-open', -2.0, 'north')],
 }
 
 /** 細部的近景（第 9 階段・細部）：每個年代都拍同樣的位置 */
@@ -152,7 +174,7 @@ async function run() {
       await page.locator('.intro__start').click()
       await page.waitForFunction(() => document.querySelector('.hud.is-started'), null, { timeout: 30000 })
       await page.waitForTimeout(1500)
-      const views = process.env.SET === 'details' ? DETAIL_VIEWS : [...COMMON_VIEWS, ...(ERA_VIEWS[eraId] ?? [])]
+      const views = SET === 'shop-glow' ? (SHOP_GLOW_VIEWS[eraId] ?? []) : SET === 'details' ? DETAIL_VIEWS : [...COMMON_VIEWS, ...(ERA_VIEWS[eraId] ?? [])]
       for (const [id, , position, target] of views) {
         await shoot(`${eraId}-${id}-${quality}`, position, target)
       }
