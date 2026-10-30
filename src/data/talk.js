@@ -6,8 +6,9 @@
 import { QING_PORT_TALK } from './qingPortTalk.js'
 import { PASTRY_TALK } from './routes/pastryRoute.js'
 import { TEMPLE_MEAL_TALK } from './routes/templeMealRoute.js'
+import { OLD_HOUSE_TALK } from './routes/oldHouseRoute.js'
 
-const ROUTE_TALK = [...PASTRY_TALK, ...TEMPLE_MEAL_TALK]
+const ROUTE_TALK = [...PASTRY_TALK, ...TEMPLE_MEAL_TALK, ...OLD_HOUSE_TALK]
 
 function byEra(talks) {
   const map = { 'qing-port': [...QING_PORT_TALK] }

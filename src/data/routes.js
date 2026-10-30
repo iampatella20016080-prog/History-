@@ -5,11 +5,12 @@
 import { TEA_ROUTE } from './teaRoute.js'
 import { PASTRY_ROUTE } from './routes/pastryRoute.js'
 import { TEMPLE_MEAL_ROUTE } from './routes/templeMealRoute.js'
+import { OLD_HOUSE_ROUTE } from './routes/oldHouseRoute.js'
 import { getShop } from './shops.js'
 import { getInspectable } from './inspectObjects.js'
 import { getRouteFigureByNpcId } from './routeFigures.js'
 
-export const ROUTES = [TEA_ROUTE, PASTRY_ROUTE, TEMPLE_MEAL_ROUTE]
+export const ROUTES = [TEA_ROUTE, PASTRY_ROUTE, TEMPLE_MEAL_ROUTE, OLD_HOUSE_ROUTE]
 
 export function getRoute(id) {
   return ROUTES.find((route) => route.id === id) ?? null

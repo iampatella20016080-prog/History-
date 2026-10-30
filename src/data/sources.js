@@ -2334,6 +2334,92 @@ SOURCES['tfam-carrying-pole-1231'] = {
   usage: '竹扁擔的形制依據：以一片剖開的竹子做成的扁擔，長 151.4、寬 7 公分，兩端烤彎略往上翹以免繩子滑落。',
 }
 
+/* ── 第 12 階段：主題路線「老屋裡的新生活」（查證紀錄 docs/research/old-house-route.md） ── */
+SOURCES['nmth-winnower-2000-003-0001'] = {
+  id: 'nmth-winnower-2000-003-0001',
+  citation: '國立臺灣歷史博物館典藏，「風鼓車」，登錄號2000.003.0001。',
+  publisher: '國立臺灣歷史博物館',
+  title: '風鼓車',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2000.003.0001',
+  published: '典藏網（2026年10月查閱）',
+  usage: '風鼓 3D 模型的形制依據與用法：木質，長77.2×寬139.8×高129.1公分、36公斤；風鼓斗、風鼓掩、風鼓櫃、風鼓肚與風鼓葉、風鼓手、頭皂與二皂；倒入風乾的穀粒、搖風鼓手、抽開風鼓掩，飽滿的穀粒從頭皂二皂流出，空殼雜物被吹出風鼓口；館方引臺灣總督府殖產局《臺灣之農具》（1921）。',
+}
+SOURCES['nmth-motor-winnower'] = {
+  id: 'nmth-motor-winnower',
+  citation: '國立臺灣歷史博物館典藏，「風鼓車製造情形」（照片），登錄號2010.006.0093.0065。',
+  publisher: '國立臺灣歷史博物館',
+  title: '風鼓車製造情形',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2010.006.0093.0065',
+  published: '典藏網（2026年10月查閱）',
+  usage: '說明傳統風鼓車的把手是人力手搖，改良的風鼓車在外面裝設馬達、齒輪及皮帶；照片推測年份 1961–1965。',
+  context: '照片的年份不是馬達改良版出現的年份，本站只寫「1960 年代前期的照片拍到改良版」。',
+}
+SOURCES['nmth-rice-ledger'] = {
+  id: 'nmth-rice-ledger',
+  citation: '國立臺灣歷史博物館典藏，「瑞興號米店帳冊」，登錄號2010.015.0220.0067。',
+  publisher: '國立臺灣歷史博物館',
+  title: '瑞興號米店帳冊',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2010.015.0220.0067',
+  published: '典藏網（2026年10月查閱）',
+  usage: '帳冊 3D 模型的形制依據：19.8×19.1×1.4公分、206.5公克，棉線裝訂、前後藍色封面，日本時代；內頁有「庚申」（館方對照同套「大正九年庚申」，約1920年）；所屬的「瑞興號及錦瑞號米店帳冊」全套72冊。',
+}
+SOURCES['nmth-cake-mould-2012-019-0010'] = {
+  id: 'nmth-cake-mould-2012-019-0010',
+  citation: '國立臺灣歷史博物館典藏，「酒瓶形單面雕桃形壽字紋帶柄餅印」，登錄號2012.019.0010。',
+  publisher: '國立臺灣歷史博物館',
+  title: '酒瓶形單面雕桃形壽字紋帶柄餅印',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2012.019.0010',
+  published: '典藏網（2026年10月查閱）',
+  usage: '餅印 3D 模型的形制依據：木質，22.1×11.7×3.1公分、146公克，推測1960–1980年；單面雕刻，桃形外圈、中央刻「壽」、周圍桃葉與花草；用來製作神誕或壽慶的糕餅；柄尾的紅絲帶是捐贈者後加。',
+}
+SOURCES['moa-baozhong-weekly'] = {
+  id: 'moa-baozhong-weekly',
+  citation: '〈文山包種茶 清香最誘人〉，《農業周刊》第15卷第34期，頁4（農業部農業知識入口網收錄）。',
+  publisher: '農業部 農業知識入口網',
+  title: '文山包種茶 清香最誘人',
+  url: 'https://kmweb.moa.gov.tw/redirect_files.php?id=157370',
+  published: '約1987年（文中稱1885年為「102年前」；2026年10月查閱掃描版）',
+  usage: '包種茶的名稱由來：用方形福建毛邊紙2張內外相襯，放入茶葉4兩，包成長方形的四方包，包外蓋上茶名及行號印章，因此稱為「包種」。',
+  context: '同文的創製者與年份（王義程、1885 年南港大坑）用「相傳」，本站不採。',
+}
+SOURCES['nmth-xfc-tea-tin'] = {
+  id: 'nmth-xfc-tea-tin',
+  citation: '國立臺灣歷史博物館典藏，「新芳春茶行包種茶茶罐」，登錄號2019.031.0393。',
+  publisher: '國立臺灣歷史博物館',
+  title: '新芳春茶行包種茶茶罐',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2019.031.0393',
+  published: '典藏網（2026年10月查閱）',
+  usage: '茶罐 3D 模型的形制依據：金屬方罐，8.6×8.5×9.5公分、199.5公克，推測1932–1945年；一面貼紙，印「合資會社新芳春茶行」與「品名」、手寫「包種茶」；編目說明1932年改組合資會社，主要經營包種茶外銷東南亞。',
+  context: '編目說明另寫王連河1919年在大稻埕獨資開設新芳春茶行，與其他來源的創立年份不一（見 xin-fang-chun.md），本站不寫創立年份。',
+}
+SOURCES['nmth-pharmacy-flyer'] = {
+  id: 'nmth-pharmacy-flyer',
+  citation: '國立臺灣歷史博物館典藏，「義乾泰藥房廣告單」，登錄號2003.006.0290。',
+  publisher: '國立臺灣歷史博物館',
+  title: '義乾泰藥房廣告單',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2003.006.0290',
+  published: '典藏網（2026年10月查閱）',
+  usage: '日本時代「藥局」與「藥房」的差別：依1896年的取締規則，藥局須由藥劑師開設、調劑；藥房（藥種商）向官廳申請即可販賣洋藥與漢藥成藥，門口須掛寫有店名、地址與管理人的標誌。',
+}
+SOURCES['nmth-medicine-bottles'] = {
+  id: 'nmth-medicine-bottles',
+  citation: '國立臺灣歷史博物館典藏，「藥瓶」2004.028.5685、「褐色小藥瓶」2019.036.0022.0002。',
+  publisher: '國立臺灣歷史博物館',
+  title: '藥瓶、褐色小藥瓶',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2019.036.0022.0002',
+  published: '典藏網（2026年10月查閱）',
+  usage: '藥瓶 3D 模型的形制依據：透明玻璃瓶配木蓋（2004.028.5685，3.6×3.6×7.9公分，年代不明，https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2004.028.5685）；褐色玻璃小藥瓶附蓋（2019.036.0022.0002，2.6×2.6×4.4公分，1926–1965年間）。',
+}
+SOURCES['aat-apothecary-bottle'] = {
+  id: 'aat-apothecary-bottle',
+  citation: '藝術與建築索引典，「藥鋪瓶」（AAT 300378929），中央研究院數位文化中心。',
+  publisher: '中央研究院',
+  title: '藥鋪瓶',
+  url: 'http://aat.teldap.tw/AATFullDisplay/300378929',
+  published: '線上索引典（2026年10月查閱）',
+  usage: '藥鋪瓶的一般形制：通常為玻璃製，配玻璃瓶塞、軟木瓶塞也常見，內容物的名稱以標籤貼示或烙鑄在瓶身上；頸部較寬、多為陶瓷的是「藥罐」。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }
