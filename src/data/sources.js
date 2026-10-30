@@ -2420,6 +2420,83 @@ SOURCES['aat-apothecary-bottle'] = {
   usage: '藥鋪瓶的一般形制：通常為玻璃製，配玻璃瓶塞、軟木瓶塞也常見，內容物的名稱以標籤貼示或烙鑄在瓶身上；頸部較寬、多為陶瓷的是「藥罐」。',
 }
 
+/* ── 第 12 階段：主題路線「今日報紙」（查證紀錄 docs/research/news-route.md） ── */
+SOURCES['hkdp-1890-11-29'] = {
+  id: 'hkdp-1890-11-29',
+  citation: 'Hong Kong Daily Press, 29 November 1890（社論；Internet Archive 掃描與自動辨識文字）。',
+  publisher: 'Hong Kong Daily Press（Internet Archive 典藏）',
+  title: 'Hong Kong Daily Press, 1890-11-29',
+  url: 'https://archive.org/stream/NPDP18901129/NPDP18901129_djvu.txt',
+  published: '1890年11月29日（2026年10月查閱）',
+  usage: '社論討論英國代理領事因淡水住處整修，在大稻埕租屋、升英國旗並照會巡撫；清方官員認為淡水才是北部的通商口岸，外國人在大稻埕居住與通商只是被默許；社論認為這件事迫使雙方表態。',
+  context: '自動辨識文字有錯字與斷句（人名也有誤認），本站只改寫大意、不引原文；社論對條約用語的解讀，摘要讀取時出現不同理解，本站不寫社論的結論。',
+}
+SOURCES['cai-2019-chenghuang'] = {
+  id: 'cai-2019-chenghuang',
+  citation: '蔡孟儒，《《臺灣民報》系報刊中的城隍信仰論述與創作分析》，國立臺灣大學臺灣文學研究所碩士論文，2019（DOI：10.6342/NTU201903936），頁33–35。',
+  publisher: '國立臺灣大學',
+  title: '《臺灣民報》系報刊中的城隍信仰論述與創作分析',
+  url: 'https://tdr.lib.ntu.edu.tw/bitstream/123456789/620/1/ntu-108-1.pdf',
+  published: '2019年',
+  usage: '引《臺灣民報》1929年6月23日〈迷信趣談 城隍吃牲醴？巡查擒八將！〉（批評迎城隍「其行列的低級單純」）與同日小言〈可憐的少女們〉（藝閣上的少女將近二百人，自正午起被扛遊行到七點多鐘，熱度九十六七度）；轉引《臺灣日日新報》1918年6月19日〈稻江準備迎城隍〉（投書建議城隍祭引進商號贊助的藝閣）與1927年6月13日〈久しぶりの晴天に 大賑ひの城隍廟祭 どの汽車も滿員の盛況〉。',
+}
+SOURCES['song-2012-yingshen'] = {
+  id: 'song-2012-yingshen',
+  citation: '宋光宇，〈1920 年代迎神賽會與臺北商業體系的形成〉，《宗教哲學》第62期，2012，頁113–147（經蔡孟儒 2019 轉引）。',
+  publisher: '宗教哲學',
+  title: '1920 年代迎神賽會與臺北商業體系的形成',
+  url: 'https://tdr.lib.ntu.edu.tw/bitstream/123456789/620/1/ntu-108-1.pdf',
+  published: '2012年（本站經蔡孟儒 2019 碩士論文頁35轉引，原文未直接查閱）',
+  usage: '1917年後藝閣兼具廣告機能；該年六月大稻埕商人推出化妝遊行，各商號以藝閣宣傳商品，遊行隊伍高達五千人。',
+}
+SOURCES['allen-2005-expo'] = {
+  id: 'allen-2005-expo',
+  citation: 'Joseph R. Allen, “Exhibiting the Colony, Suggesting the Nation: The Taiwan Exposition, 1935,” MLA Convention paper, 2005.',
+  publisher: 'Case Western Reserve University（會議論文全文）',
+  title: 'Exhibiting the Colony, Suggesting the Nation: The Taiwan Exposition, 1935',
+  url: 'https://case.edu/affil/sce/Texts_2005/Allen%20MLA%202005%20w%20illustrations.pdf',
+  published: '2005年（2026年10月查閱）',
+  usage: '博覽會除了三個主要會場，另有第四個會場由地方商界倡議，設在臺灣人商號集中的大稻埕；介紹南方的展館都在大稻埕會場，由臺灣人商人而不是殖民當局組織經營。作者引程佳惠（2004）頁40–42。',
+}
+SOURCES['wiki-1935-expo'] = {
+  id: 'wiki-1935-expo',
+  citation: '維基百科，〈始政四十周年記念臺灣博覽會〉（大稻埕分場段落）。',
+  publisher: '維基百科',
+  title: '始政四十周年記念臺灣博覽會',
+  url: 'https://zh.wikipedia.org/zh-tw/%E5%A7%8B%E6%94%BF%E5%9B%9B%E5%8D%81%E5%91%A8%E5%B9%B4%E8%A8%98%E5%BF%B5%E8%87%BA%E7%81%A3%E5%8D%9A%E8%A6%BD%E6%9C%83',
+  published: '線上百科（2026年10月查閱）',
+  usage: '大稻埕分場：今太平國小北邊空地、4,000坪，原本沒有規劃、由大稻埕的臺灣人要求設置；展館有南方館、暹邏館、菲律賓館、福建省特產物介紹所、馬產館、演藝館；大稻埕商家聘請京劇團分五輪演出。',
+  context: '這一段沒有逐句註腳（條目的參考資料有程佳惠 2004 等），屬網路百科、可信度較低；本站只取與 Allen 2005 一致的大意，展館名稱標待核。',
+}
+SOURCES['nmth-expo-ticket-2009-011-0281'] = {
+  id: 'nmth-expo-ticket-2009-011-0281',
+  citation: '國立臺灣歷史博物館典藏，「始政四十周年記念臺灣博覽會團體入場券」，登錄號2009.011.0281。',
+  publisher: '國立臺灣歷史博物館',
+  title: '始政四十周年記念臺灣博覽會團體入場券',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2009.011.0281',
+  published: '典藏網（2026年10月查閱）',
+  usage: '入場券 3D 模型的形制依據：紙質，9.1×13.6公分、1.6公克；正面印編號、大人小人與費用，背面注意事項，各會場有打洞記號，第一、第二會場、分場與夜間會場都可以用；博覽會1935年10月10日至11月28日，分場之一在大稻埕迪化街附近。',
+}
+SOURCES['udn-1968-pedicab'] = {
+  id: 'udn-1968-pedicab',
+  citation: '〈人力三輪客車 今起禁行北市〉，《聯合報》1968年6月25日第3版（「報時光」2022年5月12日轉載）。',
+  publisher: '聯合報系 報時光',
+  title: '人力三輪客車 今起禁行北市',
+  url: 'https://time.udn.com/udntime/story/122390/6308783',
+  published: '1968年6月25日（轉載2022年5月12日）',
+  usage: '1968年6月25日起人力三輪客車全面禁止在臺北市區行駛；營業三輪車收購價每輛三千元、1964年8月提高為六千元，最後一天自行轉業者每輛共可領一萬二千元；約八百人已輔導轉為計程車司機、約七百人等待訓練；全市原剩891輛，已收購826輛、65輛未繳車。',
+  context: '報導寫的是臺北市全市，沒有大稻埕專屬的記載。',
+}
+SOURCES['taipei-gov-2009-p098018'] = {
+  id: 'taipei-gov-2009-p098018',
+  citation: '臺北市政府公告，府都規字第09803474000號（民國98年8月11日），修訂「大稻埕歷史風貌特定專用區容積移轉作業要點」。',
+  publisher: '臺北市政府',
+  title: '修訂大稻埕歷史風貌特定專用區容積移轉作業要點公告',
+  url: 'https://webgis.udd.gov.taipei/book/P098018.pdf',
+  published: '2009年8月11日',
+  usage: '計畫緣起：大稻埕歷史風貌特定專用區都市計畫於民國89年1月27日公告實施（89年2月1日零時起生效），訂定容積移轉作業要點，允許配合歷史性建築物及傳統街區風貌保存的基地，將可建築容積之一部分或全部移轉至另一宗基地，保障土地所有權人權益；至98年3月底共申請240件、移出101,739.64平方公尺，尚約七成可移轉容積未申請。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }
