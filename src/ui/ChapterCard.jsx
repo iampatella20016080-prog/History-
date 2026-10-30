@@ -1,3 +1,4 @@
+import { useLocalizer } from '../i18n/useT.js'
 import { getEra } from '../data/eras.js'
 import { useGameStore } from '../state/useGameStore.js'
 
@@ -6,9 +7,10 @@ import { useGameStore } from '../state/useGameStore.js'
  * 以 nonce 作為 key，每次切換都重新播放動畫。
  */
 export function ChapterCard() {
+  const L = useLocalizer()
   const card = useGameStore((state) => state.titleCard)
   const started = useGameStore((state) => state.started)
-  const era = card ? getEra(card.eraId) : null
+  const era = card ? L(getEra(card.eraId)) : null
   if (!started || !era) return null
   return (
     <div className="chapter-card" key={card.nonce} aria-live="polite">

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { ERAS } from '../data/eras.js'
 import { useGameStore } from '../state/useGameStore.js'
-import { useT } from '../i18n/useT.js'
+import { useLocalizer, useT } from '../i18n/useT.js'
 import { LANGS } from '../i18n/lang.js'
 
 /** 開場畫面：說明情境與操作方式（觸控與鍵盤各自說明），按下「開始探索」後進入街道 */
@@ -13,6 +13,7 @@ export function IntroOverlay() {
   const setLang = useGameStore((state) => state.setLang)
   const button = useRef(null)
   const t = useT()
+  const L = useLocalizer()
 
   useEffect(() => {
     if (!started) button.current?.focus({ preventScroll: true })
@@ -50,7 +51,7 @@ export function IntroOverlay() {
           {t('intro.text')}
         </p>
         <ol className="intro__eras" aria-label={t('intro.erasLabel')}>
-          {ERAS.map((era) => (
+          {L(ERAS).map((era) => (
             <li key={era.id}>
               <span>{era.yearRange}</span>
               {era.title}

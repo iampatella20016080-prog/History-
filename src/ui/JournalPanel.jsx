@@ -5,7 +5,7 @@ import { JOURNAL_KINDS, journalEntries } from '../game/journal.js'
 import { nodeEra, routeCount, routeComplete, routeEras, routeJournalPage, routeProgress } from '../game/themeRoute.js'
 import { useGameStore } from '../state/useGameStore.js'
 import { RouteMap } from './RouteMap.jsx'
-import { useT } from '../i18n/useT.js'
+import { useLocalizer, useT } from '../i18n/useT.js'
 
 const KIND_TABS = [null, 'talk', 'object', 'shop', 'news']
 
@@ -17,6 +17,7 @@ const KIND_TABS = [null, 'talk', 'object', 'shop', 'news']
  */
 export function JournalPanel() {
   const t = useT()
+  const L = useLocalizer()
   const open = useGameStore((state) => state.journalOpen)
   const toggleJournal = useGameStore((state) => state.toggleJournal)
   const journal = useGameStore((state) => state.journal)
@@ -71,7 +72,7 @@ export function JournalPanel() {
                     <div className="journal-route__info">
                       <span className="journal-route__title">{item.title}</span>
                       <span className="journal-route__meta">
-                        {routeEras(item).map((id) => getEra(id)?.title).join('・')}｜{count.done}／{count.total}
+                        {routeEras(item).map((id) => L(getEra(id))?.title).join('・')}｜{count.done}／{count.total}
                       </span>
                       <p className="journal-route__intro">{item.intro}</p>
                     </div>
@@ -99,7 +100,7 @@ export function JournalPanel() {
                 className={`journal__tab${kind === item ? ' is-active' : ''}`}
                 onClick={() => setKind(item)}
               >
-                {item ? JOURNAL_KINDS[item].text : t('journal.all')} {/* TODO(en-data) JOURNAL_KINDS[item].text */}
+                {item ? L(JOURNAL_KINDS[item]).text : t('journal.all')}
               </button>
             ))}
           </div>
@@ -107,11 +108,11 @@ export function JournalPanel() {
           <ul className="journal__list">
             {entries.map((entry) => (
               <li key={entry.id} className="journal-entry">
-                <span className="journal-entry__kind">{JOURNAL_KINDS[entry.kind].text}</span>
+                <span className="journal-entry__kind">{L(JOURNAL_KINDS[entry.kind]).text}</span>
                 <div className="journal-entry__body">
                   <span className="journal-entry__title">
                     {entry.title}
-                    {entry.eraId && <em className="journal-entry__era">{getEra(entry.eraId)?.title}</em>}
+                    {entry.eraId && <em className="journal-entry__era">{L(getEra(entry.eraId))?.title}</em>}
                   </span>
                   {entry.text && <p className="journal-entry__text">{entry.text}</p>}
                 </div>
@@ -127,6 +128,7 @@ export function JournalPanel() {
 /** 進行中的路線：節點清單（順序自由）；完成後是這條路線的手記頁 */
 function ActiveRoute({ route, journal, eraId, requestEra, onStop }) {
   const t = useT()
+  const L = useLocalizer()
   const complete = routeComplete(route, journal)
   const count = routeCount(route, journal)
   const progress = routeProgress(route, journal)
@@ -138,13 +140,13 @@ function ActiveRoute({ route, journal, eraId, requestEra, onStop }) {
       <div className="journal-route__info">
         <span className="journal-route__title">{route.title}</span>
         <span className="journal-route__meta">
-          {eras.map((id) => getEra(id)?.title).join('・')}｜{count.done}／{count.total}
+          {eras.map((id) => L(getEra(id))?.title).join('・')}｜{count.done}／{count.total}
           {complete && t('journal.complete')}
         </span>
         {/* 還沒完成的節點都不在這個年代時，帶你過去（跨年代的路線：前往下一個還沒完成的節點的年代） */}
         {!complete && travelEra && (
           <button type="button" className="button-ghost journal-route__travel" onClick={() => requestEra(travelEra)}>
-            {t('journal.travel', { era: getEra(travelEra)?.title, range: getEra(travelEra)?.yearRange })} {/* TODO(en-data) era.title */}
+            {t('journal.travel', { era: L(getEra(travelEra))?.title, range: L(getEra(travelEra))?.yearRange })}
           </button>
         )}
       </div>
@@ -159,7 +161,7 @@ function ActiveRoute({ route, journal, eraId, requestEra, onStop }) {
               <div>
                 <span className="route-node__title">
                   {node.title}
-                  {eras.length > 1 && <em className="route-node__era">{getEra(nodeEra(route, node))?.title}</em>}
+                  {eras.length > 1 && <em className="route-node__era">{L(getEra(nodeEra(route, node)))?.title}</em>}
                 </span>
                 {!node.done && <p className="route-node__hint">{node.hint}</p>}
               </div>

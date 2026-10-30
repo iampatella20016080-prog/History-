@@ -4,7 +4,7 @@ import { routeNodePoint } from '../data/routes.js'
 import { PIER, PLAZA, RIVER, STREET } from '../game/config.js'
 import { playerState } from '../game/runtime.js'
 import { nodeEra } from '../game/themeRoute.js'
-import { useT } from '../i18n/useT.js'
+import { useLocalizer, useT } from '../i18n/useT.js'
 
 /** 地圖範圍（世界座標的 x 與 z；北方 z < 0 在上） */
 const VIEW = { minX: -55, maxX: 56, minZ: -13, maxZ: 26 }
@@ -16,6 +16,7 @@ const VIEW = { minX: -55, maxX: 56, minZ: -13, maxZ: 26 }
  */
 export function RouteMap({ route, progress, eraId }) {
   const t = useT()
+  const L = useLocalizer()
   const [player, setPlayer] = useState(() => [playerState.position.x, playerState.position.z])
   useEffect(() => {
     const timer = setInterval(() => setPlayer([playerState.position.x, playerState.position.z]), 400)
@@ -52,7 +53,7 @@ export function RouteMap({ route, progress, eraId }) {
             <text y="0.9">{node.done ? '✓' : i + 1}</text>
             {!here && (
               <text className="route-map__era" y="5.2">
-                {getEra(nodeEra(route, node))?.title}
+                {L(getEra(nodeEra(route, node)))?.title}
               </text>
             )}
           </g>

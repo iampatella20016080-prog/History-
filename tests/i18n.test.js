@@ -101,3 +101,28 @@ test('?lang=：en／zh 指定語言，優先於記住的選擇；不認得的值
   assert.equal(initialLang('?lang=en'), 'en')
   assert.equal(initialLang('?foo=1'), 'zh-Hant')
 })
+
+import { localize } from '../src/i18n/lang.js'
+
+test('localize：英文模式把 key 換成 keyEn（字串、陣列），中文模式原樣回傳；不改動原物件', () => {
+  const data = { title: '港口', titleEn: 'Harbour', lines: ['甲', '乙'], linesEn: ['A', 'B'], only: '中', nested: [{ label: '標', labelEn: 'Label' }], sign: '招牌', n: 3 }
+  const en = localize(data, 'en')
+  assert.equal(en.title, 'Harbour')
+  assert.deepEqual(en.lines, ['A', 'B'])
+  assert.equal(en.only, '中')
+  assert.equal(en.nested[0].label, 'Label')
+  assert.equal(en.sign, '招牌')
+  assert.equal(en.n, 3)
+  assert.ok(!('titleEn' in en))
+  assert.equal(data.title, '港口')
+  assert.equal(localize(data, 'zh-Hant'), data)
+  assert.equal(localize(data, 'en'), en)
+})
+
+test('localize：年代資料換成英文後，所有年代都有英文名稱與說明', () => {
+  for (const era of ERAS) {
+    const en = localize(era, 'en')
+    assert.match(en.title, /^[\x20-\x7e]+$/, era.id)
+    assert.match(en.description, /^[\x20-\x7e]+$/, era.id)
+  }
+})

@@ -1258,3 +1258,7 @@ node tests/e2e/era-switching.e2e.mjs http://127.0.0.1:4173/
 - 盤點：`node tools/i18n/inventory.mjs --write` 更新 `docs/research/english-inventory.md`（資料檔 6021 個中文字串、4851 個尚無英文；介面寫死的中文剩 14 行，都是刻意保留的除錯字樣、符號或待資料英文化的欄位）。譯名統一見 `docs/research/english-glossary.md`。
 - 後續批次：店家章節、食物圖鑑、出處、年代名稱、黃玉階展板、路線補齊；每補完一個資料檔就加進 `tests/englishCoverage.test.js` 的 `COMPLETE`。
 
+### 第 2 批：年代名稱、總覽、授權頁、熱點與音訊標籤
+- `localize(data, lang)`（`src/i18n/lang.js`）：英文模式把資料物件裡每個 `key` 換成同層的 `keyEn`（字串對字串、陣列對陣列），依物件快取；元件用 `useLocalizer()` 取得 `L`，例如 `L(getEra(id)).title`。之後的店家、章節資料只要加 `*En` 欄位並在邊界呼叫 `L`，不必逐欄接線。
+- 已補英文：`eras.js`（名稱、說明、時刻、招牌字詞）、`overview.js` 自有的年表與地圖、`licenses.js`、各店家地點配置的熱點標籤與說明、背景音樂曲名、環境音標籤。年代名稱：Harbour Merchant Street／Banquet Hall Boom／Modern Dadaocheng／Everyday Life／Old Houses, New Life。
+- 覆蓋率測試 `tests/englishCoverage.test.js` 的 `COMPLETE` 列出已補完的資料檔。

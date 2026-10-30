@@ -22,16 +22,16 @@ import { TEMPLE_COURT, templeCourtToWorld } from './squidSoupLayout.js'
  */
 export const DOUHUA_THEME = {
   id: 'douhua',
-  title: '豆花甜食文化',
+  title: '豆花甜食文化', titleEn: 'Douhua and sweet-treat food culture',
   versions: { postwar: 'temple-douhua-stall' },
-  related: [{ eraId: 'revival', shopId: 'action-bar', relation: '同類食物的參訪對照，沒有品牌傳承關係' }],
+  related: [{ eraId: 'revival', shopId: 'action-bar', relation: '同類食物的參訪對照，沒有品牌傳承關係', relationEn: 'A comparison visit to a similar food, with no brand lineage between them' }],
 }
 
 export const KUEH_THEME = {
   id: 'kueh',
-  title: '糕粿米食文化',
+  title: '糕粿米食文化', titleEn: 'Kueh and rice-food culture',
   versions: { postwar: 'temple-kueh-stall' },
-  related: [{ eraId: 'revival', shopId: 'hao-guo-yuan', relation: '同類食物的參訪對照，沒有品牌傳承關係' }],
+  related: [{ eraId: 'revival', shopId: 'hao-guo-yuan', relation: '同類食物的參訪對照，沒有品牌傳承關係', relationEn: 'A comparison visit to a similar food, with no brand lineage between them' }],
 }
 
 /**
@@ -106,8 +106,8 @@ export const DOUHUA_STALL_NPCS = [{ id: 'vendor', look: 'postwarDouhuaVendor', p
 export const DOUHUA_STALL_HOTSPOTS = [
   {
     id: 'stall',
-    label: '廟口的豆花攤',
-    note: '飲食文化情境示意',
+    label: '廟口的豆花攤', labelEn: 'Temple-front douhua stall',
+    note: '飲食文化情境示意', noteEn: 'Illustrative food-culture scene',
     chapter: 'douhua-stall',
     point: [0.05, 1.05],
     level: 0,
@@ -117,8 +117,8 @@ export const DOUHUA_STALL_HOTSPOTS = [
   },
   {
     id: 'bowls',
-    label: '兩碗豆花',
-    note: '推車上展示的原味糖水豆花與花生豆花（示意）',
+    label: '兩碗豆花', labelEn: 'Two bowls of douhua',
+    note: '推車上展示的原味糖水豆花與花生豆花（示意）', noteEn: 'Plain syrup douhua and peanut douhua displayed on the cart (illustrative)',
     chapter: 'douhua-bowls',
     clickOnly: true,
     point: [0.05, 0.4],
@@ -173,8 +173,8 @@ export const KUEH_STALL_NPCS = [{ id: 'vendor', look: 'postwarKuehVendor', pose:
 export const KUEH_STALL_HOTSPOTS = [
   {
     id: 'stall',
-    label: '廟口的糕粿攤',
-    note: '飲食文化情境示意',
+    label: '廟口的糕粿攤', labelEn: 'Temple-front kueh stall',
+    note: '飲食文化情境示意', noteEn: 'Illustrative food-culture scene',
     chapter: 'kueh-stall',
     point: [0, 1.05],
     level: 0,
@@ -184,8 +184,8 @@ export const KUEH_STALL_HOTSPOTS = [
   },
   {
     id: 'trays',
-    label: '四種傳統米食',
-    note: '托盤與木板上的草仔粿、紅龜粿、芋粿與蘿蔔糕（示意）',
+    label: '四種傳統米食', labelEn: 'Four traditional rice foods',
+    note: '托盤與木板上的草仔粿、紅龜粿、芋粿與蘿蔔糕（示意）', noteEn: 'Mugwort kueh, red-tortoise kueh, taro kueh and turnip cake on trays and boards (illustrative)',
     chapter: 'kueh-foods',
     clickOnly: true,
     point: [0, 0.4],

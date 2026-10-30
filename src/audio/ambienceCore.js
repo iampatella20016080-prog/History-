@@ -26,21 +26,22 @@ export const LOOP_PAD = 1
  * 音檔：duration 是循環區間長度（秒），檔案實際長度為 duration + 2；fallback 的循環長度不同，各自記錄。
  * 真實錄音由 tools/music/build_ambience_real.py 剪輯，合成備援由 tools/music/generate_ambience.py 產生。
  */
-const sound = (id, duration, synthDuration, label) => ({
+const sound = (id, duration, synthDuration, label, labelEn) => ({
   file: `audio/ambience/${id}.mp3`,
   duration,
   label,
+  labelEn,
   fallback: { file: `audio/ambience/synth/${id}.mp3`, duration: synthDuration },
 })
 
 export const AMBIENCE_SOUNDS = {
-  'river-lap': sound('river-lap', 12, 10, '河水拍岸'),
-  oars: sound('oars', 12, 10, '船槳與水花'),
-  'gong-distant': sound('gong-distant', 16, 14, '遠處的鑼鼓'),
-  'bicycle-bell': sound('bicycle-bell', 14, 12, '腳踏車鈴'),
-  gramophone: sound('gramophone', 26, 12, '留聲機'),
-  trishaw: sound('trishaw', 12, 10, '三輪車'),
-  radio: sound('radio', 20, 12, '收音機'),
+  'river-lap': sound('river-lap', 12, 10, '河水拍岸', 'River lapping at the bank'),
+  oars: sound('oars', 12, 10, '船槳與水花', 'Oars and splashes'),
+  'gong-distant': sound('gong-distant', 16, 14, '遠處的鑼鼓', 'Distant gongs and drums'),
+  'bicycle-bell': sound('bicycle-bell', 14, 12, '腳踏車鈴', 'Bicycle bell'),
+  gramophone: sound('gramophone', 26, 12, '留聲機', 'Gramophone'),
+  trishaw: sound('trishaw', 12, 10, '三輪車', 'Trishaw'),
+  radio: sound('radio', 20, 12, '收音機', 'Radio'),
 }
 
 // 錨點座標（世界座標，街道沿 X 軸，西側 x < -44.6 是淡水河；見 game/config.js）

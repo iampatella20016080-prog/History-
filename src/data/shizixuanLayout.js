@@ -121,11 +121,11 @@ export const CULTURE_SLOTS = {
 /* ═══════════ 資訊熱點（各年代） ═══════════ */
 
 const CULTURE_META = [
-  { id: 'man-yue', title: '滿月', note: '彌月紅圓', chapter: 'culture-man-yue' },
-  { id: 'shou-yan', title: '收涎', note: '收瀾鹹光餅', chapter: 'culture-shou-yan' },
-  { id: 'hun-jia', title: '婚嫁', note: '訂婚喜餅', chapter: 'culture-hun-jia' },
-  { id: 'zhu-shou', title: '祝壽', note: '做壽壽桃', chapter: 'culture-zhu-shou' },
-  { id: 'ji-si', title: '祭祀', note: '祭祀紅龜粿', chapter: 'culture-ji-si' },
+  { id: 'man-yue', title: '滿月', titleEn: 'Full-month celebration', note: '彌月紅圓', noteEn: 'Red full-month rice balls', chapter: 'culture-man-yue' },
+  { id: 'shou-yan', title: '收涎', titleEn: 'Drool-collecting rite', note: '收瀾鹹光餅', noteEn: 'Salty guangbing biscuits for the drool-collecting rite', chapter: 'culture-shou-yan' },
+  { id: 'hun-jia', title: '婚嫁', titleEn: 'Weddings', note: '訂婚喜餅', noteEn: 'Engagement cakes', chapter: 'culture-hun-jia' },
+  { id: 'zhu-shou', title: '祝壽', titleEn: 'Birthdays', note: '做壽壽桃', noteEn: 'Longevity peach buns for birthdays', chapter: 'culture-zhu-shou' },
+  { id: 'ji-si', title: '祭祀', titleEn: 'Worship', note: '祭祀紅龜粿', noteEn: 'Red-tortoise kueh for offerings', chapter: 'culture-ji-si' },
 ]
 
 function cultureHotspots(variant) {
@@ -139,7 +139,9 @@ function cultureHotspots(variant) {
     return {
       id: `szx-${meta.id}`,
       label: meta.title,
+      labelEn: meta.titleEn,
       note: meta.note,
+      noteEn: meta.noteEn,
       chapter: meta.chapter,
       point,
       level: 0,
@@ -152,19 +154,19 @@ function cultureHotspots(variant) {
 
 export const SZX_HOTSPOTS = {
   earlyShop: [
-    { id: 'szx-front', label: '十字軒（糕餅店）', note: '窄身街屋的糕餅店', chapter: 'szx-intro', point: [0, -0.9], level: 0, radius: 1.0, prompt: [0, 2.6, -0.2], camera: { position: [-1.4, 1.7, 3.6], target: [0, 1.7, -0.6] } },
-    { id: 'szx-counter', label: '西點與漢餅', note: '帳桌與糕餅', chapter: 'szx-products', point: [1.4, -0.9], level: 0, radius: 0.7, prompt: [1.6, 1.7, -0.6], camera: { position: [0.1, 1.55, 0.6], target: [1.6, 1.0, -0.9] } },
+    { id: 'szx-front', label: '十字軒（糕餅店）', labelEn: 'Shizixuan (pastry shop)', note: '窄身街屋的糕餅店', noteEn: 'A pastry shop in a narrow shophouse', chapter: 'szx-intro', point: [0, -0.9], level: 0, radius: 1.0, prompt: [0, 2.6, -0.2], camera: { position: [-1.4, 1.7, 3.6], target: [0, 1.7, -0.6] } },
+    { id: 'szx-counter', label: '西點與漢餅', labelEn: 'Western pastries and Han-style cakes', note: '帳桌與糕餅', noteEn: 'Account table and pastries', chapter: 'szx-products', point: [1.4, -0.9], level: 0, radius: 0.7, prompt: [1.6, 1.7, -0.6], camera: { position: [0.1, 1.55, 0.6], target: [1.6, 1.0, -0.9] } },
     ...cultureHotspots('earlyShop'),
   ],
   postwarShop: [
-    { id: 'szx-front', label: '十字軒餅舖', note: '戰後的漢餅店', chapter: 'szx-intro', point: [0, -0.9], level: 0, radius: 1.0, prompt: [0, 2.7, -0.2], camera: { position: [-1.8, 1.8, 4.6], target: [0, 1.8, -0.6] } },
-    { id: 'szx-counter', label: '漢餅與壽桃', note: '木製餅櫃與紙盒', chapter: 'szx-products', point: [2.6, -1.2], level: 0, radius: 0.8, prompt: [2.8, 1.7, -0.9], camera: { position: [0.6, 1.55, 0.6], target: [2.8, 1.0, -1.2] } },
+    { id: 'szx-front', label: '十字軒餅舖', labelEn: 'Shizixuan Cake Shop', note: '戰後的漢餅店', noteEn: 'A postwar Han-style cake shop', chapter: 'szx-intro', point: [0, -0.9], level: 0, radius: 1.0, prompt: [0, 2.7, -0.2], camera: { position: [-1.8, 1.8, 4.6], target: [0, 1.8, -0.6] } },
+    { id: 'szx-counter', label: '漢餅與壽桃', labelEn: 'Han-style cakes and longevity peach buns', note: '木製餅櫃與紙盒', noteEn: 'Wooden cake cabinets and paper boxes', chapter: 'szx-products', point: [2.6, -1.2], level: 0, radius: 0.8, prompt: [2.8, 1.7, -0.9], camera: { position: [0.6, 1.55, 0.6], target: [2.8, 1.0, -1.2] } },
     ...cultureHotspots('postwarShop'),
   ],
   modernShop: [
-    { id: 'szx-front', label: '十字軒糕餅舖', note: '延平北路的老字號', chapter: 'szx-intro', point: [1.8, 1.0], level: 0, radius: 1.1, prompt: [1.8, 2.3, 1.2], camera: { position: [0.8, 2.6, 6.8], target: [0, 4.6, 0.6] } },
-    { id: 'szx-checkout', label: '櫃台與糕餅托盤', note: '金元寶與壽桃', chapter: 'szx-products', point: [-0.9, -7.0], level: 0, radius: 0.75, prompt: [-1.9, 1.7, -7.0], camera: { position: [0.2, 1.65, -6.0], target: [-2.2, 1.0, -7.2] } },
-    { id: 'szx-history', label: '老照片與獎狀', note: '歷史展示牆', chapter: 'szx-history', point: [-1.1, -5.4], level: 0, radius: 0.8, prompt: [-3.0, 2.2, -5.2], camera: { position: [-0.75, 1.7, -5.3], target: [-4.1, 1.6, -6.4] } },
+    { id: 'szx-front', label: '十字軒糕餅舖', labelEn: 'Shizixuan Pastry Shop', note: '延平北路的老字號', noteEn: 'A long-established shop on Yanping North Road', chapter: 'szx-intro', point: [1.8, 1.0], level: 0, radius: 1.1, prompt: [1.8, 2.3, 1.2], camera: { position: [0.8, 2.6, 6.8], target: [0, 4.6, 0.6] } },
+    { id: 'szx-checkout', label: '櫃台與糕餅托盤', labelEn: 'Counter and pastry trays', note: '金元寶與壽桃', noteEn: 'Gold-ingot cakes and longevity peach buns', chapter: 'szx-products', point: [-0.9, -7.0], level: 0, radius: 0.75, prompt: [-1.9, 1.7, -7.0], camera: { position: [0.2, 1.65, -6.0], target: [-2.2, 1.0, -7.2] } },
+    { id: 'szx-history', label: '老照片與獎狀', labelEn: 'Old photographs and certificates', note: '歷史展示牆', noteEn: 'Historical display wall', chapter: 'szx-history', point: [-1.1, -5.4], level: 0, radius: 0.8, prompt: [-3.0, 2.2, -5.2], camera: { position: [-0.75, 1.7, -5.3], target: [-4.1, 1.6, -6.4] } },
     ...cultureHotspots('modernShop'),
   ],
 }

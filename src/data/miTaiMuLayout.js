@@ -15,7 +15,7 @@ import { TEMPLE_COURT, templeCourtToWorld } from './squidSoupLayout.js'
 
 export const MI_TAI_MU_THEME = {
   id: 'mi-tai-mu',
-  title: '米苔目飲食文化',
+  title: '米苔目飲食文化', titleEn: 'Mi-tai-mu food culture',
   /** 年代 id → 這個年代的版本（店家 id） */
   versions: { postwar: 'temple-mi-tai-mu-stall', revival: 'yong-le-mi-tai-mu' },
   /** 同類食物的現代相關店家（只有文字介紹，沒有店家條目與模型）：呷二嘴，沒有品牌傳承關係 */
@@ -92,8 +92,8 @@ export const MI_TAI_MU_STALL_NPCS = [
 export const MI_TAI_MU_STALL_HOTSPOTS = [
   {
     id: 'stall',
-    label: '廟口的米苔目',
-    note: '飲食文化情境示意',
+    label: '廟口的米苔目', labelEn: 'Mi-tai-mu at the temple front',
+    note: '飲食文化情境示意', noteEn: 'Illustrative food-culture scene',
     chapter: 'temple-food',
     point: [0, 1.25],
     level: 0,
@@ -103,8 +103,8 @@ export const MI_TAI_MU_STALL_HOTSPOTS = [
   },
   {
     id: 'bowl',
-    label: '一碗米苔目',
-    note: '攤台上展示的一碗與小菜（示意）',
+    label: '一碗米苔目', labelEn: 'A bowl of mi-tai-mu',
+    note: '攤台上展示的一碗與小菜（示意）', noteEn: 'A bowl and side dishes displayed on the stall counter (illustrative)',
     chapter: 'bowl',
     clickOnly: true,
     point: [MI_TAI_MU_STALL.bowl.x, 0.4],
@@ -239,8 +239,8 @@ export function yongleMtmNpcPlacement(npc) {
 export const YONGLE_MTM_HOTSPOTS = [
   {
     id: 'storefront',
-    label: '永樂米苔目',
-    note: '大稻埕的米苔目小吃店',
+    label: '永樂米苔目', labelEn: 'Yongle Mi-tai-mu',
+    note: '大稻埕的米苔目小吃店', noteEn: 'A mi-tai-mu snack shop in Dadaocheng',
     chapter: 'shop',
     point: [0.95, 1.05],
     level: 0,
@@ -250,8 +250,8 @@ export const YONGLE_MTM_HOTSPOTS = [
   },
   {
     id: 'dining',
-    label: '店內的用餐空間',
-    note: '狹長的一樓、方桌與圓凳、牆上的菜單板',
+    label: '店內的用餐空間', labelEn: 'Dining space inside',
+    note: '狹長的一樓、方桌與圓凳、牆上的菜單板', noteEn: 'A long, narrow ground floor, square tables, round stools and a menu board on the wall',
     chapter: 'dining',
     point: [0.95, -1.45],
     level: 0,
@@ -261,8 +261,8 @@ export const YONGLE_MTM_HOTSPOTS = [
   },
   {
     id: 'foods',
-    label: '一碗米苔目',
-    note: '湯米苔目與幾樣小菜',
+    label: '一碗米苔目', labelEn: 'A bowl of mi-tai-mu',
+    note: '湯米苔目與幾樣小菜', noteEn: 'Soup mi-tai-mu and a few side dishes',
     chapter: 'foods',
     point: [-0.72, -3.0],
     level: 0,
