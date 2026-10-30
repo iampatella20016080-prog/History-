@@ -28,6 +28,10 @@ export const INSPECT_OBJECTS = {
       'Davidson（1903）記載，外銷的茶裝在內襯薄鉛的木箱裡，鉛襯焊封防潮；箱外裱紙、印上商號與圖案，半箱（half-chest）約裝四十磅茶。',
       '箱子的實際長寬高查無：模型是依約四十磅茶葉估的比例，外箱圖案依「德記洋行茶箱籤」的風格設計，都是歷史情境重建。',
     ],
+    paragraphsEn: [
+      'Davidson (1903) records that export tea was packed in wooden chests lined with thin lead, the lead lining soldered shut against damp; the outside was pasted over with paper printed with the firm’s name and a design, and a half-chest held about forty pounds of tea.',
+      'The chest’s actual length, width and height are not found: the model is scaled to roughly forty pounds of tea, and the pattern on the outside follows the style of a “Tait & Co. tea chest label”. Both are a reconstructed historical scene.',
+    ],
     reconstruction: true,
     sourceIds: ['davidson-formosa-1903', 'demomy-tait-tea-label'],
   },
@@ -41,6 +45,10 @@ export const INSPECT_OBJECTS = {
     paragraphs: [
       '「斗」是計算容量的單位，十升為一斗、十斗為一石；「米斗」是形狀像斗、用來量米的木器（教育部《重編國語辭典修訂本》）。',
       '場景中的米斗是示意的模型，不代表某一件實際的器物或容量。',
+    ],
+    paragraphsEn: [
+      'A dou is a unit of capacity: ten sheng make one dou, and ten dou make one shi. A “mi dou” (rice measure) is a wooden vessel shaped like a dou and used to measure rice (Ministry of Education, Revised Mandarin Chinese Dictionary).',
+      'The rice measure in the scene is an illustrative model and does not represent any actual object or capacity.',
     ],
     reconstruction: true,
     sourceIds: ['moe-dou'],
@@ -56,6 +64,10 @@ export const INSPECT_OBJECTS = {
       '茶籌的說法來自耆老口述與私人收藏的報導（揀茶以茶籌暫代薪資憑證、定期結算），講的是日治以後的揀茶間；清末是否已經使用，查無文獻，博物館的典藏也查無——本站標「口述來源、待核」。',
       '模型是依報導描述（鐵片籌與紙籌）想像的示意，不對應任何一枚實際的茶籌，也不把它安在任何真實店家上。',
     ],
+    paragraphsEn: [
+      'The tea tally comes from accounts of elders’ oral testimony and a private collection (tallies stood in for wage vouchers in tea sorting, settled at intervals), and describes tea-sorting rooms from the Japanese period on; whether they were already in use in the late Qing is not found in any document, nor in museum collections. The site marks it “oral source, to be verified”.',
+      'The model is an illustration imagined from the reports’ description (metal-strip and paper tallies); it corresponds to no actual tally and is not attributed to any real shop.',
+    ],
     reconstruction: true,
     sourceIds: ['nownews-tea-tally-2019', 'davidson-formosa-1903'],
   },
@@ -70,6 +82,10 @@ export const INSPECT_OBJECTS = {
       'Davidson（1903）記載茶的交易與工資以擔（picul）、斤（catty）計，他自註一擔＝133磅；擔與斤是清末茶行日常的計量單位。',
       '清末茶行用秤的形制查無：模型依一般桿秤（秤桿、秤鉤、秤錘）的樣式重建，是歷史情境重建。',
     ],
+    paragraphsEn: [
+      'Davidson (1903) records that tea trading and wages were reckoned in piculs and catties, noting himself that one picul equals 133 pounds; the picul and the catty were everyday units of measure in late Qing tea hongs.',
+      'The form of scale used in late Qing tea hongs is not found: the model is rebuilt on the pattern of an ordinary steelyard (beam, hook and weight), and is a reconstructed historical scene.',
+    ],
     reconstruction: true,
     sourceIds: ['davidson-formosa-1903'],
   },
@@ -83,6 +99,10 @@ export const INSPECT_OBJECTS = {
     paragraphs: [
       'Davidson（1903）記載：焙坑深二呎、徑二呎、相距一呎，周圍是低磚臺；木炭燒到通紅、覆灰養火，一次可維持一週以上；焙茶工約每小時逐籠翻茶一次，一般焙八到十個小時。',
       '他寫的是1890年代末的做法，用在這個年代為推定相近；模型依文字描述重建，是歷史情境重建。',
+    ],
+    paragraphsEn: [
+      'Davidson (1903) records that the roasting pits were two feet deep and two feet across, a foot apart, set in a low brick platform; charcoal was burned red-hot and banked with ash to keep the fire, which could last more than a week; the roasters turned the tea basket by basket about once an hour, and roasting generally ran eight to ten hours.',
+      'He describes practice of the late 1890s, and applying it to this era is an approximate inference; the model is rebuilt from the written description and is a reconstructed historical scene.',
     ],
     reconstruction: true,
     sourceIds: ['davidson-formosa-1903'],

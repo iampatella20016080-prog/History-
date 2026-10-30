@@ -37,7 +37,7 @@ export function StoryModal() {
 
   const lastShop = useRef(null)
   if (activeShopId) lastShop.current = getShop(activeShopId, eraId)
-  const shop = lastShop.current
+  const shop = L(lastShop.current)
 
   const dialog = useRef(null)
   const body = useRef(null)

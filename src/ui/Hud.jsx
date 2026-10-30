@@ -155,7 +155,7 @@ function ObjectiveHint({ shops, touch }) {
 
   let text = null
   if (started && mode === 'explore' && viewMode === 'explore' && !nearby && !transitioning) {
-    if (firstUnvisited) text = t('hud.objective.find', { name: firstUnvisited.name }) // TODO(en-data) shop.name
+    if (firstUnvisited) text = t('hud.objective.find', { name: firstUnvisited.name })
     else if (showDone)
       text = touch ? t('hud.objective.doneTouch') : t('hud.objective.doneKeys')
   }
@@ -222,7 +222,7 @@ export function Hud() {
   useEffect(() => {
     document.documentElement.lang = lang
   }, [lang])
-  const shops = useMemo(() => getShopsByEra(era), [era])
+  const shops = useMemo(() => L(getShopsByEra(era)), [era, L])
 
   const className = [
     'hud',

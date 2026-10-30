@@ -186,7 +186,7 @@ describe('李亭香：年代限縮（名錄只在老屋新生，店屋與地段�
   })
 
   test('年代說明：只在老屋新生，其他年代的餅舖標情境示意；年代版本不改名', () => {
-    assert.deepEqual(Object.keys(ltx.eraNotes), ['revival'])
+    assert.deepEqual(Object.keys(ltx.eraNotes).filter((key) => !key.endsWith('En')), ['revival'])
     assert.match(ltx.eraNotes.revival, /情境示意/)
     assert.equal(getShop(LI_TING_XIANG_ID, 'revival').name, '李亭香')
     assert.equal(getEra('revival').availableStores.filter((id) => id === LI_TING_XIANG_ID).length, 1)

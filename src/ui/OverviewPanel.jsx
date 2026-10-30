@@ -130,7 +130,7 @@ function TimelineItem({ item }) {
         {item.kind === 'shop' ? (
           <>
             <span className="overview-event__name">
-              {item.name}
+              {L(item).name}
               {item.heritage && <span className="menu-shop__note is-heritage">{t('overview.heritage')}</span>}
               {item.status === 'coming-soon' && <span className="menu-shop__badge">{t('overview.soon')}</span>}
             </span>
@@ -186,7 +186,7 @@ function Timeline() {
           <ul className="overview-undated">
             {undated.map((item) => (
               <li key={item.shopId}>
-                {item.name}
+                {L(item).name}
                 <EraChips eraIds={item.eraIds} />
               </li>
             ))}
@@ -221,7 +221,7 @@ function ComparisonMap() {
         {MAP_PLACES.map((item) => (
           <g key={item.id} className={`overview-map__place is-${item.precision}${selected === item.id ? ' is-selected' : ''}`} onClick={() => setSelected(item.id)} role="button" tabIndex={0}>
             <circle cx={item.x} cy={item.y} r="1.6" />
-            <text x={item.x + 2.2} y={item.y + 0.8}>{item.name}</text>
+            <text x={item.x + 2.2} y={item.y + 0.8}>{L(item).name}</text>
           </g>
         ))}
       </svg>
@@ -235,7 +235,7 @@ function ComparisonMap() {
             </p>
             <ul className="overview-place__shops">
               {getPlaceShops(place).map((shop) => (
-                <li key={shop.id}>{shop.name}</li>
+                <li key={shop.id}>{L(shop).name}</li>
               ))}
             </ul>
             <SourceLinks sourceIds={place.sourceIds} />
@@ -247,7 +247,7 @@ function ComparisonMap() {
       {unmapped.length > 0 && (
         <p className="chapter__source">
           <span className="chapter__source-label">{t('overview.unmappedLabel')}</span>
-          {t('overview.unmapped', { names: unmapped.map((shop) => shop.name).join(t('common.listSep')) })} {/* TODO(en-data) shop.name */}
+          {t('overview.unmapped', { names: unmapped.map((shop) => L(shop).name).join(t('common.listSep')) })}
         </p>
       )}
     </article>
