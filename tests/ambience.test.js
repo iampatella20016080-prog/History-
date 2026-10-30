@@ -10,6 +10,7 @@ import {
   AMBIENCE_SOUNDS,
   ERA_AMBIENCE,
   FADE,
+  MUSIC_RATIO,
   LOOP_PAD,
   MAX_TRACKS,
   MIN_AUDIBLE,
@@ -123,6 +124,7 @@ describe('環境音：距離與聲軌上限', () => {
     assert.equal(masterTarget({ enabled: true, volume: 0.6, transitioning: true, story: false }), 0)
     assert.equal(masterTarget({ enabled: true, volume: 0.6, transitioning: false, story: false }), 0.6)
     assert.ok(Math.abs(masterTarget({ enabled: true, volume: 0.6, transitioning: false, story: true }) - 0.6 * STORY_RATIO) < 1e-12)
+    assert.ok(Math.abs(masterTarget({ enabled: true, volume: 0.6, transitioning: false, story: false, music: true }) - 0.6 * MUSIC_RATIO) < 1e-12, '音樂播放中環境音退讓')
     assert.equal(masterRamp({ from: 0.6, to: 0 }), FADE.out)
     assert.equal(masterRamp({ from: 0, to: 0.6, first: true }), FADE.first)
     assert.equal(masterRamp({ from: 0, to: 0.6 }), FADE.in)
@@ -274,6 +276,9 @@ describe('環境音管理器', () => {
     const t = setup()
     t.game.setState({ started: true })
     await t.flush()
+    t.manager.setMusicActive(true)
+    assert.ok(Math.abs(t.manager.inspect().masterTarget - 0.35 * MUSIC_RATIO) < 1e-9)
+    t.manager.setMusicActive(false)
     t.manager.setVolume(0.3)
     assert.equal(t.mem['ddc.ambience.volume'], '0.3')
     assert.ok(!('ddc.music.volume' in t.mem), '不影響背景音樂的設定')

@@ -89,6 +89,7 @@ export function createAmbienceManager(env = {}) {
   let eraId = null
   let transitioning = false
   let story = false
+  let music = false
   let getPosition = env.getPosition ?? (() => ({ x: 0, z: 0 }))
   let timer = null
   let unsubscribers = []
@@ -108,7 +109,7 @@ export function createAmbienceManager(env = {}) {
 
   function applyMaster(secondsOverride) {
     if (!master) return
-    const to = masterTarget({ enabled: get().enabled, volume: get().volume, transitioning, story })
+    const to = masterTarget({ enabled: get().enabled, volume: get().volume, transitioning, story, music })
     const seconds = secondsOverride ?? masterRamp({ from: lastMasterTarget, to, first: !everFaded })
     if (to > 0) everFaded = true
     lastMasterTarget = to
@@ -312,6 +313,13 @@ export function createAmbienceManager(env = {}) {
     applyMaster(FADE.story)
   }
 
+  /** 背景音樂是否正在播放（播放中環境音退讓） */
+  function setMusicActive(value) {
+    if (music === value) return
+    music = value
+    applyMaster(FADE.story)
+  }
+
   function setTransitioning(value) {
     if (transitioning === value) return
     transitioning = value
@@ -402,6 +410,7 @@ export function createAmbienceManager(env = {}) {
       contextState: ctx?.state ?? null,
       transitioning,
       story,
+      music,
       masterTarget: lastMasterTarget,
       liveTracks: [...tracks.keys()],
       playingTracks: [...tracks.values()].filter((t) => t.source && t.stopAt === undefined).map((t) => t.id),
@@ -410,7 +419,7 @@ export function createAmbienceManager(env = {}) {
     }
   }
 
-  return { store, connect, disconnect, unlock, setEnabled, setVolume, setEra, retry, tick, inspect, onVisibilityChange }
+  return { store, connect, disconnect, unlock, setEnabled, setVolume, setEra, setMusicActive, retry, tick, inspect, onVisibilityChange }
 }
 
 /** 全站共用的環境音 */

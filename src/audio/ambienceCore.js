@@ -7,7 +7,7 @@
  * - planTracks：依年代與人物位置算出每個聲軌的目標音量，並限制同時播放的聲軌數（iPad Safari）
  */
 export const AMBIENCE_STORAGE = { enabled: 'ddc.ambience.enabled', volume: 'ddc.ambience.volume' }
-export const AMBIENCE_DEFAULT_VOLUME = 0.6
+export const AMBIENCE_DEFAULT_VOLUME = 0.35
 /** 同時播放的聲軌上限（含正在淡出、尚未停止的） */
 export const MAX_TRACKS = 4
 /** 低於這個音量就視為聽不到，不播放 */
@@ -16,6 +16,8 @@ export const MIN_AUDIBLE = 0.02
 export const FADE = { out: 0.6, in: 1.4, first: 1.5, track: 0.7, story: 0.6 }
 /** 閱讀故事時的環境音比例 */
 export const STORY_RATIO = 0.45
+/** 背景音樂播放中時，環境音退讓的比例（避免和音樂旋律搶聲音） */
+export const MUSIC_RATIO = 0.55
 /** 更新人物距離的間隔（秒） */
 export const UPDATE_INTERVAL = 0.25
 /** 循環音檔前後各多 1 秒循環內容，避免 MP3 編碼補位造成的接縫 */
@@ -59,29 +61,29 @@ export const ERA_AMBIENCE = {
     spot('river-lap', 1.0, RIVER_BANK, 14, 52),
     spot('wharf-calls', 0.9, RIVER_BANK, 8, 44),
     spot('oars', 0.8, RIVER_BANK, 6, 36),
-    bed('street-murmur', 0.28),
+    bed('street-murmur', 0.20),
   ],
   banquet: [
     spot('river-lap', 0.55, RIVER_BANK, 8, 40),
-    bed('street-murmur', 0.5),
-    spot('gong-distant', 0.8, STREET_EAST, 24, 70),
+    bed('street-murmur', 0.35),
+    spot('gong-distant', 0.45, STREET_EAST, 24, 70),
   ],
   modern: [
     spot('river-lap', 0.45, RIVER_BANK, 8, 38),
-    bed('street-murmur', 0.4),
-    spot('bicycle-bell', 0.7, STREET_MID, 26, 60),
-    spot('gramophone', 0.85, SHOP_ROW, 8, 30),
+    bed('street-murmur', 0.28),
+    spot('bicycle-bell', 0.55, STREET_MID, 26, 60),
+    spot('gramophone', 0.45, SHOP_ROW, 8, 30),
   ],
   postwar: [
     spot('river-lap', 0.4, RIVER_BANK, 8, 36),
-    bed('street-murmur', 0.45),
+    bed('street-murmur', 0.20),
     spot('vendor-calls', 0.95, TEMPLE_COURT, 10, 34),
-    spot('trishaw', 0.7, STREET_MID, 20, 54),
-    spot('radio', 0.7, SHOP_ROW, 6, 22),
+    spot('trishaw', 0.55, STREET_MID, 20, 54),
+    spot('radio', 0.4, SHOP_ROW, 6, 22),
   ],
   revival: [
     spot('river-lap', 0.4, PLAZA_WEST, 8, 36),
-    bed('street-murmur', 0.4),
+    bed('street-murmur', 0.28),
     spot('scooter', 0.65, STREET_MID, 24, 64),
   ],
 }
@@ -135,9 +137,9 @@ export function planTracks({ eraId, pos, live = [], max = MAX_TRACKS }) {
 }
 
 /** 總音量：開關、使用者音量、轉場（淡出時為 0）與閱讀故事時的比例 */
-export function masterTarget({ enabled, volume, transitioning, story }) {
+export function masterTarget({ enabled, volume, transitioning, story, music = false }) {
   if (!enabled || transitioning) return 0
-  return volume * (story ? STORY_RATIO : 1)
+  return volume * (story ? STORY_RATIO : 1) * (music ? MUSIC_RATIO : 1)
 }
 
 /** 總音量的淡入淡出秒數（目前總音量 → 目標） */

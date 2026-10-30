@@ -11,6 +11,9 @@ import './styles/global.css'
 audioManager.connect(useGameStore)
 // 環境音：依人物位置調整音量；被瀏覽器阻擋時，下一次點擊或按鍵就是使用者操作，在那時恢復
 ambienceManager.connect(useGameStore, () => playerState.position)
+const syncMusic = () => ambienceManager.setMusicActive(audioManager.store.getState().status === 'playing')
+audioManager.store.subscribe(syncMusic)
+syncMusic()
 const resumeAmbience = () => {
   if (ambienceManager.store.getState().status === 'blocked') ambienceManager.unlock()
 }
