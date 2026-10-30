@@ -1,6 +1,7 @@
 import { useFrame } from '@react-three/fiber'
 import { inspectablesOfEra } from '../../data/inspectObjects.js'
 import { TALK_RADIUS, talkForNpc } from '../../data/talk.js'
+import { pickInteraction } from '../interactionPick.js'
 import { playerState } from '../runtime.js'
 import { useGameStore } from '../../state/useGameStore.js'
 
@@ -10,7 +11,8 @@ const TALK_LEAVE = TALK_RADIUS + 1.6
 
 /**
  * 每一影格檢查角色與各互動對象的距離：店家的互動點、有對話的路人、街上可以近看的器物，
- * 各自找出最近且在範圍內的一個（按 E 時依路人 → 器物 → 店家的順序擇一，見 store.interact）。
+ * 各自找出最近且在範圍內的一個，再依 game/interactionPick.js 兩兩取捨（路人和器物、路人和店家只留比較近的）；
+ * 按 E 時依路人 → 器物 → 店家的順序擇一（見 store.interact）。
  * 離開範圍時多留一點緩衝，避免在邊界上提示閃爍。
  * 互動點屬於某個樓層（例如二樓的咖啡館），角色要在同一層才算；
  * 有資訊熱點的店家（例如爐鍋咖啡）改看每個熱點，記下最近的那一個；只能點選的熱點（clickOnly）不算。
@@ -60,13 +62,6 @@ export function InteractionSystem({ shopModels, npcs = [], eraId }) {
         }
       }
     }
-    // 路人與器物同時在範圍內：只提示比較近的那一個（按 E 也是它）
-    if (nearestTalk && nearestInspectable) {
-      if (talkDistance <= inspectableDistance) nearestInspectable = null
-      else nearestTalk = null
-    }
-    store.setNearbyTalk(store.talk ? null : nearestTalk)
-    store.setNearbyInspectable(nearestInspectable)
     let nearest = null
     let nearestHotspot = null
     let nearestDistance = Infinity
@@ -92,7 +87,15 @@ export function InteractionSystem({ shopModels, npcs = [], eraId }) {
         consider(shop, placement.interactionPoint, placement.level, shop.interaction?.radius ?? 3.2, null)
       }
     }
-    store.setNearbyShop(nearest, nearestHotspot)
+    // 路人、器物與店家兩兩取捨，只提示比較近的（game/interactionPick.js）
+    const picked = pickInteraction({
+      talk: nearestTalk && { id: nearestTalk, distance: talkDistance },
+      inspectable: nearestInspectable && { id: nearestInspectable, distance: inspectableDistance },
+      shop: nearest && { id: nearest, hotspotId: nearestHotspot, distance: nearestDistance },
+    })
+    store.setNearbyTalk(store.talk ? null : (picked.talk?.id ?? null))
+    store.setNearbyInspectable(picked.inspectable?.id ?? null)
+    store.setNearbyShop(picked.shop?.id ?? null, picked.shop?.hotspotId ?? null)
   })
   return null
 }
