@@ -5,7 +5,7 @@ import { useGameStore } from '../state/useGameStore.js'
 import { AmbienceSettings } from './AmbienceSettings.jsx'
 import { MusicSettings } from './MusicSettings.jsx'
 import { LANGS } from '../i18n/lang.js'
-import { useT } from '../i18n/useT.js'
+import { useLocalizer, useT } from '../i18n/useT.js'
 
 const MODE_ORDER = ['smooth', 'fine']
 
@@ -39,8 +39,9 @@ function EraSection({ touch }) {
   const mode = useGameStore((state) => state.mode)
   const requestEra = useGameStore((state) => state.requestEra)
   const t = useT()
+  const L = useLocalizer()
   const shownId = transition?.to ?? eraId
-  const era = getEra(shownId)
+  const era = L(getEra(shownId))
   const locked = transitioning || !worldReady || mode !== 'explore'
 
   return (
@@ -50,7 +51,7 @@ function EraSection({ touch }) {
         <span className="hud-menu__count">{transitioning ? t('settings.eraSwitching') : touch ? t('settings.eraTouch') : t('settings.eraKeys')}</span>
       </p>
       <ol className="era-options">
-        {ERAS.map((item, index) => {
+        {L(ERAS).map((item, index) => {
           const active = item.id === shownId
           return (
             <li key={item.id}>
@@ -85,6 +86,7 @@ function ViewModeSection() {
   const setViewMode = useGameStore((state) => state.setViewMode)
   const setUiHidden = useGameStore((state) => state.setUiHidden)
   const t = useT()
+  const L = useLocalizer()
   const togglePanel = useGameStore((state) => state.toggleQualityPanel)
   const options = [
     { id: 'explore', label: t('settings.view.explore'), hint: t('settings.view.exploreHint') },
@@ -143,6 +145,7 @@ export function SettingsMenu() {
   const setQualityMode = useGameStore((state) => state.setQualityMode)
   const container = useRef(null)
   const t = useT()
+  const L = useLocalizer()
   const lang = useGameStore((state) => state.lang)
   const setLang = useGameStore((state) => state.setLang)
   const setLicensesOpen = useGameStore((state) => state.setLicensesOpen)

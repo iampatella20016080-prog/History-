@@ -1,19 +1,20 @@
 import { useStore } from 'zustand'
 import { ambienceManager } from '../audio/AmbienceManager.js'
 import { getEraAmbience, AMBIENCE_SOUNDS } from '../audio/ambienceCore.js'
-import { useT } from '../i18n/useT.js'
+import { useLocalizer, useT } from '../i18n/useT.js'
 
 const STATUS_KEYS = ['idle', 'playing', 'blocked', 'paused', 'off', 'error', 'unsupported']
 
 /** 設定面板中的「環境音：開／關」與音量（與背景音樂分開，選擇記在這台裝置上） */
 export function AmbienceSettings() {
   const t = useT()
+  const L = useLocalizer()
   const enabled = useStore(ambienceManager.store, (s) => s.enabled)
   const volume = useStore(ambienceManager.store, (s) => s.volume)
   const status = useStore(ambienceManager.store, (s) => s.status)
   const eraId = useStore(ambienceManager.store, (s) => s.eraId)
   const percent = Math.round(volume * 100)
-  const labels = [...new Set(getEraAmbience(eraId).map((e) => AMBIENCE_SOUNDS[e.sound]?.label))].filter(Boolean)
+  const labels = [...new Set(getEraAmbience(eraId).map((e) => L(AMBIENCE_SOUNDS[e.sound])?.label))].filter(Boolean)
 
   return (
     <div className="music-settings" data-ambience-status={status}>
@@ -52,7 +53,6 @@ export function AmbienceSettings() {
       </label>
       <p className="music-settings__status">
         {STATUS_KEYS.includes(status) ? t(`ambience.status.${status}`) : ''}
-        {/* TODO(en-data) AMBIENCE_SOUNDS[].label */}
         {status === 'playing' && labels.length ? t('ambience.playingList', { list: labels.join(t('common.listSep')) }) : ''}
         {(status === 'blocked' || status === 'error') && (
           <button type="button" className="button-ghost music-settings__retry" onClick={() => ambienceManager.retry()}>

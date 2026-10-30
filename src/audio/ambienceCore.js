@@ -22,20 +22,21 @@ export const UPDATE_INTERVAL = 0.25
 export const LOOP_PAD = 1
 
 const GEN = 'tools/music/generate_ambience.py（numpy 濾波雜訊與加法合成，ffmpeg 轉 MP3 56 kbps 單聲道）'
+const GEN_EN = 'tools/music/generate_ambience.py (numpy filtered noise and additive synthesis; mono MP3 56 kbps via ffmpeg)'
 
 /** 音檔：duration 是循環區間長度（秒），檔案實際長度為 duration + 2 */
 export const AMBIENCE_SOUNDS = {
-  'river-lap': { file: 'audio/ambience/river-lap.mp3', duration: 10, label: '河水拍岸', source: GEN },
-  'wharf-calls': { file: 'audio/ambience/wharf-calls.mp3', duration: 12, label: '碼頭吆喝', source: GEN },
-  oars: { file: 'audio/ambience/oars.mp3', duration: 10, label: '船槳與水花', source: GEN },
-  'street-murmur': { file: 'audio/ambience/street-murmur.mp3', duration: 12, label: '街上人聲', source: GEN },
-  'gong-distant': { file: 'audio/ambience/gong-distant.mp3', duration: 14, label: '遠處的鑼鼓與絃音', source: GEN },
-  'bicycle-bell': { file: 'audio/ambience/bicycle-bell.mp3', duration: 12, label: '腳踏車鈴', source: GEN },
-  gramophone: { file: 'audio/ambience/gramophone.mp3', duration: 12, label: '留聲機', source: GEN },
-  'vendor-calls': { file: 'audio/ambience/vendor-calls.mp3', duration: 12, label: '攤販叫賣', source: GEN },
-  trishaw: { file: 'audio/ambience/trishaw.mp3', duration: 10, label: '三輪車', source: GEN },
-  radio: { file: 'audio/ambience/radio.mp3', duration: 12, label: '收音機', source: GEN },
-  scooter: { file: 'audio/ambience/scooter.mp3', duration: 12, label: '機車', source: GEN },
+  'river-lap': { file: 'audio/ambience/river-lap.mp3', duration: 10, label: '河水拍岸', labelEn: 'River lapping at the bank', source: GEN, sourceEn: GEN_EN },
+  'wharf-calls': { file: 'audio/ambience/wharf-calls.mp3', duration: 12, label: '碼頭吆喝', labelEn: 'Wharf calls', source: GEN, sourceEn: GEN_EN },
+  oars: { file: 'audio/ambience/oars.mp3', duration: 10, label: '船槳與水花', labelEn: 'Oars and splashes', source: GEN, sourceEn: GEN_EN },
+  'street-murmur': { file: 'audio/ambience/street-murmur.mp3', duration: 12, label: '街上人聲', labelEn: 'Street murmur', source: GEN, sourceEn: GEN_EN },
+  'gong-distant': { file: 'audio/ambience/gong-distant.mp3', duration: 14, label: '遠處的鑼鼓與絃音', labelEn: 'Distant gongs, drums and strings', source: GEN, sourceEn: GEN_EN },
+  'bicycle-bell': { file: 'audio/ambience/bicycle-bell.mp3', duration: 12, label: '腳踏車鈴', labelEn: 'Bicycle bell', source: GEN, sourceEn: GEN_EN },
+  gramophone: { file: 'audio/ambience/gramophone.mp3', duration: 12, label: '留聲機', labelEn: 'Gramophone', source: GEN, sourceEn: GEN_EN },
+  'vendor-calls': { file: 'audio/ambience/vendor-calls.mp3', duration: 12, label: '攤販叫賣', labelEn: 'Vendors calling', source: GEN, sourceEn: GEN_EN },
+  trishaw: { file: 'audio/ambience/trishaw.mp3', duration: 10, label: '三輪車', labelEn: 'Trishaw', source: GEN, sourceEn: GEN_EN },
+  radio: { file: 'audio/ambience/radio.mp3', duration: 12, label: '收音機', labelEn: 'Radio', source: GEN, sourceEn: GEN_EN },
+  scooter: { file: 'audio/ambience/scooter.mp3', duration: 12, label: '機車', labelEn: 'Scooter', source: GEN, sourceEn: GEN_EN },
 }
 
 // 錨點座標（世界座標，街道沿 X 軸，西側 x < -44.6 是淡水河；見 game/config.js）

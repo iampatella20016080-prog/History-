@@ -2,7 +2,7 @@
 
 由 `node tools/i18n/inventory.mjs --write` 產生；每次補完一批要重新跑。
 
-- 資料檔中文字串：**6021**，尚無英文對應：**4851**（排除 sign、signText、signLines、original、quote、taiwanese、romanization、zh、hanzi、script 等刻意保留的欄位）
+- 資料檔中文字串：**6021**，尚無英文對應：**4506**（排除 sign、signText、signLines、original、quote、taiwanese、romanization、zh、hanzi、script 等刻意保留的欄位）
 - 介面元件裡仍寫死中文的行：**14**
 
 ## 資料檔
@@ -11,24 +11,24 @@
 | --- | ---: | ---: | ---: |
 | `src/data/ciShengMiaokouData.js` | 146 | 146 | 5941 |
 | `src/data/dihuaNianhuoData.js` | 53 | 53 | 2068 |
-| `src/data/doddLayout.js` | 8 | 8 | 94 |
-| `src/data/eras.js` | 80 | 80 | 373 |
-| `src/data/huangYujieLayout.js` | 23 | 23 | 157 |
+| `src/data/doddLayout.js` | 8 | 0 | 0 |
+| `src/data/eras.js` | 80 | 0 | 0 |
+| `src/data/huangYujieLayout.js` | 23 | 0 | 0 |
 | `src/data/huangYujieMuseum.js` | 59 | 59 | 1622 |
 | `src/data/inspectObjects.js` | 191 | 10 | 594 |
 | `src/data/jiangWeiShuiData.js` | 33 | 33 | 1822 |
 | `src/data/liChunShengData.js` | 35 | 35 | 2273 |
 | `src/data/liTingXiangData.js` | 85 | 85 | 3885 |
-| `src/data/licenses.js` | 12 | 12 | 386 |
-| `src/data/linHuaTaiQingLayout.js` | 6 | 6 | 76 |
-| `src/data/luguoCafeLayout.js` | 10 | 10 | 111 |
-| `src/data/miTaiMuLayout.js` | 15 | 15 | 153 |
+| `src/data/licenses.js` | 12 | 0 | 0 |
+| `src/data/linHuaTaiQingLayout.js` | 6 | 0 | 0 |
+| `src/data/luguoCafeLayout.js` | 10 | 0 | 0 |
+| `src/data/miTaiMuLayout.js` | 15 | 4 | 58 |
 | `src/data/operatorsData.js` | 52 | 52 | 4229 |
-| `src/data/overview.js` | 75 | 75 | 1113 |
+| `src/data/overview.js` | 75 | 13 | 415 |
 | `src/data/qingPortTalk.js` | 57 | 0 | 0 |
 | `src/data/riceAndShineData.js` | 167 | 167 | 6566 |
-| `src/data/riceAndShineEraConfig.js` | 16 | 16 | 174 |
-| `src/data/riceAndShineLayout.js` | 38 | 38 | 257 |
+| `src/data/riceAndShineEraConfig.js` | 16 | 0 | 0 |
+| `src/data/riceAndShineLayout.js` | 38 | 0 | 0 |
 | `src/data/routes/folkloreRoute.js` | 81 | 0 | 0 |
 | `src/data/routes/neighbourRoute.js` | 73 | 0 | 0 |
 | `src/data/routes/newsRoute.js` | 93 | 0 | 0 |
@@ -37,14 +37,14 @@
 | `src/data/routes/templeMealRoute.js` | 77 | 0 | 0 |
 | `src/data/routes.js` | 82 | 0 | 0 |
 | `src/data/shizixuanData.js` | 83 | 83 | 2127 |
-| `src/data/shizixuanEraConfig.js` | 12 | 12 | 78 |
-| `src/data/shizixuanLayout.js` | 44 | 44 | 183 |
+| `src/data/shizixuanEraConfig.js` | 12 | 0 | 0 |
+| `src/data/shizixuanLayout.js` | 44 | 0 | 0 |
 | `src/data/shops.js` | 2243 | 2234 | 81995 |
 | `src/data/sources.js` | 1443 | 1443 | 46605 |
-| `src/data/squidSoupLayout.js` | 11 | 11 | 102 |
+| `src/data/squidSoupLayout.js` | 11 | 0 | 0 |
 | `src/data/talk.js` | 330 | 0 | 0 |
 | `src/data/teaRoute.js` | 12 | 0 | 0 |
-| `src/data/templeSnackLayout.js` | 12 | 12 | 132 |
+| `src/data/templeSnackLayout.js` | 12 | 0 | 0 |
 | `src/data/wangJingQuanData.js` | 31 | 31 | 1948 |
 | `src/data/xiyuanData.js` | 58 | 58 | 2934 |
 
@@ -283,126 +283,6 @@
 - `XIA_ER_ZUI_RELATED.place.summary`：大稻埕的米苔目小吃店，夏季賣米苔目冰，冬季賣熱食。
 - `XIA_ER_ZUI_RELATED.relation`：同類食物的參訪對照，沒有品牌傳承關係
 
-### `src/data/doddLayout.js`（缺 8）
-
-- `DODD_HOTSPOTS[0].label`：寶順洋行
-- `DODD_HOTSPOTS[0].note`：英商陶德的洋行：臺灣烏龍茶外銷的起點
-- `DODD_HOTSPOTS[1].label`：揀茶桌
-- `DODD_HOTSPOTS[1].note`：婦女坐在大竹篩前挑出茶枝與壞葉，按件計酬
-- `DODD_HOTSPOTS[2].label`：焙茶區
-- `DODD_HOTSPOTS[2].note`：磚臺上的焙坑燒著炭火，茶在焙籠裡烘上八到十個小時
-- `DODD_HOTSPOTS[3].label`：裝箱檯
-- `DODD_HOTSPOTS[3].note`：茶趁熱裝進鉛襯的木箱焊封，等著挑去碼頭
-
-### `src/data/eras.js`（缺 80）
-
-- `ERAS[0].title`：港口商街
-- `ERAS[0].description`：清末移民、茶葉、南北貨與港口貿易
-- `ERAS[0].mood`：古樸典雅、熙來攘往，像一幅清末商街的風俗畫。
-- `ERAS[0].lighting.timeOfDay`：午後斜陽
-- `ERAS[0].buildingStyle.signWords[0]`：茶
-- `ERAS[0].buildingStyle.signWords[1]`：米
-- `ERAS[0].buildingStyle.signWords[2]`：布
-- `ERAS[0].buildingStyle.signWords[3]`：油
-- `ERAS[0].buildingStyle.signWords[4]`：糖
-- `ERAS[0].buildingStyle.signWords[5]`：藥材
-- `ERAS[0].buildingStyle.signWords[6]`：雜貨
-- `ERAS[0].buildingStyle.signWords[7]`：竹器
-- `ERAS[0].buildingStyle.signWords[8]`：海味
-- `ERAS[0].buildingStyle.signWords[9]`：陶器
-- `ERAS[0].buildingStyle.signWords[10]`：香燭
-- `ERAS[0].buildingStyle.signWords[11]`：金紙
-- `ERAS[0].buildingStyle.signWords[12]`：豆
-- `ERAS[0].buildingStyle.signWords[13]`：油紙
-- `ERAS[1].title`：酒樓繁華
-- `ERAS[1].description`：酒樓、宴席、仕紳社交與城市繁榮
-- `ERAS[1].mood`：傍晚入夜，暖黃燈火從窗內灑出，繁華而典雅。
-- `ERAS[1].lighting.timeOfDay`：傍晚入夜
-- `ERAS[1].buildingStyle.signWords[0]`：茶行
-- `ERAS[1].buildingStyle.signWords[1]`：布莊
-- `ERAS[1].buildingStyle.signWords[2]`：銀樓
-- `ERAS[1].buildingStyle.signWords[3]`：漢藥
-- `ERAS[1].buildingStyle.signWords[4]`：洋服
-- `ERAS[1].buildingStyle.signWords[5]`：料理
-- `ERAS[1].buildingStyle.signWords[6]`：旅館
-- `ERAS[1].buildingStyle.signWords[7]`：海產
-- `ERAS[1].buildingStyle.signWords[8]`：雜貨
-- `ERAS[1].buildingStyle.signWords[9]`：茶館
-- `ERAS[1].buildingStyle.signWords[10]`：米商
-- `ERAS[2].title`：摩登大稻埕
-- `ERAS[2].description`：Art Deco 建築、西餐、咖啡與新文化
-- `ERAS[2].mood`：黃昏的金色光線，咖啡館與西餐廳的窗內透出暖光，浪漫而時髦。
-- `ERAS[2].lighting.timeOfDay`：黃昏
-- `ERAS[2].buildingStyle.signWords[0]`：喫茶
-- `ERAS[2].buildingStyle.signWords[1]`：洋食
-- `ERAS[2].buildingStyle.signWords[2]`：寫真館
-- `ERAS[2].buildingStyle.signWords[3]`：洋服
-- `ERAS[2].buildingStyle.signWords[4]`：化粧品
-- `ERAS[2].buildingStyle.signWords[5]`：時計
-- `ERAS[2].buildingStyle.signWords[6]`：書店
-- `ERAS[2].buildingStyle.signWords[7]`：藥局
-- `ERAS[2].buildingStyle.signWords[8]`：茶行
-- `ERAS[2].buildingStyle.signWords[9]`：布行
-- `ERAS[2].buildingStyle.signWords[10]`：百貨
-- `ERAS[3].title`：庶民生活
-- `ERAS[3].description`：市場、廟口、小吃與日常生活
-- `ERAS[3].mood`：午後陽光穿過榕樹，蒸氣裊裊，像一張活起來的老照片。
-- `ERAS[3].lighting.timeOfDay`：午後
-- `ERAS[3].buildingStyle.signWords[0]`：冰果室
-- `ERAS[3].buildingStyle.signWords[1]`：電器行
-- `ERAS[3].buildingStyle.signWords[2]`：西藥房
-- `ERAS[3].buildingStyle.signWords[3]`：照相館
-- `ERAS[3].buildingStyle.signWords[4]`：五金行
-- `ERAS[3].buildingStyle.signWords[5]`：布行
-- `ERAS[3].buildingStyle.signWords[6]`：鐘錶行
-- `ERAS[3].buildingStyle.signWords[7]`：米店
-- `ERAS[3].buildingStyle.signWords[8]`：雜貨店
-- `ERAS[3].buildingStyle.signWords[9]`：麵店
-- `ERAS[3].buildingStyle.signWords[10]`：旅社
-- `ERAS[3].buildingStyle.signWords[11]`：茶行
-- `ERAS[3].buildingStyle.signWords[12]`：南北貨
-- `ERAS[4].yearRange`：2000–現在
-- `ERAS[4].title`：老屋新生
-- `ERAS[4].description`：老屋再生、歷史保存與當代飲食文化
-- `ERAS[4].mood`：明亮柔和的自然光，修復的老屋裡透出溫暖燈光，清新而優雅。
-- `ERAS[4].lighting.timeOfDay`：明亮白日
-- `ERAS[4].buildingStyle.signWords[0]`：咖啡
-- `ERAS[4].buildingStyle.signWords[1]`：茶館
-- `ERAS[4].buildingStyle.signWords[2]`：選物
-- `ERAS[4].buildingStyle.signWords[3]`：甜點
-- `ERAS[4].buildingStyle.signWords[4]`：書店
-- `ERAS[4].buildingStyle.signWords[5]`：茶行
-- `ERAS[4].buildingStyle.signWords[6]`：南北貨
-- `ERAS[4].buildingStyle.signWords[7]`：食堂
-- `ERAS[4].buildingStyle.signWords[8]`：手作
-- `ERAS[4].buildingStyle.signWords[9]`：藝文
-
-### `src/data/huangYujieLayout.js`（缺 23）
-
-- `HUANG_YUJIE_HOTSPOTS[0].label`：黃玉階文史館
-- `HUANG_YUJIE_HOTSPOTS[0].note`：紅磚拱窗的歷史街屋（元珍豆醬店）
-- `HUANG_YUJIE_HOTSPOTS[1].label`：黃玉階與大稻埕
-- `HUANG_YUJIE_HOTSPOTS[1].note`：人物展示牆
-- `HUANG_YUJIE_HOTSPOTS[2].label`：社會改革與初等教育
-- `HUANG_YUJIE_HOTSPOTS[2].note`：文史展板
-- `HUANG_YUJIE_HOTSPOTS[3].label`：元珍豆醬店與飲食生活
-- `HUANG_YUJIE_HOTSPOTS[3].note`：醬缸與商號陳列
-- `HUANG_YUJIE_HOTSPOTS[4].label`：日常器物與商號生活
-- `HUANG_YUJIE_HOTSPOTS[4].note`：茶席與舊式器物
-- `HUANG_YUJIE_HOTSPOTS[5].label`：「元珍」匾額
-- `HUANG_YUJIE_HOTSPOTS[5].note`：二樓窗下的黑底金字匾額
-- `HUANG_YUJIE_HOTSPOTS[6].label`：陶醬缸
-- `HUANG_YUJIE_HOTSPOTS[6].note`：入口一側的展示物
-- `HUANG_YUJIE_HOTSPOTS[7].label`：老屋的木梁
-- `HUANG_YUJIE_HOTSPOTS[7].note`：裸露的木梁與修補構件
-- `HUANG_YUJIE_HOTSPOTS[8].label`：木製展示架
-- `HUANG_YUJIE_HOTSPOTS[8].note`：舊商號的包裝、器物與文獻
-- `HUANG_YUJIE_HOTSPOTS[9].label`：「學貫中西」匾額
-- `HUANG_YUJIE_HOTSPOTS[9].note`：後牆的小展桌
-- `MUSEUM.counterJars[0].label`：醬
-- `MUSEUM.counterJars[1].label`：醋
-- `MUSEUM.counterJars[2].label`：醋
-
 ### `src/data/huangYujieMuseum.js`（缺 59）
 
 - `HISTORIC_SHOP.name`：元珍豆醬店
@@ -640,60 +520,12 @@
 - `LTX_TODAY_CHAPTER.facts[3].label`：經營者
 - `LTX_TODAY_CHAPTER.facts[3].value`：李佳陽（曾任面板工程師，返家接班；世代序號不寫）
 
-### `src/data/licenses.js`（缺 12）
+### `src/data/miTaiMuLayout.js`（缺 4）
 
-- `CODE_LICENSE.text`：程式碼授權：待決定（專案目前沒有 LICENSE 檔）。
-- `CONTENT_LICENSE.name`：創用 CC 姓名標示—非商業性—相同方式分享 4.0 國際（CC BY-NC-SA 4.0）
-- `CONTENT_LICENSE.terms[0]`：姓名標示：使用時請標示本站名稱與作者
-- `CONTENT_LICENSE.terms[1]`：非商業性：不得用於商業目的
-- `CONTENT_LICENSE.terms[2]`：相同方式分享：改作後須以相同授權散布
-- `CONTENT_LICENSE.scope`：本站撰寫的文字與繪製的插圖。引用的文獻、國家文化記憶庫等第三方內容不在此授權範圍，各依其原授權。
-- `OPEN_DATA[0].name`：文化部國家文化記憶庫
-- `OPEN_DATA[0].note`：已在查證紀錄中確認的條目：〈有記名茶〉（阮素芬；國立臺灣工藝研究發展中心建檔）標示為 CC BY 3
-- `OPEN_DATA[1].name`：國家圖書館「臺灣記憶」
-- `OPEN_DATA[1].license`：頁面標示「不開放授權」
-- `OPEN_DATA[1].note`：本站只引用事實，不引用原文。
-- `PHOTO_CREDITS.text`：本站目前沒有使用外部老照片。街景與室內的圖樣都是程式產生的原創示意；章節中的實地照片是專案自行取得的
-
-### `src/data/linHuaTaiQingLayout.js`（缺 6）
-
-- `LHT_HOTSPOTS[0].label`：林華泰茶行
-- `LHT_HOTSPOTS[0].note`：1883 年起做毛茶的篩選與精製
-- `LHT_HOTSPOTS[1].label`：秤茶桌
-- `LHT_HOTSPOTS[1].note`：毛茶論擔論斤計價，桿秤上的秤錘移到刻度就知道重量
-- `LHT_HOTSPOTS[2].label`：焙茶區
-- `LHT_HOTSPOTS[2].note`：店後的焙坑與焙籠：毛茶再篩選、烘焙，才能出售或外銷
-
-### `src/data/luguoCafeLayout.js`（缺 10）
-
-- `LUGUO_HOTSPOTS[0].label`：小藝埕（屈臣氏大藥房舊址）
-- `LUGUO_HOTSPOTS[0].note`：轉角塔樓的立面保留「A.S. WATSON & CO.」字樣
-- `LUGUO_HOTSPOTS[1].label`：樓梯入口
-- `LUGUO_HOTSPOTS[1].note`：從巷子側的騎樓走上二樓
-- `LUGUO_HOTSPOTS[2].label`：窗邊座位
-- `LUGUO_HOTSPOTS[2].note`：三組木格窗面對小巷
-- `LUGUO_HOTSPOTS[3].label`：咖啡吧檯
-- `LUGUO_HOTSPOTS[3].note`：手沖、義式咖啡與烘焙咖啡豆
-- `LUGUO_HOTSPOTS[4].label`：紅色扭蛋機
-- `LUGUO_HOTSPOTS[4].note`：裝著咖啡器具的迷你模型（依實地照片）
-
-### `src/data/miTaiMuLayout.js`（缺 15）
-
-- `MI_TAI_MU_STALL_HOTSPOTS[0].label`：廟口的米苔目
-- `MI_TAI_MU_STALL_HOTSPOTS[0].note`：飲食文化情境示意
-- `MI_TAI_MU_STALL_HOTSPOTS[1].label`：一碗米苔目
-- `MI_TAI_MU_STALL_HOTSPOTS[1].note`：攤台上展示的一碗與小菜（示意）
-- `MI_TAI_MU_THEME.title`：米苔目飲食文化
 - `MI_TAI_MU_THEME.related[0].place.name`：呷二嘴
 - `MI_TAI_MU_THEME.related[0].place.address`：臺北市大同區甘州街34號
 - `MI_TAI_MU_THEME.related[0].place.summary`：大稻埕的米苔目小吃店，夏季賣米苔目冰，冬季賣熱食。
 - `MI_TAI_MU_THEME.related[0].relation`：同類食物的參訪對照，沒有品牌傳承關係
-- `YONGLE_MTM_HOTSPOTS[0].label`：永樂米苔目
-- `YONGLE_MTM_HOTSPOTS[0].note`：大稻埕的米苔目小吃店
-- `YONGLE_MTM_HOTSPOTS[1].label`：店內的用餐空間
-- `YONGLE_MTM_HOTSPOTS[1].note`：狹長的一樓、方桌與圓凳、牆上的菜單板
-- `YONGLE_MTM_HOTSPOTS[2].label`：一碗米苔目
-- `YONGLE_MTM_HOTSPOTS[2].note`：湯米苔目與幾樣小菜
 
 ### `src/data/operatorsData.js`（缺 52）
 
@@ -750,82 +582,20 @@
 - `OPERATORS_REVIVAL_CHAPTER.facts[3].label`：不寫
 - `OPERATORS_REVIVAL_CHAPTER.facts[3].value`：各店之間的師承、合作或傳承；經營者的動機；老潘魷魚羹、好粿緣、林復振的現任經營者（查無）
 
-### `src/data/overview.js`（缺 75）
+### `src/data/overview.js`（缺 13）
 
-- `MAP_PLACES[0].name`：永樂市場・好粿緣
-- `MAP_PLACES[0].address`：迪化街一段21號
-- `MAP_PLACES[1].name`：老潘魷魚羹
-- `MAP_PLACES[1].address`：迪化街一段30號
-- `MAP_PLACES[2].name`：爐鍋咖啡（小藝埕）
-- `MAP_PLACES[2].address`：迪化街一段32巷1號
-- `MAP_PLACES[3].name`：永樂米苔目
-- `MAP_PLACES[3].address`：民樂街111號
-- `MAP_PLACES[4].name`：新芳春茶行
-- `MAP_PLACES[4].address`：民生西路309號
-- `MAP_PLACES[5].name`：波麗路
-- `MAP_PLACES[5].address`：民生西路314號
-- `MAP_PLACES[6].name`：十字軒糕餅舖
-- `MAP_PLACES[6].address`：延平北路二段68號
-- `MAP_PLACES[7].name`：有記名茶
-- `MAP_PLACES[7].address`：重慶北路二段64巷26號
-- `MAP_PLACES[8].name`：林華泰茶行
-- `MAP_PLACES[8].address`：重慶北路二段193號
-- `MAP_PLACES[9].name`：慈聖宮與廟口小吃
-- `MAP_PLACES[9].address`：保安街49巷17號
-- `MAP_PLACES[10].name`：滋養豆餡舖
-- `MAP_PLACES[10].address`：迪化街一段247號（涼州街口）
-- `MAP_PLACES[11].name`：導演的豆花店・黃玉階文史館
-- `MAP_PLACES[11].address`：迪化街一段224巷24號（文史館門牌未核實）
-- `MAP_PLACES[12].name`：稻舍（迪化街329號店屋）
-- `MAP_PLACES[12].address`：迪化街一段329號
-- `MAP_PLACES[13].name`：霞海城隍廟
-- `MAP_PLACES[13].address`：迪化街一段61號
-- `MAP_PLACES[14].name`：乾元藥行
-- `MAP_PLACES[14].address`：迪化街一段71號（門牌僅見部落格與名錄摘要，未核實）
-- `MAP_PLACES[15].name`：李春生紀念教會
-- `MAP_PLACES[15].address`：貴德街44號
 - `MAP_PLACES[16].name`：大稻埕教會
 - `MAP_PLACES[16].address`：甘州街40號
 - `MAP_PLACES[17].name`：渭水驛站（緊鄰大安醫院舊址）
 - `MAP_PLACES[17].address`：延平北路二段27號
-- `MAP_PLACES[18].name`：洋行區（建昌街・千秋街）
-- `MAP_PLACES[18].address`：今貴德街一帶，洋行與茶行的確切門牌未載
-- `MAP_STREETS[0].name`：淡水河
-- `MAP_STREETS[1].name`：貴德街
-- `MAP_STREETS[2].name`：西寧北路
-- `MAP_STREETS[3].name`：迪化街一段
-- `MAP_STREETS[4].name`：民樂街
-- `MAP_STREETS[5].name`：延平北路二段
-- `MAP_STREETS[6].name`：重慶北路二段
-- `MAP_STREETS[7].name`：民權西路
-- `MAP_STREETS[8].name`：涼州街
-- `MAP_STREETS[9].name`：保安街
-- `MAP_STREETS[10].name`：歸綏街
-- `MAP_STREETS[11].name`：民生西路
-- `MAP_STREETS[12].name`：南京西路
-- `TIMELINE_EVENTS[0].text`：艋舺頂下郊拚，同安人隨林右藻移居大稻埕。
-- `TIMELINE_EVENTS[1].text`：滬尾正式設關開埠（1858年天津條約開放，通稱1860年淡水開港）。
 - `TIMELINE_EVENTS[2].text`：李春生受英商寶順行之聘來臺北任買辦，同年到安溪採辦茶苗（自敘「迨三十歲」；陳慈玉記1865年，並列）
-- `TIMELINE_EVENTS[3].text`：陶德把精製茶廠設在大稻埕。
-- `TIMELINE_EVENTS[4].text`：臺灣烏龍茶運往紐約，「Formosa Oolong」打開美國市場。
-- `TIMELINE_EVENTS[5].text`：霞海城隍廟「五月十三迎城隍」的起源年代（官方民俗登錄）。
-- `TIMELINE_EVENTS[6].text`：同安茶商在大稻埕設源隆行，專製包種茶外銷。
-- `TIMELINE_EVENTS[7].text`：林維源與李春生成立建昌公司，建昌街、千秋街（今貴德街）成為洋樓街。
-- `TIMELINE_EVENTS[8].text`：日本人調查：大稻埕茶商252店、從業3,612人。
-- `TIMELINE_EVENTS[9].text`：慈聖宮因市區改正遷至日新街（今保安街49巷）重建完成；遷建起於1909／1910、完工另有1916一
 - `TIMELINE_EVENTS[10].text`：大稻埕教會在甘州街遷建禮拜堂，由李春生出資、規劃並監造。
 - `TIMELINE_EVENTS[11].text`：蔣渭水在大稻埕太平町開設大安醫院，後來也是《臺灣民報》的總批發處（門牌待核）。
 - `TIMELINE_EVENTS[12].text`：臺灣文化協會成立（10月），蔣渭水是重要成員之一；成立日與地點待核。
-- `TIMELINE_EVENTS[13].text`：李春生紀念教會在貴德街設立。
 - `TIMELINE_EVENTS[14].text`：王井泉與張文環、陳逸松、黃得時等組啟文社，創刊《台灣文學》季刊，社址設於山水亭。
 - `TIMELINE_EVENTS[15].text`：厚生演劇研究會成立，會址設於山水亭；9月在永樂座演出《閹雞》等劇。
-- `TIMELINE_EVENTS[16].text`：霞海城隍廟增祀月下老人。
-- `TIMELINE_EVENTS[17].text`：江山樓拆除。
-- `TIMELINE_EVENTS[18].text`：永樂市場現在的大樓開業。
 - `TIMELINE_EVENTS[19].text`：迪化街年貨大街首次在農曆春節前半個月舉辦（市府新聞稿；構想由來與實際日期、範圍待核）。
-- `TIMELINE_EVENTS[20].text`：新芳春茶行指定為直轄市定古蹟。
 - `TIMELINE_EVENTS[21].text`：大稻埕戲苑在永樂市場大樓8、9樓正式營運（2010年試營運；前身為1987年的延平活動中心，開幕年份
-- `TIMELINE_EVENTS[22].text`：新芳春茶行修復後開放參觀。
 - `TIMELINE_EVENTS[23].text`：延平北路二段27號「渭水驛站」常設展《你好，渭水》開幕（10月7日），館所緊鄰大安醫院舊址。
 
 ### `src/data/riceAndShineData.js`（缺 167）
@@ -998,66 +768,6 @@
 - `RICE_SCENARIO[3].text`：料理與餐具依照片簡化建模，每張桌子的狀態與套餐略有不同；不代表現在的菜單，也不寫價格。
 - `RICE_SCENARIO[4].text`：尺寸依照片估算；照片沒有拍到的後進與二樓細部是簡化的配置。
 
-### `src/data/riceAndShineEraConfig.js`（缺 16）
-
-- `RICE_AND_SHINE_BY_ERA.banquet.label`：北街米業逐漸形成
-- `RICE_AND_SHINE_BY_ERA.banquet.name`：北街米業店屋（迪化街329號）
-- `RICE_AND_SHINE_BY_ERA.modern.label`：米行與碾米產業
-- `RICE_AND_SHINE_BY_ERA.modern.name`：迪化街329號米行／碾米間
-- `RICE_AND_SHINE_BY_ERA.postwar.label`：戰後米業與產業轉變
-- `RICE_AND_SHINE_BY_ERA.postwar.name`：迪化街329號米行（戰後）
-- `RICE_AND_SHINE_BY_ERA.revival.label`：老屋再生・稻舍
-- `RICE_AND_SHINE_BY_ERA.revival.name`：稻舍 Rice & Shine
-- `riceAndShineEraConfig.1895.label`：北街米業逐漸形成
-- `riceAndShineEraConfig.1895.name`：北街米業店屋（迪化街329號）
-- `riceAndShineEraConfig.1930.label`：米行與碾米產業
-- `riceAndShineEraConfig.1930.name`：迪化街329號米行／碾米間
-- `riceAndShineEraConfig.1945.label`：戰後米業與產業轉變
-- `riceAndShineEraConfig.1945.name`：迪化街329號米行（戰後）
-- `riceAndShineEraConfig.2000.label`：老屋再生・稻舍
-- `riceAndShineEraConfig.2000.name`：稻舍 Rice & Shine
-
-### `src/data/riceAndShineLayout.js`（缺 38）
-
-- `RICE_HOTSPOTS.earlyRiceTrade[0].label`：北街米業逐漸形成
-- `RICE_HOTSPOTS.earlyRiceTrade[0].note`：米袋、竹籮與木牌
-- `RICE_HOTSPOTS.earlyRiceTrade[1].label`：米斗
-- `RICE_HOTSPOTS.earlyRiceTrade[1].note`：量米的木斗
-- `RICE_HOTSPOTS.riceMill[0].label`：迪化街329號米行／碾米間
-- `RICE_HOTSPOTS.riceMill[0].note`：紅磚拱券的米行
-- `RICE_HOTSPOTS.riceMill[1].label`：米斗與帳桌
-- `RICE_HOTSPOTS.riceMill[1].note`：秤、算盤與帳本
-- `RICE_HOTSPOTS.riceMill[2].label`：碾米機
-- `RICE_HOTSPOTS.riceMill[2].note`：稻穀變成白米
-- `RICE_HOTSPOTS.riceMill[3].label`：北街為什麼曾經都是米行？
-- `RICE_HOTSPOTS.riceMill[3].note`：天井
-- `RICE_HOTSPOTS.riceMill[4].label`：米倉
-- `RICE_HOTSPOTS.riceMill[4].note`：堆疊的米袋與木梯
-- `RICE_HOTSPOTS.postwarRiceHouse[0].label`：戰後米業與產業轉變
-- `RICE_HOTSPOTS.postwarRiceHouse[0].note`：老化的紅磚店屋
-- `RICE_HOTSPOTS.postwarRiceHouse[1].label`：留下來的碾米器具
-- `RICE_HOTSPOTS.postwarRiceHouse[1].note`：蓋著布的碾米機
-- `RICE_HOTSPOTS.postwarRiceHouse[2].label`：住家與倉庫
-- `RICE_HOTSPOTS.postwarRiceHouse[2].note`：後進的日常
-- `RICE_HOTSPOTS.riceAndShineModern[0].label`：稻舍 Rice & Shine
-- `RICE_HOTSPOTS.riceAndShineModern[0].note`：老屋再生的米食餐館
-- `RICE_HOTSPOTS.riceAndShineModern[1].label`：老屋再生
-- `RICE_HOTSPOTS.riceAndShineModern[1].note`：米行 → 歷史建築 → 稻舍
-- `RICE_HOTSPOTS.riceAndShineModern[2].label`：米食料理
-- `RICE_HOTSPOTS.riceAndShineModern[2].note`：木托盤上的套餐
-- `RICE_HOTSPOTS.riceAndShineModern[3].label`：北街為什麼曾經都是米行？
-- `RICE_HOTSPOTS.riceAndShineModern[3].note`：米業文化展示
-- `RICE_HOTSPOTS.riceAndShineModern[4].label`：米斗
-- `RICE_HOTSPOTS.riceAndShineModern[4].note`：量米的木斗
-- `RICE_HOTSPOTS.riceAndShineModern[5].label`：竹籮與竹篩
-- `RICE_HOTSPOTS.riceAndShineModern[5].note`：土礱、蓑衣與斗笠
-- `RICE_HOTSPOTS.riceAndShineModern[6].label`：天井
-- `RICE_HOTSPOTS.riceAndShineModern[6].note`：日光、植物與壁畫
-- `RICE_HOTSPOTS.riceAndShineModern[7].label`：碾米工廠
-- `RICE_HOTSPOTS.riceAndShineModern[7].note`：舊碾米機
-- `RICE_HOTSPOTS.riceAndShineModern[8].label`：郭雪湖《南街殷賑》與大稻埕
-- `RICE_HOTSPOTS.riceAndShineModern[8].note`：二樓的小展覽
-
 ### `src/data/shizixuanData.js`（缺 83）
 
 - `SZX_CHAPTERS.modern[0].tab`：店史
@@ -1143,68 +853,6 @@
 - `SZX_SCENARIO[0].text`：報導沒有記載1930–1980之間店面的實際樣貌；1930的窄身店屋與1945的戰後店面是依一般糕餅
 - `SZX_SCENARIO[1].text`：2000–現在的外觀依實地照片的立面語彙（三層樓米色建築、兩個騎樓開間、紅底金字招牌）重建，不是逐一
 - `SZX_SCENARIO[2].text`：滿月、收涎、婚嫁、祝壽、祭祀五個文化節點是教育部辭典的通用釋義，說明這些糕餅在人生禮俗中的用途，不是
-
-### `src/data/shizixuanEraConfig.js`（缺 12）
-
-- `SHIZIXUAN_BY_ERA.modern.label`：糕餅店初創
-- `SHIZIXUAN_BY_ERA.modern.name`：十字軒（糕餅店）
-- `SHIZIXUAN_BY_ERA.postwar.label`：漢餅與喜慶糕點
-- `SHIZIXUAN_BY_ERA.postwar.name`：十字軒餅舖
-- `SHIZIXUAN_BY_ERA.revival.label`：延平北路的老字號
-- `SHIZIXUAN_BY_ERA.revival.name`：十字軒糕餅舖
-- `shizixuanEraConfig.1930.label`：糕餅店初創
-- `shizixuanEraConfig.1930.name`：十字軒（糕餅店）
-- `shizixuanEraConfig.1945.label`：漢餅與喜慶糕點
-- `shizixuanEraConfig.1945.name`：十字軒餅舖
-- `shizixuanEraConfig.2000.label`：延平北路的老字號
-- `shizixuanEraConfig.2000.name`：十字軒糕餅舖
-
-### `src/data/shizixuanLayout.js`（缺 44）
-
-- `SZX_HOTSPOTS.earlyShop[0].label`：十字軒（糕餅店）
-- `SZX_HOTSPOTS.earlyShop[0].note`：窄身街屋的糕餅店
-- `SZX_HOTSPOTS.earlyShop[1].label`：西點與漢餅
-- `SZX_HOTSPOTS.earlyShop[1].note`：帳桌與糕餅
-- `SZX_HOTSPOTS.earlyShop[2].label`：滿月
-- `SZX_HOTSPOTS.earlyShop[2].note`：彌月紅圓
-- `SZX_HOTSPOTS.earlyShop[3].label`：收涎
-- `SZX_HOTSPOTS.earlyShop[3].note`：收瀾鹹光餅
-- `SZX_HOTSPOTS.earlyShop[4].label`：婚嫁
-- `SZX_HOTSPOTS.earlyShop[4].note`：訂婚喜餅
-- `SZX_HOTSPOTS.earlyShop[5].label`：祝壽
-- `SZX_HOTSPOTS.earlyShop[5].note`：做壽壽桃
-- `SZX_HOTSPOTS.earlyShop[6].label`：祭祀
-- `SZX_HOTSPOTS.earlyShop[6].note`：祭祀紅龜粿
-- `SZX_HOTSPOTS.postwarShop[0].label`：十字軒餅舖
-- `SZX_HOTSPOTS.postwarShop[0].note`：戰後的漢餅店
-- `SZX_HOTSPOTS.postwarShop[1].label`：漢餅與壽桃
-- `SZX_HOTSPOTS.postwarShop[1].note`：木製餅櫃與紙盒
-- `SZX_HOTSPOTS.postwarShop[2].label`：滿月
-- `SZX_HOTSPOTS.postwarShop[2].note`：彌月紅圓
-- `SZX_HOTSPOTS.postwarShop[3].label`：收涎
-- `SZX_HOTSPOTS.postwarShop[3].note`：收瀾鹹光餅
-- `SZX_HOTSPOTS.postwarShop[4].label`：婚嫁
-- `SZX_HOTSPOTS.postwarShop[4].note`：訂婚喜餅
-- `SZX_HOTSPOTS.postwarShop[5].label`：祝壽
-- `SZX_HOTSPOTS.postwarShop[5].note`：做壽壽桃
-- `SZX_HOTSPOTS.postwarShop[6].label`：祭祀
-- `SZX_HOTSPOTS.postwarShop[6].note`：祭祀紅龜粿
-- `SZX_HOTSPOTS.modernShop[0].label`：十字軒糕餅舖
-- `SZX_HOTSPOTS.modernShop[0].note`：延平北路的老字號
-- `SZX_HOTSPOTS.modernShop[1].label`：櫃台與糕餅托盤
-- `SZX_HOTSPOTS.modernShop[1].note`：金元寶與壽桃
-- `SZX_HOTSPOTS.modernShop[2].label`：老照片與獎狀
-- `SZX_HOTSPOTS.modernShop[2].note`：歷史展示牆
-- `SZX_HOTSPOTS.modernShop[3].label`：滿月
-- `SZX_HOTSPOTS.modernShop[3].note`：彌月紅圓
-- `SZX_HOTSPOTS.modernShop[4].label`：收涎
-- `SZX_HOTSPOTS.modernShop[4].note`：收瀾鹹光餅
-- `SZX_HOTSPOTS.modernShop[5].label`：婚嫁
-- `SZX_HOTSPOTS.modernShop[5].note`：訂婚喜餅
-- `SZX_HOTSPOTS.modernShop[6].label`：祝壽
-- `SZX_HOTSPOTS.modernShop[6].note`：做壽壽桃
-- `SZX_HOTSPOTS.modernShop[7].label`：祭祀
-- `SZX_HOTSPOTS.modernShop[7].note`：祭祀紅龜粿
 
 ### `src/data/shops.js`（缺 2234）
 
@@ -2013,35 +1661,6 @@
 - `SOURCES.tcmb-huang-yujie.supports[2]`：經營醬菜業
 - `SOURCES.tcmb-huang-yujie.supports[3]`：漢醫救治霍亂、鼠疫等疫病
 - …另外 1043 筆
-
-### `src/data/squidSoupLayout.js`（缺 11）
-
-- `LAO_PAN_HOTSPOTS[0].label`：老潘魷魚羹
-- `LAO_PAN_HOTSPOTS[0].note`：迪化街一段30號，永樂市場對面
-- `LAO_PAN_HOTSPOTS[1].label`：料理檯
-- `LAO_PAN_HOTSPOTS[1].note`：湯鍋、玻璃展示罩與疊放的碗
-- `LAO_PAN_HOTSPOTS[2].label`：四道展示餐點
-- `LAO_PAN_HOTSPOTS[2].note`：沙茶魷魚羹、魚酥羹、甜不辣、乾拌沙茶生魷魚
-- `SQUID_SOUP_THEME.title`：魷魚羹飲食文化
-- `TEMPLE_STALL_HOTSPOTS[0].label`：廟口的魷魚羹攤
-- `TEMPLE_STALL_HOTSPOTS[0].note`：飲食文化情境示意
-- `TEMPLE_STALL_HOTSPOTS[1].label`：一碗魷魚羹
-- `TEMPLE_STALL_HOTSPOTS[1].note`：攤台上展示的一碗（示意）
-
-### `src/data/templeSnackLayout.js`（缺 12）
-
-- `DOUHUA_STALL_HOTSPOTS[0].label`：廟口的豆花攤
-- `DOUHUA_STALL_HOTSPOTS[0].note`：飲食文化情境示意
-- `DOUHUA_STALL_HOTSPOTS[1].label`：兩碗豆花
-- `DOUHUA_STALL_HOTSPOTS[1].note`：推車上展示的原味糖水豆花與花生豆花（示意）
-- `DOUHUA_THEME.title`：豆花甜食文化
-- `DOUHUA_THEME.related[0].relation`：同類食物的參訪對照，沒有品牌傳承關係
-- `KUEH_STALL_HOTSPOTS[0].label`：廟口的糕粿攤
-- `KUEH_STALL_HOTSPOTS[0].note`：飲食文化情境示意
-- `KUEH_STALL_HOTSPOTS[1].label`：四種傳統米食
-- `KUEH_STALL_HOTSPOTS[1].note`：托盤與木板上的草仔粿、紅龜粿、芋粿與蘿蔔糕（示意）
-- `KUEH_THEME.title`：糕粿米食文化
-- `KUEH_THEME.related[0].relation`：同類食物的參訪對照，沒有品牌傳承關係
 
 ### `src/data/wangJingQuanData.js`（缺 31）
 
