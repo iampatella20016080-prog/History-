@@ -286,7 +286,7 @@
 - **白天與入夜**：明暗同時乘在底色與自發光上——白天看得出房間的深淺，入夜（酒樓繁華、摩登）燈光集中在中間，四周與上方沉下去。
 - **不和真的室內衝突**：效果種類記在 UV 上（`windowLit` 沒有貼圖，UV 本來沒用到；材質的貼圖尺寸改成 0–1）：沒有標記的維持原本的平面發光，所以 `BUILDING_INTERIORS`（永樂市場、Action! Bar、爐鍋咖啡、老潘、寶順洋行、林華泰等）室內場景裡的窗、門楣都不受影響；可以走進去的店家本來就不產生淺室內。
 - 邏輯在純模組 `src/game/rendering/shopGlow.js`（明暗算式、視線求交、UV 標記、同一套算式的 GLSL，以及依畫質選擇版本的 `patchShopWindowShader`／`patchShopGlassShader`）；`materials.js` 的 `windowLit`、`glassWarm` 用 `onBeforeCompile` 接上，`QualityController` 依 `quality.js` 的 `shopGlow` 呼叫 `setShopGlowEnabled`（`<html data-shop-glow>` 可檢查）；建築產生器用 `PartBuilder.shopGlow`／`shopGlowGroup` 標記（`facade.js`、`arcade.js`、`shophouse.js`）。
-- **效能**：五個年代依材質合併的街景批次數不變（15／20／25／27／37），沒有新的網格、貼圖或光源；精緻畫質每個片段多一次視線與盒子求交（幾個除法），流暢畫質沒有額外計算（玻璃店面的批次多一個沒用到的頂點屬性）。
+- **效能**：五個年代依材質合併的街景批次數和 main 相同（16／21／26／28／38，含細部的接地暗影），沒有新的網格、貼圖或光源；精緻畫質每個片段多一次視線與盒子求交（幾個除法），流暢畫質沒有額外計算（玻璃店面的批次多一個沒用到的頂點屬性）。
 - 截圖（實際渲染，`docs/lookbook/shop-glow-before/` 與 `shop-glow-after/`）：每個年代兩三個一般店面，正面一張、斜看一張（看視差），兩種畫質（`-high` 看效果，`-low` 和改動前相同）；用 `SET=shop-glow node tests/e2e/lookbook.e2e.mjs` 重拍。
 
 ## 新增：在地經營者群像——庶民生活與老屋新生（第 8 階段 C）
@@ -1034,7 +1034,7 @@ node tests/e2e/era-switching.e2e.mjs http://127.0.0.1:4173/
 
 ## 測試狀態
 
-- 店內透光（第 9 階段）：新增 `tests/shopGlow.test.js` 29 項；既有測試不需修改。`npm test` 全部 776 項通過、`npm run build` 成功。瀏覽器在 macOS 的 Playwright Chromium headless（SwiftShader 軟體繪圖）拍了前後對照（五個年代、兩種畫質、正面與斜看，`docs/lookbook/shop-glow-*`），著色器編譯沒有錯誤；流暢畫質的截圖和改動前相同，執行中從流暢切到精緻會重新編譯並出現效果。繪製呼叫（街道遠景、一個影格的總數）前後完全相同：流暢 225／212／232／258／307、精緻 245／230／246／288／356。**沒有在 iPad 實機上看過**：假室內用到 `dFdx`（WebGL 2 內建）與每個片段一次盒子求交，實機的幀率與 Safari 的精度沒有量過。
+- 店內透光（第 9 階段）：新增 `tests/shopGlow.test.js` 29 項；既有測試不需修改。`npm test` 全部通過（合併 main 的細部之後共 802 項）、`npm run build` 成功。瀏覽器在 macOS 的 Playwright Chromium headless（SwiftShader 軟體繪圖）拍了前後對照（五個年代、兩種畫質、正面與斜看，`docs/lookbook/shop-glow-*`），著色器編譯沒有錯誤；流暢畫質的截圖和改動前相同，執行中從流暢切到精緻會重新編譯並出現效果。繪製呼叫（街道遠景、一個影格的總數；合併細部之前在 5867e2d 上量的）前後完全相同：流暢 225／212／232／258／307、精緻 245／230／246／288／356。**沒有在 iPad 實機上看過**：假室內用到 `dFdx`（WebGL 2 內建）與每個片段一次盒子求交，實機的幀率與 Safari 的精度沒有量過。
 - 效能量測 `?stats=1`（第 9 階段）：新增 `tests/stats.test.js` 6 項與 `tests/e2e/stats.e2e.mjs`（沒參數時不載入、五個年代 × 兩種畫質有數字）；`npm test` 全部通過、`npm run build` 成功。Playwright Chromium headless（SwiftShader，1024×700、dpr 1，一個影格所有 pass 加總）量到的繪製呼叫／三角形數，流暢：港口商街 249／438k、酒樓繁華 216／556k、摩登 192／514k、庶民生活 267／607k、老屋新生 308／706k；精緻：304／461k、272／576k、252／542k、300／664k、298／619k。三角形數含陰影與法線等多個 pass 的重複計算。**沒有在 iPad 實機驗證**（數字、浮層位置與觸控下的可見度，以及實機幀率）。
 - 環境音（第 9 階段）：新增 `tests/ambience.test.js` 14 項；`npm test` 全部 747 項通過、`npm run build` 成功。另在桌面瀏覽器（開發版）實測：11 個音檔都能解碼、開始探索後解鎖並播放、走到河岸疊到 4 軌、換年代後換成新年代的聲音。**沒有在 iPad 實機驗證**（解鎖、音量平衡、循環接縫），也沒有用耳朵確認合成音的聽感。
 - 酒樓繁華與摩登的光線、畫面動態（第 9 階段）：新增 `tests/lightingMotion.test.js` 31 項；既有測試只改 `tests/banquet.test.js`（「其他年代沒有冷色補光」排除摩登）。單元測試 733 項全部通過、`npm run build` 成功。瀏覽器測試在 macOS 的 Playwright Chromium 141 headless（SwiftShader 軟體繪圖）執行：動態 81／81 通過，固定視角截圖兩種畫質 × 五個年代各六個視角拍了前後對照。繪製呼叫（SwiftShader、街道遠景、一個影格的總數）：流暢 251／215／231／253／235 → 254／218／235／257／238，精緻 273／231／244／282／269 → 279／236／249／287／273（依港口商街、酒樓繁華、摩登、庶民生活、老屋新生）。沒有在 iPad 實機上看過，也沒有量實機的幀率；動態只用截圖與 uniform／實例矩陣的變化驗證，沒有錄影。
