@@ -1,0 +1,87 @@
+{
+  "note": "街道遠景（往東，太陽在鏡頭後方）一個影格的繪製呼叫",
+  "before": {
+    "qing-port/low": {
+      "calls": 166,
+      "meshes": 122
+    },
+    "banquet/low": {
+      "calls": 209,
+      "meshes": 104
+    },
+    "modern/low": {
+      "calls": 247,
+      "meshes": 120
+    },
+    "postwar/low": {
+      "calls": 172,
+      "meshes": 113
+    },
+    "revival/low": {
+      "calls": 219,
+      "meshes": 138
+    },
+    "qing-port/high": {
+      "calls": 187,
+      "meshes": 144
+    },
+    "banquet/high": {
+      "calls": 224,
+      "meshes": 123
+    },
+    "modern/high": {
+      "calls": 271,
+      "meshes": 135
+    },
+    "postwar/high": {
+      "calls": 190,
+      "meshes": 125
+    },
+    "revival/high": {
+      "calls": 242,
+      "meshes": 150
+    }
+  },
+  "after": {
+    "qing-port/low": {
+      "calls": 166,
+      "meshes": 122
+    },
+    "banquet/low": {
+      "calls": 209,
+      "meshes": 104
+    },
+    "modern/low": {
+      "calls": 247,
+      "meshes": 120
+    },
+    "postwar/low": {
+      "calls": 172,
+      "meshes": 113
+    },
+    "revival/low": {
+      "calls": 219,
+      "meshes": 138
+    },
+    "qing-port/high": {
+      "calls": 188,
+      "meshes": 144
+    },
+    "banquet/high": {
+      "calls": 225,
+      "meshes": 123
+    },
+    "modern/high": {
+      "calls": 272,
+      "meshes": 135
+    },
+    "postwar/high": {
+      "calls": 191,
+      "meshes": 125
+    },
+    "revival/high": {
+      "calls": 243,
+      "meshes": 150
+    }
+  }
+}
