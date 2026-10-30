@@ -2,8 +2,8 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Color, MeshToonMaterial } from 'three'
 import { getInspectable } from '../../data/inspectObjects.js'
-import { getRoute } from '../../data/teaRoute.js'
-import { routeProgress } from '../themeRoute.js'
+import { getRoute } from '../../data/routes.js'
+import { nodeEra, routeProgress } from '../themeRoute.js'
 import { getMaterials } from '../rendering/materials.js'
 import { useGameStore } from '../../state/useGameStore.js'
 import { damp } from '../utils/math.js'
@@ -38,8 +38,8 @@ function Guide({ position }) {
 }
 
 /**
- * 主題探索模式的街上引導（第 10 階段）：
- * 進行中路線還沒完成的節點，在對應的店家、路人或器物上方放引導標示；順序自由，全部一起亮。
+ * 主題探索模式的街上引導（第 10、12 階段）：
+ * 進行中路線還沒完成、而且在目前年代的節點，在對應的店家、路人或器物上方放引導標示；順序自由，全部一起亮。
  */
 export function RouteGuides({ world }) {
   const activeRouteId = useGameStore((state) => state.activeRouteId)
@@ -47,10 +47,11 @@ export function RouteGuides({ world }) {
   const route = activeRouteId ? getRoute(activeRouteId) : null
 
   const guides = useMemo(() => {
-    if (!route || route.eraId !== world.eraId) return []
+    if (!route) return []
     const positions = []
     for (const node of routeProgress(route, journal)) {
-      if (node.done) continue
+      // 跨年代的路線：只標這個年代的節點
+      if (node.done || nodeEra(route, node) !== world.eraId) continue
       if (node.npcIds) {
         for (const npcId of node.npcIds) {
           const npc = (world.npcs ?? []).find((item) => item.id === npcId)

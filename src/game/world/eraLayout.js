@@ -1,6 +1,7 @@
 import { PIER, PLAZA, STREET } from '../config.js'
 import { QING_WHARF_ERA, qingWharfBoxes } from '../../data/qingWharfLayout.js'
 import { addedSceneProps, sceneBox, scenesForEra } from '../../data/streetPropsLayout.js'
+import { routeFigureBox, routeFiguresOfEra } from '../../data/routeFigures.js'
 import { getShop, getShopBuilding, getShopsByEra } from '../../data/shops.js'
 import { genericBuildingConfig } from './lineage.js'
 import { getLotPlan } from './lots.js'
@@ -449,6 +450,11 @@ export function createEraLayout(era) {
   const isAnchor = (prop) => scenes.some(({ anchor }) => anchor.type === prop.type && anchor.position.every((v, i) => v === prop.position[i]))
   for (const scene of scenes) {
     const { minX, maxX, minZ, maxZ } = sceneBox(scene)
+    extraObstacles.push({ minX, maxX, minZ, maxZ })
+  }
+  // 主題路線的情境人物（data/routeFigures.js）：站著的人也是障礙物
+  for (const figure of routeFiguresOfEra(era.id)) {
+    const { minX, maxX, minZ, maxZ } = routeFigureBox(figure)
     extraObstacles.push({ minX, maxX, minZ, maxZ })
   }
   const lamps = streetLamps(era)

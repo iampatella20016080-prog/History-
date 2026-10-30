@@ -5,13 +5,26 @@
  * （跟某位路人說話、近看某件器物、走進某家店、讀一則消息），
  * 完成與否看探索手記有沒有對應的條目（journal.js），所以關掉網頁再回來也記得。
  *
- * 路線格式：{ id, title, titleEn, intro, eraId, nodes: [...], journalId }
- * 節點格式：{ id, kind, journalIds, title, titleEn, hint, shopId?, npcId?, objectId? }
+ * 路線格式：{ id, title, titleEn, intro, introEn, eraId, nodes: [...] }
+ * 節點格式：{ id, kind, journalIds, title, titleEn, hint, hintEn?, eraId?, shopId?, npcIds?, inspectableId?, mapAt? }
+ *   eraId       節點所在的年代（省略時是路線的 eraId；跨年代的路線，例如同一棟房子的五個年代，每個節點各自指定）
  *   kind        talk／object／shop／news（手記的種類）
  *   journalIds  完成的判定：手記裡有其中任何一個 id 就算完成
  *               （例如「聽挑夫說消息」：跟三位挑夫之中任何一位說過話都算）
  *   shopId      引導標示掛在哪家店（talk 節點用 npcId 標在路人身上）
  */
+
+/** 節點所在的年代 */
+export function nodeEra(route, node) {
+  return node.eraId ?? route.eraId
+}
+
+/** 路線經過的年代（依節點順序，不重複） */
+export function routeEras(route) {
+  const eras = []
+  for (const node of route.nodes) if (!eras.includes(nodeEra(route, node))) eras.push(nodeEra(route, node))
+  return eras
+}
 
 /** 每個節點完成了沒（依手記） */
 export function routeProgress(route, journal) {
@@ -58,6 +71,7 @@ export function validateRoute(route) {
     if (!node.title || !node.titleEn) problems.push(`${route.id}／${node.id}：缺少 title 或 titleEn`)
     if (!node.hint) problems.push(`${route.id}／${node.id}：缺少引導提示 hint`)
     if (!['talk', 'object', 'shop', 'news'].includes(node.kind)) problems.push(`${route.id}／${node.id}：kind 無效`)
+    if (node.hint && !node.hintEn) problems.push(`${route.id}／${node.id}：缺少 hintEn`)
   }
   return problems
 }

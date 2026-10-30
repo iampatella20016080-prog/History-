@@ -98,7 +98,7 @@ export const useGameStore = create((set, get) => ({
   nearbyInspectableId: null,
   /** 進行中的對話（game/talk.js 的 session；對話中角色仍可走動，走遠就結束） */
   talk: null,
-  /** 器物 3D 檢視 { objectId, source: 'street'（街上）或 'chapter'（店家介紹的器物章節）, nonce } */
+  /** 器物 3D 檢視 { objectId, source: 'street'（街上）、'chapter'（店家介紹的器物章節）或 'talk'（路人拿給你看）, nonce } */
   inspect: null,
   /** 探索手記（localStorage 持久化）與手記視窗 */
   journal: loadJournal(),
@@ -189,6 +189,14 @@ export const useGameStore = create((set, get) => ({
 
   endTalk: () => {
     if (get().talk) set({ talk: null })
+  },
+
+  /** 路人拿給玩家看的器物（talk.objectId）：結束對話、打開 3D 檢視 */
+  showTalkObject: () => {
+    const objectId = get().talk?.talk.objectId
+    if (!objectId) return false
+    set({ talk: null })
+    return get().openInspect(objectId, 'talk')
   },
 
   /** 器物 3D 檢視（source：street 街上的器物、chapter 店家介紹的器物章節）；看過就記進手記 */

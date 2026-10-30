@@ -4,7 +4,7 @@ import { useGameStore } from '../state/useGameStore.js'
 /**
  * 走近已開放的店家時，浮現在店面上方的店名提示（以 drei Html 投影到 3D 位置）。
  * 電腦按 E、觸控裝置點店面（或點這張提示）即可開啟介紹。
- * 未開放的店家不顯示提示；建築觀賞模式也不顯示。
+ * 未開放的店家不顯示提示；建築觀賞模式與器物檢視時也不顯示。
  */
 export function ShopPrompt({ shop, hotspot = null }) {
   const visible = useGameStore(
@@ -13,6 +13,8 @@ export function ShopPrompt({ shop, hotspot = null }) {
       state.mode === 'explore' &&
       state.viewMode === 'explore' &&
       !state.transitioning &&
+      // 器物 3D 檢視時鏡頭在街道上空的舞台，店名提示不浮在器物上
+      !state.inspect &&
       state.nearbyShopId === shop.id,
   )
   const touch = useGameStore((state) => state.inputMode === 'touch')

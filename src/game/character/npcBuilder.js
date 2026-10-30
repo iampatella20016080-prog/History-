@@ -135,6 +135,11 @@ export const NPC_LOOKS = {
   revivalCustomer: { era: 'revival', hair: 'short', top: { kind: 'tee', color: '#7d8389' }, bottom: '#3c3f45', shoes: ['#3c3f45', '#e9e5dc'] },
   revivalStaff: { era: 'revival', hair: 'short', top: { kind: 'tee', color: '#5d6f80' }, bottom: '#2a2b2f', shoes: ['#2a2b2f', '#5c5d60'], extras: { apron: '#2a2a2c', cap: '#2a2a2c', mask: '#f3f3f0' } },
   revivalStaffBack: { era: 'revival', hair: 'bun', top: { kind: 'tee', color: '#5d6f80' }, bottom: '#2a2b2f', shoes: ['#2a2b2f', '#5c5d60'], extras: { apron: '#2a2a2c' } },
+  // 2000–現在：主題路線的情境人物（第 12 階段，data/routeFigures.js；歷史情境重建，不對應任何真實人物）
+  revivalElder: { era: 'revival', hair: 'short', hairColor: '#b9b4ad', top: { kind: 'shirt', color: '#8c9aa4', trim: '#7a8892' }, bottom: '#4a4a4c', shoes: ['#3c3a38', '#2c2a28'] },
+  revivalElderWoman: { era: 'revival', hair: 'bun', hairColor: '#c4beb6', top: { kind: 'long', color: '#a8667a', trim: '#93576a' }, bottom: '#3a3b44', shoes: ['#3c3a38', '#2c2a28'], extras: { strap: '#6a4a3a' } },
+  revivalShopper: { era: 'revival', hair: 'bob', top: { kind: 'shirt', color: '#d9c7a0', trim: '#c4b28c' }, bottom: '#4b5568', shoes: ['#f1efe9', '#d8d4ca'], extras: { strap: '#8a6a4a' } },
+  revivalYoung: { era: 'revival', hair: 'short', top: { kind: 'shirt', color: '#f0ece2', trim: '#d8d2c4' }, bottom: '#2f3a52', shoes: ['#2c2c30', '#e9e5dc'] },
 }
 
 /* ───────────── 姿勢 ───────────── */

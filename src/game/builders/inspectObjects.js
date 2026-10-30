@@ -1,5 +1,6 @@
-import { BoxGeometry, BufferAttribute, Color, CylinderGeometry, Euler, Matrix4, Quaternion, SphereGeometry, Vector3 } from 'three'
-import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
+import { BoxGeometry, CylinderGeometry, SphereGeometry } from 'three'
+import { Parts } from './inspectParts.js'
+import { PASTRY_BUILDERS } from './routeObjects/pastryObjects.js'
 
 /**
  * 器物 3D 檢視的程式建模（第 10 階段）：對照照片與文獻建模，不用 AI 生成的模型。
@@ -11,49 +12,10 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
  * 原點在器物中心附近，radius 是檢視鏡頭取景的大小。
  */
 
-const _m = new Matrix4()
-const _q = new Quaternion()
-const _e = new Euler()
-const _p = new Vector3()
-const _s = new Vector3()
-const _c = new Color()
-
-/** 頂點色零件合併（做法同 character/npcBuilder.js 的 Parts） */
-class Parts {
-  constructor() {
-    this.list = []
-  }
-
-  add(color, geometry, { p = [0, 0, 0], r = [0, 0, 0], s = 1 } = {}) {
-    const scale = Array.isArray(s) ? s : [s, s, s]
-    _m.compose(_p.set(...p), _q.setFromEuler(_e.set(...r)), _s.set(...scale))
-    let g = geometry.index ? geometry.toNonIndexed() : geometry
-    if (g !== geometry) geometry.dispose()
-    for (const name of Object.keys(g.attributes)) if (name !== 'position' && name !== 'normal') g.deleteAttribute(name)
-    g.applyMatrix4(_m)
-    _c.set(color)
-    const count = g.attributes.position.count
-    const colors = new Float32Array(count * 3)
-    for (let i = 0; i < count; i++) {
-      colors[i * 3] = _c.r
-      colors[i * 3 + 1] = _c.g
-      colors[i * 3 + 2] = _c.b
-    }
-    g.setAttribute('color', new BufferAttribute(colors, 3))
-    this.list.push(g)
-    return this
-  }
-
-  build() {
-    if (!this.list.length) return null
-    const geometry = this.list.length === 1 ? this.list[0] : mergeGeometries(this.list, false)
-    this.list.forEach((g) => g !== geometry && g.dispose())
-    geometry.computeBoundingSphere()
-    return geometry
-  }
-}
-
 const box = (x, y, z) => new BoxGeometry(x, y, z)
+
+/* 第 12 階段主題路線的器物（每條路線一個檔案，接受 { detail }）：builders/routeObjects/*.js */
+const ROUTE_BUILDERS = { ...PASTRY_BUILDERS }
 
 /* ── 顏色 ── */
 const PINE = '#c8a66c'
@@ -289,10 +251,16 @@ const BUILDERS = {
 /** 同一件器物的幾何共用（快取到頁面關閉；幾何不大，不需要釋放） */
 const cache = new Map()
 
-export function buildInspectObject(objectId) {
-  if (!BUILDERS[objectId]) throw new Error(`未知的檢視器物：${objectId}`)
-  if (!cache.has(objectId)) cache.set(objectId, BUILDERS[objectId]())
-  return cache.get(objectId)
+/**
+ * 器物的幾何。detail：精緻畫質的高細節模型（較多的段數與小零件）；流暢畫質（false）簡化，
+ * 但零件與小動作相同，互動一樣。第 10 階段的器物本來就不大，兩種畫質共用同一份幾何。
+ */
+export function buildInspectObject(objectId, { detail = true } = {}) {
+  const builder = BUILDERS[objectId] ?? ROUTE_BUILDERS[objectId]
+  if (!builder) throw new Error(`未知的檢視器物：${objectId}`)
+  const key = ROUTE_BUILDERS[objectId] ? `${objectId}|${detail ? 'fine' : 'smooth'}` : objectId
+  if (!cache.has(key)) cache.set(key, builder({ detail }))
+  return cache.get(key)
 }
 
 /** 會動零件目前的旋轉角（依動作進度 0–1，緩入緩出）；滑動的零件（kind: 'slide'）用 inspectPartTransform */
@@ -305,7 +273,8 @@ export function inspectPartRotation(part, t) {
 /**
  * 會動零件目前的位移與旋轉（依動作進度 0–1，緩入緩出）：
  * - 預設繞樞軸旋轉（axis 軸，從 from 轉到 to）
- * - kind: 'slide' 的零件沿 axis 軸滑動（例如秤錘、抬起的焙籠），drift 是額外的位移方向
+ * - kind: 'slide' 的零件沿 axis 軸滑動（例如秤錘、抬起的焙籠）
+ * - drift 是額外的位移（兩種都可以用：滑動時偏向旁邊，或旋轉時同時抬起）
  */
 export function inspectPartTransform(part, t) {
   const result = { rotation: [0, 0, 0], offset: [0, 0, 0] }
@@ -313,11 +282,9 @@ export function inspectPartTransform(part, t) {
   const eased = t * t * (3 - 2 * t)
   const value = part.animate.from + (part.animate.to - part.animate.from) * eased
   const axisIndex = { x: 0, y: 1, z: 2 }[part.animate.axis] ?? 0
-  if (part.animate.kind === 'slide') {
-    result.offset[axisIndex] = value
-    for (const [i, d] of (part.animate.drift ?? []).entries()) result.offset[i] += d * eased
-  } else {
-    result.rotation[axisIndex] = value
-  }
+  if (part.animate.kind === 'slide') result.offset[axisIndex] = value
+  else result.rotation[axisIndex] = value
+  // 額外的位移（滑動的方向偏移，或旋轉時同時抬起，例如提起一串收涎餅）
+  for (const [i, d] of (part.animate.drift ?? []).entries()) result.offset[i] += d * eased
   return result
 }

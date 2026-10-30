@@ -1,5 +1,6 @@
 import { DODD_INSPECT_SPOTS } from './doddLayout.js'
 import { LHT_INSPECT_SPOTS } from './linHuaTaiQingLayout.js'
+import { PASTRY_OBJECTS } from './routes/pastryRoute.js'
 
 /**
  * 器物 3D 檢視的器物資料（第 10 階段）：標題、說明、小動作與出處。
@@ -7,6 +8,7 @@ import { LHT_INSPECT_SPOTS } from './linHuaTaiQingLayout.js'
  * 檢視的狀態在 game/objectInspect.js。
  *
  * reconstruction：形制查無、依文獻描述與一般樣式重建的器物，介面標「歷史情境重建」。
+ * 第 12 階段主題路線的器物寫在各路線的資料檔（data/routes/*.js 的 OBJECTS），合併進這張表。
  */
 
 export const INSPECT_OBJECTS = {
@@ -80,6 +82,7 @@ export const INSPECT_OBJECTS = {
     reconstruction: true,
     sourceIds: ['davidson-formosa-1903'],
   },
+  ...PASTRY_OBJECTS,
 }
 
 export function getInspectObject(id) {

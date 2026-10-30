@@ -8,6 +8,9 @@
  *   folklore  坊間傳說（民間故事、年代不確定的唸謠與歌謠）
  *   fiction   虛構對白（情境裡的閒聊與小事件）
  *
+ * 路人可以拿一件器物給玩家看（objectId，對應 data/inspectObjects.js）：對話說完或追問時，
+ * 對話框出現「近看」的按鈕，打開器物 3D 檢視（第 12 階段）。
+ *
  * 對話進行中的狀態（session）是不可變物件：每個操作回傳新的 session。
  */
 
@@ -61,6 +64,12 @@ export function talkFinished(session) {
   return session?.stage === 'done'
 }
 
+/** 對話框可以打開的器物（開場說完之後才出現，選擇追問或說完時都看得到） */
+export function talkObjectId(session) {
+  if (!session?.talk.objectId) return null
+  return session.stage === 'line' ? null : session.talk.objectId
+}
+
 /** 這段對話記進探索手記的條目 id */
 export function talkJournalId(talk) {
   return `talk:${talk.id}`
@@ -83,6 +92,7 @@ export function validateTalk(talk) {
   if (!talk.id) problems.push('缺少 id')
   if (!talk.role) problems.push(`${talk.id}：缺少身分 role`)
   if (!talk.doing) problems.push(`${talk.id}：缺少正在做的事 doing`)
+  if (!talk.roleEn || !talk.doingEn) problems.push(`${talk.id}：缺少 roleEn 或 doingEn`)
   if (!talk.lines || talk.lines.length < 2 || talk.lines.length > 4) problems.push(`${talk.id}：開場要 2–4 句`)
   talk.lines?.forEach((line, i) => checkLine(line, `${talk.id} 第 ${i + 1} 句`))
   const ids = new Set()

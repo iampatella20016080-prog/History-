@@ -16,11 +16,12 @@ export const INSPECT_LIMITS = {
   maxZoom: 2.4,
 }
 
-export function newInspectState() {
-  return { yaw: 0.6, pitch: -0.3, zoom: 1, spinning: true, actions: {} }
-}
-
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
+
+/** pitch：開始時的俯仰角（器物建模可以指定 viewPitch，例如扁平的粿印從上方看；省略時 -0.3） */
+export function newInspectState({ pitch = -0.3 } = {}) {
+  return { yaw: 0.6, pitch: clamp(pitch, INSPECT_LIMITS.minPitch, INSPECT_LIMITS.maxPitch), zoom: 1, spinning: true, actions: {} }
+}
 
 /** 拖曳旋轉（dx／dy 為螢幕位移換算的弧度）；碰過之後就不再自己慢慢轉 */
 export function rotateInspect(state, dx, dy) {

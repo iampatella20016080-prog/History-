@@ -61,6 +61,7 @@ import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
 import { buildQingWharf } from '../builders/qingWharf.js'
 import { sceneBox, sceneNpcs, scenesForEra } from '../../data/streetPropsLayout.js'
+import { routeFigureBox, routeFigureNpcs, routeFiguresOfEra } from '../../data/routeFigures.js'
 import { buildDoddTeaHouse } from '../builders/doddTeaHouse.js'
 import { buildDoddTeaHouseInterior } from '../builders/doddTeaHouseInterior.js'
 import { buildLinHuaTaiQing } from '../builders/linHuaTaiQing.js'
@@ -387,6 +388,9 @@ export function* eraWorldSteps(eraId) {
   // 街頭的情境人物（車夫、牽腳踏車的人、攤販）與道具：範圍是鏡頭遮擋方塊（data/streetPropsLayout.js）
   for (const scene of scenesForEra(era.id)) b.blockers.push(sceneBox(scene))
   npcs.push(...sceneNpcs(era.id))
+  // 主題路線的情境人物（第 12 階段；data/routeFigures.js）：範圍也是鏡頭遮擋方塊
+  for (const figure of routeFiguresOfEra(era.id)) b.blockers.push(routeFigureBox(figure))
+  npcs.push(...routeFigureNpcs(era.id))
   // 遠景裝飾（街屋後方的樹、遠方天際線、年代的節慶裝飾）另外合併，流暢模式下不顯示
   layout.trees.forEach((tree, i) =>
     // 河岸廣場的榕樹（collider）：落地的氣根只在樹幹的碰撞範圍裡（eraLayout 的半寬 0.55），精緻模式多一批短氣根

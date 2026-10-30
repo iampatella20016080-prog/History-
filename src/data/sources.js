@@ -2147,6 +2147,135 @@ SOURCES['nownews-tea-tally-2019'] = {
   context: '報導記茶行以茶籌暫代薪資憑證、定期結算；收藏者藏品中有茶行的鐵片籌與紙籌。',
 }
 
+/* ── 第 12 階段：主題路線「一塊糕餅的人生」（查證紀錄 docs/research/pastry-life-route.md） ── */
+SOURCES['th-dict-shoutao'] = {
+  id: 'th-dict-shoutao',
+  citation: '國史館臺灣文獻館，《臺灣民俗文物辭典》，「壽桃」。',
+  publisher: '國史館臺灣文獻館',
+  title: '臺灣民俗文物辭典：壽桃',
+  url: 'https://dict.th.gov.tw/detailPage.aspx?ID=2272',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '做壽從五十歲起每十年一次大壽；壽桃依禮俗由孫女贈賀、宴後分送親友；數量取九、十二、十六、十八、六十、八十、一〇八等吉祥數；家庭做法（發麵、包棗泥、捏桃形、蒸約十二分鐘、壓紋後噴紅色）；孫臏獻桃的傳說（「相傳」）。',
+}
+SOURCES['th-dict-mian-gui'] = {
+  id: 'th-dict-mian-gui',
+  citation: '國史館臺灣文獻館，《臺灣民俗文物辭典》，「麵龜」。',
+  publisher: '國史館臺灣文獻館',
+  title: '臺灣民俗文物辭典：麵龜',
+  url: 'https://dict.th.gov.tw/detailPage.aspx?ID=2280&Ca=32',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '麵龜（壽龜）：麵粉做成龜形、外皮染紅，用於神明誕辰、長輩慶壽與嬰兒週歲；清明時孩童到墓前討紅龜粿與麵龜的「印墓粿」習俗。',
+}
+SOURCES['ltn-2021-shizixuan'] = {
+  id: 'ltn-2021-shizixuan',
+  citation: '〈自由開麥拉：手工製作八十載〉，《自由時報》，2021年。',
+  publisher: '自由時報',
+  title: '自由開麥拉：手工製作八十載',
+  url: 'https://news.ltn.com.tw/news/life/breakingnews/3432501',
+  published: '2021年（2026年10月查閱）',
+  usage: '十字軒的糕點常上霞海城隍廟的供桌。',
+  context: '報導另記1930年創辦人與友人合夥開店、後改名十字軒；與本站十字軒章節依鏡週刊所寫的「1920年代」不一致，創立年份待核（見研究檔）。',
+}
+SOURCES['moe-shou-lan'] = {
+  id: 'moe-shou-lan',
+  citation: '教育部《臺灣台語常用詞辭典》，「收瀾」。',
+  publisher: '教育部',
+  title: '收瀾',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/2580/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '收涎的禮俗：嬰兒滿四個月時，外婆家送中間有孔的口酥餅，用紅絲線串起掛在嬰兒胸前，象徵收口水；例句的吉祥話。',
+}
+SOURCES['moe-gui-yin'] = {
+  id: 'moe-gui-yin',
+  citation: '教育部《臺灣台語常用詞辭典》，「粿印」。',
+  publisher: '教育部',
+  title: '粿印',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/10704/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '粿印是做粿的印模，常見一面桃、一面龜，有長壽之意。',
+}
+SOURCES['moe-da-bing'] = {
+  id: 'moe-da-bing',
+  citation: '教育部《臺灣台語常用詞辭典》，「大餅」。',
+  publisher: '教育部',
+  title: '大餅',
+  url: 'https://sutian.moe.edu.tw/zh-hant/su/506/',
+  published: '線上辭典（2026年10月查閱）',
+  usage: '大餅：喜餅、禮餅，訂婚時女方分送親友的餅。',
+}
+SOURCES['hakka-four-months'] = {
+  id: 'hakka-four-months',
+  citation: '劉淑貞，〈做四個月〉，教育部《臺灣客語辭典》禮俗專欄（約2021年）。',
+  publisher: '教育部',
+  title: '做四個月',
+  url: 'https://hakkadict.moe.edu.tw/static/resource/禮俗/110_029_做四個月.pdf',
+  published: '約2021年（2026年10月查閱）',
+  usage: '客家「做四個月」的收涎：餅數取雙數（十二、二十四、三十六片），請年長者用餅在嬰兒嘴邊抹一抹。',
+}
+SOURCES['tcmb-erlin-red-turtle'] = {
+  id: 'tcmb-erlin-red-turtle',
+  citation: '洪崇銘撰，〈二林地區紅龜粿習俗〉，蔗青文化工作室，國家文化記憶庫（訪談日期2021年1月21日）。',
+  publisher: '國家文化記憶庫',
+  title: '二林地區紅龜粿習俗',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_Object&id=635964',
+  published: '2021年（2026年10月查閱）',
+  usage: '紅龜粿的紅白之別沒有全臺通則：二林的喪禮只把紅龜粿當祭品，常與鼠麴粿一起；芳苑王功一帶的龜粿皮不染紅、只在頂端點紅點。',
+}
+SOURCES['chen-jingkuan-2022-xingang'] = {
+  id: 'chen-jingkuan-2022-xingang',
+  citation: '陳靜寬，〈日治時期臺南州地方特產的創生及其歷史意義：以新港飴為例〉，國史館臺灣文獻館網站所載期刊論文，2022年。',
+  publisher: '國史館臺灣文獻館',
+  title: '日治時期臺南州地方特產的創生及其歷史意義：以新港飴為例',
+  url: 'https://ws.th.gov.tw/002/TH/tjpdf20241015/var/www/html/new_site/05publish/03publishquery/02journal/tj/401073306.pdf',
+  published: '2022年（2026年10月查閱；刊名待核）',
+  usage: '轉引清代《續修臺灣府志》：納采有大餅、豚肩、糖品（二手轉引，原書待核）；日治時期日本人引進羊羹、饅頭、煎餅等菓子的做法，在臺灣多成為伴手禮。',
+}
+SOURCES['chen-yuzhen-2021-kamatiam'] = {
+  id: 'chen-yuzhen-2021-kamatiam',
+  citation: '陳玉箴，〈你想來點…漢餅還是麵包？百年前的烘焙業〉，「歷史學柑仔店」，2021年。',
+  publisher: '歷史學柑仔店',
+  title: '你想來點…漢餅還是麵包？',
+  url: 'https://kamatiam.org/%E4%BD%A0%E6%83%B3%E4%BE%86%E9%BB%9E%E6%BC%A2%E9%A4%85%E9%82%84%E6%98%AF%E9%BA%B5%E5%8C%85%E7%99%BE%E5%B9%B4%E5%89%8D%E7%9A%84%E7%83%98%E7%84%99%E6%A5%AD/',
+  published: '2021年（2026年10月查閱）',
+  usage: '男方納采備大餅、豬肉、糖品；日治時期大稻埕的寶香齋在1934年的商工名錄列為「和洋菓子店」。作者另有《臺灣史研究》28卷1期（2021）的論文〈漢餅、臺灣菓子、麵包〉。',
+}
+SOURCES['ltn-2011-wedding-cakes'] = {
+  id: 'ltn-2011-wedding-cakes',
+  citation: '楊久瑩，〈【百年老店】喜餅大對抗〉，《自由時報》，2011年10月2日。',
+  publisher: '自由時報',
+  title: '【百年老店】喜餅大對抗',
+  url: 'https://news.ltn.com.tw/news/life/paper/528293',
+  published: '2011年10月2日',
+  usage: '約1977年香港超群西餅進入臺灣，奶酥喜餅走紅；報導時西式喜餅與漢式大餅約八比二。',
+}
+SOURCES['nmth-kueh-mold-0563'] = {
+  id: 'nmth-kueh-mold-0563',
+  citation: '國立臺灣歷史博物館典藏，「朱漆三面龜桃連錢紋帶柄粿印」，登錄號2003.001.0563。',
+  publisher: '國立臺灣歷史博物館',
+  title: '朱漆三面龜桃連錢紋帶柄粿印',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2003.001.0563',
+  published: '典藏網（2026年10月查閱）',
+  usage: '龜粿印 3D 模型的形制依據：木質，長36.1×寬17.3×高3.3公分；一面龜紋（龜甲兩圈、中央六角框內刻「壽」），一面桃紋與銀圓紋，側面七枚連錢，握柄底部鑽有鐵圈，表面塗朱漆、有蟲蛀；年代未標明確切時間。',
+}
+SOURCES['kmh-kueh-mold'] = {
+  id: 'kmh-kueh-mold',
+  citation: '高雄市立歷史博物館典藏，「龜形陰刻粿印」，KH1998.021.0060。',
+  publisher: '高雄市立歷史博物館',
+  title: '龜形陰刻粿印',
+  url: 'https://collections.culture.tw/kmh_collectionsweb/collection.aspx?GID=M1MHMW',
+  published: '典藏網（2026年10月查閱）',
+  usage: '對照：樟木粿印，29×14×3公分，戰後；正面壽字與龜、反面壽字與雙連龜，握把有小孔。',
+}
+SOURCES['foodnext-2023-japan-wedding'] = {
+  id: 'foodnext-2023-japan-wedding',
+  citation: '青木直己，〈日本婚禮不送喜餅送什麼？〉，《食力 foodNEXT》，2023年。',
+  publisher: '食力 foodNEXT',
+  title: '日本婚禮不送喜餅送什麼？',
+  url: 'https://www.foodnext.net/life/culture/paper/5616822767',
+  published: '2023年（2026年10月查閱）',
+  usage: '日本的婚禮與慶事常用紅白饅頭等慶事菓子（日本的習俗；臺灣是否有同樣的用法，本站查無）。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }
