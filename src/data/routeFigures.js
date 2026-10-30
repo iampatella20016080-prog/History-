@@ -10,12 +10,13 @@
  *   rotationY  NPC 面向 +Z 的慣例（0 面向南方的街心，Math.PI 面向北方）
  */
 import { PASTRY_FIGURES } from './routes/pastryRoute.js'
+import { TEMPLE_MEAL_FIGURES } from './routes/templeMealRoute.js'
 
 /** 人物的碰撞半寬（和 streetPropsLayout 的 FIGURE_HALF 相同） */
 export const ROUTE_FIGURE_HALF = 0.3
 const FIGURE_HEIGHT = 1.75
 
-export const ROUTE_FIGURES = [...PASTRY_FIGURES]
+export const ROUTE_FIGURES = [...PASTRY_FIGURES, ...TEMPLE_MEAL_FIGURES]
 
 export function routeFigureNpcId(figure) {
   return `route-${figure.id}`

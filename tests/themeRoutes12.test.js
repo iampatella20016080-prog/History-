@@ -1,7 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { ROUTES, getRoute, routeNodePoint } from '../src/data/routes.js'
-import { TALK_BY_ERA, talkForNpc } from '../src/data/talk.js'
+import { TALK_BY_ERA, TALK_RADIUS, talkForNpc } from '../src/data/talk.js'
+import { pickInteraction } from '../src/game/interactionPick.js'
 import { ROUTE_FIGURES, routeFigureBox, routeFigureNpcId, routeFiguresOfEra } from '../src/data/routeFigures.js'
 import { INSPECT_OBJECTS, getInspectObject } from '../src/data/inspectObjects.js'
 import { getSource } from '../src/data/sources.js'
@@ -179,23 +180,115 @@ test('第 12 階段：路線人物站在可以走的地方，不和建築、道�
   }
 })
 
-test('第 12 階段：路線人物不影響走路——從人物身邊走過，多種步長來回多次都不會卡住', () => {
+/** 人物附近 8 × 8 公尺的格點（0.2 公尺）：角色站得下的格子（在可行走範圍內、不碰到障礙物） */
+function freeCells(world, center, skip = null) {
+  const r = 0.32
+  const ground = world.collision.walkable.filter((rect) => (rect.level ?? 0) === 0)
+  const obstacles = world.collision.obstacles.filter((rect) => (rect.level ?? 0) === 0 && rect !== skip)
+  const cells = new Map()
+  for (let i = -20; i <= 20; i++) {
+    for (let k = -20; k <= 20; k++) {
+      const x = center[0] + i * 0.2
+      const z = center[1] + k * 0.2
+      const inGround = ground.some((rect) => x > rect.minX + r && x < rect.maxX - r && z > rect.minZ + r && z < rect.maxZ - r)
+      const blocked = obstacles.some((rect) => x > rect.minX - r && x < rect.maxX + r && z > rect.minZ - r && z < rect.maxZ + r)
+      if (inGround && !blocked) cells.set(`${i},${k}`, [x, z])
+    }
+  }
+  return cells
+}
+
+/** 格點的連通塊數（只算夠大的塊，忽略邊角的零星格子） */
+function components(cells) {
+  const seen = new Set()
+  let count = 0
+  for (const key of cells.keys()) {
+    if (seen.has(key)) continue
+    const queue = [key]
+    seen.add(key)
+    let size = 0
+    while (queue.length) {
+      const [i, k] = queue.pop().split(',').map(Number)
+      size++
+      for (const [di, dk] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const next = `${i + di},${k + dk}`
+        if (cells.has(next) && !seen.has(next)) {
+          seen.add(next)
+          queue.push(next)
+        }
+      }
+    }
+    if (size >= 12) count++
+  }
+  return count
+}
+
+test('第 12 階段：路線人物不把可以走的地方切成兩塊；從空的方向走近再走開，多種步長都不會卡住', () => {
   for (const figure of ROUTE_FIGURES) {
     const world = worldOf(figure.eraId)
+    const box = routeFigureBox(figure)
+    const own = world.collision.obstacles.find((rect) => Math.abs(rect.minX - box.minX) < 1e-9 && Math.abs(rect.minZ - box.minZ) < 1e-9 && Math.abs(rect.maxX - box.maxX) < 1e-9)
+    assert.ok(own, `${figure.id}：碰撞資料裡沒有人物的範圍`)
+    const withFigure = freeCells(world, figure.position)
+    const without = freeCells(world, figure.position, own)
+    assert.equal(components(withFigure), components(without), `${figure.id}：人物把附近可以走的地方隔開了`)
+    // 從人物四周空著的方向走近（停在人物外面），再走回原處
     const [fx, fz] = figure.position
-    // 從人物旁邊（街心那一側 1 公尺）沿街走過去再走回來
-    const side = fz > 0 ? -1 : 1
+    const starts = [0, 1, 2, 3, 4, 5, 6, 7]
+      .map((i) => [fx + Math.cos((i * Math.PI) / 4) * 1.6, fz + Math.sin((i * Math.PI) / 4) * 1.6])
+      .filter(([x, z]) => [...withFigure.values()].some(([cx, cz]) => Math.hypot(cx - x, cz - z) < 0.15))
+    assert.ok(starts.length >= 2, `${figure.id}：四周至少要有兩個方向走得到`)
     for (const step of [0.05, 0.13, 0.31]) {
-      const p = { x: fx - 3, y: 0, z: fz + side * 1.0 }
-      for (let round = 0; round < 3; round++) {
-        for (const dir of [1, -1]) {
-          const target = fx + dir * 3
-          for (let i = 0; i < 200 && Math.abs(p.x - target) > step; i++) {
-            p.x += Math.sign(target - p.x) * step
+      for (const [sx, sz] of starts) {
+        for (let round = 0; round < 3; round++) {
+          const p = { x: sx, y: 0, z: sz }
+          for (let i = 0; i < 80; i++) {
+            const d = Math.hypot(fx - p.x, fz - p.z)
+            if (d < step) break
+            p.x += ((fx - p.x) / d) * step
+            p.z += ((fz - p.z) / d) * step
             resolvePlayerPosition(p, 0.32, world.collision)
           }
-          assert.ok(Math.abs(p.x - target) <= step + 1e-6, `${figure.id}：步長 ${step} 走不過去`)
+          const inside = p.x > box.minX && p.x < box.maxX && p.z > box.minZ && p.z < box.maxZ
+          assert.ok(!inside, `${figure.id}：步長 ${step} 走進了人物裡`)
+          for (let i = 0; i < 80; i++) {
+            const d = Math.hypot(sx - p.x, sz - p.z)
+            if (d < step) break
+            p.x += ((sx - p.x) / d) * step
+            p.z += ((sz - p.z) / d) * step
+            resolvePlayerPosition(p, 0.32, world.collision)
+          }
+          assert.ok(Math.hypot(sx - p.x, sz - p.z) < 0.5, `${figure.id}：步長 ${step} 從 (${sx.toFixed(1)}, ${sz.toFixed(1)}) 走近後走不回去`)
         }
+      }
+    }
+  }
+})
+
+test('第 12 階段：每位節點路人都叫得到——有站得到的位置，路人在交談半徑內而且比任何店家的互動點近', () => {
+  for (const route of PHASE12) {
+    for (const node of route.nodes) {
+      const eraId = nodeEra(route, node)
+      const world = worldOf(eraId)
+      const points = getEra(eraId).availableStores.flatMap((shopId) => {
+        const shop = getShop(shopId, eraId)
+        if (!shop?.position || shop.status !== 'open') return []
+        const placement = getShopPlacement(shop)
+        return placement.hotspots.length
+          ? placement.hotspots.filter((hotspot) => !hotspot.clickOnly).map((hotspot) => ({ id: shopId, point: hotspot.interactionPoint, radius: hotspot.radius ?? 2 }))
+          : [{ id: shopId, point: placement.interactionPoint, radius: shop.interaction?.radius ?? 3.2 }]
+      })
+      for (const npcId of node.npcIds ?? []) {
+        const npc = world.npcs.find((item) => item.id === npcId)
+        assert.ok(npc, `${route.id}／${node.id}：${npcId} 不在 ${eraId} 的街景裡`)
+        const reachable = [...freeCells(world, [npc.position[0], npc.position[2]]).values()].some(([x, z]) => {
+          const talk = Math.hypot(x - npc.position[0], z - npc.position[2])
+          if (talk >= TALK_RADIUS) return false
+          const shops = points.map((item) => ({ id: item.id, distance: Math.hypot(x - item.point.x, z - item.point.z), radius: item.radius })).filter((item) => item.distance < item.radius)
+          const shop = shops.sort((a, b) => a.distance - b.distance)[0] ?? null
+          return pickInteraction({ talk: { id: npcId, distance: talk }, shop }).talk !== null
+        })
+        assert.ok(reachable, `${route.id}／${node.id}：走不到可以跟 ${npcId} 說話的位置`)
       }
     }
   }
