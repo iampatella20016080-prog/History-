@@ -1,0 +1,55 @@
+{
+  "stats": {
+    "qing-port/low": {
+      "calls": 222,
+      "meshes": 112,
+      "lightPools": false
+    },
+    "banquet/low": {
+      "calls": 249,
+      "meshes": 112,
+      "lightPools": false
+    },
+    "modern/low": {
+      "calls": 231,
+      "meshes": 105,
+      "lightPools": false
+    },
+    "postwar/low": {
+      "calls": 255,
+      "meshes": 120,
+      "lightPools": false
+    },
+    "revival/low": {
+      "calls": 356,
+      "meshes": 169,
+      "lightPools": false
+    },
+    "qing-port/high": {
+      "calls": 248,
+      "meshes": 141,
+      "lightPools": false
+    },
+    "banquet/high": {
+      "calls": 273,
+      "meshes": 135,
+      "lightPools": true
+    },
+    "modern/high": {
+      "calls": 252,
+      "meshes": 120,
+      "lightPools": true
+    },
+    "postwar/high": {
+      "calls": 281,
+      "meshes": 137,
+      "lightPools": false
+    },
+    "revival/high": {
+      "calls": 409,
+      "meshes": 196,
+      "lightPools": true
+    }
+  },
+  "errors": []
+}
