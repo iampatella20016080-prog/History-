@@ -1255,3 +1255,6 @@ node tests/e2e/era-switching.e2e.mjs http://127.0.0.1:4173/
 - `localize(data, lang)`（`src/i18n/lang.js`）：英文模式把資料物件裡每個 `key` 換成同層的 `keyEn`（字串對字串、陣列對陣列），依物件快取；元件用 `useLocalizer()` 取得 `L`，例如 `L(getEra(id)).title`。之後的店家、章節資料只要加 `*En` 欄位並在邊界呼叫 `L`，不必逐欄接線。
 - 已補英文：`eras.js`（名稱、說明、時刻、招牌字詞）、`overview.js` 自有的年表與地圖、`licenses.js`、各店家地點配置的熱點標籤與說明、背景音樂曲名、環境音標籤。年代名稱：Harbour Merchant Street／Banquet Hall Boom／Modern Dadaocheng／Everyday Life／Old Houses, New Life。
 - 覆蓋率測試 `tests/englishCoverage.test.js` 的 `COMPLETE` 列出已補完的資料檔。
+### 第 3 批：各店家資料檔、黃玉階展板、器物與環境音來源
+- 已補英文：慈聖宮、西園、迪化年貨、江尾水、李春生、李亭香、王景泉、運營者（operators）、稻舍、十字軒、黃玉階文史館展板、器物檢視說明、環境音來源與授權（`ambienceCredits.js`）。這些資料檔都在 `tests/englishCoverage.test.js` 的 `COMPLETE`。
+- 店名、類別、章節等店家資料在介面邊界以 `L(shop)` 換成英文（目錄、店家提示、目標提示、故事視窗、總覽）；`shops.js` 的章節與店家欄位在下一批補完前，英文模式會暫時顯示中文。
