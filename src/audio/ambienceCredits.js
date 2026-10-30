@@ -1,0 +1,153 @@
+/**
+ * 環境音的來源與授權記錄（資料檔；人看的版本是 public/audio/ambience/CREDITS.md，測試檢查兩者一致）
+ *
+ * - 只用 CC0 或公有領域的錄音（CC-BY 等需要署名的授權先不用）。
+ * - AMBIENCE_SOURCES：每一個下載的原始錄音（網址、作者、授權、原始檔名、錄音地點與時間）。
+ * - AMBIENCE_CREDITS：每一個輸出的音檔用了哪些錄音、剪哪一段、做了哪些處理；
+ *   `context` 不是空的就是「情境示意」：錄音不是當年、當地的聲音，只取它的聲響質感。
+ * - 剪輯程式：tools/music/build_ambience_real.py（只剪輯、濾波、調整音量與交叉淡化，沒有加入合成的聲音）。
+ */
+
+const CC0 = { license: 'CC0-1.0', licenseName: 'CC0 1.0（公眾領域貢獻宣告）', licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/' }
+const FREESOUND_PREVIEW = 'Freesound 免登入的高品質預覽 MP3（128 kbps）；原始檔需要登入才能下載'
+
+export const AMBIENCE_LICENSES = ['CC0-1.0', 'PD']
+
+export const AMBIENCE_SOURCES = {
+  fs318064: {
+    title: 'Water_Lapping_River.wav',
+    author: 'ceich93',
+    url: 'https://freesound.org/people/ceich93/sounds/318064/',
+    ...CC0,
+    originalFile: 'Water_Lapping_River.wav',
+    recorded: '美國哈德遜河卵石岸邊，夜間（上傳於 2015-07-30）',
+    downloaded: FREESOUND_PREVIEW,
+  },
+  fs585316: {
+    title: '2021-08-30-rowing-boat-009.wav',
+    author: 'ilmari_freesound',
+    url: 'https://freesound.org/people/ilmari_freesound/sounds/585316/',
+    ...CC0,
+    originalFile: '2021-08-30-rowing-boat-009.wav',
+    recorded: '芬蘭塞馬湖（Lake Saimaa）上的舊木划艇，2021-08-30',
+    downloaded: FREESOUND_PREVIEW,
+  },
+  fs792545: {
+    title: 'Chinese Hong Kong folk drums and gongs beating 02',
+    author: 'Jor92',
+    url: 'https://freesound.org/people/Jor92/sounds/792545/',
+    ...CC0,
+    originalFile: 'Chinese Hong Kong folk drums and gongs beating 02',
+    recorded: '香港路邊店家前的醒獅鑼鼓（上傳於 2025-03-15）',
+    downloaded: FREESOUND_PREVIEW,
+  },
+  fs688055: {
+    title: 'Traditional Bicycle Bell.wav',
+    author: 'trpete',
+    url: 'https://freesound.org/people/trpete/sounds/688055/',
+    ...CC0,
+    originalFile: 'Traditional Bicycle Bell.wav',
+    recorded: '英國傳統機械式腳踏車鈴的單響與連響（上傳於 2023-05-20）',
+    downloaded: FREESOUND_PREVIEW,
+  },
+  fs826604: {
+    title: 'bicycle_rideby_stereo_01',
+    author: 'submergent',
+    url: 'https://freesound.org/people/submergent/sounds/826604/',
+    ...CC0,
+    originalFile: 'bicycle_rideby_stereo_01',
+    recorded: '舊十段變速腳踏車在粗糙路面滑行經過（上傳於 2025-09-15）',
+    downloaded: FREESOUND_PREVIEW,
+  },
+  fs364806: {
+    title: 'Japan_Matsudo_Bicycle_Bell_2.wav',
+    author: 'RutgerMuller',
+    url: 'https://freesound.org/people/RutgerMuller/sounds/364806/',
+    ...CC0,
+    originalFile: 'Japan_Matsudo_Bicycle_Bell_2.wav',
+    recorded: '日本千葉縣松戶車站附近的腳踏車鈴，2016 年 10 月下旬',
+    downloaded: FREESOUND_PREVIEW,
+  },
+  wc_mazurka1923: {
+    title: 'Mazurka in C sharp minor, op. 63, no. 3 (1923 recording)',
+    author: '作曲：蕭邦（1810–1849）；演奏：拉赫曼尼諾夫（1873–1943）；Victor 唱片 1008（B-24644，第 8 次錄音），1923-12-27',
+    url: 'https://commons.wikimedia.org/wiki/File:Mazurka_in_C_sharp_minor,_op._63,_no._3_(1923_recording).mp3',
+    license: 'PD',
+    licenseName: '公有領域（錄音：1923 年在美國出版，已進入美國公有領域，臺灣著作權法的錄音保護期（公開發表後 50 年）也已屆滿；演奏者逝世逾 80 年。作曲：作者逝世逾 170 年）',
+    licenseUrl: 'https://commons.wikimedia.org/wiki/Template:PD-US-record-expired',
+    originalFile: 'Mazurka_in_C_sharp_minor,_op._63,_no._3_(1923_recording).mp3',
+    recorded: '78 轉蟲膠唱片，美國國會圖書館 National Jukebox 轉錄（https://www.loc.gov/item/jukebox-38676/）',
+    downloaded: 'Wikimedia Commons 原始檔',
+  },
+  fs350323: {
+    title: '071416 Victor Victrola playing a record end loop.wav',
+    author: 'thaighaudio',
+    url: 'https://freesound.org/people/thaighaudio/sounds/350323/',
+    ...CC0,
+    originalFile: '071416 Victor Victrola playing a record end loop.wav',
+    recorded: '1916 年 Victor Victrola VV-XI 留聲機播完 78 轉唱片後唱針在終端溝槽的雜音（錄於 2016-07-14）',
+    downloaded: FREESOUND_PREVIEW,
+  },
+  wc_bach1915: {
+    title: 'Concerto for two violins Part 1 (1915 recording)',
+    author: '作曲：巴哈（1685–1750）；演奏：克萊斯勒、津巴利斯特（小提琴），Walter B. Rogers 指揮；Victor 唱片 76028（C-15560，第 4 次錄音），1915-01-04',
+    url: 'https://commons.wikimedia.org/wiki/File:Concerto_for_two_violins_Part_1_(1915_recording).mp3',
+    license: 'PD',
+    licenseName: '公有領域（錄音：1915 年在美國出版，已進入美國公有領域，臺灣著作權法的錄音保護期（公開發表後 50 年）也已屆滿。作曲：作者逝世逾 270 年）',
+    licenseUrl: 'https://commons.wikimedia.org/wiki/Template:PD-old-auto-record-expired',
+    originalFile: 'Concerto_for_two_violins_Part_1_(1915_recording).mp3',
+    recorded: '78 轉蟲膠唱片，美國國會圖書館 National Jukebox 轉錄（https://www.loc.gov/item/jukebox-11983/）',
+    downloaded: 'Wikimedia Commons 原始檔',
+  },
+  fs686530: {
+    title: 'German Radio Saba_AM.wav',
+    author: 'Anellide',
+    url: 'https://freesound.org/people/Anellide/sounds/686530/',
+    ...CC0,
+    originalFile: 'German Radio Saba_AM.wav',
+    recorded: '德國 SABA 2000 Transeuropa 真空管收音機在 AM 波段選台的雜訊，錄於比利時布魯塞爾（上傳於 2023-05-09）',
+    downloaded: FREESOUND_PREVIEW,
+  },
+}
+
+/** 每個輸出音檔（public/audio/ambience/<id>.mp3）的來源與剪輯 */
+export const AMBIENCE_CREDITS = {
+  'river-lap': {
+    sources: ['fs318064'],
+    edits: '剪 10–24 秒（沒有人聲、車聲的段落）；去掉 120 Hz 以下的風噪；尾端 2 秒交叉淡化接回開頭成 12 秒循環。',
+    context: '情境示意：美國哈德遜河的卵石岸，不是淡水河；只取河水拍岸的聲響。',
+  },
+  oars: {
+    sources: ['fs585316'],
+    edits: '剪 8–22 秒的划槳、槳架摩擦與水花（避開 23 秒處最大聲的一下）；去掉 60 Hz 以下；交叉淡化成 12 秒循環。',
+    context: '情境示意：芬蘭湖上的木划艇，不是淡水河上的舢舨。',
+  },
+  'gong-distant': {
+    sources: ['fs792545'],
+    edits: '剪 15–33 秒的連續段落；帶通 120 Hz–1.8 kHz，做成遠處傳來的鑼鼓；交叉淡化成 16 秒循環。',
+    context: '情境示意：香港醒獅的鑼鼓，不是日治時期大稻埕的演出；實際的樂器與曲目待核。',
+  },
+  'bicycle-bell': {
+    sources: ['fs826604', 'fs688055'],
+    edits: '腳踏車滑行經過（4.2 秒）放在第 1 秒；車鈴單響（1.6–4.6 秒）放在第 2.6 秒、連響（19.2–22.6 秒）放在第 9 秒；14 秒循環，接點落在無聲處。',
+    context: '情境示意：英國傳統車鈴與現代腳踏車，不是 1930 年代臺灣的錄音。',
+  },
+  gramophone: {
+    sources: ['wc_mazurka1923', 'fs350323'],
+    edits: '唱片剪 2.5–24.5 秒，前後淡入 1 秒、淡出 2.5 秒，放在第 2 秒；Victrola 唱針雜音（1.5–13.5 秒）反覆交叉淡化接成連續底噪，比音樂小 14 dB；兩者帶通 250 Hz–4.5 kHz 模擬喇叭留聲機；26 秒循環，接點只有唱針雜音。',
+    context: '情境示意：1934 年開業的波麗路西餐廳以 78 轉電唱機播古典樂（見 docs/research/bolero.md），這裡用年代相近、已是公有領域的 1923 年唱片；不是當年大稻埕實際播放的那一張。',
+  },
+  trishaw: {
+    sources: ['fs826604', 'fs364806'],
+    edits: '腳踏車滑行經過放慢到 0.8 倍（較重、較慢）、音量提高，放在第 0.8 秒；松戶的車鈴兩段（降低音量）（1.5–3.8、6.7–8.7 秒）放在第 2.4、8.2 秒；12 秒循環，接點落在無聲處。',
+    context: '情境示意：用腳踏車與日本車鈴組成三輪車經過的聲音，沒有找到授權清楚的三輪車錄音。',
+  },
+  radio: {
+    sources: ['wc_bach1915', 'fs686530'],
+    edits: '唱片剪 40–56 秒，帶通 300 Hz–3.4 kHz 模擬調幅收音機，前後淡入 1.5 秒、淡出 2 秒，放在第 2 秒；SABA 收音機 AM 底噪（1–23 秒，沒有電台內容）帶通 200 Hz–4 kHz、比音樂小 12 dB，交叉淡化成 20 秒循環；接點只有底噪。',
+    context: '情境示意：收音機播放的內容用公有領域的 1915 年古典樂唱片代替，不是當年臺灣電台的節目；收音機雜訊錄自德國 SABA 真空管收音機（機種年代未查證）。',
+  },
+}
+
+/** 載入失敗時的備援：第 9 階段程式合成的示意音（tools/music/generate_ambience.py，沒有第三方素材） */
+export const AMBIENCE_FALLBACK_SOURCE = '由 tools/music/generate_ambience.py 以 numpy 濾波雜訊與加法合成，沒有第三方素材'

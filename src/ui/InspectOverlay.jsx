@@ -5,12 +5,14 @@ import { inspectRuntime } from '../game/inspectRuntime.js'
 import { rotateInspect, toggleInspectAction, zoomInspect } from '../game/objectInspect.js'
 import { useGameStore } from '../state/useGameStore.js'
 import { usePresence } from './usePresence.js'
+import { useT } from '../i18n/useT.js'
 
 /**
  * 器物 3D 檢視的介面層：器物本身畫在主畫面的畫布（components/ObjectStage.jsx），
  * 這一層只有手勢區（拖曳旋轉、滾輪或雙指縮放）與下方的說明卡片（標題、小動作、說明與出處）。
  */
 export function InspectOverlay() {
+  const t = useT()
   const inspect = useGameStore((state) => state.inspect)
   const closeInspect = useGameStore((state) => state.closeInspect)
   const { mounted, state } = usePresence(!!inspect, 300)
@@ -70,22 +72,22 @@ export function InspectOverlay() {
       <div
         className="inspect-stage"
         role="img"
-        aria-label={`${object.title}的 3D 模型，可以拖曳旋轉、縮放`}
+        aria-label={t('inspect.label', { title: object.title })}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
         onWheel={onWheel}
       >
-        <span className="inspect-stage__hint">拖曳旋轉・滾輪或雙指縮放</span>
+        <span className="inspect-stage__hint">{t('inspect.hint')}</span>
       </div>
       <button type="button" className="inspect-close paper" onClick={closeInspect}>
-        <span aria-hidden="true">✕</span> 關閉 <kbd>Esc</kbd>
+        <span aria-hidden="true">✕</span> {t('common.close')} <kbd>Esc</kbd>
       </button>
       <section className="inspect-card paper" aria-label={object.title}>
         <header className="inspect-card__header">
           <h3 className="inspect-card__title">{object.title}</h3>
-          {object.reconstruction && <span className="story__badge">歷史情境重建</span>}
+          {object.reconstruction && <span className="story__badge">{t('common.reconstruction')}</span>}
         </header>
         <p className="inspect-card__lead">{object.lead}</p>
         {object.actions?.length > 0 && (
@@ -98,11 +100,11 @@ export function InspectOverlay() {
           </div>
         )}
         <details className="inspect-card__more">
-          <summary>說明與出處</summary>
+          <summary>{t('inspect.more')}</summary>
           {object.paragraphs?.map((paragraph, i) => (
             <p key={i}>{paragraph}</p>
           ))}
-          {sources.length > 0 && <p className="inspect-card__sources">出處：{sources.map((source) => source.title).join('；')}</p>}
+          {sources.length > 0 && <p className="inspect-card__sources">{t('common.sourcesLine', { list: sources.map((source) => source.title).join('；') })}</p>}
         </details>
       </section>
     </div>

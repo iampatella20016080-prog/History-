@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-環境音合成工具：產生 public/audio/ambience/*.mp3（每個年代的場景環境聲，與背景音樂分開）
+環境音合成工具：產生 public/audio/ambience/synth/*.mp3（每個年代的場景環境聲，與背景音樂分開）
+
+第 9 階段之後網站改用真實錄音（tools/music/build_ambience_real.py）；這裡的合成音只在真實錄音載入或解碼失敗時當備援。
 
 全部是程式合成（numpy 濾波雜訊＋加法合成），不是真實錄音、也沒有使用任何第三方音檔，
 所以沒有授權問題；聽感是「示意」，不宣稱還原當年的實際聲音。
@@ -357,6 +359,10 @@ SOUNDS = {
 }
 
 
+# 使用者決定移除的聲音（碼頭吆喝、街上人聲、廟埕叫賣、機車）：網站不再使用，不輸出
+REMOVED = {'wharf-calls', 'street-murmur', 'vendor-calls', 'scooter'}
+
+
 def encode(name, sig, out_dir):
     pad = n_of(PAD)
     full = np.concatenate([sig[-pad:], sig, sig[:pad]])
@@ -374,10 +380,12 @@ def encode(name, sig, out_dir):
 
 
 def main():
-    out_dir = Path(sys.argv[1] if len(sys.argv) > 1 else 'public/audio/ambience')
+    out_dir = Path(sys.argv[1] if len(sys.argv) > 1 else 'public/audio/ambience/synth')
     out_dir.mkdir(parents=True, exist_ok=True)
     for name, fn in SOUNDS.items():
-        sig = fn()
+        sig = fn()  # 移除的聲音也照樣產生（亂數序列不變，其餘音檔的結果和以前相同），只是不輸出
+        if name in REMOVED:
+            continue
         mp3 = encode(name, sig, out_dir)
         print(f'{name}: {len(sig) / SR:.1f}s 循環 → {mp3} ({mp3.stat().st_size / 1024:.0f} KB)')
 

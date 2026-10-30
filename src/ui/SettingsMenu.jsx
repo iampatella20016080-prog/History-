@@ -5,14 +5,15 @@ import { useGameStore } from '../state/useGameStore.js'
 import { AmbienceSettings } from './AmbienceSettings.jsx'
 import { MusicSettings } from './MusicSettings.jsx'
 import { LANGS } from '../i18n/lang.js'
-import { useT } from '../i18n/useT.js'
+import { useLocalizer, useT } from '../i18n/useT.js'
 
 const MODE_ORDER = ['smooth', 'fine']
 
-function specs(q) {
+function specs(q, t) {
+  const dpr = t('settings.spec.dpr', { dpr: q.dpr.toFixed(2) })
   return q.id === 'smooth'
-    ? [`解析度最高 ×${q.dpr.toFixed(2)}`, `陰影貼圖 ${q.shadowMapSize}`, '關閉景深、光暈與環境遮蔽', '精簡遠景裝飾與蒸氣']
-    : [`解析度最高 ×${q.dpr.toFixed(2)}`, `陰影貼圖 ${q.shadowMapSize}（柔和陰影）`, '環境遮蔽、輕微光暈與景深', '完整的遠景與街景裝飾']
+    ? [dpr, t('settings.spec.shadow', { size: q.shadowMapSize }), t('settings.spec.smooth1'), t('settings.spec.smooth2')]
+    : [dpr, t('settings.spec.shadowSoft', { size: q.shadowMapSize }), t('settings.spec.fine1'), t('settings.spec.fine2')]
 }
 
 function GearIcon() {
@@ -38,8 +39,9 @@ function EraSection({ touch }) {
   const mode = useGameStore((state) => state.mode)
   const requestEra = useGameStore((state) => state.requestEra)
   const t = useT()
+  const L = useLocalizer()
   const shownId = transition?.to ?? eraId
-  const era = getEra(shownId)
+  const era = L(getEra(shownId))
   const locked = transitioning || !worldReady || mode !== 'explore'
 
   return (
@@ -49,7 +51,7 @@ function EraSection({ touch }) {
         <span className="hud-menu__count">{transitioning ? t('settings.eraSwitching') : touch ? t('settings.eraTouch') : t('settings.eraKeys')}</span>
       </p>
       <ol className="era-options">
-        {ERAS.map((item, index) => {
+        {L(ERAS).map((item, index) => {
           const active = item.id === shownId
           return (
             <li key={item.id}>
@@ -84,6 +86,7 @@ function ViewModeSection() {
   const setViewMode = useGameStore((state) => state.setViewMode)
   const setUiHidden = useGameStore((state) => state.setUiHidden)
   const t = useT()
+  const L = useLocalizer()
   const togglePanel = useGameStore((state) => state.toggleQualityPanel)
   const options = [
     { id: 'explore', label: t('settings.view.explore'), hint: t('settings.view.exploreHint') },
@@ -142,6 +145,7 @@ export function SettingsMenu() {
   const setQualityMode = useGameStore((state) => state.setQualityMode)
   const container = useRef(null)
   const t = useT()
+  const L = useLocalizer()
   const lang = useGameStore((state) => state.lang)
   const setLang = useGameStore((state) => state.setLang)
   const setLicensesOpen = useGameStore((state) => state.setLicensesOpen)
@@ -176,13 +180,13 @@ export function SettingsMenu() {
         <GearIcon />
       </button>
       {open && (
-        <div id="quality-panel" className="hud-quality__panel paper" role="dialog" aria-label="設定" data-scrollable>
+        <div id="quality-panel" className="hud-quality__panel paper" role="dialog" aria-label={t('settings.dialog')} data-scrollable>
           <EraSection touch={touch} />
           <ViewModeSection />
           <p className="hud-menu__heading">
             <span>{t('settings.quality')}</span>
           </p>
-          <div className="quality-options" role="radiogroup" aria-label="畫質模式">
+          <div className="quality-options" role="radiogroup" aria-label={t('settings.qualityMode')}>
             {MODE_ORDER.map((id) => {
               const q = getQualitySettings(id)
               const active = mode === id
@@ -201,7 +205,7 @@ export function SettingsMenu() {
                     <small>{q.hint}</small>
                   </span>
                   <span className="quality-option__specs">
-                    {specs(q).map((line) => (
+                    {specs(q, t).map((line) => (
                       <span key={line}>{line}</span>
                     ))}
                   </span>

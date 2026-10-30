@@ -7,7 +7,7 @@ import { QUALITY_MODES, initialQualityMode, saveQualityMode } from '../game/qual
 import { addJournalEntry, loadJournal, saveJournal } from '../game/journal.js'
 import { objectJournalId } from '../game/objectInspect.js'
 import { advanceTalk, chooseFollowUp, startTalkSession, talkJournalId } from '../game/talk.js'
-import { isLang, loadLang, saveLang } from '../i18n/lang.js'
+import { initialLang, isLang, saveLang } from '../i18n/lang.js'
 
 /** 網址可指定一開始的年代，例如 ?era=modern */
 function initialEra() {
@@ -84,7 +84,7 @@ export const useGameStore = create((set, get) => ({
   inputMode: detectTouch() ? 'touch' : 'mouse',
   qualityMode: initialQualityMode(),
   /** 介面語言：'zh-Hant'（預設）或 'en'，記在 localStorage */
-  lang: loadLang(),
+  lang: initialLang(),
   /** 「授權與出處」視窗 */
   licensesOpen: false,
   qualityOpen: false,

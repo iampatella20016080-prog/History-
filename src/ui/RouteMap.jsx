@@ -4,6 +4,7 @@ import { routeNodePoint } from '../data/routes.js'
 import { PIER, PLAZA, RIVER, STREET } from '../game/config.js'
 import { playerState } from '../game/runtime.js'
 import { nodeEra } from '../game/themeRoute.js'
+import { useLocalizer, useT } from '../i18n/useT.js'
 
 /** 地圖範圍（世界座標的 x 與 z；北方 z < 0 在上） */
 const VIEW = { minX: -55, maxX: 56, minZ: -13, maxZ: 26 }
@@ -14,6 +15,8 @@ const VIEW = { minX: -55, maxX: 56, minZ: -13, maxZ: 26 }
  * 街景本身是情境示意（不是真實的相對位置；真實位置見「年表與地圖」的對照地圖）。
  */
 export function RouteMap({ route, progress, eraId }) {
+  const t = useT()
+  const L = useLocalizer()
   const [player, setPlayer] = useState(() => [playerState.position.x, playerState.position.z])
   useEffect(() => {
     const timer = setInterval(() => setPlayer([playerState.position.x, playerState.position.z]), 400)
@@ -26,7 +29,7 @@ export function RouteMap({ route, progress, eraId }) {
       className="route-map"
       viewBox={`${VIEW.minX} ${VIEW.minZ} ${VIEW.maxX - VIEW.minX} ${VIEW.maxZ - VIEW.minZ}`}
       role="img"
-      aria-label={`${route.title}的路線地圖`}
+      aria-label={t('routeMap.label', { title: route.title })}
     >
       <rect className="route-map__river" x={VIEW.minX} y={VIEW.minZ} width={RIVER.edgeX - VIEW.minX} height={VIEW.maxZ - VIEW.minZ} />
       <rect className="route-map__ground" x={PIER.minX} y={-PIER.halfWidth} width={PIER.maxX - PIER.minX} height={PIER.halfWidth * 2} />
@@ -35,10 +38,10 @@ export function RouteMap({ route, progress, eraId }) {
       <rect className="route-map__block" x={STREET.rowStartX} y={STREET.facadeZ} width={rowEnd - STREET.rowStartX} height={8} />
       <rect className="route-map__ground" x={STREET.rowStartX} y={-STREET.facadeZ} width={STREET.endFacadeX - STREET.rowStartX} height={STREET.facadeZ * 2} />
       <text className="route-map__label" x={-50} y={-6}>
-        淡水河
+        {t('routeMap.river')}
       </text>
       <text className="route-map__label" x={-8} y={0.9}>
-        迪化街
+        {t('routeMap.street')}
       </text>
       {progress.map((node, i) => {
         const point = routeNodePoint({ ...node, eraId: nodeEra(route, node) })
@@ -50,7 +53,7 @@ export function RouteMap({ route, progress, eraId }) {
             <text y="0.9">{node.done ? '✓' : i + 1}</text>
             {!here && (
               <text className="route-map__era" y="5.2">
-                {getEra(nodeEra(route, node))?.title}
+                {L(getEra(nodeEra(route, node)))?.title}
               </text>
             )}
           </g>

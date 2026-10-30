@@ -3,6 +3,7 @@ import { getInspectObject } from '../data/inspectObjects.js'
 import { TALK_LABELS, currentLine, hasNextLine, remainingFollowUps, talkObjectId } from '../game/talk.js'
 import { useGameStore } from '../state/useGameStore.js'
 import { usePresence } from './usePresence.js'
+import { useT } from '../i18n/useT.js'
 
 /**
  * 路人對話框（畫面下方）：一次一句，可以繼續、追問或道別。
@@ -11,6 +12,7 @@ import { usePresence } from './usePresence.js'
  * 對話中角色仍可走動，走遠會自動結束（InteractionSystem）。
  */
 export function DialogueBox() {
+  const t = useT()
   const talk = useGameStore((state) => state.talk)
   const advanceTalk = useGameStore((state) => state.advanceTalk)
   const chooseTalkFollowUp = useGameStore((state) => state.chooseTalkFollowUp)
@@ -32,18 +34,18 @@ export function DialogueBox() {
   const object = talk ? getInspectObject(talkObjectId(session)) : null
   const objectButton = object && (
     <button type="button" className="button-solid dialogue__choice is-object" onClick={showTalkObject}>
-      ❖ 近看：{object.title}
+      {t('dialogue.look', { title: object.title })}
     </button>
   )
 
   return (
     <div className="dialogue-layer" data-state={state}>
-      <section className="dialogue paper" role="dialog" aria-label={`與${session.talk.role}的對話`}>
+      <section className="dialogue paper" role="dialog" aria-label={t('dialogue.label', { role: session.talk.role })}>
         <header className="dialogue__header">
           <span className="dialogue__role">{session.talk.role}</span>
           <span className="dialogue__doing">{session.talk.doing}</span>
           <button type="button" className="dialogue__close" onClick={endTalk}>
-            道別 <kbd>Esc</kbd>
+            {t('dialogue.bye')} <kbd>Esc</kbd>
           </button>
         </header>
         {line && (
@@ -51,20 +53,20 @@ export function DialogueBox() {
             <p className="dialogue__text">{line.text}</p>
             <div className="dialogue__meta">
               {label && <span className={`talk-label is-${line.label}`}>{label.text}</span>}
-              {sources.length > 0 && <span className="dialogue__sources">出處：{sources.map((source) => source.title).join('；')}</span>}
+              {sources.length > 0 && <span className="dialogue__sources">{t('common.sourcesLine', { list: sources.map((source) => source.title).join('；') })}</span>}
             </div>
           </div>
         )}
         {session.stage === 'line' && (
           <footer className="dialogue__footer">
             <button type="button" className="button-solid" onClick={advanceTalk}>
-              {hasNextLine(session) ? '繼續' : '……'} {!touch && <kbd>E</kbd>}
+              {hasNextLine(session) ? t('dialogue.next') : '……'} {!touch && <kbd>E</kbd>}
             </button>
           </footer>
         )}
         {session.stage === 'choices' && (
           <footer className="dialogue__footer dialogue__choices">
-            <p className="dialogue__ask">想問些什麼？</p>
+            <p className="dialogue__ask">{t('dialogue.ask')}</p>
             {objectButton}
             {followUps.map((item) => (
               <button key={item.id} type="button" className="button-ghost dialogue__choice" onClick={() => chooseTalkFollowUp(item.id)}>
@@ -72,16 +74,16 @@ export function DialogueBox() {
               </button>
             ))}
             <button type="button" className="button-ghost dialogue__choice is-bye" onClick={endTalk}>
-              沒事了，多謝。
+              {t('dialogue.noThanks')}
             </button>
           </footer>
         )}
         {session.stage === 'done' && (
           <footer className="dialogue__footer">
-            <p className="dialogue__ask">（已記進探索手記）</p>
+            <p className="dialogue__ask">{t('dialogue.journaled')}</p>
             {objectButton}
             <button type="button" className="button-solid" onClick={endTalk}>
-              道別
+              {t('dialogue.bye')}
             </button>
           </footer>
         )}

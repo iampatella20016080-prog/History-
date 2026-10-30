@@ -2,6 +2,7 @@ import { Html } from '@react-three/drei'
 import { inspectablesOfEra } from '../../data/inspectObjects.js'
 import { talkForNpc } from '../../data/talk.js'
 import { useGameStore } from '../../state/useGameStore.js'
+import { useT } from '../../i18n/useT.js'
 
 /**
  * 街上的互動提示（第 10 階段）：
@@ -10,6 +11,7 @@ import { useGameStore } from '../../state/useGameStore.js'
  * 做法同店家的 ShopPrompt（drei Html 投影到 3D 位置，掛在 promptLayer）。
  */
 function TalkPrompt({ npc, talk }) {
+  const t = useT()
   const visible = useGameStore(
     (state) =>
       state.started &&
@@ -33,7 +35,7 @@ function TalkPrompt({ npc, talk }) {
       >
         <span className="shop-prompt__name">{talk.role}</span>
         <span className="shop-prompt__meta">{talk.doing}</span>
-        <span className="shop-prompt__action">{touch ? '點一下交談' : <>按 <kbd>E</kbd> 交談</>}</span>
+        <span className="shop-prompt__action">{touch ? t('street.tapTalk') : <>{t('street.pressTalkPre')}<kbd>E</kbd>{t('street.pressTalkPost')}</>}</span>
       </button>
       <span className="shop-prompt__tip" />
     </div>
@@ -41,6 +43,7 @@ function TalkPrompt({ npc, talk }) {
 }
 
 function InspectPrompt({ item }) {
+  const t = useT()
   const visible = useGameStore(
     (state) =>
       state.started &&
@@ -63,7 +66,7 @@ function InspectPrompt({ item }) {
         onClick={() => visible && openInspect(item.objectId, 'street')}
       >
         <span className="shop-prompt__name">{item.label}</span>
-        <span className="shop-prompt__action">{touch ? '點一下近看' : <>按 <kbd>E</kbd> 近看</>}</span>
+        <span className="shop-prompt__action">{touch ? t('street.tapLook') : <>{t('street.pressLookPre')}<kbd>E</kbd>{t('street.pressLookPost')}</>}</span>
       </button>
       <span className="shop-prompt__tip" />
     </div>

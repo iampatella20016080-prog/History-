@@ -9,10 +9,10 @@ export const RICE_AND_SHINE_ID = 'rice-and-shine-329'
 
 export const riceAndShineEraConfig = {
   1853: { era: 'qing-port', active: false, variant: 'earlyStreet' },
-  1895: { era: 'banquet', active: true, variant: 'earlyRiceTrade', label: '北街米業逐漸形成', name: '北街米業店屋（迪化街329號）' },
-  1930: { era: 'modern', active: true, variant: 'riceMill', label: '米行與碾米產業', name: '迪化街329號米行／碾米間' },
-  1945: { era: 'postwar', active: true, variant: 'postwarRiceHouse', label: '戰後米業與產業轉變', name: '迪化街329號米行（戰後）' },
-  2000: { era: 'revival', active: true, variant: 'riceAndShineModern', label: '老屋再生・稻舍', name: '稻舍 Rice & Shine' },
+  1895: { era: 'banquet', active: true, variant: 'earlyRiceTrade', label: '北街米業逐漸形成', labelEn: 'The rice trade takes shape on North Street', name: '北街米業店屋（迪化街329號）', nameEn: 'North Street rice-trade shophouse (329 Dihua Street)' },
+  1930: { era: 'modern', active: true, variant: 'riceMill', label: '米行與碾米產業', labelEn: 'Rice shops and the rice-milling trade', name: '迪化街329號米行／碾米間', nameEn: '329 Dihua Street rice shop and mill' },
+  1945: { era: 'postwar', active: true, variant: 'postwarRiceHouse', label: '戰後米業與產業轉變', labelEn: 'The postwar rice trade and industrial change', name: '迪化街329號米行（戰後）', nameEn: '329 Dihua Street rice shop (postwar)' },
+  2000: { era: 'revival', active: true, variant: 'riceAndShineModern', label: '老屋再生・稻舍', labelEn: 'Old house reborn: Rice & Shine', name: '稻舍 Rice & Shine', nameEn: 'Rice & Shine' },
 }
 
 /** 年代 id → 這個年代的版本設定 */

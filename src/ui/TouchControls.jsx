@@ -1,12 +1,14 @@
 import { useEffect, useRef } from 'react'
 import { setStick } from '../game/input.js'
 import { useGameStore } from '../state/useGameStore.js'
+import { useT } from '../i18n/useT.js'
 
 /**
  * 左下角的虛擬搖桿（觸控裝置）：可斜向移動，推得越遠走得越快，放開即停止。
  * 以 Pointer Events 實作並鎖定觸控點，拖曳時手指滑出搖桿範圍也不會中斷。
  */
 export function Joystick() {
+  const t = useT()
   const zone = useRef(null)
   const knob = useRef(null)
   const drag = useRef({ id: null, cx: 0, cy: 0, radius: 48 })
@@ -83,7 +85,7 @@ export function Joystick() {
         <span className="joystick__arrow is-right" />
       </div>
       <div ref={knob} className="joystick__knob">
-        <span>行</span>
+        <span>{t('touch.stickSeal')}</span>
       </div>
     </div>
   )

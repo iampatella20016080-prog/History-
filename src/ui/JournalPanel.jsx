@@ -5,6 +5,7 @@ import { JOURNAL_KINDS, journalEntries } from '../game/journal.js'
 import { nodeEra, routeCount, routeComplete, routeEras, routeJournalPage, routeProgress } from '../game/themeRoute.js'
 import { useGameStore } from '../state/useGameStore.js'
 import { RouteMap } from './RouteMap.jsx'
+import { useLocalizer, useT } from '../i18n/useT.js'
 
 const KIND_TABS = [null, 'talk', 'object', 'shop', 'news']
 
@@ -15,6 +16,8 @@ const KIND_TABS = [null, 'talk', 'object', 'shop', 'news']
  * - 手記：記下看過的器物、聽過的話、走過的店與讀過的消息，可以依種類翻看；不用完成百分比。
  */
 export function JournalPanel() {
+  const t = useT()
+  const L = useLocalizer()
   const open = useGameStore((state) => state.journalOpen)
   const toggleJournal = useGameStore((state) => state.toggleJournal)
   const journal = useGameStore((state) => state.journal)
@@ -50,16 +53,16 @@ export function JournalPanel() {
         onClick={() => toggleJournal()}
       >
         <span className="hud-menu__seal" aria-hidden="true">
-          記
+          {t('journal.seal')}
         </span>
-        探索手記
+        {t('journal.title')}
       </button>
       {open && (
         <div id="journal-panel" className="hud-menu__panel paper journal" data-scrollable>
           {/* 主題探索模式 */}
           <section className="journal__routes">
             <p className="hud-menu__heading">
-              <span>主題探索</span>
+              <span>{t('journal.routes')}</span>
             </p>
             {!route &&
               ROUTES.map((item) => {
@@ -69,12 +72,12 @@ export function JournalPanel() {
                     <div className="journal-route__info">
                       <span className="journal-route__title">{item.title}</span>
                       <span className="journal-route__meta">
-                        {routeEras(item).map((id) => getEra(id)?.title).join('・')}｜{count.done}／{count.total}
+                        {routeEras(item).map((id) => L(getEra(id))?.title).join('・')}｜{count.done}／{count.total}
                       </span>
                       <p className="journal-route__intro">{item.intro}</p>
                     </div>
                     <button type="button" className="button-solid" onClick={() => setActiveRoute(item.id)}>
-                      {count.done > 0 ? '繼續' : '開始'}
+                      {count.done > 0 ? t('journal.continue') : t('journal.start')}
                     </button>
                   </div>
                 )
@@ -84,10 +87,10 @@ export function JournalPanel() {
 
           {/* 手記 */}
           <p className="hud-menu__heading journal__heading">
-            <span>手記</span>
-            <span className="hud-menu__count">{journal.entries.length} 則</span>
+            <span>{t('journal.entries')}</span>
+            <span className="hud-menu__count">{t('journal.count', { n: journal.entries.length })}</span>
           </p>
-          <div className="journal__tabs" role="tablist" aria-label="手記分類">
+          <div className="journal__tabs" role="tablist" aria-label={t('journal.tabs')}>
             {KIND_TABS.map((item) => (
               <button
                 key={item ?? 'all'}
@@ -97,19 +100,19 @@ export function JournalPanel() {
                 className={`journal__tab${kind === item ? ' is-active' : ''}`}
                 onClick={() => setKind(item)}
               >
-                {item ? JOURNAL_KINDS[item].text : '全部'}
+                {item ? L(JOURNAL_KINDS[item]).text : t('journal.all')}
               </button>
             ))}
           </div>
-          {entries.length === 0 && <p className="journal__empty">還沒有記下東西——去街上跟人說說話、近看器物、走進店家吧。</p>}
+          {entries.length === 0 && <p className="journal__empty">{t('journal.empty')}</p>}
           <ul className="journal__list">
             {entries.map((entry) => (
               <li key={entry.id} className="journal-entry">
-                <span className="journal-entry__kind">{JOURNAL_KINDS[entry.kind].text}</span>
+                <span className="journal-entry__kind">{L(JOURNAL_KINDS[entry.kind]).text}</span>
                 <div className="journal-entry__body">
                   <span className="journal-entry__title">
                     {entry.title}
-                    {entry.eraId && <em className="journal-entry__era">{getEra(entry.eraId)?.title}</em>}
+                    {entry.eraId && <em className="journal-entry__era">{L(getEra(entry.eraId))?.title}</em>}
                   </span>
                   {entry.text && <p className="journal-entry__text">{entry.text}</p>}
                 </div>
@@ -124,6 +127,8 @@ export function JournalPanel() {
 
 /** 進行中的路線：節點清單（順序自由）；完成後是這條路線的手記頁 */
 function ActiveRoute({ route, journal, eraId, requestEra, onStop }) {
+  const t = useT()
+  const L = useLocalizer()
   const complete = routeComplete(route, journal)
   const count = routeCount(route, journal)
   const progress = routeProgress(route, journal)
@@ -135,13 +140,13 @@ function ActiveRoute({ route, journal, eraId, requestEra, onStop }) {
       <div className="journal-route__info">
         <span className="journal-route__title">{route.title}</span>
         <span className="journal-route__meta">
-          {eras.map((id) => getEra(id)?.title).join('・')}｜{count.done}／{count.total}
-          {complete && '・完成'}
+          {eras.map((id) => L(getEra(id))?.title).join('・')}｜{count.done}／{count.total}
+          {complete && t('journal.complete')}
         </span>
         {/* 還沒完成的節點都不在這個年代時，帶你過去（跨年代的路線：前往下一個還沒完成的節點的年代） */}
         {!complete && travelEra && (
           <button type="button" className="button-ghost journal-route__travel" onClick={() => requestEra(travelEra)}>
-            前往{getEra(travelEra)?.title}（{getEra(travelEra)?.yearRange}）
+            {t('journal.travel', { era: L(getEra(travelEra))?.title, range: L(getEra(travelEra))?.yearRange })}
           </button>
         )}
       </div>
@@ -156,7 +161,7 @@ function ActiveRoute({ route, journal, eraId, requestEra, onStop }) {
               <div>
                 <span className="route-node__title">
                   {node.title}
-                  {eras.length > 1 && <em className="route-node__era">{getEra(nodeEra(route, node))?.title}</em>}
+                  {eras.length > 1 && <em className="route-node__era">{L(getEra(nodeEra(route, node)))?.title}</em>}
                 </span>
                 {!node.done && <p className="route-node__hint">{node.hint}</p>}
               </div>
@@ -166,7 +171,7 @@ function ActiveRoute({ route, journal, eraId, requestEra, onStop }) {
       )}
       {complete && (
         <div className="journal-route__page">
-          <p className="journal-route__done">這條路線走完了——這是你一路記下的手記：</p>
+          <p className="journal-route__done">{t('journal.routeDone')}</p>
           {route.closing && <p className="journal-route__intro">{route.closing}</p>}
           <ul className="journal-route__nodes">
             {routeJournalPage(route, journal).map(({ node, entry }) => (
@@ -184,7 +189,7 @@ function ActiveRoute({ route, journal, eraId, requestEra, onStop }) {
         </div>
       )}
       <button type="button" className="button-ghost" onClick={onStop}>
-        {complete ? '收起路線' : '先不走這條路線'}
+        {complete ? t('journal.collapse') : t('journal.leave')}
       </button>
     </div>
   )
