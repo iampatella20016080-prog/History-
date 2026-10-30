@@ -13,6 +13,7 @@ const COMPLETE = [
   'routes/folkloreRoute.js', 'routes/neighbourRoute.js', 'routes/newsRoute.js', 'routes/oldHouseRoute.js', 'routes/pastryRoute.js', 'routes/templeMealRoute.js',
   'ciShengMiaokouData.js', 'dihuaNianhuoData.js', 'huangYujieMuseum.js', 'jiangWeiShuiData.js', 'liChunShengData.js', 'liTingXiangData.js',
   'operatorsData.js', 'riceAndShineData.js', 'shizixuanData.js', 'wangJingQuanData.js', 'xiyuanData.js', 'inspectObjects.js', 'miTaiMuLayout.js',
+  'shops.js',
   'eras.js', 'licenses.js', 'doddLayout.js', 'huangYujieLayout.js', 'linHuaTaiQingLayout.js', 'luguoCafeLayout.js',
   'riceAndShineEraConfig.js', 'riceAndShineLayout.js', 'shizixuanEraConfig.js', 'shizixuanLayout.js', 'squidSoupLayout.js', 'templeSnackLayout.js',
 ]

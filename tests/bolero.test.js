@@ -39,7 +39,7 @@ describe('波麗路：店家資料', () => {
     assert.equal(shop.status, 'open')
     assert.equal(shop.year, 1934)
     assert.deepEqual(Object.keys(shop.buildingByEra), BOLERO_ERAS)
-    assert.deepEqual(Object.keys(shop.eraNotes), BOLERO_ERAS)
+    assert.deepEqual(Object.keys(shop.eraNotes).filter((key) => !key.endsWith('En')), BOLERO_ERAS)
     for (const era of ERAS) {
       assert.equal(era.availableStores.includes('bolero'), BOLERO_ERAS.includes(era.id), `${era.id} 的店家名錄`)
     }

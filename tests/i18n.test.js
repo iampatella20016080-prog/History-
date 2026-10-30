@@ -71,13 +71,15 @@ test('summaryEn：以年代分開的店家（稻舍）每個啟用的年代都�
   for (const eraId of Object.keys(rice.eras)) {
     const { text, fallback } = shopSummary(getShop(rice.id, eraId), 'en')
     assert.equal(fallback, false)
-    assert.equal(text, rice.summaryEn[eraId])
+    // 年代版本自己的 summary（年代說明）有對應的 summaryEn；沒有時才退回依年代分開的摘要
+    const era = getShop(rice.id, eraId)
+    assert.equal(text, typeof era.summaryEn === 'string' ? era.summaryEn : rice.summaryEn[eraId])
   }
 })
 
 test('shopSummary：中文模式用中文；英文模式沒有 summaryEn 時退回中文並標 fallback', () => {
   const withEn = SHOPS.find((shop) => typeof shop.summaryEn === 'string')
-  const without = SHOPS.find((shop) => !shop.summaryEn && shop.summary)
+  const without = { id: 'x', summary: '只有中文的摘要' }
   assert.deepEqual(shopSummary(withEn, 'zh-Hant'), { text: withEn.summary, fallback: false })
   assert.deepEqual(shopSummary(withEn, 'en'), { text: withEn.summaryEn, fallback: false })
   assert.deepEqual(shopSummary(without, 'en'), { text: without.summary, fallback: true })

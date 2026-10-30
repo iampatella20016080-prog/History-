@@ -42,7 +42,7 @@ describe('江山樓：店家資料', () => {
     for (const era of ERAS) {
       assert.equal(era.availableStores.includes(ID), era.id === ERA, `${era.id} 的店家名錄`)
     }
-    assert.deepEqual(Object.keys(shop.eraNotes), [ERA])
+    assert.deepEqual(Object.keys(shop.eraNotes).filter((key) => !key.endsWith('En')), [ERA])
     assert.equal(shop.reconstruction, true, '原址不在迪化街，要標情境重建')
   })
 
