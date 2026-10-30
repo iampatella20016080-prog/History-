@@ -4,8 +4,8 @@
 
 - `before/`：改動前（main，5867e2d）；`after/`：改動後
 - 年代：港口商街、庶民生活、老屋新生；`low` 是流暢、`high` 是精緻
+- **細部只在精緻畫質**（使用者 2026-10-30 決定）：`after/*-low.jpg` 與 `before/*-low.jpg` 應該相同（流暢畫質和改動前一樣），差別看 `*-high.jpg`
 - 視角：`banyan` 廟埕榕樹、`banyan-under` 河岸榕樹的粗枝、`ground` 大面積地面、`plaster` 樓上灰泥牆、`plaster-arcade` 洋樓立面、`column` 騎樓柱腳
-- `postwar-sill-streak-low.jpg`：另外用同一個開發版鏡頭拍的庶民生活洋樓（x = 5.2），水漬從牆頂改成窗臺下（只有流暢模式）
 - `stats.json`：街道遠景的繪製呼叫（一個影格內所有 gl.render 的總數，含法線、色彩與陰影三趟）與可見網格數
 
 | 年代／畫質 | 改動前 | 改動後 |
