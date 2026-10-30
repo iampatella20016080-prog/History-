@@ -3,6 +3,7 @@ import { CylinderGeometry, IcosahedronGeometry, Shape, SphereGeometry, TorusGeom
 import { STREET } from '../config.js'
 import { createCurvedSlab } from './PartBuilder.js'
 import { MATERIAL_TILE } from '../rendering/materials.js'
+import { SHOP_SHELF_HEIGHTS } from '../rendering/shopGlow.js'
 import { createRng, pick } from '../utils/random.js'
 import { conditionGrime, conditionTint } from './condition.js'
 import {
@@ -487,10 +488,11 @@ function buildGroundShop(b, cfg, rng, { style, innerW, openingH, walkH, conditio
   const interior = () => {
     const roomD = 2.8
     b.box('planks', [innerW, 0.04, roomD], [0, walkH + 0.02, -roomD / 2 - 0.12], { tint: '#6b5643' })
-    b.box('windowLit', [innerW, openingH, 0.1], [0, openingH / 2, -roomD - 0.12], { tint: '#4a3a2e' })
+    // 後牆：中間亮、四周與上方暗、層架下有陰影（店內透光，rendering/shopGlow.js）
+    b.shopGlow(b.box('windowLit', [innerW, openingH, 0.1], [0, openingH / 2, -roomD - 0.12], { tint: '#4a3a2e' }), 'back', { floorOffset: walkH })
     b.box('dark', [innerW, 0.1, roomD], [0, openingH + 0.05, -roomD / 2 - 0.12], { tint: '#2c241e' })
-    for (let i = 0; i < 2; i++) {
-      const sy = walkH + 0.95 + i * 0.62
+    for (const shelfH of SHOP_SHELF_HEIGHTS) {
+      const sy = walkH + shelfH
       b.box('wood', [innerW * 0.86, 0.05, 0.36], [0, sy, -roomD + 0.08], { tint: '#8d6c4d' })
       for (let k = 0; k < Math.floor(innerW / 0.5); k++) {
         if (rng() < 0.7) jar(b, [-innerW * 0.4 + k * 0.5 + 0.2, sy + 0.025, -roomD + 0.1], { scale: 0.5, tint: pick(rng, ['#6e4a34', '#8a6844', '#a07a52']) })
@@ -541,7 +543,8 @@ const STEEL = '#2e2b27'
 
 /** 鋼框窗：細框、一道直櫺、三道水平玻璃條（Art Deco 的特徵），外圍灰泥窗框與階梯狀窗楣 */
 function steelWindow(b, { x, y, width, height, z, lit, surround, curtain, glassTint = '#4a5270' }) {
-  b.box(lit ? 'windowLit' : 'dark', [width, height, 0.04], [x, y, z - 0.03], { tint: lit ? '#6b4b33' : glassTint })
+  const glass = b.box(lit ? 'windowLit' : 'dark', [width, height, 0.04], [x, y, z - 0.03], { tint: lit ? '#6b4b33' : glassTint })
+  if (lit) b.shopGlow(glass, 'room')
   const f = 0.045
   for (const dy of [-1, 1]) b.box('plain', [width + f * 2, f, 0.06], [x, y + dy * (height / 2 + f / 2), z], { tint: STEEL })
   for (const dx of [-1, 1]) b.box('plain', [f, height, 0.06], [x + dx * (width / 2 + f / 2), y, z], { tint: STEEL })

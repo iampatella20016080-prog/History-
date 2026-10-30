@@ -4,6 +4,7 @@ import { ensureExhibitTexture, getExhibitTexture } from './exhibitTexture.js'
 import { ensureRiceTexture, getRiceTexture } from './riceTexture.js'
 import { ensureSzxTexture, getSzxTexture } from './szxTexture.js'
 import { windUniforms } from './wind.js'
+import { patchShopGlassShader, patchShopWindowShader } from './shopGlow.js'
 import { SURFACE_VARIATION, applySurfaceVariation } from './surfaceVariation.js'
 import { CONTACT_OPACITY } from '../builders/contactShadow.js'
 
@@ -54,7 +55,8 @@ export const MATERIAL_TILE = {
   plain: 1,
   dark: 1,
   cloth: 1,
-  windowLit: 1,
+  // 0–1 的 UV：店內透光用 UV 標記效果種類（見 shopGlow.js）
+  windowLit: null,
   lanternLit: 1,
   bulb: 1,
   // 黃玉階文史館的展板圖集：平面零件自己指定圖集上的 UV（見 exhibitAtlas.js）
@@ -124,12 +126,15 @@ export function getMaterials() {
     bamboo: toon({ map: textures.bamboo }),
     paper: toon({ map: textures.teaLabel }),
     glass: toon({ map: textures.glass, emissive: new Color('#ffcf8a'), emissiveIntensity: 0 }),
-    glassWarm: toon({
-      map: textures.interior,
-      emissive: new Color('#ffffff'),
-      emissiveMap: textures.interior,
-      emissiveIntensity: 0.3,
-    }),
+    // 玻璃店面：原本的室內貼圖畫在假室內的後牆，左右牆、天花板與地板取貼圖邊緣的顏色（shopGlow.js）
+    glassWarm: shopGlass(
+      toon({
+        map: textures.interior,
+        emissive: new Color('#ffffff'),
+        emissiveMap: textures.interior,
+        emissiveIntensity: 0.3,
+      }),
+    ),
     // 透明玻璃：看得見櫥窗後方的淺層室內（不寫入深度、不參與輪廓線）
     glassClear: toon({ transparent: true, opacity: 0.2, depthWrite: false }),
     // 室內陳設：帶一點暖色自發光，在騎樓的陰影下仍看得清楚
@@ -137,7 +142,8 @@ export function getMaterials() {
     plain: toon(),
     dark: toon(),
     cloth: toon({ side: DoubleSide }),
-    windowLit: toon({ emissive: new Color('#ffb768'), emissiveIntensity: 0.2 }),
+    // 亮窗與店內後牆：依 UV 標記畫假室內或後牆的漸層，沒標記的維持平面發光（shopGlow.js）
+    windowLit: shopWindow(toon({ emissive: new Color('#ffb768'), emissiveIntensity: 0.2 })),
     lanternLit: toon({ emissive: new Color('#ff7a45'), emissiveIntensity: 0.2 }),
     bulb: toon({ emissive: new Color('#fff0c8'), emissiveIntensity: 0.4 }),
     // 黃玉階文史館的展板（圖集很大，第一次有網格用到時才繪製；其他年代不佔記憶體）
@@ -187,6 +193,39 @@ function swayingAwning(material) {
   }
   material.customProgramCacheKey = () => 'awning-sway'
   return material
+}
+
+/**
+ * 店內透光只在精緻畫質啟用（setShopGlowEnabled）；著色器在編譯時依開關選擇版本（shopGlow.js 的
+ * patchShopWindowShader／patchShopGlassShader），流暢畫質是原本的平面發光。切換畫質時材質重新編譯，
+ * 不另外多一份材質，批次數不變。
+ */
+let shopGlowEnabled = false
+
+function shopWindow(material) {
+  material.onBeforeCompile = (shader) => patchShopWindowShader(shader, shopGlowEnabled)
+  material.customProgramCacheKey = () => (shopGlowEnabled ? 'shop-window' : 'shop-window-flat')
+  return material
+}
+
+function shopGlass(material) {
+  material.onBeforeCompile = (shader) => patchShopGlassShader(shader, shopGlowEnabled)
+  material.customProgramCacheKey = () => (shopGlowEnabled ? 'shop-glass' : 'shop-glass-flat')
+  return material
+}
+
+/** 精緻畫質開啟店內透光、流暢畫質關閉；有變更時讓 windowLit、glassWarm 重新編譯 */
+export function setShopGlowEnabled(enabled) {
+  const next = Boolean(enabled)
+  if (next === shopGlowEnabled) return
+  shopGlowEnabled = next
+  if (!cache) return
+  cache.windowLit.needsUpdate = true
+  cache.glassWarm.needsUpdate = true
+}
+
+export function isShopGlowEnabled() {
+  return shopGlowEnabled
 }
 
 function lazyAtlasMaterial(toon, getTexture, ensure) {
