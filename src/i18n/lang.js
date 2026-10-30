@@ -18,6 +18,21 @@ export function loadLang(storage = typeof window === 'undefined' ? null : window
   }
 }
 
+/** 網址 ?lang=en（或 zh）優先於記住的選擇；不認得的值忽略 */
+export function langFromSearch(search) {
+  try {
+    const value = new URLSearchParams(search ?? '').get('lang')
+    if (value === 'zh' || value === 'zh-Hant' || value === 'zh-TW') return 'zh-Hant'
+    return value === 'en' ? 'en' : null
+  } catch {
+    return null
+  }
+}
+
+export function initialLang(search = typeof window === 'undefined' ? '' : window.location.search) {
+  return langFromSearch(search) ?? loadLang()
+}
+
 export function saveLang(lang, storage = typeof window === 'undefined' ? null : window.localStorage) {
   try {
     storage?.setItem(STORAGE_KEY, lang)
@@ -43,4 +58,14 @@ export function shopSummary(shop, lang) {
     return { text: shop?.summary ?? '', fallback: true }
   }
   return { text: shop?.summary ?? '', fallback: false }
+}
+
+/** 資料欄位的在地化：英文模式取 `${key}En`，沒有時退回中文欄位 */
+export function pick(obj, key, lang) {
+  if (!obj) return ''
+  if (lang === 'en') {
+    const en = obj[`${key}En`]
+    if (en != null && en !== '') return en
+  }
+  return obj[key] ?? ''
 }

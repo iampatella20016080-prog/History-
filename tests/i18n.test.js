@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { STRINGS } from '../src/i18n/strings.js'
-import { DEFAULT_LANG, LANGS, loadLang, saveLang, shopSummary, translate } from '../src/i18n/lang.js'
+import { DEFAULT_LANG, LANGS, initialLang, langFromSearch, loadLang, saveLang, shopSummary, translate } from '../src/i18n/lang.js'
 import { SHOPS, getShop } from '../src/data/shops.js'
 import { ERAS } from '../src/data/eras.js'
 
@@ -90,4 +90,14 @@ test('英文介面：代表店家出現的年代都不會漏掉英文摘要', ()
       if (EN_SHOPS.includes(id) || shop.summaryEn) assert.equal(shopSummary(shop, 'en').fallback, false, `${era.id}/${id}`)
     }
   }
+})
+
+test('?lang=：en／zh 指定語言，優先於記住的選擇；不認得的值忽略', () => {
+  assert.equal(langFromSearch('?lang=en'), 'en')
+  assert.equal(langFromSearch('?era=modern&lang=zh'), 'zh-Hant')
+  assert.equal(langFromSearch('?lang=fr'), null)
+  assert.equal(langFromSearch(''), null)
+  assert.equal(langFromSearch(undefined), null)
+  assert.equal(initialLang('?lang=en'), 'en')
+  assert.equal(initialLang('?foo=1'), 'zh-Hant')
 })

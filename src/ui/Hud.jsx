@@ -132,6 +132,7 @@ function ControlsHint({ touch, viewer }) {
 }
 
 function ObjectiveHint({ shops, touch }) {
+  const t = useT()
   const started = useGameStore((state) => state.started)
   const visited = useGameStore((state) => state.visited)
   const mode = useGameStore((state) => state.mode)
@@ -152,30 +153,31 @@ function ObjectiveHint({ shops, touch }) {
 
   let text = null
   if (started && mode === 'explore' && viewMode === 'explore' && !nearby && !transitioning) {
-    if (firstUnvisited) text = `沿著街道前進，尋找屋頂上有紅色標記的「${firstUnvisited.name}」`
+    if (firstUnvisited) text = t('hud.objective.find', { name: firstUnvisited.name }) // TODO(en-data) shop.name
     else if (showDone)
-      text = touch ? '點右上角的齒輪切換年代，看看這條街在其他年代的樣子' : '點右上角的齒輪（或按 1–5）切換年代，看看這條街在其他年代的樣子'
+      text = touch ? t('hud.objective.doneTouch') : t('hud.objective.doneKeys')
   }
   return <div className={`hud-objective${text ? ' is-visible' : ''}`}>{text && <span>{text}</span>}</div>
 }
 
 /** 建築觀賞模式的工具列（下方中央）：隱藏介面、返回探索 */
 function ViewerBar() {
+  const t = useT()
   const setViewMode = useGameStore((state) => state.setViewMode)
   const setUiHidden = useGameStore((state) => state.setUiHidden)
   return (
-    <div className="viewer-bar paper" role="toolbar" aria-label="建築觀賞模式">
+    <div className="viewer-bar paper" role="toolbar" aria-label={t('viewerBar.label')}>
       <span className="viewer-bar__label">
         <span className="viewer-bar__seal" aria-hidden="true">
-          觀
+          {t('viewerBar.seal')}
         </span>
-        建築觀賞
+        {t('viewerBar.title')}
       </span>
       <button type="button" className="button-ghost" data-hide-ui onClick={() => setUiHidden(true)}>
-        隱藏介面
+        {t('viewerBar.hide')}
       </button>
       <button type="button" className="button-solid" data-exit-viewer onClick={() => setViewMode('explore')}>
-        返回探索
+        {t('viewerBar.exit')}
       </button>
     </div>
   )
@@ -183,14 +185,15 @@ function ViewerBar() {
 
 /** 隱藏介面時：右上角的隱形觸發區，點一下（或按 Esc）重新顯示介面 */
 function RevealUi() {
+  const t = useT()
   const setUiHidden = useGameStore((state) => state.setUiHidden)
   return (
     <button
       type="button"
       className="ui-reveal"
       data-reveal-ui
-      aria-label="顯示介面"
-      title="顯示介面（Esc）"
+      aria-label={t('revealUi.label')}
+      title={t('revealUi.title')}
       onPointerDown={(event) => event.stopPropagation()}
       onClick={() => setUiHidden(false)}
     />
