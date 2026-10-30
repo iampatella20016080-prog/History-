@@ -320,7 +320,7 @@ export function glassStorefront(b, { width, height, y0 = 0.15, z = -0.1, frameTi
   b.box(frameMat, [width + 0.08, 0.1, 0.14], [0, y0 + height, z + 0.03], { tint: frameTint })
   b.box(frameMat, [width, 0.06, 0.1], [0, y0 + height * 0.78, z + 0.03], { tint: frameTint })
   // 整排玻璃後面是同一個假房間（店內透光，rendering/shopGlow.js）
-  b.shopGlowGroup(glass, 'room')
+  b.shopGlowGroup(glass)
 }
 
 /** 鐵捲門：openRatio 為拉起的比例 */

@@ -5,22 +5,28 @@
  * - 假室內（亮窗、玻璃店面）：視線打到看不見的房間，斜看時打到的位置跟著移動（視差）；天花板比後牆暗。
  * - UV 標記：街景的亮窗與店內後牆有標記，室內場景（BUILDING_INTERIORS）的窗維持平面發光。
  * - 預算：不加材質，街景批次數和改動前一樣。
+ * - 只在精緻畫質啟用：流暢畫質（iPad）的著色器不做假室內求交，維持原本的平面發光。
  */
 import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
+import { ShaderLib } from 'three'
 import { ERAS } from '../src/data/eras.js'
 import {
   backWallShade,
+  patchShopGlassShader,
+  patchShopWindowShader,
   roomHit,
   roomShade,
   SHOP_GLOW_KIND,
   SHOP_GLOW_U0,
+  SHOP_ROOM_ATTRIBUTE,
   SHOP_SHELF_HEIGHTS,
   shopGlowKind,
   tagShopGlowUV,
   tagShopGlowUVGroup,
 } from '../src/game/rendering/shopGlow.js'
 import { MATERIAL_TILE } from '../src/game/rendering/materials.js'
+import { getQualitySettings, QUALITY_MODES } from '../src/game/quality.js'
 import { buildEraInteriorSync, buildEraWorldSync } from '../src/game/world/buildWorld.js'
 
 /** 改動前（main 5867e2d）各年代依材質合併的街景批次數 */
@@ -145,12 +151,15 @@ describe('街景與室內', () => {
       const counts = kindCounts(world.batches)
       assert.ok(counts.back > 0, `${era.id} 有店內後牆`)
       assert.ok(counts.room > 0, `${era.id} 有假室內窗`)
-      // glassWarm 的 UV 是原本的 0–1，或玻璃店面整排共用的 [10, 11]（著色器一律當假室內）
+      // glassWarm 的 UV 維持原本每片 0–1；整排玻璃另有 shopRoom 屬性（0 = 沒有，1–2 = 整排共用的位置）
       for (const batch of world.batches.filter((b) => b.material === 'glassWarm')) {
         const uv = batch.geometry.attributes.uv
-        for (let i = 0; i < uv.count; i++) {
-          const u = uv.getX(i)
-          assert.ok((u > -0.01 && u < 1.01) || (u > 9.99 && u < 11.01), `glassWarm u = ${u}`)
+        for (let i = 0; i < uv.count; i++) assert.ok(uv.getX(i) > -0.01 && uv.getX(i) < 1.01, `glassWarm u = ${uv.getX(i)}`)
+        const room = batch.geometry.attributes[SHOP_ROOM_ATTRIBUTE]
+        if (!room) continue
+        for (let i = 0; i < room.count; i++) {
+          const u = room.getX(i)
+          assert.ok(u === 0 || (u > 0.99 && u < 2.01), `shopRoom u = ${u}`)
         }
       }
     })
@@ -160,4 +169,45 @@ describe('街景與室內', () => {
       assert.equal(counts.room + counts.back, 0)
     })
   }
+})
+
+describe('只在精緻畫質啟用', () => {
+  const toon = () => ({ vertexShader: ShaderLib.toon.vertexShader, fragmentShader: ShaderLib.toon.fragmentShader })
+
+  test('精緻畫質開啟、流暢畫質關閉', () => {
+    assert.equal(QUALITY_MODES.fine.shopGlow, true)
+    assert.equal(QUALITY_MODES.smooth.shopGlow, false)
+    assert.equal(getQualitySettings('smooth').shopGlow, false)
+    assert.equal(getQualitySettings('fine').shopGlow, true)
+  })
+  test('流暢畫質：亮窗的著色器和原本完全相同', () => {
+    const original = toon()
+    const shader = patchShopWindowShader(toon(), false)
+    assert.equal(shader.vertexShader, original.vertexShader)
+    assert.equal(shader.fragmentShader, original.fragmentShader)
+  })
+  test('流暢畫質：玻璃店面的著色器和原本完全相同（不做假室內求交）', () => {
+    const shader = patchShopGlassShader(toon(), false)
+    assert.equal(shader.vertexShader, ShaderLib.toon.vertexShader)
+    assert.equal(shader.fragmentShader, ShaderLib.toon.fragmentShader)
+    for (const word of ['shopRoomHit', 'dFdx', SHOP_ROOM_ATTRIBUTE]) assert.ok(!shader.fragmentShader.includes(word) && !shader.vertexShader.includes(word))
+  })
+  test('老屋新生的玻璃店面有整排共用的假房間座標', () => {
+    const world = buildEraWorldSync('revival')
+    const glass = world.batches.find((b) => b.material === 'glassWarm')
+    const room = glass.geometry.attributes[SHOP_ROOM_ATTRIBUTE]
+    assert.ok(room, '有 shopRoom 屬性')
+    let tagged = 0
+    for (let i = 0; i < room.count; i++) if (room.getX(i) > 0.5) tagged++
+    assert.ok(tagged > 0)
+  })
+  test('精緻畫質：亮窗與玻璃店面都有假室內求交', () => {
+    for (const patch of [patchShopWindowShader, patchShopGlassShader]) {
+      const shader = patch(toon(), true)
+      assert.ok(shader.fragmentShader.includes('shopRoomHit('))
+      assert.ok(shader.vertexShader.includes('vShopPos ='))
+    }
+    assert.ok(patchShopWindowShader(toon(), true).fragmentShader.includes('shopBackWall('))
+    assert.ok(patchShopGlassShader(toon(), true).vertexShader.includes(`vShopUv = ${SHOP_ROOM_ATTRIBUTE}.x > 0.5`), '整排玻璃用 shopRoom')
+  })
 })

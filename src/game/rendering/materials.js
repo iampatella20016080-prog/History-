@@ -4,13 +4,7 @@ import { ensureExhibitTexture, getExhibitTexture } from './exhibitTexture.js'
 import { ensureRiceTexture, getRiceTexture } from './riceTexture.js'
 import { ensureSzxTexture, getSzxTexture } from './szxTexture.js'
 import { windUniforms } from './wind.js'
-import {
-  ROOM_DEPTH,
-  SHOP_GLOW_FRAGMENT_PARS,
-  SHOP_GLOW_U0,
-  SHOP_GLOW_VERTEX,
-  SHOP_GLOW_VERTEX_PARS,
-} from './shopGlow.js'
+import { patchShopGlassShader, patchShopWindowShader } from './shopGlow.js'
 
 /**
  * 共用的卡通渲染材質。
@@ -183,88 +177,37 @@ function swayingAwning(material) {
   return material
 }
 
-/** 店內透光的頂點著色器：傳世界座標、法線與 UV（windowLit 沒有貼圖，vUv 不存在） */
-function shopGlowVertex(shader) {
-  shader.vertexShader = shader.vertexShader
-    .replace('#include <common>', `#include <common>\n${SHOP_GLOW_VERTEX_PARS}`)
-    .replace('#include <begin_vertex>', `#include <begin_vertex>\n${SHOP_GLOW_VERTEX}`)
-}
-
 /**
- * 亮窗與店內後牆（不加光源、不加繪製呼叫）：
- * - 店內後牆：中間亮、左右與上方暗、層架下有陰影；
- * - 假室內窗：視線打到看不見的房間，斜看有視差，窗邊兩側有窗簾；
- * - 沒標記的（室內場景裡的窗、門楣）維持原本的平面發光。
- * 明暗同時乘在底色與自發光：白天看得出房間的深淺，入夜時燈光集中在中間。
+ * 店內透光只在精緻畫質啟用（setShopGlowEnabled）；著色器在編譯時依開關選擇版本（shopGlow.js 的
+ * patchShopWindowShader／patchShopGlassShader），流暢畫質是原本的平面發光。切換畫質時材質重新編譯，
+ * 不另外多一份材質，批次數不變。
  */
+let shopGlowEnabled = false
+
 function shopWindow(material) {
-  material.onBeforeCompile = (shader) => {
-    shopGlowVertex(shader)
-    shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', `#include <common>\n${SHOP_GLOW_FRAGMENT_PARS}`)
-      .replace(
-        '#include <color_fragment>',
-        `#include <color_fragment>
-        // 求交放在分支外面（dFdx 在分支裡沒有定義）
-        vec4 shopHit = shopRoomHit(vec2(vShopUv.x - ${SHOP_GLOW_U0.room.toFixed(1)}, vShopUv.y), ${ROOM_DEPTH.window.toFixed(2)});
-        float shopShade = 1.0;
-        float shopEmissive = 1.0;
-        if (vShopUv.x > ${(SHOP_GLOW_U0.back - 0.5).toFixed(1)}) {
-          shopShade = shopBackWall(vShopUv.x - ${SHOP_GLOW_U0.back.toFixed(1)}, vShopUv.y);
-          // 中間約等於原本的亮度，往外收暗（太亮會在入夜的年代過曝，層架陰影就看不出來）
-          shopEmissive = shopShade * 1.05;
-        } else if (vShopUv.x > ${(SHOP_GLOW_U0.room - 0.5).toFixed(1)}) {
-          float px = vShopUv.x - ${SHOP_GLOW_U0.room.toFixed(1)};
-          shopShade = shopHit.w < -0.5 ? 0.8 : shopRoomShade(shopHit);
-          // 窗簾：貼在玻璃上（不跟著視差），兩側收起、偏暗
-          float curtain = max(1.0 - smoothstep(0.08, 0.17, px), smoothstep(0.83, 0.92, px));
-          shopShade = mix(shopShade, 0.32, curtain * 0.8);
-          shopEmissive = shopShade * 1.3;
-        }
-        if (vShopUv.x > 9.5) diffuseColor.rgb *= mix(0.45, 1.15, shopShade);`,
-      )
-      .replace(
-        '#include <emissivemap_fragment>',
-        '#include <emissivemap_fragment>\n        totalEmissiveRadiance *= vShopUv.x > 9.5 ? shopEmissive * shopLampTint(shopShade) : vec3(1.0);',
-      )
-  }
-  material.customProgramCacheKey = () => 'shop-window'
+  material.onBeforeCompile = (shader) => patchShopWindowShader(shader, shopGlowEnabled)
+  material.customProgramCacheKey = () => (shopGlowEnabled ? 'shop-window' : 'shop-window-flat')
   return material
 }
 
-/**
- * 玻璃店面：假室內，後牆是原本的室內貼圖，其他面取貼圖邊緣的顏色並依燈的距離收暗；
- * 玻璃反光留在玻璃面上（不跟著視差）。
- */
 function shopGlass(material) {
-  material.onBeforeCompile = (shader) => {
-    shopGlowVertex(shader)
-    shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', `#include <common>\n${SHOP_GLOW_FRAGMENT_PARS}`)
-      .replace(
-        '#include <map_fragment>',
-        `// 玻璃店面整排標成 u ∈ [10, 11]（共用一個房間），其他的 glassWarm 是原本 0–1 的 UV
-        vec2 shopUv = vec2(vShopUv.x > ${(SHOP_GLOW_U0.room - 0.5).toFixed(1)} ? vShopUv.x - ${SHOP_GLOW_U0.room.toFixed(1)} : vShopUv.x, vShopUv.y);
-        vec4 shopHit = shopRoomHit(shopUv, ${ROOM_DEPTH.glass.toFixed(2)});
-        vec2 shopTexUv = shopHit.w < -0.5 ? shopUv : shopHit.xy;
-        if (shopHit.w > 0.5 && shopHit.w < 1.5) shopTexUv = vec2(shopHit.x > 0.5 ? 0.985 : 0.015, shopHit.y);
-        else if (shopHit.w > 1.5 && shopHit.w < 2.5) shopTexUv = vec2(shopHit.x, 0.03);
-        else if (shopHit.w > 2.5) shopTexUv = vec2(shopHit.x, 0.97);
-        shopTexUv = clamp(shopTexUv, 0.005, 0.995);
-        float shopShade = shopHit.w < 0.5 ? 1.0 : shopRoomShade(shopHit) * 1.25;
-        vec3 shopRoom = texture2D(map, shopTexUv).rgb * shopShade;
-        // 玻璃反光：留在玻璃面上，不跟著視差
-        float shopGlint = fract(shopUv.x * 0.8 + shopUv.y * 0.45 + 0.15);
-        shopRoom += vec3(0.06) * smoothstep(0.0, 0.04, shopGlint) * (1.0 - smoothstep(0.07, 0.13, shopGlint));
-        diffuseColor.rgb *= shopRoom;`,
-      )
-      .replace(
-        '#include <emissivemap_fragment>',
-        'totalEmissiveRadiance *= shopRoom;',
-      )
-  }
-  material.customProgramCacheKey = () => 'shop-glass'
+  material.onBeforeCompile = (shader) => patchShopGlassShader(shader, shopGlowEnabled)
+  material.customProgramCacheKey = () => (shopGlowEnabled ? 'shop-glass' : 'shop-glass-flat')
   return material
+}
+
+/** 精緻畫質開啟店內透光、流暢畫質關閉；有變更時讓 windowLit、glassWarm 重新編譯 */
+export function setShopGlowEnabled(enabled) {
+  const next = Boolean(enabled)
+  if (next === shopGlowEnabled) return
+  shopGlowEnabled = next
+  if (!cache) return
+  cache.windowLit.needsUpdate = true
+  cache.glassWarm.needsUpdate = true
+}
+
+export function isShopGlowEnabled() {
+  return shopGlowEnabled
 }
 
 function lazyAtlasMaterial(toon, getTexture, ensure) {

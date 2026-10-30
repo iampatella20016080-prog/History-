@@ -12,7 +12,7 @@ import {
 } from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { MATERIAL_TILE } from '../rendering/materials.js'
-import { tagShopGlowUV, tagShopGlowUVGroup } from '../rendering/shopGlow.js'
+import { SHOP_ROOM_ATTRIBUTE, tagShopGlowUV, tagShopGlowUVGroup } from '../rendering/shopGlow.js'
 
 const KEEP_ATTRIBUTES = new Set(['position', 'normal', 'uv'])
 const UP = new Vector3(0, 1, 0)
@@ -254,11 +254,17 @@ export class PartBuilder {
     return geometry
   }
 
-  /** 好幾片幾何共用一個假房間（玻璃店面的整排玻璃） */
-  shopGlowGroup(geometries, kind, options) {
-    const parts = geometries.map((g) => ({ positions: g.attributes.position.array, normals: g.attributes.normal.array, uvs: g.attributes.uv.array }))
-    tagShopGlowUVGroup(parts, kind, options)
-    for (const g of geometries) g.attributes.uv.needsUpdate = true
+  /**
+   * 好幾片玻璃共用一個假房間（玻璃店面的整排玻璃）：UV 不動（流暢畫質照原本每片貼一張室內圖），
+   * 另外寫頂點屬性 shopRoom = 1 + 整排共用的 0–1 位置，只有精緻畫質的著色器讀它。
+   */
+  shopGlowGroup(geometries) {
+    const parts = geometries.map((g) => {
+      const array = new Float32Array(g.attributes.position.count * 2)
+      g.setAttribute(SHOP_ROOM_ATTRIBUTE, new BufferAttribute(array, 2))
+      return { positions: g.attributes.position.array, normals: g.attributes.normal.array, uvs: array }
+    })
+    tagShopGlowUVGroup(parts, 'room', { offset: 1 })
   }
 
   box(material, size, position = [0, 0, 0], options = {}) {
@@ -340,6 +346,14 @@ export class PartBuilder {
     const list = this.groups.get(material)
     this.groups.delete(material)
     if (!list?.length) return []
+    // 只有部分幾何有的屬性（玻璃店面的 shopRoom）：其他幾何補 0，才能合併
+    const names = new Map()
+    for (const g of list) for (const [name, attribute] of Object.entries(g.attributes)) names.set(name, attribute.itemSize)
+    for (const g of list) {
+      for (const [name, itemSize] of names) {
+        if (!g.attributes[name]) g.setAttribute(name, new BufferAttribute(new Float32Array(g.attributes.position.count * itemSize), itemSize))
+      }
+    }
     const geometry = list.length === 1 ? list[0] : mergeGeometries(list, false)
     if (list.length > 1) list.forEach((g) => g.dispose())
     geometry.computeBoundingSphere()

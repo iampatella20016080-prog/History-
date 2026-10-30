@@ -24,6 +24,8 @@ export const QUALITY_MODES = {
     ao: 0,
     bloom: 0,
     detail: false,
+    // 店內透光（後牆漸層、假室內）：細節美觀類只在精緻畫質啟用，流暢畫質維持平面發光
+    shopGlow: false,
   },
   fine: {
     id: 'fine',
@@ -38,6 +40,7 @@ export const QUALITY_MODES = {
     ao: 0.4,
     bloom: 0.16,
     detail: true,
+    shopGlow: true,
   },
 }
 

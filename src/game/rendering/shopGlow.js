@@ -8,12 +8,14 @@
  *   （後牆、左右牆、天花板、地板），各面明暗不同，從街上斜看時房間會跟著視差移動。
  *
  * 全部在既有材質（windowLit、glassWarm）的著色器裡算，不加光源、不加材質、不加繪製呼叫。
+ * 只在精緻畫質啟用（quality.js 的 shopGlow）；流暢畫質（iPad）的著色器不做求交，維持原本的平面發光。
  * 要哪一種效果記在 UV 上（windowLit 沒有貼圖，UV 本來沒用到）：
  * - u < 9.5：維持原本的平面發光（室內場景裡的窗、門楣等，不讓假室內和真的室內衝突）
  * - u ∈ [10, 11]：假室內窗，u − 10、v 是窗面上 0–1 的位置
  * - u ∈ [20, 21]：店內後牆，u − 20 是 0–1 的寬度位置，v 是離店內地面的高度（公尺）
- * glassWarm 一律是假室內（UV 本來就是 0–1，後牆畫的是原本的室內貼圖）；玻璃店面整排玻璃一起標成 u ∈ [10, 11]，
- * 共用一個房間。
+ * glassWarm 一律是假室內（UV 維持原本每片 0–1，後牆畫的是原本的室內貼圖）；玻璃店面的整排玻璃另外寫一個頂點屬性
+ * shopRoom = (1 + u, 1 + v)（整排共用的 0–1 位置），精緻畫質的著色器用它讓整排共用一個房間；沒有這個屬性時讀到 0，
+ * 改用每片自己的 UV。流暢畫質不讀它，著色器和原本完全相同。
  *
  * 下面的 JS 函式和 GLSL 是同一套算式（JS 給測試用），改一邊要一起改另一邊。
  */
@@ -25,6 +27,9 @@ export const SHOP_GLOW_U0 = { room: 10, back: 20 }
 
 /** 店內兩層層架離店內地面的高度（公尺）；shophouse、arcade 的淺室內依此放層板，後牆依此畫陰影 */
 export const SHOP_SHELF_HEIGHTS = [0.95, 1.57]
+
+/** 玻璃店面整排共用的假房間座標（頂點屬性名稱；值是 1 + 0–1 的位置，0 代表沒有） */
+export const SHOP_ROOM_ATTRIBUTE = 'shopRoom'
 
 /** 假室內的房間深度（公尺）：樓上的窗、玻璃店面 */
 export const ROOM_DEPTH = { window: 2.4, glass: 3.0 }
@@ -112,8 +117,8 @@ export function tagShopGlowUV(positions, normals, uvs, kind, options = {}) {
  * 好幾片幾何共用一個範圍（例如玻璃店面的每一片玻璃）：整排玻璃後面是同一個假房間，不會變成一格一格的隔間。
  * parts：[{ positions, normals, uvs }]
  */
-export function tagShopGlowUVGroup(parts, kind, { floorOffset = 0 } = {}) {
-  const u0 = SHOP_GLOW_U0[kind]
+export function tagShopGlowUVGroup(parts, kind, { floorOffset = 0, offset } = {}) {
+  const u0 = offset ?? SHOP_GLOW_U0[kind]
   if (u0 === undefined) throw new Error(`未知的店內透光種類：${kind}`)
   const groups = new Map()
   let yMin = Infinity
@@ -156,7 +161,7 @@ export function tagShopGlowUVGroup(parts, kind, { floorOffset = 0 } = {}) {
         u = (s[i] - g.min) / Math.max(g.max - g.min, 1e-6)
       }
       uvs[i * 2] = u0 + u
-      uvs[i * 2 + 1] = kind === 'room' ? (y - yMin) / ySpan : y - yMin - floorOffset
+      uvs[i * 2 + 1] = kind === 'room' ? (offset ?? 0) + (y - yMin) / ySpan : y - yMin - floorOffset
     }
   })
 }
@@ -247,3 +252,88 @@ vec3 shopLampTint(float shade) {
   return mix(vec3(0.78, 0.46, 0.3), vec3(1.0, 0.96, 0.9), clamp(shade, 0.0, 1.0));
 }
 `
+
+/* ── 著色器修補（materials.js 的 onBeforeCompile 呼叫；精緻畫質才開啟） ───────────── */
+
+/** 頂點著色器：傳世界座標、法線與 UV（windowLit 沒有貼圖，vUv 不存在） */
+function patchVertex(shader) {
+  shader.vertexShader = shader.vertexShader
+    .replace('#include <common>', `#include <common>\n${SHOP_GLOW_VERTEX_PARS}`)
+    .replace('#include <begin_vertex>', `#include <begin_vertex>\n${SHOP_GLOW_VERTEX}`)
+}
+
+/**
+ * windowLit（亮窗與店內後牆）。enabled 為 false（流暢畫質）時不修改，維持原本的平面發光。
+ * - 店內後牆：中間亮、左右與上方暗、層架下有陰影；
+ * - 假室內窗：視線打到看不見的房間，斜看有視差，窗邊兩側有窗簾；
+ * - 沒標記的（室內場景裡的窗、門楣）維持原本的平面發光。
+ * 明暗同時乘在底色與自發光：白天看得出房間的深淺，入夜時燈光集中在中間。
+ */
+export function patchShopWindowShader(shader, enabled) {
+  if (!enabled) return shader
+  patchVertex(shader)
+  shader.fragmentShader = shader.fragmentShader
+    .replace('#include <common>', `#include <common>\n${SHOP_GLOW_FRAGMENT_PARS}`)
+    .replace(
+      '#include <color_fragment>',
+      `#include <color_fragment>
+      // 求交放在分支外面（dFdx 在分支裡沒有定義）
+      vec4 shopHit = shopRoomHit(vec2(vShopUv.x - ${SHOP_GLOW_U0.room.toFixed(1)}, vShopUv.y), ${ROOM_DEPTH.window.toFixed(2)});
+      float shopShade = 1.0;
+      float shopEmissive = 1.0;
+      if (vShopUv.x > ${(SHOP_GLOW_U0.back - 0.5).toFixed(1)}) {
+        shopShade = shopBackWall(vShopUv.x - ${SHOP_GLOW_U0.back.toFixed(1)}, vShopUv.y);
+        // 中間約等於原本的亮度，往外收暗（太亮會在入夜的年代過曝，層架陰影就看不出來）
+        shopEmissive = shopShade * 1.05;
+      } else if (vShopUv.x > ${(SHOP_GLOW_U0.room - 0.5).toFixed(1)}) {
+        float px = vShopUv.x - ${SHOP_GLOW_U0.room.toFixed(1)};
+        shopShade = shopHit.w < -0.5 ? 0.8 : shopRoomShade(shopHit);
+        // 窗簾：貼在玻璃上（不跟著視差），兩側收起、偏暗
+        float curtain = max(1.0 - smoothstep(0.08, 0.17, px), smoothstep(0.83, 0.92, px));
+        shopShade = mix(shopShade, 0.32, curtain * 0.8);
+        shopEmissive = shopShade * 1.3;
+      }
+      if (vShopUv.x > 9.5) diffuseColor.rgb *= mix(0.45, 1.15, shopShade);`,
+    )
+    .replace(
+      '#include <emissivemap_fragment>',
+      '#include <emissivemap_fragment>\n        totalEmissiveRadiance *= vShopUv.x > 9.5 ? shopEmissive * shopLampTint(shopShade) : vec3(1.0);',
+    )
+  return shader
+}
+
+/**
+ * glassWarm（玻璃店面）。enabled 為 true：假室內，後牆是原本的室內貼圖，其他面取貼圖邊緣的顏色並依燈的距離收暗，
+ * 玻璃反光留在玻璃面上（不跟著視差）。enabled 為 false（流暢畫質）時不修改，維持原本的平貼室內圖。
+ */
+export function patchShopGlassShader(shader, enabled) {
+  if (!enabled) return shader
+  patchVertex(shader)
+  shader.vertexShader = shader.vertexShader
+    .replace('#include <common>', `#include <common>\nattribute vec2 ${SHOP_ROOM_ATTRIBUTE};`)
+    .replace('vShopUv = uv;', `vShopUv = ${SHOP_ROOM_ATTRIBUTE}.x > 0.5 ? ${SHOP_ROOM_ATTRIBUTE} - 1.0 : uv;`)
+  shader.fragmentShader = shader.fragmentShader
+    .replace('#include <common>', `#include <common>\n${SHOP_GLOW_FRAGMENT_PARS}`)
+    .replace(
+      '#include <map_fragment>',
+      `// 玻璃店面整排共用一個房間（頂點屬性 shopRoom），其他的 glassWarm 用每片自己 0–1 的 UV
+      vec2 shopUv = vShopUv;
+      vec4 shopHit = shopRoomHit(shopUv, ${ROOM_DEPTH.glass.toFixed(2)});
+      vec2 shopTexUv = shopHit.w < -0.5 ? shopUv : shopHit.xy;
+      if (shopHit.w > 0.5 && shopHit.w < 1.5) shopTexUv = vec2(shopHit.x > 0.5 ? 0.985 : 0.015, shopHit.y);
+      else if (shopHit.w > 1.5 && shopHit.w < 2.5) shopTexUv = vec2(shopHit.x, 0.03);
+      else if (shopHit.w > 2.5) shopTexUv = vec2(shopHit.x, 0.97);
+      shopTexUv = clamp(shopTexUv, 0.005, 0.995);
+      float shopShade = shopHit.w < 0.5 ? 1.0 : shopRoomShade(shopHit) * 1.25;
+      vec3 shopRoom = texture2D(map, shopTexUv).rgb * shopShade;
+      // 玻璃反光：留在玻璃面上，不跟著視差
+      float shopGlint = fract(shopUv.x * 0.8 + shopUv.y * 0.45 + 0.15);
+      shopRoom += vec3(0.06) * smoothstep(0.0, 0.04, shopGlint) * (1.0 - smoothstep(0.07, 0.13, shopGlint));
+      diffuseColor.rgb *= shopRoom;`,
+    )
+    .replace(
+      '#include <emissivemap_fragment>',
+      'totalEmissiveRadiance *= shopRoom;',
+    )
+  return shader
+}
