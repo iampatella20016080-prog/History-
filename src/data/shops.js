@@ -2588,7 +2588,7 @@ export const SHOPS = [
       revival:
         '2004年廠房前半部整理為門市、二樓的揀茶樓改為藝文空間「清源堂」；一樓後方的焙籠間仍以木炭焙茶，四十多個焙窟還在使用。2008年起清源堂每週六下午有南管演奏；第五代王聖鈞2012年接班，2020年底在隔壁開了 WANGTEA LAB。',
     },
-    camera: { distance: 6, height: 4.2, side: -4, lookHeight: 3.2 },
+    camera: { distance: 5, height: 4.2, side: -4, lookHeight: 3.2 }, // distance 不用 6：路燈往街心移了以後，鏡頭會貼著 x = 8 那盞路燈的燈頭（畫面審查）
     chapters: [
       {
         id: 'baozhong-nanyang',

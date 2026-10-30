@@ -139,6 +139,27 @@ describe('按 E 探索店家時的鏡頭', () => {
     }
   })
 
+  test('路燈的燈頭不在鏡頭前面 3 公尺內（有記名茶的鏡頭在路燈往街心移了以後貼著燈頭）', () => {
+    // 各款路燈的燈頭（本地座標：朝街心 forward 公尺、高度 y）
+    const HEAD = { 'electric-pole': [1.08, 4.42], deco: [0, 4.0], utility: [1.24, 5.1], heritage: [0, 3.8] }
+    for (const era of ERAS) {
+      const lamps = createEraLayout(era).lamps ?? []
+      for (const shop of getShopsByEra(era).filter((item) => item.status === 'open')) {
+        const { position, target } = getShopPlacement(shop).camera
+        const dir = target.clone().sub(position).normalize()
+        for (const lamp of lamps) {
+          const [forward, y] = HEAD[lamp.style]
+          const r = lamp.rotationY
+          const head = { x: lamp.position[0] + Math.sin(r) * forward, y, z: lamp.position[2] + Math.cos(r) * forward }
+          const to = { x: head.x - position.x, y: head.y - position.y, z: head.z - position.z }
+          const d = Math.hypot(to.x, to.y, to.z)
+          const cos = (to.x * dir.x + to.y * dir.y + to.z * dir.z) / d
+          assert.ok(!(d < 3 && cos > Math.cos(0.6)), `${era.id}／${shop.id}：路燈 (${lamp.position[0]}, ${lamp.position[2]}) 的燈頭在鏡頭前 ${d.toFixed(2)} 公尺`)
+        }
+      }
+    }
+  })
+
   test('鏡頭與店面之間沒有路線人物擋著（好粿緣的鏡頭原本從壽粿的阿伯頭上掠過）', () => {
     for (const era of ERAS) {
       const figures = routeFiguresOfEra(era.id)
@@ -226,10 +247,11 @@ describe('布幡掛在竹竿下面', () => {
 })
 
 describe('鏡頭貼著人物時不畫人物', () => {
-  test('水平距離 0.7 公尺以內、高度在人物身上時算太近（近裁切面 0.3 公尺會切開肩膀與後腦）', () => {
+  test('水平距離 0.85 公尺以內、高度在人物身上時算太近（近裁切面 0.3 公尺會切開肩膀與後腦）', () => {
     const p = { x: 0, y: 0, z: 0 }
     assert.ok(cameraTooCloseToCharacter({ x: 0.45, y: 1.6, z: 0 }, p), '貼在背後')
-    assert.ok(!cameraTooCloseToCharacter({ x: 0.9, y: 1.6, z: 0 }, p), '一般室內距離')
+    assert.ok(cameraTooCloseToCharacter({ x: 0.75, y: 1.6, z: 0 }, p), '斗笠帽緣會被切到')
+    assert.ok(!cameraTooCloseToCharacter({ x: 1.0, y: 1.6, z: 0 }, p), '一般室內距離')
     assert.ok(!cameraTooCloseToCharacter({ x: 0.3, y: 3.2, z: 0 }, p), '頭頂上方很高')
     assert.ok(!cameraTooCloseToCharacter({ x: 0, y: 1.6, z: 7.8 }, p), '街上')
   })
