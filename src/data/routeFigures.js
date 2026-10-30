@@ -14,12 +14,13 @@ import { TEMPLE_MEAL_FIGURES } from './routes/templeMealRoute.js'
 import { OLD_HOUSE_FIGURES } from './routes/oldHouseRoute.js'
 import { NEWS_FIGURES } from './routes/newsRoute.js'
 import { FOLKLORE_FIGURES } from './routes/folkloreRoute.js'
+import { NEIGHBOUR_FIGURES } from './routes/neighbourRoute.js'
 
 /** 人物的碰撞半寬（和 streetPropsLayout 的 FIGURE_HALF 相同） */
 export const ROUTE_FIGURE_HALF = 0.3
 const FIGURE_HEIGHT = 1.75
 
-export const ROUTE_FIGURES = [...PASTRY_FIGURES, ...TEMPLE_MEAL_FIGURES, ...OLD_HOUSE_FIGURES, ...NEWS_FIGURES, ...FOLKLORE_FIGURES]
+export const ROUTE_FIGURES = [...PASTRY_FIGURES, ...TEMPLE_MEAL_FIGURES, ...OLD_HOUSE_FIGURES, ...NEWS_FIGURES, ...FOLKLORE_FIGURES, ...NEIGHBOUR_FIGURES]
 
 export function routeFigureNpcId(figure) {
   return `route-${figure.id}`

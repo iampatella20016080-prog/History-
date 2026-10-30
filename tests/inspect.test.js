@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { INSPECT_LIMITS, inspectActionT, newInspectState, objectJournalId, rotateInspect, toggleInspectAction, updateInspect, zoomInspect } from '../src/game/objectInspect.js'
+import { INSPECT_LIMITS, INSPECT_MIN_RADIUS, inspectActionT, inspectScale, inspectViewDistance, newInspectState, objectJournalId, rotateInspect, toggleInspectAction, updateInspect, zoomInspect } from '../src/game/objectInspect.js'
+import { CAMERA } from '../src/game/config.js'
 import { INSPECT_OBJECTS, STREET_INSPECTABLES, getInspectObject, getInspectable, inspectablesOfEra } from '../src/data/inspectObjects.js'
 import { buildInspectObject, inspectPartRotation } from '../src/game/builders/inspectObjects.js'
 import { getSource } from '../src/data/sources.js'
@@ -87,4 +88,19 @@ test('器物章節：chapter.object 都對應存在的器物（米斗、茶箱�
       if (chapter.type === 'object') assert.ok(getInspectObject(chapter.object), `${shopId}／${chapter.id}`)
     }
   }
+})
+
+test('器物檢視：很小的器物放大取景，任何縮放下鏡頭都不穿進器物（近裁切面之外）', () => {
+  assert.equal(inspectScale(0.75), 1)
+  assert.ok(Math.abs(inspectScale(0.07) * 0.07 - INSPECT_MIN_RADIUS) < 1e-9)
+  for (const object of Object.values(INSPECT_OBJECTS)) {
+    const built = buildInspectObject(object.id)
+    const radius = built.radius * inspectScale(built.radius)
+    for (const zoom of [INSPECT_LIMITS.minZoom, 1, INSPECT_LIMITS.maxZoom]) {
+      const distance = inspectViewDistance(radius, zoom, CAMERA.near)
+      assert.ok(distance - radius > CAMERA.near, `${object.id}：縮放 ${zoom} 時鏡頭穿進器物`)
+    }
+  }
+  // 拉近時距離變短（還沒碰到下限時）
+  assert.ok(inspectViewDistance(0.75, 1, CAMERA.near) > inspectViewDistance(0.75, 2, CAMERA.near))
 })

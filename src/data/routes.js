@@ -8,11 +8,12 @@ import { TEMPLE_MEAL_ROUTE } from './routes/templeMealRoute.js'
 import { OLD_HOUSE_ROUTE } from './routes/oldHouseRoute.js'
 import { NEWS_ROUTE } from './routes/newsRoute.js'
 import { FOLKLORE_ROUTE } from './routes/folkloreRoute.js'
+import { NEIGHBOUR_ROUTE } from './routes/neighbourRoute.js'
 import { getShop } from './shops.js'
 import { getInspectable } from './inspectObjects.js'
 import { getRouteFigureByNpcId } from './routeFigures.js'
 
-export const ROUTES = [TEA_ROUTE, PASTRY_ROUTE, TEMPLE_MEAL_ROUTE, OLD_HOUSE_ROUTE, NEWS_ROUTE, FOLKLORE_ROUTE]
+export const ROUTES = [TEA_ROUTE, PASTRY_ROUTE, TEMPLE_MEAL_ROUTE, OLD_HOUSE_ROUTE, NEWS_ROUTE, FOLKLORE_ROUTE, NEIGHBOUR_ROUTE]
 
 export function getRoute(id) {
   return ROUTES.find((route) => route.id === id) ?? null
