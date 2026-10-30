@@ -216,7 +216,8 @@ describe('流暢畫質和 #53 之前相同', () => {
       const world = buildEraWorldSync(era.id)
       const pre = PRE_MOTION[era.id]
       assert.equal(world.batches.length, pre.batches)
-      assert.equal((world.detailBatches ?? []).length, pre.detailBatches)
+      // 細部批次只在精緻畫質畫（EraScene 的 visible={detail}）；細部（#57）把接地暗影併進這裡，多一批不影響流暢畫質
+      assert.ok((world.detailBatches ?? []).length >= pre.detailBatches)
       assert.equal(world.signs.length, pre.signs)
       assert.equal(world.banners.length, pre.banners)
       assert.equal(world.lanterns.length, pre.lanterns)
