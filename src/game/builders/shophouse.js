@@ -1,5 +1,6 @@
 import { STREET } from '../config.js'
 import { createCurvedSlab } from './PartBuilder.js'
+import { contactShadow } from './contactShadow.js'
 import { MATERIAL_TILE } from '../rendering/materials.js'
 import { SHOP_SHELF_HEIGHTS } from '../rendering/shopGlow.js'
 import { createRng, pick } from '../utils/random.js'
@@ -182,6 +183,7 @@ export function buildShophouse(b, cfg, detail = null) {
     const px = side * (w / 2 - 0.36)
     const postH = beamY - 0.09 - walkH
     b.box('stone', [0.34, 0.2, 0.34], [px, walkH + 0.1, postZ], { tint: '#c9c0ae' })
+    contactShadow(b, px, walkH, postZ, 0.34, 0.34, { maxZ: walkD })
     b.box('wood', [0.19, postH, 0.19], [px, walkH + postH / 2, postZ], { tint: woodTint, grime: grime(0.25) })
     b.extrude('wood', bracketShape(0.44), 0.06, {
       position: [px - side * 0.095, beamY - 0.09, postZ + (side > 0 ? 0.03 : -0.03)],

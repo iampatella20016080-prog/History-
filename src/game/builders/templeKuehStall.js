@@ -1,6 +1,7 @@
 import { KUEH_STALL, KUEH_STALL_HOTSPOTS, KUEH_STALL_NPCS } from '../../data/templeSnackLayout.js'
 import { conditionTint } from './condition.js'
 import { shade } from './props.js'
+import { contactShadow } from './contactShadow.js'
 import {
   angKuKue,
   bambooBasket,
@@ -41,6 +42,7 @@ function table(b, detail, tint) {
   const { half, depth, height } = S.table
   const top = tableTop()
   b.box('wood', [half * 2, 0.04, depth], [0, top - 0.02, -depth / 2], { tint: tint(WOOD) })
+  contactShadow(b, 0, G, -depth / 2, half * 2 - 0.2, depth - 0.1)
   b.box('wood', [half * 2 + 0.01, 0.05, 0.02], [0, top - 0.045, -0.005], { tint: tint(shade(WOOD, 0.86)) })
   for (const x of [-half + 0.18, half - 0.18]) {
     for (const s of [-1, 1]) {

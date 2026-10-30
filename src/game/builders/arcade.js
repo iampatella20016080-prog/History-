@@ -88,6 +88,8 @@ export function buildArcadeBuilding(b, cfg, detail = null) {
       tint: columnTint,
       capTint: trimTint,
       round: style === 'deco',
+      floorY: walkH,
+      floorMaxZ: walkD,
     })
   }
 

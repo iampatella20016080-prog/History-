@@ -7,6 +7,8 @@ import {
   Vector2,
 } from 'three'
 import { createRng, pick } from '../utils/random.js'
+import { contactShadow } from './contactShadow.js'
+import { limbGeometry, lumpyClump } from './foliage.js'
 
 /**
  * 街道擺設：木箱、茶箱、麻布袋、乾貨籃、陶甕、推車…
@@ -99,6 +101,7 @@ const JAR_PROFILE = [
 ].map(([x, y]) => new Vector2(x, y))
 
 export function jar(b, position, { scale = 1, tint = '#6e4a34', lid = false } = {}) {
+  contactShadow(b, position[0], position[1], position[2], 0.36 * scale)
   b.add('plain', new LatheGeometry(JAR_PROFILE, 10), { position, scale: [scale, scale, scale], tint })
   if (lid) {
     b.cylinder('wood', 0.16 * scale, 0.16 * scale, 0.04 * scale, 10, [position[0], position[1] + 0.62 * scale, position[2]], {
@@ -109,6 +112,7 @@ export function jar(b, position, { scale = 1, tint = '#6e4a34', lid = false } = 
 
 /* ── 木桶 ───────────────────────────────────── */
 export function barrel(b, position, { radius = 0.3, height = 0.72, tint = '#c9a983' } = {}) {
+  contactShadow(b, position[0], position[1], position[2], radius * 1.8)
   b.cylinder('wood', radius, radius * 0.9, height, 10, [position[0], position[1] + height / 2, position[2]], { tint })
   for (const t of [0.22, 0.78]) {
     b.cylinder('dark', radius * (1.0 - t * 0.08) + 0.012, radius * (1.0 - t * 0.08) + 0.012, 0.05, 10, [position[0], position[1] + height * t, position[2]], {
@@ -230,6 +234,7 @@ export function roeTray(b, position, { rotationY = 0 } = {}) {
 export function displayTable(b, position, { width = 1.7, depth = 0.6, height = 0.66, rotationY = 0, tint = '#a98562' } = {}) {
   b.group(position, rotationY, () => {
     b.box('wood', [width, 0.06, depth], [0, height - 0.03, 0], { tint })
+    contactShadow(b, 0, 0, 0, width - 0.1, depth - 0.06, { spread: 0.16 })
     const lx = width / 2 - 0.08
     const lz = depth / 2 - 0.06
     for (const sx of [-1, 1]) {
@@ -379,12 +384,24 @@ export function planter(b, position, { seed = 1, small = false } = {}) {
   const [x, y, z] = position
   const w = small ? 0.5 : 0.9
   b.box('wood', [w, 0.42, 0.42], [x, y + 0.21, z], { tint: '#9c7a58' })
+  contactShadow(b, x, y, z, w, 0.42)
   b.box('earth', [w - 0.08, 0.04, 0.34], [x, y + 0.42, z], { tint: '#6d5640' })
   const greens = ['#7f9268', '#8fa276', '#6f845d', '#9aa97f']
   if (!small && rng() < 0.6) {
+    // 小樹：主幹在上段分成兩根枝，各撐一團不規則的葉叢，枝從葉叢之間露出來
     b.cylinder('wood', 0.04, 0.05, 1.0, 5, [x, y + 0.9, z], { tint: '#7a6450' })
-    b.add('plain', new IcosahedronGeometry(0.42, 1), { position: [x, y + 1.55, z], scale: [1, 0.9, 1], tint: pick(rng, greens) })
-    b.add('plain', new IcosahedronGeometry(0.3, 1), { position: [x + 0.18, y + 1.35, z + 0.1], tint: pick(rng, greens) })
+    const tops = [
+      [x - 0.08, y + 1.5, z - 0.04, 0.42, 0.9],
+      [x + 0.2, y + 1.33, z + 0.1, 0.3, 1],
+    ]
+    b.add('wood', limbGeometry([[x, y + 1.3, z], [x - 0.05, y + 1.45, z - 0.03], [x - 0.14, y + 1.72, z - 0.08]], [0.04, 0.03, 0.016]), { tint: '#7a6450' })
+    b.add('wood', limbGeometry([[x, y + 1.25, z], [x + 0.14, y + 1.33, z + 0.07], [x + 0.32, y + 1.4, z + 0.16]], [0.035, 0.025, 0.014]), { tint: '#7a6450' })
+    tops.forEach(([cx, cy, cz, r, squash], k) => {
+      const g = lumpyClump(r, seed * 7 + k, { satellites: 1, outward: k ? 0.5 : 2.6 })
+      g.scale(1, squash, 1)
+      g.translate(cx, cy, cz)
+      b.add('plain', g, { tint: pick(rng, greens) })
+    })
   } else {
     const count = small ? 2 : 4
     for (let i = 0; i < count; i++) {
@@ -401,16 +418,27 @@ export function pottedPlant(b, position, { seed = 1, size = 1, potTint = '#7c4a3
   const rng = createRng(seed)
   const [x, y, z] = position
   b.cylinder('plain', 0.24 * size, 0.18 * size, 0.42 * size, 12, [x, y + 0.21 * size, z], { tint: potTint })
+  contactShadow(b, x, y, z, 0.4 * size)
   b.cylinder('plain', 0.27 * size, 0.27 * size, 0.05 * size, 12, [x, y + 0.43 * size, z], { tint: shade(potTint, 0.85) })
   b.cylinder('wood', 0.03 * size, 0.045 * size, 0.6 * size, 5, [x, y + 0.7 * size, z], { tint: '#6c5440' })
   const greens = ['#5f7a52', '#6c8a5c', '#56704a']
+  // 葉叢不規則（缺口與外緣的小葉團），主幹上段分出細枝伸到外側的葉叢，從葉叢之間露出來
+  const stemTop = y + 0.95 * size
   for (let i = 0; i < 4; i++) {
     const a = (i / 4) * Math.PI * 2 + rng()
-    b.add('plain', new IcosahedronGeometry((0.2 + rng() * 0.08) * size, 1), {
-      position: [x + Math.cos(a) * 0.16 * size, y + (0.95 + rng() * 0.25) * size, z + Math.sin(a) * 0.16 * size],
-      scale: [1, 0.75, 1],
-      tint: pick(rng, greens),
-    })
+    const r = (0.2 + rng() * 0.08) * size
+    const cx = x + Math.cos(a) * 0.16 * size
+    const cy = y + (0.95 + rng() * 0.25) * size
+    const cz = z + Math.sin(a) * 0.16 * size
+    const tint = pick(rng, greens)
+    const g = lumpyClump(r, seed * 13 + i, { satellites: i % 2 ? 1 : 0, outward: a })
+    g.scale(1, 0.75, 1)
+    g.translate(cx, cy, cz)
+    b.add('plain', g, { tint })
+    if (i % 2 === 0) {
+      const reach = 0.16 + r / size * 0.9
+      b.add('wood', limbGeometry([[x, stemTop - 0.18 * size, z], [x + Math.cos(a) * 0.1 * size, stemTop - 0.08 * size, z + Math.sin(a) * 0.1 * size], [x + Math.cos(a) * reach * size, cy - 0.02 * size, z + Math.sin(a) * reach * size]], [0.026 * size, 0.018 * size, 0.009 * size]), { tint: '#6c5440' })
+    }
   }
 }
 
@@ -419,7 +447,10 @@ export function flowerPot(b, position, { seed = 1 } = {}) {
   const rng = createRng(seed)
   const [x, y, z] = position
   b.cylinder('plain', 0.17, 0.13, 0.3, 10, [x, y + 0.15, z], { tint: pick(rng, ['#b9653f', '#a75a3c', '#e6dccb']) })
-  b.add('plain', new IcosahedronGeometry(0.19, 1), { position: [x, y + 0.38, z], scale: [1, 0.7, 1], tint: '#6f8a5c' })
+  const leaves = lumpyClump(0.19, seed * 5 + 1, { satellites: 1, outward: seed * 2.4 })
+  leaves.scale(1, 0.7, 1)
+  leaves.translate(x, y + 0.38, z)
+  b.add('plain', leaves, { tint: '#6f8a5c' })
   const flowers = ['#d9504a', '#f2c94c', '#f4efe6', '#d97aa0']
   for (let i = 0; i < 6; i++) {
     const a = rng() * Math.PI * 2
@@ -455,12 +486,14 @@ export function teaTable(b, position, { rotationY = 0, seed = 1 } = {}) {
   const rng = createRng(seed)
   b.group(position, rotationY, () => {
     b.box('wood', [0.82, 0.05, 0.82], [0, 0.74, 0], { tint: '#8c6446' })
+    contactShadow(b, 0, 0, 0, 0.72, 0.72, { spread: 0.16 })
     for (const sx of [-1, 1]) {
       for (const sz of [-1, 1]) b.box('wood', [0.05, 0.72, 0.05], [sx * 0.34, 0.36, sz * 0.34], { tint: '#6c4c34' })
     }
     for (const [sx, sz] of [[0.75, 0], [-0.75, 0], [0, 0.75]]) {
       b.cylinder('wood', 0.17, 0.17, 0.05, 10, [sx, 0.44, sz], { tint: '#9a7452' })
       b.cylinder('wood', 0.03, 0.03, 0.42, 5, [sx, 0.21, sz], { tint: '#6c4c34' })
+      contactShadow(b, sx, 0, sz, 0.22)
     }
     b.add('plain', new SphereGeometry(0.08, 10, 8), { position: [0, 0.84, 0], scale: [1, 0.85, 1], tint: '#5b6f78' })
     for (let i = 0; i < 3; i++) {
@@ -543,10 +576,12 @@ export function cafeSet(b, position, { rotationY = 0, seed = 1, modern = false }
     b.cylinder(modern ? 'wood' : 'plain', 0.36, 0.36, 0.04, 16, [0, 0.74, 0], { tint: top })
     b.cylinder('plain', 0.03, 0.03, 0.7, 6, [0, 0.38, 0], { tint: '#2d2a28' })
     b.cylinder('plain', 0.2, 0.22, 0.03, 10, [0, 0.02, 0], { tint: '#2d2a28' })
+    contactShadow(b, 0, 0, 0, 0.5)
     for (const side of [-1, 1]) {
       const cx = side * 0.62
       b.group([cx, 0, 0], side > 0 ? -Math.PI / 2 : Math.PI / 2, () => {
         b.cylinder(modern ? 'wood' : 'plain', 0.2, 0.2, 0.04, 12, [0, 0.46, 0], { tint: modern ? '#b48e64' : '#5a3a2c' })
+        contactShadow(b, 0, 0, 0, 0.32)
         for (const [lx, lz] of [[0.13, 0.13], [-0.13, 0.13], [0.13, -0.13], [-0.13, -0.13]]) {
           b.box('plain', [0.025, 0.45, 0.025], [lx, 0.23, lz], { tint: '#2d2a28' })
         }
@@ -608,6 +643,7 @@ export function vintageCar(b, position, { rotationY = 0, tint = '#28352f' } = {}
 export function stool(b, position, { tint = '#c96a4a' } = {}) {
   const [x, y, z] = position
   b.cylinder('plain', 0.15, 0.15, 0.04, 10, [x, y + 0.42, z], { tint })
+  contactShadow(b, x, y, z, 0.24)
   for (let i = 0; i < 4; i++) {
     const a = (i / 4) * Math.PI * 2 + Math.PI / 4
     b.box('plain', [0.03, 0.42, 0.03], [x + Math.cos(a) * 0.1, y + 0.21, z + Math.sin(a) * 0.1], { tint: shade(tint, 0.8) })
@@ -619,6 +655,7 @@ export function bench(b, position, { rotationY = 0, length = 1.6, modern = false
     for (let i = 0; i < 3; i++) {
       b.box('wood', [length, 0.04, 0.12], [0, 0.45, -0.14 + i * 0.14], { tint: modern ? '#b48e64' : '#8c6a48' })
     }
+    contactShadow(b, 0, 0, 0, length - 0.2, 0.36, { spread: 0.16 })
     for (const side of [-1, 1]) {
       b.box(modern ? 'plain' : 'wood', [0.06, 0.45, 0.42], [side * (length / 2 - 0.15), 0.225, 0], { tint: modern ? '#2a2c2e' : '#6c4c34' })
     }
@@ -634,6 +671,7 @@ export function foodStall(b, position, { rotationY = 0, seed = 1, canopy = '#d9c
   b.group(position, rotationY, () => {
     // 攤台
     b.box('wood', [1.9, 0.85, 0.8], [0, 0.425, 0], { tint: '#9a7656' })
+    contactShadow(b, 0, 0, 0, 1.9, 0.8)
     b.box('plain', [2.0, 0.05, 0.9], [0, 0.875, 0], { tint: '#d8d4c8' })
     // 棚架
     for (const sx of [-1, 1]) {
