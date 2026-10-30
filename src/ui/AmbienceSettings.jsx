@@ -60,7 +60,12 @@ export function AmbienceSettings() {
           </button>
         )}
       </p>
-      <p className="music-settings__note">{t('ambience.note')}</p>
+      <p className="music-settings__note">
+        {t('ambience.note')}
+        <a href={`${import.meta.env.BASE_URL}audio/ambience/CREDITS.md`} target="_blank" rel="noreferrer">
+          {t('ambience.credits')}
+        </a>
+      </p>
     </div>
   )
 }
