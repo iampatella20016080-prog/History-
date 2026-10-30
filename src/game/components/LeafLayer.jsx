@@ -10,7 +10,7 @@ import { useGameStore } from '../../state/useGameStore.js'
 /**
  * 榕樹下的落葉：葉子從樹冠下緣飄落、翻轉、隨風偏移，落地後停一下再淡出，然後從樹冠重新開始。
  * 整個年代的落葉合成一個網格（一次繪製），位置全部在頂點著色器裡依時間計算；
- * 流暢模式只畫前面幾片（其餘移到畫面外），份量見 motion.js 的 MOTION_SETTINGS。
+ * 只在精緻畫質掛載（EraScene）；流暢畫質不建立這個網格。份量見 motion.js 的 MOTION_SETTINGS。
  */
 const MAX_PER_TREE = Math.max(...Object.values(MOTION_SETTINGS).map((s) => s.leavesPerTree))
 
@@ -57,7 +57,7 @@ const VERTEX = /* glsl */ `
     }
     vec4 mv = modelViewMatrix * vec4(center + offset, 1.0);
     gl_Position = projectionMatrix * mv;
-    // 流暢模式：每棵樹只畫前 uCount 片
+    // 每棵樹只畫前 uCount 片
     if (aGround.y >= uCount) gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
     vCorner = aCorner;
     vHue = aParams.w;

@@ -4,25 +4,30 @@
  * - 風：整條街共用一個緩慢起伏的風力（幾個不成倍數的正弦疊加，偶爾一陣較強的風），
  *   燈籠、布幡、遮雨棚、煙與落葉都讀同一個值，所以一陣風吹過時整條街一起動。
  * - 燈籠：以掛點為軸的單擺；擺動頻率依燈籠大小（擺長）變化，大燈籠擺得慢。
- * - 各畫質的動態份量：流暢模式減量（落葉少一些、倒影只畫近處的船），但每一種動態都保留。
- * - 繪製呼叫預算：新動態最多增加幾次繪製呼叫。
+ * - 各畫質的動態：只在精緻畫質（電腦版）啟用（使用者 2026-10-30 決定：細節美觀類效果只給電腦版）。
+ *   流暢畫質（iPad）回到第 9 階段之前的畫面：不建立落葉與倒影、河面用原本的靜態材質、
+ *   燈籠與布幡照舊輕擺、遮雨棚不動、煙畫成原本的蒸氣（煤球爐的煙不畫），繪製呼叫和之前相同。
+ * - 繪製呼叫預算：新動態在精緻畫質最多增加幾次繪製呼叫（流暢畫質為 0）。
  */
 
 /** 每一種動態在兩種畫質的份量（smooth 流暢、fine 精緻） */
 export const MOTION_SETTINGS = {
   smooth: {
-    leavesPerTree: 10, // 每棵榕樹同時在空中的落葉
-    rippleOctaves: 2, // 河面波紋疊加的層數
-    reflections: 'near', // 船的倒影：只畫近處（和船本身的規則相同）
-    smokePuffs: 3, // 每個爐灶同時上升的煙團（蒸氣維持原本的隔一個略過）
-    awningSway: 1,
+    enabled: false, // 流暢畫質沒有第 9 階段的畫面動態
+    leavesPerTree: 0, // 每棵榕樹同時在空中的落葉（0＝不建立落葉網格）
+    rippleOctaves: 0, // 河面波紋疊加的層數（0＝原本的靜態水面材質）
+    reflections: 'none', // 船的倒影：不建立
+    smokePuffs: 0, // 每個爐灶同時上升的煙團（0＝香爐畫成原本的蒸氣、煤球爐的煙不畫）
+    awningSway: 0,
   },
   fine: {
-    leavesPerTree: 22,
+    enabled: true,
+    leavesPerTree: 22, // 每棵榕樹同時在空中的落葉
+    rippleOctaves: 3, // 河面波紋疊加的層數
     rippleOctaves: 3,
-    reflections: 'all',
-    smokePuffs: 6,
-    awningSway: 1,
+    reflections: 'all', // 每艘船都有倒影
+    smokePuffs: 6, // 每個爐灶同時上升的煙團（蒸氣維持原本的份量）
+    awningSway: 1, // 遮雨棚隨風
   },
 }
 
@@ -34,10 +39,16 @@ export const MOTION_DRAW_BUDGET = {
   maxBoats: 6,
 }
 
-/** 每個年代畫面上新動態最多增加的繪製呼叫數（色彩一趟） */
-export function motionDrawCalls({ boats = 0, leafTrees = 0 } = {}) {
+/** 每個年代畫面上新動態最多增加的繪製呼叫數（色彩一趟）；流暢畫質不增加 */
+export function motionDrawCalls({ boats = 0, leafTrees = 0 } = {}, qualityId = 'fine') {
+  if (!motionSettings(qualityId).enabled) return 0
   const b = MOTION_DRAW_BUDGET
   return (leafTrees > 0 ? b.leaves : 0) + Math.min(boats, b.maxBoats) * b.reflectionsPerBoat + b.smoke
+}
+
+/** 這個畫質有沒有第 9 階段的畫面動態 */
+export function motionEnabled(qualityId) {
+  return motionSettings(qualityId).enabled
 }
 
 export function motionSettings(qualityId) {
@@ -77,6 +88,14 @@ export function lanternSwing(t, i, scale = 1, wind = windStrength(t)) {
   const across = Math.sin(t * omega * 1.31 + phase * 2.1) * amp * 0.35
   // 風往 +x 吹 → 燈籠繞 z 軸擺；往 +z 吹 → 繞 x 軸擺
   return [along * dz + across * dx, -(along * dx) + across * dz]
+}
+
+/**
+ * 流暢畫質的燈籠輕擺（第 9 階段之前的擺法）：兩個固定頻率的正弦，不跟著風。
+ * 回傳 [繞 x 軸, 繞 z 軸]，以預設的 XYZ 順序套用。
+ */
+export function lanternSway(t, i) {
+  return [Math.sin(t * 0.9 + i * 1.3) * 0.035, Math.sin(t * 1.3 + i * 1.7) * 0.06]
 }
 
 /** 決定性的亂數（落葉的位置、相位） */

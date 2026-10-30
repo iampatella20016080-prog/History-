@@ -149,8 +149,8 @@ export function buildTemple(b, cfg, detail = null) {
     const a = (i / 3) * Math.PI * 2
     b.box('plain', [0.1, 0.5, 0.1], [Math.cos(a) * 0.3, 0.25, burnerZ + Math.sin(a) * 0.3], { tint: '#5a4a30' })
   }
-  // 香煙：比蒸氣灰、升得高，會被風吹斜
-  b.addSmoke(0, 1.15, burnerZ, 0.6)
+  // 香煙：比蒸氣灰、升得高，會被風吹斜（精緻畫質）；流暢畫質畫成原本的蒸氣
+  b.addSmoke(0, 1.15, burnerZ, 0.6, { smoothAsSteam: true })
   // 戰後的廟埕後段有觀賞鏡頭（cfg.courtCamera）：天公爐也是遮擋方塊，聚焦兩側的攤位時鏡頭不會躲在爐子後面
   if (cfg.courtCamera) b.addBlocker(-0.5, 0.5, 0, 1.1, burnerZ - 0.5, burnerZ + 0.5)
 
