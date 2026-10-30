@@ -22,12 +22,15 @@ import { getQualitySettings } from '../quality.js'
 import { useGameStore } from '../../state/useGameStore.js'
 import { renderState } from '../runtime.js'
 import { transitionState } from '../transition.js'
+import { lightPoolStrength, syncLightPoolPass } from '../lightPools.js'
+import { createLightPoolPass } from './lightPoolPass.js'
 
 /**
  * 卡通渲染管線（接管 R3F 的預設渲染）
  *
  * 1. 法線＋深度：以 MeshNormalMaterial 覆寫全場景，取得法線與深度
  * 2. 色彩：正常渲染（卡通材質、陰影）
+ *    （精緻畫質）燈光落點：燈籠、路燈、店門口的燈照到地面與牆上（lightPoolPass.js）
  * 3. 輪廓：依深度二階差分與法線差異描出細黑線，遠處線條淡出
  * 4. 輸出：輕微景深（遠景柔焦）、年代調色、暗角、紙張顆粒，最後轉為 sRGB
  *
@@ -414,6 +417,9 @@ function createPipeline(gl, initialQuality) {
   const brightQuad = new FullScreenQuad(brightMaterial)
   const blurQuad = new FullScreenQuad(blurMaterial)
   let bloom = null
+  // 燈光落點（只在精緻畫質建立；流暢畫質不建立、不編譯）
+  let lightPools = null
+  let lightPoolsActive = false
 
   function createBloom() {
     const make = () => {
@@ -471,10 +477,12 @@ function createPipeline(gl, initialQuality) {
     finalMaterial.uniforms.uBloom.value = next.bloom
     if (next.bloom > 0 && !bloom) createBloom()
     else if (next.bloom <= 0) disposeBloom()
+    lightPools = syncLightPoolPass(lightPools, next, () => createLightPoolPass(colorType))
     const data = typeof document !== 'undefined' ? document.documentElement.dataset : {}
     data.msaa = String(colorTarget.samples)
     data.ao = String(next.ao)
     data.bloom = String(next.bloom)
+    data.lightPools = lightPools ? '1' : '0'
   }
 
   const size = new Vector2()
@@ -523,6 +531,10 @@ function createPipeline(gl, initialQuality) {
     u.uDissolve.value = transitionState.dissolve
     u.uTime.value = (performance.now() - startTime) / 1000
     skyClear.copy(a.skyHorizon)
+    // 燈光落點：依年代的 glow 值（白天的年代為 0，整趟略過）；有燈光落點時燈本身的光暈也稍微加強
+    const poolStrength = lightPools ? lightPoolStrength(a.glow) : 0
+    lightPoolsActive = Boolean(lightPools?.update(camera, transitionState.mountedWorld?.glows, poolStrength))
+    u.uBloom.value = quality.bloom * (1 + poolStrength * 0.6)
   }
 
   function render(scene, camera) {
@@ -555,6 +567,11 @@ function createPipeline(gl, initialQuality) {
     gl.setClearColor(skyClear, 1)
     gl.clear(true, true, false)
     gl.render(scene, camera)
+
+    // 燈光落點（精緻畫質、有燈的年代）：輪廓趟改讀加上光斑的畫面
+    edgeMaterial.uniforms.tColor.value = lightPoolsActive
+      ? lightPools.render(gl, colorTarget.texture, normalTarget.texture, normalTarget.depthTexture, current.x, current.y)
+      : colorTarget.texture
 
     // 3. 輪廓
     gl.setRenderTarget(compositeTarget)
@@ -590,6 +607,7 @@ function createPipeline(gl, initialQuality) {
     finalQuad.dispose()
     copyQuad.dispose()
     disposeBloom()
+    lightPools?.dispose()
     brightMaterial.dispose()
     blurMaterial.dispose()
     brightQuad.dispose()

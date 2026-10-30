@@ -4,7 +4,7 @@
  * 用 window.__DDC__.cameraOverride 把鏡頭固定在同一組位置，拍慈聖宮前、河岸、街道遠景與各年代兩三個店門口，
  * 兩種畫質（流暢 ?quality=low、精緻 ?quality=high）各拍一次，存成 960 寬的 JPEG，另存灰階縮圖（看明度差用）。
  * 每個年代另外量一次街道遠景的繪製呼叫（一個影格內所有 gl.render 的總數，含法線、色彩與陰影三趟）
- * 與場景裡可見的網格數，寫進 stats.json。
+ * 與場景裡可見的網格數，寫進 stats.json；lightPools 是燈光落點的著色器有沒有編譯過（流暢畫質必須是 false）。
  *
  * 用法：
  *   npm run dev -- --host 127.0.0.1 --port 5173
@@ -164,7 +164,9 @@ async function run() {
         d.scene.traverseVisible((o) => {
           if (o.isMesh || o.isInstancedMesh || o.isPoints) meshes++
         })
-        return { calls, meshes }
+        // 燈光落點（只在精緻畫質）：這一趟的著色器有沒有編譯過
+        const lightPools = (info.programs ?? []).some((program) => program.name === 'LightPools')
+        return { calls, meshes, lightPools }
       })
 
     // 每個年代各自重新載入（?era=），不經過年代選單的轉場與開場卡片
