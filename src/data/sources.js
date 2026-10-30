@@ -2276,6 +2276,64 @@ SOURCES['foodnext-2023-japan-wedding'] = {
   usage: '日本的婚禮與慶事常用紅白饅頭等慶事菓子（日本的習俗；臺灣是否有同樣的用法，本站查無）。',
 }
 
+/* ── 第 12 階段：主題路線「廟口的一餐」（查證紀錄 docs/research/temple-meal-route.md） ── */
+SOURCES['stat-gov-hawker-survey'] = {
+  id: 'stat-gov-hawker-survey',
+  citation: '行政院主計總處，〈攤販經營概況調查〉簡介，中華民國統計資訊網。',
+  publisher: '行政院主計總處',
+  title: '攤販經營概況調查：簡介',
+  url: 'https://www.stat.gov.tw/cp.aspx?n=2848',
+  published: '線上資料（2026年10月查閱）',
+  usage: '攤販是由過去農業社會的「市集」「廟會」延續產生的經濟活動。',
+}
+SOURCES['twreporter-2021-snack-bowl'] = {
+  id: 'twreporter-2021-snack-bowl',
+  citation: '包子逸，《小吃碗上外太空》（有鹿文化）書摘，《報導者》，2021年5月19日。',
+  publisher: '報導者',
+  title: '《小吃碗上外太空》書摘',
+  url: 'https://www.twreporter.org/a/bookreview-taipei-goldshsu-bowl-and-plate',
+  published: '2021年5月19日',
+  usage: '白底青花碗是老派小吃常見的食器；鶯歌日用碗盤 1950 年代起步、靠手工轆轤與手繪，1960 年代引進閃光釉；早年圓環小吃攤的碗容易混淆，後來有在碗上燒店號的服務；1970 年代政府推動免洗餐具。',
+  context: '書摘的主角是一家現存的餐具商號，本站只取產業的一般情形，不寫商號。',
+}
+SOURCES['taiwanceramics-yingge-bowl'] = {
+  id: 'taiwanceramics-yingge-bowl',
+  citation: '台灣碗盤博物館藏，「鶯歌手繪魚紋碗公」，館藏編號 TW-5-01-00-0-B-0030。',
+  publisher: '台灣碗盤博物館',
+  title: '鶯歌手繪魚紋碗公',
+  url: 'https://english.taiwanceramics.com.tw/?p=2544',
+  published: '線上典藏（2026年10月查閱）',
+  usage: '碗的形制依據：陶製，1945–1964 年，口徑 20.5、高 8.5 公分，碗內以藍色與紅褐色手繪鯉魚與水草、碗口飾有花邊；同館另藏胭脂紅蝦紋小碗（約 18.5 × 5.8 公分）等戰後鶯歌碗。',
+}
+SOURCES['gvm-2017-mitaimu'] = {
+  id: 'gvm-2017-mitaimu',
+  citation: '魚夫，〈米苔目、米篩目和老鼠粄〉，《遠見雜誌》，2017年11月3日。',
+  publisher: '遠見雜誌',
+  title: '米苔目、米篩目和老鼠粄',
+  url: 'https://www.gvm.com.tw/article/40754',
+  published: '2017年11月3日',
+  usage: '作者的說法：臺語「米苔目」音譯自客語「米篩目」；陳年在來米漿加番薯粉揉成「米胎」，在竹製米篩目板上用力搓揉，穿過孔洞成為米條；傳統器具另有槓桿壓榨、鐵片或瓢器鑽孔等形式。',
+}
+SOURCES['stust-2021-douhua'] = {
+  id: 'stust-2021-douhua',
+  citation: '方子毓，〈豆花(1)：話說這一碗白花花的「擣灰」！〉，《南台通識電子報》第92期，南臺科技大學通識教育中心，2021年1月15日。',
+  publisher: '南臺科技大學通識教育中心',
+  title: '豆花(1)：話說這一碗白花花的「擣灰」！',
+  url: 'https://genedu.stust.edu.tw/Sysid/genedu/621GEP/GEP10/gep1092_13.pdf',
+  published: '2021年1月15日',
+  usage: '作者的兒時回憶：扁擔掛兩個大桶，分裝豆花與冰涼糖水（冬天換熱糖水），孩子捧碗拿湯匙、拿五圓硬幣或十元紙鈔等待；民國七〇年代後挑擔漸被推車與鈴聲取代；剛開始加料時印象中只有紅豆。',
+  context: '生活回憶，不是特定地點的紀錄；作者以臺南的經驗起筆，本站只取挑擔叫賣的一般情形。',
+}
+SOURCES['tfam-carrying-pole-1231'] = {
+  id: 'tfam-carrying-pole-1231',
+  citation: '台灣民俗文物館（臺中市民俗公園）典藏，「籮筐擔」，登錄號1231，國家文化記憶庫／數位典藏聯合目錄。',
+  publisher: '台灣民俗文物館',
+  title: '籮筐擔',
+  url: 'https://catalog.digitalarchives.tw/item/00/32/a4/16.html',
+  published: '數位典藏（2026年10月查閱）',
+  usage: '竹扁擔的形制依據：以一片剖開的竹子做成的扁擔，長 151.4、寬 7 公分，兩端烤彎略往上翹以免繩子滑落。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }
