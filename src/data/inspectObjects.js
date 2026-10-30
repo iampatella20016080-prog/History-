@@ -2,6 +2,7 @@ import { DODD_INSPECT_SPOTS } from './doddLayout.js'
 import { LHT_INSPECT_SPOTS } from './linHuaTaiQingLayout.js'
 import { PASTRY_OBJECTS } from './routes/pastryRoute.js'
 import { TEMPLE_MEAL_OBJECTS } from './routes/templeMealRoute.js'
+import { OLD_HOUSE_OBJECTS } from './routes/oldHouseRoute.js'
 
 /**
  * 器物 3D 檢視的器物資料（第 10 階段）：標題、說明、小動作與出處。
@@ -85,6 +86,7 @@ export const INSPECT_OBJECTS = {
   },
   ...PASTRY_OBJECTS,
   ...TEMPLE_MEAL_OBJECTS,
+  ...OLD_HOUSE_OBJECTS,
 }
 
 export function getInspectObject(id) {
