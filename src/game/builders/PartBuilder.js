@@ -98,6 +98,7 @@ export function createCurvedSlab(width, thickness, length, upturn, tile, segment
  * - push / pop：矩陣堆疊，方便以「建築本地座標」擺放零件
  * - box / cylinder / extrude / add：加入零件（可指定頂點色 tint 與牆腳髒污 grime）
  * - addCollider / addBlocker：同時登記角色碰撞與鏡頭遮擋用的範圍（世界座標）
+ * - variant：只在某一種畫質出現的零件（見 builders/qualityVariants.js）
  * - build：依材質合併並回傳 [{ material, geometry }]
  */
 export class PartBuilder {
@@ -114,6 +115,21 @@ export class PartBuilder {
     this.steam = [] // 蒸氣
     this.banners = [] // 布幡
     this.leafTrees = [] // 會落葉的榕樹（樹冠範圍）
+    this.variantTag = null // 目前加入的零件屬於哪一種畫質（null：兩種都有）
+  }
+
+  /**
+   * callback 裡加入的零件只在一種畫質出現：'smooth' 流暢（精緻畫質時被取代）、'fine' 精緻
+   * （細部的不規則樹冠、接地暗影、窗臺下的水漬……；見 builders/qualityVariants.js）
+   */
+  variant(name, callback) {
+    const previous = this.variantTag
+    this.variantTag = name
+    try {
+      callback()
+    } finally {
+      this.variantTag = previous
+    }
   }
 
   /** 登記招牌：position 為本地座標，rotationY 為本地旋轉 */
@@ -237,6 +253,7 @@ export class PartBuilder {
     _final.multiplyMatrices(this.matrix, _local)
     g.applyMatrix4(_final)
 
+    if (this.variantTag) g.userData.variant = this.variantTag
     if (!this.groups.has(material)) this.groups.set(material, [])
     this.groups.get(material).push(g)
     return g
@@ -316,16 +333,23 @@ export class PartBuilder {
     })
   }
 
-  /** 只合併一種材質（可分段執行）；回傳 [] 或 [{ material, geometry }] */
+  /**
+   * 只合併一種材質（可分段執行）；回傳 [] 或 [{ material, geometry }]。
+   * 只在流暢畫質出現的零件（variant 'smooth'）排在最前面，smoothOnly 是它們的頂點數：
+   * 精緻畫質從這裡開始畫（drawRange），同一個網格、同一次繪製呼叫。
+   */
   buildMaterial(material) {
-    const list = this.groups.get(material)
+    const raw = this.groups.get(material)
     this.groups.delete(material)
-    if (!list?.length) return []
+    if (!raw?.length) return []
+    const smooth = raw.filter((g) => g.userData.variant === 'smooth')
+    const list = smooth.length ? [...smooth, ...raw.filter((g) => g.userData.variant !== 'smooth')] : raw
+    const smoothOnly = smooth.reduce((sum, g) => sum + g.attributes.position.count, 0)
     const geometry = list.length === 1 ? list[0] : mergeGeometries(list, false)
     if (list.length > 1) list.forEach((g) => g.dispose())
     geometry.computeBoundingSphere()
     geometry.computeBoundingBox()
-    return [{ material, geometry }]
+    return [smoothOnly ? { material, geometry, smoothOnly } : { material, geometry }]
   }
 
   build() {

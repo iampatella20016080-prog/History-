@@ -118,19 +118,24 @@ describe('五個年代：處理之後沒有共面重疊的面', () => {
     parts.push(g)
     return g
   }
+  // 兩種畫質各自檢查：流暢畫質沒有精緻畫質的細部（'fine'），精緻畫質沒有被取代的零件（'smooth'）
   const remaining = (eraId) => {
     parts.length = 0
     buildEraWorldSync(eraId)
     buildEraInteriorSync(eraId)
     const kept = parts.filter((g) => !g.userData.discarded)
-    return findCoplanar([{ groups: new Map([['all', kept]]) }], { visibleOnly: true })
+    return ['smooth', 'fine'].map((quality) => {
+      const shown = kept.filter((g) => !g.userData.variant || g.userData.variant === quality)
+      return [quality, findCoplanar([{ groups: new Map([['all', shown]]) }], { visibleOnly: true })]
+    })
   }
   for (const era of ERAS) {
     test(`${era.id}：街景＋室內`, () => {
-      const list = remaining(era.id)
-      const area = list.reduce((sum, item) => sum + item.area, 0)
-      // 只剩兩個零件都不是最外側的面（凹槽裡），面積很小
-      assert.ok(area < 0.1, `${era.id}：剩下 ${list.length} 處、${area.toFixed(2)} m²：${JSON.stringify(list.slice(0, 3))}`)
+      for (const [quality, list] of remaining(era.id)) {
+        const area = list.reduce((sum, item) => sum + item.area, 0)
+        // 只剩兩個零件都不是最外側的面（凹槽裡），面積很小
+        assert.ok(area < 0.1, `${era.id}／${quality}：剩下 ${list.length} 處、${area.toFixed(2)} m²：${JSON.stringify(list.slice(0, 3))}`)
+      }
     })
   }
   test('結束攔截', () => {

@@ -4,7 +4,7 @@ import { ensureExhibitTexture, getExhibitTexture } from './exhibitTexture.js'
 import { ensureRiceTexture, getRiceTexture } from './riceTexture.js'
 import { ensureSzxTexture, getSzxTexture } from './szxTexture.js'
 import { windUniforms } from './wind.js'
-import { SURFACE_VARIATION, applySurfaceVariation } from './surfaceVariation.js'
+import { SURFACE_VARIATION, applySurfaceVariation, setSurfaceVariationEnabled } from './surfaceVariation.js'
 import { CONTACT_OPACITY } from '../builders/contactShadow.js'
 
 /**
@@ -232,6 +232,11 @@ export function getInteriorMaterials() {
     interiorCache[name] = copy
   }
   return interiorCache
+}
+
+/** 地磚與牆面的大尺度變化與破磚（surfaceVariation.js）只在精緻畫質啟用；街景與室內材質一起切換 */
+export function setSurfaceDetail(on) {
+  setSurfaceVariationEnabled(on, [getMaterials(), interiorCache])
 }
 
 /**

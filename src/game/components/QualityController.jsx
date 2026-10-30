@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { getQualitySettings } from '../quality.js'
+import { setSurfaceDetail } from '../rendering/materials.js'
 import { useGameStore } from '../../state/useGameStore.js'
 
 const WINDOW = 1.6 // 秒
@@ -31,6 +32,9 @@ export function QualityController() {
     data.dof = String(settings.dofTaps)
     data.detail = settings.detail ? 'full' : 'reduced'
   }, [settings, setDpr])
+
+  // 地磚與牆面的大尺度變化只在精緻畫質（流暢畫質的著色器與原本相同）；在第一次繪製之前套用
+  useLayoutEffect(() => setSurfaceDetail(settings.detail), [settings])
 
   useFrame((_, delta) => {
     const s = stats.current

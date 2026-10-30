@@ -7,7 +7,9 @@ import { createRng } from '../utils/random.js'
  * 只套用在一般街屋與洋樓（lineage 產生的背景建築，config.weathering = 年代 id）；
  * 店家建築與另外建模的建築（江山樓、稻舍、爐鍋咖啡、永樂市場……）都不套用。
  *
- * - 風化：水漬（從窗臺下往下流）、剝落、髒污、補土痕跡，以頂點色的薄片貼在牆面前方，程度依年代與 condition 而不同
+ * - 風化：水漬、剝落、髒污、補土痕跡，以頂點色的薄片貼在牆面前方，程度依年代與 condition 而不同。
+ *   精緻畫質的水漬改成從窗臺下往下流（sillStreaks；閩南街屋與洋樓都有出簷或女兒牆壓頂，牆頂淋不到雨），
+ *   流暢畫質維持原本從牆頂往下的水漬（見 qualityVariants.js）
  * - 海報：只在庶民生活年代，貼在牆面與騎樓柱；只用不具名的色塊圖案（電影、藥品、選舉的情境示意），不寫字
  * - 鐵窗花：只在庶民生活與老屋新生年代，部分窗戶前加上鐵窗
  *
@@ -74,29 +76,17 @@ export function planWeathering({ eraId, condition = 'new', seed = 1, surfaces = 
   for (const s of surfaces) {
     const area = (s.x1 - s.x0) * (s.y1 - s.y0)
     const count = Math.min(8, Math.round(level * area * 0.55))
-    // 這面牆上的窗：水漬只從窗臺下往下流（閩南街屋與洋樓都有出簷或女兒牆壓頂，牆頂淋不到雨）
-    const sills = openings.filter((o) => (o.kind === 'window' || o.kind === 'arch') && o.x > s.x0 && o.x < s.x1 && o.y > s.y0 && o.y < s.y1)
     for (let i = 0; i < count; i++) {
       for (let attempt = 0; attempt < 6; attempt++) {
         const roll = rng()
         let kind
         if (restored) kind = roll < 0.8 ? 'patch' : 'streak'
         else kind = roll < 0.5 ? 'streak' : roll < 0.8 ? 'peel' : 'soot'
-        // 沒有窗的牆面（騎樓下的牆柱）淋不到雨：改成剝落或補土
-        if (kind === 'streak' && !sills.length) kind = restored ? 'patch' : 'peel'
-        if (kind === 'streak') {
-          const rect = sillStreak(rng, s, sills, blocked)
-          if (rect && free(rect, s)) {
-            stains.push(rect)
-            break
-          }
-          continue
-        }
-        const width = kind === 'soot' ? 0.6 + rng() * 0.9 : 0.25 + rng() * 0.5
-        const height = kind === 'soot' ? 0.18 + rng() * 0.2 : 0.2 + rng() * 0.4
+        const width = kind === 'streak' ? 0.1 + rng() * 0.22 : kind === 'soot' ? 0.6 + rng() * 0.9 : 0.25 + rng() * 0.5
+        const height = kind === 'streak' ? 0.5 + rng() * 1.1 : kind === 'soot' ? 0.18 + rng() * 0.2 : 0.2 + rng() * 0.4
         const x = s.x0 + width / 2 + rng() * Math.max(0, s.x1 - s.x0 - width)
-        // 髒污在牆腳，剝落與補土散在牆面
-        const y = kind === 'soot' ? s.y0 + height / 2 + rng() * 0.1 : s.y0 + height / 2 + rng() * Math.max(0, s.y1 - s.y0 - height)
+        // 水漬從牆頂往下流，髒污在牆腳
+        const y = kind === 'streak' ? s.y1 - height / 2 - rng() * 0.15 : kind === 'soot' ? s.y0 + height / 2 + rng() * 0.1 : s.y0 + height / 2 + rng() * Math.max(0, s.y1 - s.y0 - height)
         const rect = { kind, x, y, width, height, z: s.z }
         if (!free(rect, s)) continue
         stains.push(rect)
@@ -142,7 +132,33 @@ export function planWeathering({ eraId, condition = 'new', seed = 1, surfaces = 
     }
   }
 
-  return { eraId, condition, level, stains, posters, grilles }
+  const sillStreaks = planSillStreaks({ seed, surfaces, openings, blocked, stains, posters })
+  return { eraId, condition, level, stains, posters, grilles, sillStreaks }
+}
+
+/**
+ * 精緻畫質的水漬：每一道原本的水漬改到同一面牆上某扇窗的窗臺下往下流。
+ * 用另一組亂數，原本的規劃（流暢畫質）完全不變；沒有窗的牆面（騎樓下的牆柱）淋不到雨，這道水漬不畫。
+ * 不和窗、招牌、其他風化痕跡與海報重疊。
+ */
+function planSillStreaks({ seed, surfaces, openings, blocked, stains, posters }) {
+  const rng = createRng((seed ^ 0x51115) >>> 0)
+  const others = [...stains.filter((s) => s.kind !== 'streak'), ...posters]
+  const result = []
+  for (const old of stains) {
+    if (old.kind !== 'streak') continue
+    const s = surfaces.find((w) => w.z === old.z && old.x >= w.x0 && old.x <= w.x1 && old.y >= w.y0 && old.y <= w.y1)
+    if (!s) continue
+    const sills = openings.filter((o) => (o.kind === 'window' || o.kind === 'arch') && o.x > s.x0 && o.x < s.x1 && o.y > s.y0 && o.y < s.y1)
+    if (!sills.length) continue
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const rect = sillStreak(rng, s, sills, blocked)
+      if (!rect || !inside(rect, s) || blocked.some((o) => overlaps(rect, o, 0.04)) || [...others, ...result].some((o) => overlaps(rect, o, 0.02))) continue
+      result.push(rect)
+      break
+    }
+  }
+  return result
 }
 
 /** 窗臺下緣到下方第一個開口（或牆面底部）之間的空間 */
@@ -189,8 +205,9 @@ const STAIN_TINT = {
 export function applyWeathering(b, detail, plan) {
   const d = detail ?? b
   for (const s of plan.stains) {
+    // 從牆頂往下的水漬只在流暢畫質；精緻畫質換成窗臺下的水漬
     if (s.kind === 'streak') {
-      sillStain(b, s)
+      b.variant('smooth', () => b.box('plain', [s.width, s.height, DECAL_T], [s.x, s.y, s.z + 0.006], { tint: STAIN_TINT[s.kind] }))
       continue
     }
     b.box('plain', [s.width, s.height, DECAL_T], [s.x, s.y, s.z + 0.006], { tint: STAIN_TINT[s.kind] })
@@ -209,6 +226,7 @@ export function applyWeathering(b, detail, plan) {
     for (const k of [0, 1]) d.box('plain', [p.width * (0.6 - k * 0.2), 0.018, DECAL_T], [p.x, y - h * (0.32 + k * 0.08), p.z + 0.013], { ...rot, tint: '#4a423a' })
   }
   for (const g of plan.grilles) ironGrille(d, g, plan.eraId)
+  b.variant('fine', () => (plan.sillStreaks ?? []).forEach((s) => sillStain(b, s)))
 }
 
 /**
