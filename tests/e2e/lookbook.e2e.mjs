@@ -21,6 +21,8 @@
  *           WEATHER（clear｜rain：加上 ?weather=，只在精緻畫質有效；不設定就不加參數）
  *           SET=night：夜晚（第 14 階段）——街道遠景、河岸（月亮與月光）、慈聖宮前、店門口；配合 TIME_OF_DAY 拍前後對照
  *           TIME_OF_DAY（day｜night：加上 ?time=，只在精緻畫質有效）
+ *           SET=skyline：隔岸天際線（第 14 階段）——碼頭往西、棧橋往西北、往北看臺北橋；
+ *           HIDE_BANK=1 拍「之前」：藏起對岸、觀音山放回原本的距離（和加入天際線之前的精緻畫質相同）
  *           ONLY（正規表示式，只拍檔名符合的視角；SET=audit 重拍單張用）
  *           VIEWS（JSON：[[檔名, 鏡頭位置, 注視點], ...]，臨時指定視角，查問題時近看用；優先於 SET）
  */
@@ -38,6 +40,7 @@ const SET = process.env.SET ?? 'default'
 const ONLY = process.env.ONLY ? new RegExp(process.env.ONLY) : null
 const WEATHER = process.env.WEATHER ? `&weather=${process.env.WEATHER}` : ''
 const TIME_OF_DAY = process.env.TIME_OF_DAY ? `&time=${process.env.TIME_OF_DAY}` : ''
+const HIDE_BANK = process.env.HIDE_BANK === '1'
 const TIMEOUT = 240000
 const HIDE_UI =
   '.hud, .hud-quality, .hud-actions, .hud-controls, .hud-objective, .shop-prompt, .hud-help, .touch-controls, .prompt-layer, .dialogue-box, .controls-hint, .toast { visibility: hidden !important; }'
@@ -115,6 +118,13 @@ export const RAIN_VIEWS = [
 /** 夜晚（第 14 階段，只在精緻畫質）：夜空與月亮、窗光、燈籠與路燈、河面的月光與燈影 */
 export const NIGHT_VIEWS = [COMMON_VIEWS[2], COMMON_VIEWS[1], COMMON_VIEWS[0], ['arcade', '亭仔腳', [0, 1.5, 0.3], [9, 2.2, -3.4]]]
 
+/** 隔岸天際線（第 14 階段，只在精緻畫質）：從碼頭與棧橋看對岸三重埔、往北看臺北橋 */
+export const SKYLINE_VIEWS = [
+  COMMON_VIEWS[1],
+  ['pier', '棧橋往西北', [-52, 2.4, 0], [-200, 8, -40]],
+  ['bridge', '往北看臺北橋', [-46, 3, 2], [-200, 2, -150]],
+]
+
 /** 空氣遠近感與光束（第 9 階段追加）：往東、往西（夕陽方向）的街道遠景與河岸 */
 export const AIR_VIEWS = [
   COMMON_VIEWS[2],
@@ -138,6 +148,7 @@ async function viewsFor(eraId) {
   if (SET === 'details') return DETAIL_VIEWS
   if (SET === 'relief') return RELIEF_VIEWS
   if (SET === 'rain') return RAIN_VIEWS
+  if (SET === 'skyline') return SKYLINE_VIEWS
   if (SET === 'night') return [...NIGHT_VIEWS, ...(ERA_VIEWS[eraId] ?? []).slice(0, 1)]
   if (SET === 'air') return [...AIR_VIEWS, ...(AIR_ARCADE_VIEWS[eraId] ?? [])]
   return [...COMMON_VIEWS, ...(ERA_VIEWS[eraId] ?? [])]
@@ -170,7 +181,7 @@ async function run() {
     }
     const shoot = async (name, position, target, options = {}) => {
       await page.waitForFunction(() => window.__DDC__?.playerState, null, { timeout: TIMEOUT })
-      await page.evaluate(({ position, target, css, follow }) => {
+      await page.evaluate(({ position, target, css, follow, hideBank }) => {
         // 介面藏起來（每張都重新確認：開發伺服器重新載入後樣式會消失）
         if (!document.getElementById('lookbook-css')) {
           const style = document.createElement('style')
@@ -198,7 +209,12 @@ async function run() {
         d.playerState.position.set(position[0] - (dx / len) * 2.5, 0, position[2] - (dz / len) * 2.5)
         d.playerState.level = 0
         d.cameraOverride = { position, target }
-      }, { position, target, css: HIDE_UI, follow: options.follow ?? null })
+        if (hideBank) {
+          const bank = d.scene.getObjectByName('opposite-bank')
+          if (bank) bank.visible = false
+          d.scene.getObjectByName('guanyin')?.scale.setScalar(1)
+        }
+      }, { position, target, css: HIDE_UI, follow: options.follow ?? null, hideBank: HIDE_BANK })
       // 室內按需產生（背景執行緒），跟隨鏡頭與審查視角多等一些影格（固定鏡頭在店裡時也要等室內產生完）
       await frames(options.follow ? 90 : SET === 'audit' ? 80 : 40)
       const png = await page.screenshot({ timeout: TIMEOUT })

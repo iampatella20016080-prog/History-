@@ -141,6 +141,7 @@ describe('夜晚：各年代的照明依史料', () => {
         assert.match(SOURCES[id].url, /^https:\/\//)
       }
       assert.ok(/^#[0-9a-f]{6}$/.test(n.windowTint) && n.tintAmount > 0 && n.tintAmount <= 0.6)
+      assert.ok(n.lift >= 0 && n.lift <= 0.05, `${era.id} 暗部提亮`)
     }
   })
 
@@ -154,6 +155,16 @@ describe('夜晚：各年代的照明依史料', () => {
     const [r, g, b] = [1, 3, 5].map((i) => parseInt(NIGHT_ERAS['qing-port'].windowTint.slice(i, i + 2), 16))
     assert.ok(r > g && g > b, '油燈偏橘')
     assert.match(NIGHT_ERAS['qing-port'].note, /1895 年以前大稻埕街上沒有電燈/)
+  })
+
+  test('清末的河岸正對月亮：暗部提亮最少（不會整片灰霧）；騎樓深的酒樓繁華、摩登提得多', () => {
+    for (const id of ['banquet', 'modern', 'postwar', 'revival']) assert.ok(NIGHT_ERAS['qing-port'].lift < NIGHT_ERAS[id].lift, id)
+    setAtmosphereOverlay({ night: 0 })
+    setAtmosphere(getEra('qing-port'))
+    setAtmosphereOverlay({ night: 1, nightEra: nightEra('qing-port') })
+    assert.ok(Math.abs(atmosphere.current.lift - NIGHT_ERAS['qing-port'].lift) < 1e-12)
+    assert.ok(atmosphere.current.air_sunScatter < 0.05, '往月亮方向的空氣不帶月暈色')
+    setAtmosphereOverlay({ night: 0 })
   })
 
   test('戰後的窗光偏冷白（日光燈）；研究文件存在並列出出處', () => {

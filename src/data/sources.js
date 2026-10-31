@@ -2698,6 +2698,96 @@ SOURCES['udn-2026-dadaocheng-riverside'] = {
   context: '大稻埕碼頭的夕陽、貨櫃市集夜間燈光、迪化街暖黃燈光與夏日節煙火。',
 }
 
+// 第 14 階段：隔岸天際線（查證紀錄：docs/research/opposite-bank.md；src/game/oppositeBank.js 引用）
+SOURCES['zh-wiki-taipei-bridge'] = {
+  id: 'zh-wiki-taipei-bridge',
+  citation: '維基百科，〈臺北橋〉。',
+  publisher: '維基百科',
+  title: '臺北橋',
+  url: 'https://zh.wikipedia.org/wiki/%E8%87%BA%E5%8C%97%E6%A9%8B',
+  context: '1889 年木橋連接三重埔與大稻埕；1925-06-18 鋼桁架橋通車、「鐵橋夕照」列臺北八景；1969、1996 年改建。',
+}
+SOURCES['zh-wiki-sanchong-district'] = {
+  id: 'zh-wiki-sanchong-district',
+  citation: '維基百科，〈三重區〉。',
+  publisher: '維基百科',
+  title: '三重區',
+  url: 'https://zh.wikipedia.org/zh-tw/%E4%B8%89%E9%87%8D%E5%8D%80',
+  context: '乾隆年間由上游往下游拓墾；橋頭港與大橋町渡為兩岸渡口；日治劃為洪泛區、農牧至 1960 年代；戰後人口與工廠激增。',
+}
+SOURCES['zh-wiki-sanchongpu'] = {
+  id: 'zh-wiki-sanchongpu',
+  citation: '維基百科，〈三重埔 (新北市)〉。',
+  publisher: '維基百科',
+  title: '三重埔 (新北市)',
+  url: 'https://zh.wikipedia.org/zh-tw/%E4%B8%89%E9%87%8D%E5%9F%94_(%E6%96%B0%E5%8C%97%E5%B8%82)',
+  context: '三重埔位於淡水河西岸、與臺北市相望，日治小字含竹圍子、菜寮等。',
+}
+SOURCES['sanchong-district-office-history'] = {
+  id: 'sanchong-district-office-history',
+  citation: '新北市三重區公所，〈歷史沿革〉。',
+  publisher: '新北市三重區公所',
+  title: '歷史沿革',
+  url: 'https://www.sanchong.ntpc.gov.tw/home.jsp?id=e32fc9bbd6f35420',
+  context: '日治三重為香花、柑橘集散地，約 38 公頃茉莉供茶葉窨花；戰後客廳即工廠、移民湧入。',
+}
+SOURCES['cheng-1998-sanchongpu'] = {
+  id: 'cheng-1998-sanchongpu',
+  citation: '鄭政誠，〈清代三重埔的拓墾〉，《史耘》第 3、4 期（1998 年 9 月），頁 85 起。',
+  publisher: '國立臺灣師範大學歷史學系',
+  title: '清代三重埔的拓墾',
+  url: 'https://www.his.ntnu.edu.tw/publish03/downloadfile.php?periodicalsPage=2&issue_id=42&paper_id=278',
+  context: '三重為肥沃沖積平原，延長新莊水圳將旱田闢為水田，清康乾年間農業已高度發展。',
+}
+SOURCES['zh-wiki-erchong-floodway'] = {
+  id: 'zh-wiki-erchong-floodway',
+  citation: '維基百科，〈二重疏洪道〉。',
+  publisher: '維基百科',
+  title: '二重疏洪道',
+  url: 'https://zh.wikipedia.org/zh-tw/%E4%BA%8C%E9%87%8D%E7%96%8F%E6%B4%AA%E9%81%93',
+  context: '1979 年核定臺北地區防洪計畫，1982–1984 年完成二重疏洪道與三重、蘆洲低堤，之後分期加高。',
+}
+SOURCES['heo-dadaocheng-levee'] = {
+  id: 'heo-dadaocheng-levee',
+  citation: '臺北市政府工務局水利工程處，〈淡水河大稻埕、大龍峒及渡頭堤防〉。',
+  publisher: '臺北市政府工務局水利工程處',
+  title: '淡水河大稻埕、大龍峒及渡頭堤防',
+  url: 'https://heo.gov.taipei/cp.aspx?n=63CD1B711694769F',
+  context: '1899 年起築 818 公尺石堤；1913–1933 年建防洪牆；1973 年加高 1–1.8 公尺；1985 年核定再加高約 3.2–3.5 公尺。',
+}
+SOURCES['zh-wiki-taipei-flood-defense-japanese'] = {
+  id: 'zh-wiki-taipei-flood-defense-japanese',
+  citation: '維基百科，〈台北都市防災設施 (日治時期)〉。',
+  publisher: '維基百科',
+  title: '台北都市防災設施 (日治時期)',
+  url: 'https://zh.wikipedia.org/zh-hant/%E5%8F%B0%E5%8C%97%E9%83%BD%E5%B8%82%E9%98%B2%E7%81%BD%E8%A8%AD%E6%96%BD_(%E6%97%A5%E6%B2%BB%E6%99%82%E6%9C%9F)',
+  context: '大稻埕石砌堤 1899–1900 年完成，1913–1915 年改建 RC 堤岸，1933 年淡水河堤防總長 8,430.61 公尺。',
+}
+SOURCES['sinica-taipei-history-map'] = {
+  id: 'sinica-taipei-history-map',
+  citation: '中央研究院人文社會科學研究中心地理資訊科學研究專題中心，「臺北百年歷史地圖」WMTS 服務。',
+  publisher: '中央研究院',
+  title: '臺北百年歷史地圖',
+  url: 'https://gis.sinica.edu.tw/taipei/',
+  context: '提供 1895–1945 年臺北古地圖、1913 年淡水河平面圖、1944–1945 年美軍航照與戰後舊航照，可判讀對岸景觀。',
+}
+SOURCES['sinica-1945-taipei-poster'] = {
+  id: 'sinica-1945-taipei-poster',
+  citation: '中央研究院地圖與遙測影像數位典藏計畫，〈1945年臺北城市地圖與空照影像海報〉，2014-07-24。',
+  publisher: '中央研究院',
+  title: '1945年臺北城市地圖與空照影像海報',
+  url: 'https://gis.rchss.sinica.edu.tw/mapdap/archives/5326',
+  context: '以 1944–1945 年美軍航照與城市地圖編製的臺北海報，可看戰末淡水河兩岸。',
+}
+SOURCES['zh-wiki-guanyinshan'] = {
+  id: 'zh-wiki-guanyinshan',
+  citation: '維基百科，〈觀音山 (新北市)〉。',
+  publisher: '維基百科',
+  title: '觀音山 (新北市)',
+  url: 'https://zh.wikipedia.org/zh-tw/%E8%A7%80%E9%9F%B3%E5%B1%B1_(%E6%96%B0%E5%8C%97%E5%B8%82)',
+  context: '主峰硬漢嶺約 616 公尺（內文作 609 公尺），位於淡水河口南岸；「觀音吐霧」為淡水舊八景。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

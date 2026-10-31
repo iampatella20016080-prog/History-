@@ -4,7 +4,7 @@
  * - smooth 流暢（適合 iPad）：解析度上限 1.25、陰影貼圖 1024、關閉景深／光暈／環境遮蔽／空氣遠近感與光束、
  *          減少遠景裝飾與蒸氣粒子；保留基本陰影、漫畫描邊與所有年代建築。
  * - fine   精緻（適合電腦）：解析度上限 1.75（不超過裝置像素比）、陰影貼圖 2048、柔和陰影、
- *          適量環境遮蔽、非常輕微的光暈與輕微景深、空氣遠近感與斜陽光束、完整的遠景裝飾、燈光落點（燈照到地面與牆上，lightPools.js）、材質凹凸與河面倒映、天氣（雨天，weather.js）。
+ *          適量環境遮蔽、非常輕微的光暈與輕微景深、空氣遠近感與斜陽光束、完整的遠景裝飾、燈光落點（燈照到地面與牆上，lightPools.js）、材質凹凸與河面倒映、天氣（雨天，weather.js）、隔岸天際線（oppositeBank.js）。
  *
  * 觸控裝置預設「流暢」、桌面電腦預設「精緻」；使用者的選擇記在 localStorage。
  * 切換後由 QualityController、Lighting、ToonRenderer 與各場景元件立即套用，不需要重新整理。
@@ -32,6 +32,8 @@ export const QUALITY_MODES = {
     lightPools: false,
     // 天氣（雨天，第 14 階段）：流暢畫質沒有天氣選項，一律晴天（game/weather.js）
     weather: false,
+    // 隔岸天際線（第 14 階段）：流暢畫質保留原本的遠景（遠山與河面）
+    oppositeBank: false,
   },
   fine: {
     id: 'fine',
@@ -55,6 +57,8 @@ export const QUALITY_MODES = {
     lightPools: true,
     // 天氣選項（晴／雨）：雨絲、屋簷滴水、濕地面與積水倒影、河面雨點、雨聲（game/weather.js）
     weather: true,
+    // 隔岸天際線：對岸三重埔一帶依年代的低面數剪影、夜裡的燈火與河面倒影（game/oppositeBank.js）
+    oppositeBank: true,
   },
 }
 
