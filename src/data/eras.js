@@ -41,8 +41,10 @@ export const ERAS = [
       lines: { color: '#2b211a', strength: 0.82 },
       glow: 0.12,
       riverMist: 0.35,
-      // 空氣遠近感（精緻畫質）：清末河港偏濕，貼地的水氣較濃；午後太陽高，光束幾乎看不到
-      air: { density: 0.0062, start: 14, heightFalloff: 0.07, max: 0.66, desaturate: 0.42, horizon: 0.35, sunScatter: 0.35, rays: 0.35 },
+      // 空氣遠近感（精緻畫質）：清末河港偏濕，貼地的水氣較濃；午後太陽高，光束幾乎看不到。
+      // 第 14 階段依使用者意見（畫面灰灰的）：近景 20 公尺內不加、上限 0.66 → 0.46、去飽和 0.42 → 0.26，
+      // 精緻畫質的飽和 ×1.06（對比不調：調色的對比以線性 0.5 為中心，暗部會被壓黑）；仍是五個年代裡最濃、最貼地的
+      air: { density: 0.0062, start: 20, heightFalloff: 0.07, max: 0.46, desaturate: 0.26, horizon: 0.35, sunScatter: 0.35, rays: 0.35, saturation: 1.06 },
     },
     buildingStyle: {
       rebuild: {},

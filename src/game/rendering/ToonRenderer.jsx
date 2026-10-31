@@ -550,8 +550,9 @@ function createPipeline(gl, initialQuality) {
     u.uFocus.value = renderState.focusDistance
     u.uMaxBlur.value = 3.6 * dpr * renderState.blurStrength
     u.uExposure.value = a.exposure
-    u.uSaturation.value = a.saturation
-    u.uContrast.value = a.contrast
+    // 精緻畫質（有空氣遠近感那一趟）再乘上年代的調色倍率（清末多一點對比與飽和，不灰濛）；流暢畫質不變
+    u.uSaturation.value = a.saturation * (air ? a.air_saturation : 1)
+    u.uContrast.value = a.contrast * (air ? a.air_contrast : 1)
     u.uTint.value.set(a.tintR, a.tintG, a.tintB)
     u.uShadowTint.value.set(a.shadowR, a.shadowG, a.shadowB)
     u.uHighlightTint.value.set(a.highlightR, a.highlightG, a.highlightB)

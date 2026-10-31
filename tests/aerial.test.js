@@ -84,6 +84,19 @@ describe('各年代的參數', () => {
     assert.ok(fogAmount(150, 2, 3, air('qing-port')) > fogAmount(150, 2, 3, air('revival')) + 0.1)
   })
 
+  test('精緻畫質的調色倍率：預設 1（不變），只有清末多一點飽和；流暢畫質沒有空氣這一趟，渲染器不套用', async () => {
+    assert.equal(AIR_DEFAULTS.contrast, 1)
+    assert.equal(AIR_DEFAULTS.saturation, 1)
+    for (const id of ['banquet', 'modern', 'postwar', 'revival']) assert.ok(air(id).contrast === 1 && air(id).saturation === 1, id)
+    // 對比以線性 0.5 為中心，乘大於 1 會把暗部（夜晚、木作）壓黑，所以清末只調飽和
+    assert.equal(air('qing-port').contrast, 1)
+    assert.ok(air('qing-port').saturation > 1 && air('qing-port').saturation <= 1.08)
+    const { readFileSync } = await import('node:fs')
+    const src = readFileSync(new URL('../src/game/rendering/ToonRenderer.jsx', import.meta.url), 'utf8')
+    assert.match(src, /a\.saturation \* \(air \? a\.air_saturation : 1\)/)
+    assert.match(src, /a\.contrast \* \(air \? a\.air_contrast : 1\)/)
+  })
+
   test('傍晚、黃昏的空氣朝太陽偏暖（太陽光暈色的比例較高）', () => {
     for (const id of ['banquet', 'modern']) assert.ok(air(id).sunScatter > air('revival').sunScatter, id)
   })

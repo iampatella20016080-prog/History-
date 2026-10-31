@@ -20,6 +20,9 @@ export const AIR_DEFAULTS = {
   horizon: 0.45, // 空氣顏色取多少天空地平線色（其餘是年代霧色）
   sunScatter: 0.45, // 朝太陽方向的空氣帶多少太陽光暈色
   rays: 0, // 光束強度（會再乘上太陽高度與畫面位置的係數）
+  // 精緻畫質的調色倍率（乘在年代的對比與飽和上；流暢畫質沒有空氣這一趟，不套用）
+  contrast: 1,
+  saturation: 1,
 }
 
 export const AIR_KEYS = Object.keys(AIR_DEFAULTS)
