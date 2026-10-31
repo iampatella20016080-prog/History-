@@ -28,6 +28,7 @@ import { lightPoolStrength, syncLightPoolPass } from '../lightPools.js'
 import { createLightPoolPass } from './lightPoolPass.js'
 import { createWetPass } from './wetPass.js'
 import { weatherState } from '../weather.js'
+import { NIGHT_BLOOM, nightState } from '../night.js'
 
 /**
  * 卡通渲染管線（接管 R3F 的預設渲染）
@@ -565,7 +566,8 @@ function createPipeline(gl, initialQuality) {
     // 燈光落點：依年代的 glow 值（白天的年代為 0，整趟略過）；有燈光落點時燈本身的光暈也稍微加強
     const poolStrength = lightPools ? lightPoolStrength(a.glow) : 0
     lightPoolsActive = Boolean(lightPools?.update(camera, transitionState.mountedWorld?.glows, poolStrength))
-    u.uBloom.value = quality.bloom * (1 + poolStrength * 0.6)
+    // 夜晚（精緻畫質）：燈籠、路燈的光暈再加強；流暢畫質 bloom = 0、夜晚一直是 0，結果不變
+    u.uBloom.value = quality.bloom * (1 + poolStrength * 0.6 + nightState.night * NIGHT_BLOOM)
   }
 
   function render(scene, camera) {

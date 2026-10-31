@@ -10,7 +10,9 @@ import { reflectionSize, reflectsInRiver, updateMirrorCamera } from '../renderin
 import { createCoverMaterial, createDripGeometry, createDripMaterial, createRainGeometry, createRainMaterial, rainRuntime } from '../rendering/rainShader.js'
 import { waterUniforms } from '../rendering/waterShader.js'
 import { transitionState } from '../transition.js'
+import { effectiveTimeOfDay, nightEra, nightState, stepNight } from '../night.js'
 import { useGameStore } from '../../state/useGameStore.js'
+import { Night } from './Night.jsx'
 
 const WHITE = new Color('#ffffff')
 const RETAG_FRAMES = 30
@@ -19,10 +21,11 @@ function setData(key, value) {
   if (typeof document !== 'undefined') document.documentElement.dataset[key] = value
 }
 
-/** 雨停、切回晴天或流暢畫質：雨勢歸零，年代光線回到原樣 */
+/** 切回流暢畫質：雨勢與夜晚歸零，年代光線回到原樣 */
 function resetWeather() {
   Object.assign(weatherState, weatherSteady(false))
-  setAtmosphereOverlay({ rain: 0 })
+  nightState.night = 0
+  setAtmosphereOverlay({ rain: 0, night: 0 })
   waterUniforms.uRain.value = 0
 }
 
@@ -220,45 +223,62 @@ function Rain({ world }) {
   )
 }
 
-/** 精緻畫質：每個影格推進雨勢，疊上雨天的光線；下雨或地面還濕時掛載 Rain */
-function WeatherClock({ world, raining }) {
+/**
+ * 精緻畫質：每個影格推進雨勢與夜晚，疊上雨天與夜晚的光線；
+ * 下雨或地面還濕時掛載 Rain，夜晚（或正在入夜、天亮）時掛載 Night。
+ */
+function WeatherClock({ world, raining, night }) {
   const [active, setActive] = useState(() => {
-    // 一開始就下雨（網址參數、記住的選擇，或從流暢畫質切回來）：直接是下了一陣子的樣子
+    // 一開始就下雨、就是夜晚（網址參數、記住的選擇，或從流暢畫質切回來）：直接是那個樣子，不用等它慢慢變
     Object.assign(weatherState, weatherSteady(raining))
-    return raining
+    nightState.night = night ? 1 : 0
+    return { rain: raining, night }
   })
   const activeRef = useRef(active)
   useEffect(() => () => resetWeather(), [])
   useEffect(() => setData('weather', raining ? 'rain' : 'clear'), [raining])
+  useEffect(() => setData('timeOfDay', night ? 'night' : 'day'), [night])
 
   useFrame((_, delta) => {
     stepWeather(weatherState, delta, raining)
-    setAtmosphereOverlay({ rain: weatherState.sky })
+    nightState.night = stepNight(nightState.night, delta, night)
+    const eraId = transitionState.mountedEraId ?? world.eraId
+    setAtmosphereOverlay({ rain: weatherState.sky, night: nightState.night, nightEra: nightEra(eraId) })
     waterUniforms.uRain.value = weatherState.rain
-    const on = weatherActive(weatherState)
-    if (on !== activeRef.current) {
-      activeRef.current = on
-      setActive(on)
-      setData('rainActive', on ? '1' : '0')
+    const next = { rain: weatherActive(weatherState), night: nightState.night > 0.001 }
+    if (next.rain !== activeRef.current.rain || next.night !== activeRef.current.night) {
+      activeRef.current = next
+      setActive(next)
     }
   }, 0.3)
 
-  useEffect(() => setData('rainActive', active ? '1' : '0'), [active])
-  return active ? <Rain world={world} /> : null
+  useEffect(() => {
+    setData('rainActive', active.rain ? '1' : '0')
+    setData('nightActive', active.night ? '1' : '0')
+  }, [active])
+  return (
+    <>
+      {active.rain && <Rain world={world} />}
+      {active.night && <Night world={world} />}
+    </>
+  )
 }
 
 /**
- * 天氣（第 14 階段）：只在精緻畫質。流暢畫質（iPad、觸控裝置的預設）什麼都不掛載、不建立、不編譯，
- * 雨勢一直是 0，年代光線、河面與環境音都和以前相同。
+ * 天氣與時段（第 14 階段）：只在精緻畫質。流暢畫質（iPad、觸控裝置的預設）什麼都不掛載、不建立、不編譯，
+ * 雨勢與夜晚一直是 0，年代光線、河面與環境音都和以前相同。
  */
 export function WeatherDirector({ world }) {
   const available = useGameStore((state) => weatherAvailable(state.qualityMode))
   const raining = useGameStore((state) => effectiveWeather(state.qualityMode, state.weather) === 'rain')
+  const night = useGameStore((state) => effectiveTimeOfDay(state.qualityMode, state.timeOfDay) === 'night')
   useEffect(() => {
     if (available) return
     resetWeather()
     setData('weather', 'clear')
     setData('rainActive', '0')
+    setData('timeOfDay', 'day')
+    setData('nightActive', '0')
   }, [available])
-  return available ? <WeatherClock world={world} raining={raining} /> : null
+  return available ? <WeatherClock world={world} raining={raining} night={night} /> : null
 }

@@ -1,0 +1,15 @@
+{
+  "stats": {
+    "banquet/high": {
+      "calls": 301,
+      "meshes": 138,
+      "lightPools": true
+    },
+    "postwar/high": {
+      "calls": 328,
+      "meshes": 145,
+      "lightPools": true
+    }
+  },
+  "errors": []
+}

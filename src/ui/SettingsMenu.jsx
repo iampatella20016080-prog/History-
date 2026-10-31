@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { ERAS, getEra } from '../data/eras.js'
 import { getQualitySettings } from '../game/quality.js'
 import { WEATHER_IDS, weatherAvailable } from '../game/weather.js'
+import { TIME_IDS, timeAvailable } from '../game/night.js'
 import { useGameStore } from '../state/useGameStore.js'
 import { AmbienceSettings } from './AmbienceSettings.jsx'
 import { MusicSettings } from './MusicSettings.jsx'
@@ -168,11 +169,47 @@ function WeatherSection() {
 }
 
 /**
+ * 時段：白天／夜晚（第 14 階段）。只在精緻畫質顯示，可以和雨天同時開；流暢畫質一律是年代原本的時刻。
+ */
+function TimeSection() {
+  const timeOfDay = useGameStore((state) => state.timeOfDay)
+  const setTimeOfDay = useGameStore((state) => state.setTimeOfDay)
+  const t = useT()
+  return (
+    <section className="settings-section" aria-labelledby="settings-time-heading" data-time-section>
+      <p className="hud-menu__heading">
+        <span id="settings-time-heading">{t('settings.time')}</span>
+      </p>
+      <div className="mode-options" role="radiogroup" aria-labelledby="settings-time-heading">
+        {TIME_IDS.map((id) => {
+          const active = timeOfDay === id
+          return (
+            <button
+              key={id}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              data-time-option={id}
+              className={`mode-option${active ? ' is-active' : ''}`}
+              onClick={() => setTimeOfDay(id)}
+            >
+              <strong>{t(`settings.time.${id}`)}</strong>
+              <small>{t(`settings.time.${id}Hint`)}</small>
+            </button>
+          )
+        })}
+      </div>
+      <p className="hud-menu__note">{t('settings.timeNote')}</p>
+    </section>
+  )
+}
+
+/**
  * 右上角的設定（齒輪）：
  * - 年代：五個年代的切換
  * - 觀看模式：探索／建築觀賞（含隱藏介面）
  * - 畫質：流暢（適合 iPad）／精緻（適合電腦），切換後立即套用到 3D 畫面，不需要重新整理
- * - 天氣：晴／雨（只在精緻畫質顯示）
+ * - 天氣：晴／雨；時段：白天／夜晚（都只在精緻畫質顯示）
  * - 背景音樂：開／關與音量
  * 畫質與音樂的選擇會記在這台裝置上。
  */
@@ -254,6 +291,7 @@ export function SettingsMenu() {
           </div>
           <p className="hud-menu__note">{t('settings.qualityNote')}</p>
           {weatherAvailable(mode) && <WeatherSection />}
+          {timeAvailable(mode) && <TimeSection />}
           <MusicSettings />
           <AmbienceSettings />
           <section className="settings-section" aria-labelledby="settings-lang-heading">

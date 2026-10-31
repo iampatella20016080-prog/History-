@@ -19,6 +19,8 @@
  *           SET=audit：畫面審查——街道、每個開放店家的店門口與探索鏡頭、走進室內（跟隨鏡頭）、路線人物，見 auditViews.mjs
  *           SET=rain：雨天（第 14 階段）——街道遠景、亭仔腳的屋簷、簷口近看、慈聖宮前、河岸；配合 WEATHER 拍前後對照
  *           WEATHER（clear｜rain：加上 ?weather=，只在精緻畫質有效；不設定就不加參數）
+ *           SET=night：夜晚（第 14 階段）——街道遠景、河岸（月亮與月光）、慈聖宮前、店門口；配合 TIME_OF_DAY 拍前後對照
+ *           TIME_OF_DAY（day｜night：加上 ?time=，只在精緻畫質有效）
  *           ONLY（正規表示式，只拍檔名符合的視角；SET=audit 重拍單張用）
  *           VIEWS（JSON：[[檔名, 鏡頭位置, 注視點], ...]，臨時指定視角，查問題時近看用；優先於 SET）
  */
@@ -35,6 +37,7 @@ const QUALITIES = (process.env.QUALITIES ?? 'low,high').split(',')
 const SET = process.env.SET ?? 'default'
 const ONLY = process.env.ONLY ? new RegExp(process.env.ONLY) : null
 const WEATHER = process.env.WEATHER ? `&weather=${process.env.WEATHER}` : ''
+const TIME_OF_DAY = process.env.TIME_OF_DAY ? `&time=${process.env.TIME_OF_DAY}` : ''
 const TIMEOUT = 240000
 const HIDE_UI =
   '.hud, .hud-quality, .hud-actions, .hud-controls, .hud-objective, .shop-prompt, .hud-help, .touch-controls, .prompt-layer, .dialogue-box, .controls-hint, .toast { visibility: hidden !important; }'
@@ -109,6 +112,9 @@ export const RAIN_VIEWS = [
   COMMON_VIEWS[1],
 ]
 
+/** 夜晚（第 14 階段，只在精緻畫質）：夜空與月亮、窗光、燈籠與路燈、河面的月光與燈影 */
+export const NIGHT_VIEWS = [COMMON_VIEWS[2], COMMON_VIEWS[1], COMMON_VIEWS[0], ['arcade', '亭仔腳', [0, 1.5, 0.3], [9, 2.2, -3.4]]]
+
 /** 空氣遠近感與光束（第 9 階段追加）：往東、往西（夕陽方向）的街道遠景與河岸 */
 export const AIR_VIEWS = [
   COMMON_VIEWS[2],
@@ -132,6 +138,7 @@ async function viewsFor(eraId) {
   if (SET === 'details') return DETAIL_VIEWS
   if (SET === 'relief') return RELIEF_VIEWS
   if (SET === 'rain') return RAIN_VIEWS
+  if (SET === 'night') return [...NIGHT_VIEWS, ...(ERA_VIEWS[eraId] ?? []).slice(0, 1)]
   if (SET === 'air') return [...AIR_VIEWS, ...(AIR_ARCADE_VIEWS[eraId] ?? [])]
   return [...COMMON_VIEWS, ...(ERA_VIEWS[eraId] ?? [])]
 }
@@ -240,7 +247,7 @@ async function run() {
 
     // 每個年代各自重新載入（?era=），不經過年代選單的轉場與開場卡片
     for (const eraId of ERA_IDS) {
-      await page.goto(`${BASE_URL}?era=${eraId}&quality=${quality}${WEATHER}`, { waitUntil: 'load' })
+      await page.goto(`${BASE_URL}?era=${eraId}&quality=${quality}${WEATHER}${TIME_OF_DAY}`, { waitUntil: 'load' })
       await page.waitForFunction((era) => document.documentElement.dataset.sceneEra === era, eraId, { timeout: TIMEOUT })
       // 軟體繪圖很慢時開場按鈕的動畫一直不算「穩定」，等不到就直接點
       await page.locator('.intro__start').click({ timeout: 60000 }).catch(() => page.locator('.intro__start').click({ force: true }))

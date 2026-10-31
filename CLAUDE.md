@@ -36,7 +36,7 @@ node tests/e2e/viewer.e2e.mjs http://127.0.0.1:5173/
 
 讀取人物／鏡頭狀態的 e2e 需要開發版的 `window.__DDC__`（`src/main.jsx`）。`era-switching.e2e.mjs` 也可以對 `vite preview --port 4173` 的打包版執行。
 
-除錯用網址參數：`?era=<年代 id>`、`?quality=low|medium|high`、`?worker=0`（不用 Web Worker 產生街景）、`?adaptive=0`（停用畫面更新率過低時的自動降解析度）、`?weather=rain|clear`（天氣，只在精緻畫質有效）、`?stats=1`（左上角顯示幀率、繪製呼叫、三角形數、解析度；正式版也有效，沒參數時不載入，見 `src/stats/`）。
+除錯用網址參數：`?era=<年代 id>`、`?quality=low|medium|high`、`?worker=0`（不用 Web Worker 產生街景）、`?adaptive=0`（停用畫面更新率過低時的自動降解析度）、`?weather=rain|clear`（天氣）、`?time=night|day`（時段；兩者都只在精緻畫質有效）、`?stats=1`（左上角顯示幀率、繪製呼叫、三角形數、解析度；正式版也有效，沒參數時不載入，見 `src/stats/`）。
 
 ## 架構
 

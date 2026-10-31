@@ -4033,6 +4033,120 @@ SOURCES['nmth-silver-bracelet-2003-014-0152'] = {
   usageEn: 'Basis for the form of the bracelet 3D model: Qing or Japanese period, silver, diameter 6.1 cm, height 0.6 cm, 17.8 g; several silver strands are interwoven and coiled into a ring, with an opening that can be slipped over the wrist, plain and without ornament; known in Taiwanese folk usage as “rope ring” (繩索環), “suo-a ring” (索仔環) and “cart-vine for the foot” (腳車藤).',
 }
 
+// 第 14 階段：夜晚的各年代照明（查證紀錄：docs/research/night-lighting.md；src/game/night.js 引用）
+SOURCES['culture-xindian-hydro'] = {
+  id: 'culture-xindian-hydro',
+  citation: '文化部，〈首都來電—新店溪近代水力發電設施群〉，文化資產主題文件 PDF。',
+  publisher: '文化部',
+  title: '首都來電—新店溪近代水力發電設施群',
+  url: 'https://themefile.culture.tw/file/2019-03-06/89c7ff4f-5cb7-4a6e-8fae-64700fe34e63/4.%E6%96%B0%E5%BA%97%E6%BA%AA%E6%B0%B4%E5%8A%9B%E7%99%BC%E9%9B%BB%E8%A8%AD%E6%96%BD%E7%BE%A4.pdf',
+  context: '1888 年興市公司在臺北城內點電燈、月餘即停；1905 年龜山發電所完工並供應臺北市街照明。',
+}
+SOURCES['storystudio-first-electric-light'] = {
+  id: 'storystudio-first-electric-light',
+  citation: '徐祥弼，〈「聽說，臺北出現了不可思議的會亮的物體……！」百年前，當電燈第一次點亮臺灣天空〉，故事 StoryStudio，2021-12-22。',
+  publisher: '故事 StoryStudio',
+  title: '百年前，當電燈第一次點亮臺灣天空',
+  url: 'https://storystudio.tw/article/gushi/the-first-time-electric-light-lighted-taiwan',
+  context: '1879 年首度從美國進口燈油；1905 年龜山送電至城內、艋舺、大稻埕；引《臺灣日日新報》1905-09-19 報導大稻埕第一根電線桿。',
+}
+SOURCES['gjtaiwan-1905-taipei-lights'] = {
+  id: 'gjtaiwan-1905-taipei-lights',
+  citation: '聚珍臺灣，〈1905(明治38)年9月11日，臺北市街電燈點亮了！〉。',
+  publisher: '聚珍臺灣',
+  title: '1905(明治38)年9月11日，臺北市街電燈點亮了！',
+  url: 'https://www.gjtaiwan.com/new/?p=9531',
+  context: '1905 年龜山電力經古亭庄配電所供應臺北、大稻埕、艋舺，市街電燈點亮；路燈有商家自費設置。',
+}
+SOURCES['taipower-suzuran-lamp'] = {
+  id: 'taipower-suzuran-lamp',
+  citation: '台灣電力公司電業文物典藏，〈日治時期曾經存在的鈴蘭燈〉。',
+  publisher: '台灣電力公司',
+  title: '日治時期曾經存在的鈴蘭燈',
+  url: 'https://service.taipower.com.tw/Collection/2009/2025/11352/blogPost',
+  context: '鈴蘭燈 1920 年代起源於日本，約 1930 年傳入臺灣，1942 年起因戰時金屬回收而拆除。',
+}
+SOURCES['taipower-history-03-electric-light'] = {
+  id: 'taipower-history-03-electric-light',
+  citation: '台灣電力公司電業文物典藏，〈【臺灣百年電業史話03】電燈〉。',
+  publisher: '台灣電力公司',
+  title: '【臺灣百年電業史話03】電燈',
+  url: 'https://service.taipower.com.tw/Collection/2009/2025/9602/',
+  context: '1905 年全臺約 5,000 盞電燈，1940 年約 60 萬盞；戰前電氣化率約 35–40%。',
+}
+SOURCES['fujii-taipei-cinema-league'] = {
+  id: 'fujii-taipei-cinema-league',
+  citation: '藤井省三著、張季琳譯，〈臺北電影聯盟的興衰——一九三○年代現代都市的電影界革命〉，《中國文哲研究通訊》第 21 卷第 4 期，頁 105–120。',
+  publisher: '中央研究院中國文哲研究所',
+  title: '臺北電影聯盟的興衰——一九三○年代現代都市的電影界革命',
+  url: 'https://www.litphil.sinica.edu.tw/newsletter/84/105-120.pdf',
+  context: '引《臺灣日日新報》1931-11-01：臺北年初只有 1 座霓虹燈，後增至榮町、本町等 6 處；並記 1888 年臺北城內設電燈。',
+}
+SOURCES['chu-2022-qing-petroleum'] = {
+  id: 'chu-2022-qing-petroleum',
+  citation: '朱書漢，〈清領時期臺灣石油的開發與利用（1861-1891）〉，《臺灣鑛業》第 74 卷第 3 期（2022 年 9 月），頁 13–21。',
+  publisher: '臺灣鑛業',
+  title: '清領時期臺灣石油的開發與利用（1861-1891）',
+  url: 'https://www.airitilibrary.com/Article/Detail/10219927-202209-202209280012-202209280012-13-21',
+  context: '李春生於 1865 年進口並經銷石油，清代臺灣石油主要用於照明。',
+}
+SOURCES['beigang-kerosene-lamp-curation'] = {
+  id: 'beigang-kerosene-lamp-curation',
+  citation: '北港高中社會科，〈北港高中鄉土文物館館藏文物：煤油燈（上）〉，國家文化記憶庫「時空旅行社」線上策展。',
+  publisher: '文化部國家文化記憶庫',
+  title: '北港高中鄉土文物館館藏文物：煤油燈（上）',
+  url: 'https://curation.culture.tw/curation/public?id=2476',
+  context: '光緒 5 年（1879）臺灣首次從美國進口燈油，數年內成為日常必需品。',
+}
+SOURCES['zh-wiki-li-chunsheng'] = {
+  id: 'zh-wiki-li-chunsheng',
+  citation: '維基百科，〈李春生〉。',
+  publisher: '維基百科',
+  title: '李春生',
+  url: 'https://zh.wikipedia.org/zh-tw/%E6%9D%8E%E6%98%A5%E7%94%9F',
+  context: '大稻埕仕商李春生曾任寶順洋行買辦，並經營三達石油公司的煤油生意。',
+}
+SOURCES['tcmb-1885-taipei-streetlight'] = {
+  id: 'tcmb-1885-taipei-streetlight',
+  citation: '文化部國家文化記憶庫，〈1885年臺北城設立路燈〉。',
+  publisher: '文化部國家文化記憶庫',
+  title: '1885年臺北城設立路燈',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_Place&id=463911',
+  context: '主張清末臺北城內官署區設電燈路燈（年份作 1885，與多數來源的 1888 不同，僅作對照）。',
+}
+SOURCES['taipei-pkl-streetlight-history'] = {
+  id: 'taipei-pkl-streetlight-history',
+  citation: '臺北市政府工務局公園路燈工程管理處，〈路燈演進有亮點 臺北走入LED世代〉，新聞稿，2018-12-04。',
+  publisher: '臺北市政府工務局公園路燈工程管理處',
+  title: '路燈演進有亮點 臺北走入LED世代',
+  url: 'https://pkl.gov.taipei/News_Content.aspx?n=43E05059FCC72525&sms=72544237BBE4C5F6&s=8D95B7428F95B600',
+  context: '臺北路燈由電碳弧燈、白熱燈、日光燈、水銀燈、鈉光燈演進到 LED；1888 年劉銘傳點亮第一盞路燈。',
+}
+SOURCES['ltn-2018-taipei-led'] = {
+  id: 'ltn-2018-taipei-led',
+  citation: '自由時報，〈臺北市智慧路燈全面起跑 億光「勝利」力挺〉，2018-08-01。',
+  publisher: '自由時報',
+  title: '臺北市智慧路燈全面起跑 億光「勝利」力挺',
+  url: 'https://ec.ltn.com.tw/article/breakingnews/2506566',
+  context: '臺北市 16 萬餘盞路燈汰換為 LED，預定 2018 年第三季完成。',
+}
+SOURCES['fan-2013-taiwan-air-defense'] = {
+  id: 'fan-2013-taiwan-air-defense',
+  citation: '范耿鈞，《日治時期台灣的防空》，國立政治大學台灣史研究所碩士論文，2013。',
+  publisher: '國立政治大學',
+  title: '日治時期台灣的防空',
+  url: 'https://ah.lib.nccu.edu.tw/item?item_id=73298',
+  context: '戰時臺灣依日本體制舉行防空演習（燈火管制的背景）。',
+}
+SOURCES['udn-2026-dadaocheng-riverside'] = {
+  id: 'udn-2026-dadaocheng-riverside',
+  citation: 'Eric，〈大稻埕的人間煙火氣｜河岸遊憩〉，聯合新聞網／臺北畫刊，2026-07-26。',
+  publisher: '聯合新聞網／臺北畫刊',
+  title: '大稻埕的人間煙火氣',
+  url: 'https://udn.com/news/story/6961/9644197',
+  context: '大稻埕碼頭的夕陽、貨櫃市集夜間燈光、迪化街暖黃燈光與夏日節煙火。',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }
