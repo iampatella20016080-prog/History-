@@ -3,7 +3,7 @@
 import { statSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { AMBIENCE_SOUNDS, ERA_AMBIENCE } from '../../src/audio/ambienceCore.js'
+import { AMBIENCE_SOUNDS, ERA_AMBIENCE, WEATHER_AMBIENCE } from '../../src/audio/ambienceCore.js'
 import { AMBIENCE_CREDITS, AMBIENCE_FALLBACK_SOURCE, AMBIENCE_SOURCES } from '../../src/audio/ambienceCredits.js'
 import { ERAS } from '../../src/data/eras.js'
 
@@ -28,6 +28,7 @@ const lines = [
   '| 年代 | 音檔 |',
   '| --- | --- |',
   ...ERAS.map((era) => `| ${era.title}（${era.id}） | ${ERA_AMBIENCE[era.id].map((e) => `\`${e.sound}.mp3\``).join('、')} |`),
+  `| 雨天（只在精緻畫質，五個年代都有） | ${WEATHER_AMBIENCE.rain.map((e) => `\`${e.sound}.mp3\``).join('、')} |`,
   '',
   '## 音檔',
   '',

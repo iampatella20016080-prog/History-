@@ -4,6 +4,7 @@ import { getShop } from '../data/shops.js'
 import { getInspectObject, getInspectable } from '../data/inspectObjects.js'
 import { talkForNpc } from '../data/talk.js'
 import { QUALITY_MODES, initialQualityMode, saveQualityMode } from '../game/quality.js'
+import { WEATHER_IDS, initialWeather, saveWeather } from '../game/weather.js'
 import { addJournalEntry, loadJournal, saveJournal } from '../game/journal.js'
 import { objectJournalId } from '../game/objectInspect.js'
 import { advanceTalk, chooseFollowUp, startTalkSession, talkJournalId } from '../game/talk.js'
@@ -49,6 +50,7 @@ function detectTouch() {
  *
  * 畫質
  *   qualityMode    'smooth'（流暢）或 'fine'（精緻），記在 localStorage，切換後立即套用
+ *   weather        'clear'（晴）或 'rain'（雨），記在 localStorage；只在精緻畫質有效（流暢畫質一律晴天，見 game/weather.js）
  *
  * 觀看方式（與 mode 分開：mode 管店家介紹，viewMode 管鏡頭與角色）
  *   viewMode       'explore'（第三人稱探索）或 'viewer'（建築觀賞：角色暫停並隱藏，鏡頭自由環繞）
@@ -83,6 +85,7 @@ export const useGameStore = create((set, get) => ({
   travel: null,
   inputMode: detectTouch() ? 'touch' : 'mouse',
   qualityMode: initialQualityMode(),
+  weather: initialWeather(),
   /** 介面語言：'zh-Hant'（預設）或 'en'，記在 localStorage */
   lang: initialLang(),
   /** 「授權與出處」視窗 */
@@ -337,6 +340,13 @@ export const useGameStore = create((set, get) => ({
     set({ lang })
   },
   setLicensesOpen: (open) => set((state) => ({ licensesOpen: open ?? !state.licensesOpen, qualityOpen: false, menuOpen: false })),
+  setWeather: (weather) => {
+    if (!WEATHER_IDS.includes(weather)) return false
+    saveWeather(weather)
+    if (get().weather !== weather) set({ weather })
+    return true
+  },
+
   setQualityMode: (mode) => {
     if (!QUALITY_MODES[mode]) return false
     saveQualityMode(mode)

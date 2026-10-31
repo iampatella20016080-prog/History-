@@ -133,6 +133,17 @@ export const AMBIENCE_SOURCES = {
     downloaded: FREESOUND_PREVIEW,
     downloadedEn: FREESOUND_PREVIEW_EN,
   },
+  fs826025: {
+    title: 'RAIN_Summer Rain.City Yard.Entrance Canopy.Eaves Leaking.Drops On Plants And Asphalt 3_EM',
+    author: 'newlocknew',
+    url: 'https://freesound.org/people/newlocknew/sounds/826025/',
+    ...CC0,
+    originalFile: 'RAIN_Summer Rain.City Yard.Entrance Canopy.Eaves Leaking.Drops On Plants And Asphalt 3_EM.wav',
+    recorded: '俄羅斯葉卡捷琳堡老社區公寓中庭的入口雨棚下，夏天的大雨，屋簷漏水滴在地面與草地上，2025-06-13（Tascam DR-05x）',
+    recordedEn: 'Under the entrance canopy of an apartment courtyard in an old residential area of Yekaterinburg, Russia: heavy summer rain, with water leaking from the eaves onto the pavement and lawn, 13 June 2025 (Tascam DR-05x)',
+    downloaded: FREESOUND_PREVIEW,
+    downloadedEn: FREESOUND_PREVIEW_EN,
+  },
 }
 
 /** 每個輸出音檔（public/audio/ambience/<id>.mp3）的來源與剪輯 */
@@ -185,6 +196,13 @@ export const AMBIENCE_CREDITS = {
     editsEn: 'The record cut from 40–56 s, band-passed 300 Hz–3.4 kHz to imitate an AM radio, faded in over 1.5 s and out over 2 s, placed at 2 s; the SABA radio’s AM noise bed (1–23 s, with no station content) band-passed 200 Hz–4 kHz and 12 dB quieter than the music, cross-faded into a 20-second loop; the join contains only the noise bed.',
     context: '情境示意：收音機播放的內容用公有領域的 1915 年古典樂唱片代替，不是當年臺灣電台的節目；收音機雜訊錄自德國 SABA 真空管收音機（機種年代未查證）。',
     contextEn: 'Illustrative: what the radio plays is replaced by a public-domain 1915 classical record, not a programme of a Taiwanese station of the time; the radio noise was recorded from a German SABA valve radio (model date unverified).',
+  },
+  rain: {
+    sources: ['fs826025'],
+    edits: '剪 120–142 秒（雨勢平穩、沒有雷聲與人聲的段落）；去掉 80 Hz 以下的低頻轟聲；尾端 2 秒交叉淡化接回開頭成 20 秒循環。只在精緻畫質的雨天播放，音量跟著雨勢。',
+    editsEn: 'Cut from 120–142 s (a steady stretch of rain with no thunder or voices); low rumble below 80 Hz removed; the last 2 s cross-faded into the start to make a 20-second loop. Plays only when it rains in Fine quality, with the volume following the strength of the rain.',
+    context: '情境示意：俄羅斯老社區中庭的雨與屋簷滴水，不是大稻埕的錄音；只取雨打在雨棚、地面與屋簷滴水的聲響。',
+    contextEn: 'Illustrative: rain and dripping eaves in a courtyard of an old Russian neighbourhood, not a recording from Dadaocheng; only the sound of rain on a canopy, the pavement and dripping eaves is used.',
   },
 }
 

@@ -4,7 +4,7 @@
  * - smooth 流暢（適合 iPad）：解析度上限 1.25、陰影貼圖 1024、關閉景深／光暈／環境遮蔽／空氣遠近感與光束、
  *          減少遠景裝飾與蒸氣粒子；保留基本陰影、漫畫描邊與所有年代建築。
  * - fine   精緻（適合電腦）：解析度上限 1.75（不超過裝置像素比）、陰影貼圖 2048、柔和陰影、
- *          適量環境遮蔽、非常輕微的光暈與輕微景深、空氣遠近感與斜陽光束、完整的遠景裝飾、燈光落點（燈照到地面與牆上，lightPools.js）、材質凹凸與河面倒映。
+ *          適量環境遮蔽、非常輕微的光暈與輕微景深、空氣遠近感與斜陽光束、完整的遠景裝飾、燈光落點（燈照到地面與牆上，lightPools.js）、材質凹凸與河面倒映、天氣（雨天，weather.js）。
  *
  * 觸控裝置預設「流暢」、桌面電腦預設「精緻」；使用者的選擇記在 localStorage。
  * 切換後由 QualityController、Lighting、ToonRenderer 與各場景元件立即套用，不需要重新整理。
@@ -32,6 +32,8 @@ export const QUALITY_MODES = {
     relief: false,
     waterReflection: 0,
     lightPools: false,
+    // 天氣（雨天，第 14 階段）：流暢畫質沒有天氣選項，一律晴天（game/weather.js）
+    weather: false,
   },
   fine: {
     id: 'fine',
@@ -55,6 +57,8 @@ export const QUALITY_MODES = {
     // 河面倒映：平面反射的解析度（相對畫面的比例；0 = 不做，rendering/planarReflection.js）
     waterReflection: 0.35,
     lightPools: true,
+    // 天氣選項（晴／雨）：雨絲、屋簷滴水、濕地面與積水倒影、河面雨點、雨聲（game/weather.js）
+    weather: true,
   },
 }
 

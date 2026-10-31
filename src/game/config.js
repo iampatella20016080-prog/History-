@@ -10,6 +10,10 @@ export const LAYERS = {
   NO_OUTLINE: 1,
   // 河面倒映（精緻畫質）：畫進平面反射的物件多開這個圖層（rendering/planarReflection.js）
   REFLECT: 2,
+  // 雨天（精緻畫質）：遮雨高度圖只畫這個圖層（街景的靜態網格，畫的時候才暫時打開）
+  COVER: 3,
+  // 雨天（精緻畫質）：積水倒影畫的物件（河面倒映的那些，再加上招牌與燈火的光暈）
+  PUDDLE: 4,
 }
 
 export const STREET = {

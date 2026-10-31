@@ -11,6 +11,7 @@ import { RouteGuides } from './components/RouteGuides.jsx'
 import { StreetPrompts } from './components/StreetPrompts.jsx'
 import { River } from './components/River.jsx'
 import { Sky } from './components/Sky.jsx'
+import { WeatherDirector } from './components/Weather.jsx'
 import { StoreMarkers } from './components/StoreMarkers.jsx'
 import { ToonRenderer } from './rendering/ToonRenderer.jsx'
 import { viewerSpaceOf } from './viewerCamera.js'
@@ -32,6 +33,8 @@ export function World({ world, promptLayer, onSwap }) {
       <River eraId={world.eraId} />
       <EraDirector onSwap={onSwap} />
       <EraScene key={world.eraId} world={world} />
+      {/* 天氣（雨天）：只在精緻畫質，流暢畫質不掛載任何東西 */}
+      <WeatherDirector world={world} />
       <StoreMarkers shopModels={world.shopModels} promptLayer={promptLayer} />
       <StreetPrompts npcs={world.npcs ?? []} eraId={world.eraId} promptLayer={promptLayer} />
       <RouteGuides world={world} />

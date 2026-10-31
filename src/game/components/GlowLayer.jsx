@@ -210,7 +210,7 @@ export function GlowLayer({ glows, pools }) {
         <mesh geometry={layer.poolGeometry} material={layer.poolMaterial} renderOrder={1} onUpdate={setLayer} />
       )}
       {layer.glowGeometry && (
-        <mesh geometry={layer.glowGeometry} material={layer.glowMaterial} renderOrder={2} onUpdate={setLayer} />
+        <mesh name="glows" geometry={layer.glowGeometry} material={layer.glowMaterial} renderOrder={2} onUpdate={setLayer} />
       )}
     </>
   )

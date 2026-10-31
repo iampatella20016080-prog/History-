@@ -10,6 +10,7 @@ import {
   masterTarget,
   planTracks,
   getEraAmbience,
+  getWeatherAmbience,
 } from './ambienceCore.js'
 
 /**
@@ -91,6 +92,8 @@ export function createAmbienceManager(env = {}) {
   let transitioning = false
   let story = false
   let getPosition = env.getPosition ?? (() => ({ x: 0, z: 0 }))
+  // 雨勢（0..1）：精緻畫質的雨天才大於 0（game/weather.js 的 weatherState.rain）
+  let getRain = env.getRain ?? (() => 0)
   let timer = null
   let unsubscribers = []
   let hiddenWhilePlaying = false
@@ -224,7 +227,7 @@ export function createAmbienceManager(env = {}) {
     if (!ctx || !get().enabled || doc?.hidden || ctx.state !== 'running' || !eraId) return
     const t = now()
     for (const track of [...tracks.values()]) if (track.stopAt !== undefined && track.stopAt <= t) teardown(track)
-    const { targets, start } = planTracks({ eraId, pos: getPosition(), live: tracks.keys() })
+    const { targets, start } = planTracks({ eraId, pos: getPosition(), live: tracks.keys(), rain: getRain() })
     for (const track of [...tracks.values()]) {
       if (!targets.has(track.id)) fadeOut(track, FADE.track)
       else if (track.stopAt !== undefined) {
@@ -330,7 +333,7 @@ export function createAmbienceManager(env = {}) {
     if (next === eraId) return
     eraId = next
     set({ eraId: next })
-    const keep = new Set(getEraAmbience(next).map((e) => e.sound))
+    const keep = new Set([...getEraAmbience(next), ...getWeatherAmbience(getRain())].map((e) => e.sound))
     for (const track of [...tracks.values()]) if (!keep.has(track.id)) fadeOut(track, 0.1)
     tick()
   }
@@ -372,11 +375,13 @@ export function createAmbienceManager(env = {}) {
 
   /**
    * 連接遊戲狀態：started（使用者操作，啟用 AudioContext）、eraId（只看已成功切換的年代）、
-   * transitioning（轉場時淡出／淡入）與 mode（閱讀故事時降低音量）。getPos 回傳人物的世界座標。
+   * transitioning（轉場時淡出／淡入）與 mode（閱讀故事時降低音量）。getPos 回傳人物的世界座標；
+   * rain 回傳目前的雨勢（0..1，雨聲的音量跟著它）。
    */
-  function connect(gameStore, getPos) {
+  function connect(gameStore, getPos, rain) {
     disconnect()
     if (getPos) getPosition = getPos
+    if (rain) getRain = rain
     const state = gameStore.getState()
     transitioning = Boolean(state.transitioning)
     story = state.mode !== 'explore'

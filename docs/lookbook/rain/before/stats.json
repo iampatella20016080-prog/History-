@@ -1,0 +1,30 @@
+{
+  "stats": {
+    "qing-port/high": {
+      "calls": 188,
+      "meshes": 144,
+      "lightPools": false
+    },
+    "banquet/high": {
+      "calls": 204,
+      "meshes": 132,
+      "lightPools": true
+    },
+    "modern/high": {
+      "calls": 184,
+      "meshes": 120,
+      "lightPools": true
+    },
+    "postwar/high": {
+      "calls": 225,
+      "meshes": 139,
+      "lightPools": false
+    },
+    "revival/high": {
+      "calls": 304,
+      "meshes": 181,
+      "lightPools": true
+    }
+  },
+  "errors": []
+}
