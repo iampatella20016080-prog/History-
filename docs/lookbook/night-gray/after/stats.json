@@ -1,8 +1,8 @@
 {
   "stats": {
-    "banquet/high": {
-      "calls": 206,
-      "meshes": 134,
+    "modern/high": {
+      "calls": 186,
+      "meshes": 122,
       "lightPools": true
     }
   },
