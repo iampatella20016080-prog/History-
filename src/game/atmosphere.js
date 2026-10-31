@@ -126,7 +126,8 @@ function applyRain(current, amount, night) {
   for (const [key, look, tint] of RAIN_COLORS) {
     const color = current[key]
     const l = color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722
-    color.lerp(_gray.setRGB(l, l, l), look.gray * t).multiplyScalar(1 + (look.dark - 1) * t)
+    // 雨夜：顏色不往灰色洗（夜色本來就暗，再去飽和只會灰濛濛）
+    color.lerp(_gray.setRGB(l, l, l), look.gray * t * (1 - 0.75 * night)).multiplyScalar(1 + (look.dark - 1) * t)
     if (tint) color.lerp(tint, look.mix * t * (1 - 0.85 * night))
   }
 }

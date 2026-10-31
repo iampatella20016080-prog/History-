@@ -144,7 +144,7 @@ export const NIGHT_ERAS = {
     // 燈籠多、光暈大：夜裡調小一點，不然一團一團的光暈讓整條街像蒙了一層霧
     lanternGlow: 0.6,
     lift: 0.04,
-    exposure: 1.75,
+    exposure: 2.1,
     windowTint: '#ffb866',
     tintAmount: 0.4,
     electric: true,
@@ -158,6 +158,7 @@ export const NIGHT_ERAS = {
     glow: 1.0,
     lanternGlow: 0.8,
     lift: 0.035,
+    exposure: 1.75,
     windowTint: '#ffc878',
     tintAmount: 0.35,
     electric: true,
@@ -183,7 +184,7 @@ export const NIGHT_ERAS = {
   revival: {
     glow: 1.0,
     lanternGlow: 0.85,
-    lift: 0.025,
+    lift: 0.012,
     windowTint: '#ffc98a',
     tintAmount: 0.3,
     electric: true,
