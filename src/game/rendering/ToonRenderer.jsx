@@ -26,12 +26,15 @@ import { renderState } from '../runtime.js'
 import { transitionState } from '../transition.js'
 import { lightPoolStrength, syncLightPoolPass } from '../lightPools.js'
 import { createLightPoolPass } from './lightPoolPass.js'
+import { createWetPass } from './wetPass.js'
+import { weatherState } from '../weather.js'
 
 /**
  * 卡通渲染管線（接管 R3F 的預設渲染）
  *
  * 1. 法線＋深度：以 MeshNormalMaterial 覆寫全場景，取得法線與深度
  * 2. 色彩：正常渲染（卡通材質、陰影）
+ *    （精緻畫質的雨天）濕地面與積水倒影（wetPass.js）
  *    （精緻畫質）燈光落點：燈籠、路燈、店門口的燈照到地面與牆上（lightPoolPass.js）
  * 3. 輪廓：依深度二階差分與法線差異描出細黑線，遠處線條淡出
  * 3b. 空氣遠近感與斜陽光束（只在精緻畫質，見 airPass.js）
@@ -424,6 +427,8 @@ function createPipeline(gl, initialQuality) {
   let lightPools = null
   let lightPoolsActive = false
   let air = null
+  // 濕地面與積水倒影（只在精緻畫質建立；要下過雨才編譯與繪製）
+  let wet = null
 
   // 空氣與光束（只在精緻畫質）：接在輪廓之後，後面的光暈、轉場擷取與輸出改讀它的結果
   function setAir(enabled) {
@@ -494,6 +499,11 @@ function createPipeline(gl, initialQuality) {
     if (next.bloom > 0 && !bloom) createBloom()
     else if (next.bloom <= 0) disposeBloom()
     lightPools = syncLightPoolPass(lightPools, next, () => createLightPoolPass(colorType))
+    if (next.weather && !wet) wet = createWetPass(colorType)
+    else if (!next.weather && wet) {
+      wet.dispose()
+      wet = null
+    }
     setAir(Boolean(next.air))
     const data = typeof document !== 'undefined' ? document.documentElement.dataset : {}
     data.msaa = String(colorTarget.samples)
@@ -501,6 +511,7 @@ function createPipeline(gl, initialQuality) {
     data.bloom = String(next.bloom)
     data.lightPools = lightPools ? '1' : '0'
     data.air = air ? '1' : '0'
+    data.wetPass = wet ? '1' : '0'
   }
 
   const size = new Vector2()
@@ -588,10 +599,16 @@ function createPipeline(gl, initialQuality) {
     gl.clear(true, true, false)
     gl.render(scene, camera)
 
+    // 濕地面與積水倒影（精緻畫質、地面濕的時候）
+    let color = colorTarget.texture
+    if (wet && wet.update(camera, weatherState, atmosphere.current.water)) {
+      color = wet.render(gl, color, normalTarget.texture, normalTarget.depthTexture, current.x, current.y)
+    }
+
     // 燈光落點（精緻畫質、有燈的年代）：輪廓趟改讀加上光斑的畫面
     edgeMaterial.uniforms.tColor.value = lightPoolsActive
-      ? lightPools.render(gl, colorTarget.texture, normalTarget.texture, normalTarget.depthTexture, current.x, current.y)
-      : colorTarget.texture
+      ? lightPools.render(gl, color, normalTarget.texture, normalTarget.depthTexture, current.x, current.y)
+      : color
 
     // 3. 輪廓
     gl.setRenderTarget(compositeTarget)
@@ -629,6 +646,7 @@ function createPipeline(gl, initialQuality) {
     copyQuad.dispose()
     disposeBloom()
     lightPools?.dispose()
+    wet?.dispose()
     air?.dispose()
     brightMaterial.dispose()
     blurMaterial.dispose()

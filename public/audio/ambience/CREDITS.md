@@ -18,6 +18,7 @@
 | 摩登大稻埕（modern） | `river-lap.mp3`、`bicycle-bell.mp3`、`gramophone.mp3` |
 | 庶民生活（postwar） | `river-lap.mp3`、`trishaw.mp3`、`radio.mp3` |
 | 老屋新生（revival） | `river-lap.mp3` |
+| 雨天（只在精緻畫質，五個年代都有） | `rain.mp3` |
 
 ## 音檔
 
@@ -30,6 +31,7 @@
 | `gramophone.mp3`（留聲機） | 26 秒 | 219 KB | 作曲：蕭邦（1810–1849）；演奏：拉赫曼尼諾夫（1873–1943）；Victor 唱片 1008（B-24644，第 8 次錄音），1923-12-27〈Mazurka in C sharp minor, op. 63, no. 3 (1923 recording)〉＋thaighaudio〈071416 Victor Victrola playing a record end loop.wav〉 | 唱片剪 2.5–24.5 秒，前後淡入 1 秒、淡出 2.5 秒，放在第 2 秒；Victrola 唱針雜音（1.5–13.5 秒）反覆交叉淡化接成連續底噪，比音樂小 14 dB；兩者帶通 250 Hz–4.5 kHz 模擬喇叭留聲機；26 秒循環，接點只有唱針雜音。 | 情境示意：1934 年開業的波麗路西餐廳以 78 轉電唱機播古典樂（見 docs/research/bolero.md），這裡用年代相近、已是公有領域的 1923 年唱片；不是當年大稻埕實際播放的那一張。 |
 | `trishaw.mp3`（三輪車） | 12 秒 | 110 KB | submergent〈bicycle_rideby_stereo_01〉＋RutgerMuller〈Japan_Matsudo_Bicycle_Bell_2.wav〉 | 腳踏車滑行經過放慢到 0.8 倍（較重、較慢）、音量提高，放在第 0.8 秒；松戶的車鈴兩段（降低音量）（1.5–3.8、6.7–8.7 秒）放在第 2.4、8.2 秒；12 秒循環，接點落在無聲處。 | 情境示意：用腳踏車與日本車鈴組成三輪車經過的聲音，沒有找到授權清楚的三輪車錄音。 |
 | `radio.mp3`（收音機） | 20 秒 | 173 KB | 作曲：巴哈（1685–1750）；演奏：克萊斯勒、津巴利斯特（小提琴），Walter B. Rogers 指揮；Victor 唱片 76028（C-15560，第 4 次錄音），1915-01-04〈Concerto for two violins Part 1 (1915 recording)〉＋Anellide〈German Radio Saba_AM.wav〉 | 唱片剪 40–56 秒，帶通 300 Hz–3.4 kHz 模擬調幅收音機，前後淡入 1.5 秒、淡出 2 秒，放在第 2 秒；SABA 收音機 AM 底噪（1–23 秒，沒有電台內容）帶通 200 Hz–4 kHz、比音樂小 12 dB，交叉淡化成 20 秒循環；接點只有底噪。 | 情境示意：收音機播放的內容用公有領域的 1915 年古典樂唱片代替，不是當年臺灣電台的節目；收音機雜訊錄自德國 SABA 真空管收音機（機種年代未查證）。 |
+| `rain.mp3`（雨聲與屋簷滴水） | 20 秒 | 173 KB | newlocknew〈RAIN_Summer Rain.City Yard.Entrance Canopy.Eaves Leaking.Drops On Plants And Asphalt 3_EM〉 | 剪 120–142 秒（雨勢平穩、沒有雷聲與人聲的段落）；去掉 80 Hz 以下的低頻轟聲；尾端 2 秒交叉淡化接回開頭成 20 秒循環。只在精緻畫質的雨天播放，音量跟著雨勢。 | 情境示意：俄羅斯老社區中庭的雨與屋簷滴水，不是大稻埕的錄音；只取雨打在雨棚、地面與屋簷滴水的聲響。 |
 
 ## 原始錄音
 
@@ -132,3 +134,13 @@
 - 錄音：德國 SABA 2000 Transeuropa 真空管收音機在 AM 波段選台的雜訊，錄於比利時布魯塞爾（上傳於 2023-05-09）
 - 下載：Freesound 免登入的高品質預覽 MP3（128 kbps）；原始檔需要登入才能下載
 - 用在：`radio.mp3`
+
+### RAIN_Summer Rain.City Yard.Entrance Canopy.Eaves Leaking.Drops On Plants And Asphalt 3_EM
+
+- 作者：newlocknew
+- 網址：https://freesound.org/people/newlocknew/sounds/826025/
+- 授權：CC0 1.0（公眾領域貢獻宣告）（https://creativecommons.org/publicdomain/zero/1.0/）
+- 原始檔名：RAIN_Summer Rain.City Yard.Entrance Canopy.Eaves Leaking.Drops On Plants And Asphalt 3_EM.wav
+- 錄音：俄羅斯葉卡捷琳堡老社區公寓中庭的入口雨棚下，夏天的大雨，屋簷漏水滴在地面與草地上，2025-06-13（Tascam DR-05x）
+- 下載：Freesound 免登入的高品質預覽 MP3（128 kbps）；原始檔需要登入才能下載
+- 用在：`rain.mp3`

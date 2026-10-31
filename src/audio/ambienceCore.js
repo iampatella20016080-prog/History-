@@ -5,6 +5,7 @@
  *   public/audio/ambience/CREDITS.md）；`fallback` 是第 9 階段程式合成的示意音，只在真實錄音載入或解碼失敗時使用
  * - ERA_AMBIENCE：每個年代的聲音清單。`bed` 是整條街都聽得到的底噪（目前沒有使用）；`spot` 有位置，
  *   依人物到錨點的距離調整音量（內圈全音量、外圈 0，之間平滑下降），只用 gain，不用 PannerNode
+ * - WEATHER_AMBIENCE：天氣的聲音（第 14 階段的雨聲）。天氣只在精緻畫質有，所以流暢畫質的雨量永遠是 0、清單和以前相同
  * - planTracks：依年代與人物位置算出每個聲軌的目標音量，並限制同時播放的聲軌數（iPad Safari）
  */
 export const AMBIENCE_STORAGE = { enabled: 'ddc.ambience.enabled', volume: 'ddc.ambience.volume' }
@@ -42,6 +43,7 @@ export const AMBIENCE_SOUNDS = {
   gramophone: sound('gramophone', 26, 12, '留聲機', 'Gramophone'),
   trishaw: sound('trishaw', 12, 10, '三輪車', 'Trishaw'),
   radio: sound('radio', 20, 12, '收音機', 'Radio'),
+  rain: sound('rain', 20, 12, '雨聲與屋簷滴水', 'Rain and dripping eaves'),
 }
 
 // 錨點座標（世界座標，街道沿 X 軸，西側 x < -44.6 是淡水河；見 game/config.js）
@@ -87,6 +89,22 @@ export function getEraAmbience(eraId) {
   return ERA_AMBIENCE[eraId] ?? []
 }
 
+const bed = (sound, gain) => ({ sound, mode: 'bed', gain })
+
+/**
+ * 天氣的聲音：整條街都聽得到的底噪，音量乘上雨勢（weather.js 的 rain，0..1，雨慢慢變大、雨停時淡出）。
+ * 雨聲錄音的來源見 ambienceCredits.js；天氣只在精緻畫質，流暢畫質不會播放。
+ */
+export const WEATHER_AMBIENCE = {
+  rain: [bed('rain', 0.85)],
+}
+
+/** 某個雨勢的天氣聲音清單（雨勢太小時是空的） */
+export function getWeatherAmbience(rain = 0) {
+  if (!(rain > 0)) return []
+  return WEATHER_AMBIENCE.rain.map((entry) => ({ ...entry, gain: entry.gain * Math.min(1, rain) }))
+}
+
 /** 距離 → 音量（0..1）：內圈 1、外圈 0，之間用平滑曲線 */
 export function distanceGain(distance, inner, outer) {
   if (!(outer > inner)) return distance <= inner ? 1 : 0
@@ -105,15 +123,15 @@ export function entryGain(entry, pos) {
 
 /**
  * 算出各聲軌的目標音量。
- * @param {{eraId:string, pos:{x:number,z:number}, live?:Iterable<string>, max?:number}} input
- *   live：目前已建立（含淡出中）的聲音 id
+ * @param {{eraId:string, pos:{x:number,z:number}, live?:Iterable<string>, max?:number, rain?:number}} input
+ *   live：目前已建立（含淡出中）的聲音 id；rain：雨勢（0..1，只有精緻畫質的雨天大於 0）
  * @returns {{targets: Map<string, number>, start: string[]}}
  *   targets：應該聽得到的聲音（最多 max 個，依音量排序）；live 裡不在 targets 的要淡出
  *   start：這一輪可以新建的聲軌（建立後含淡出中的總數不超過 max）
  */
-export function planTracks({ eraId, pos, live = [], max = MAX_TRACKS }) {
+export function planTracks({ eraId, pos, live = [], max = MAX_TRACKS, rain = 0 }) {
   const liveSet = new Set(live)
-  const ranked = getEraAmbience(eraId)
+  const ranked = [...getEraAmbience(eraId), ...getWeatherAmbience(rain)]
     .map((entry) => ({ id: entry.sound, gain: entryGain(entry, pos) }))
     .filter((item) => item.gain >= MIN_AUDIBLE)
     .sort((a, b) => b.gain - a.gain)
@@ -145,6 +163,6 @@ export function masterRamp({ from, to, first }) {
 
 export function ambienceSoundIds() {
   const ids = new Set()
-  for (const list of Object.values(ERA_AMBIENCE)) for (const e of list) ids.add(e.sound)
+  for (const list of [...Object.values(ERA_AMBIENCE), ...Object.values(WEATHER_AMBIENCE)]) for (const e of list) ids.add(e.sound)
   return [...ids]
 }

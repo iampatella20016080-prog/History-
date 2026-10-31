@@ -1,5 +1,6 @@
 import { Color, MathUtils, Vector3 } from 'three'
 import { AIR_KEYS, airValues } from './aerial.js'
+import { RAIN_LOOK, rainNumber } from './weather.js'
 
 /**
  * 年代氛圍（光線、天空、霧氣、調色、燈火）
@@ -106,6 +107,23 @@ export const atmosphere = {
   progress: 1,
   current: createCurrent(),
   version: 0,
+  // 疊在年代光線上的天氣（只在精緻畫質大於 0；見 weather.js 與 setAtmosphereOverlay）
+  overlay: { rain: 0 },
+}
+
+const RAIN_COLORS = Object.entries(RAIN_LOOK.colors).map(([key, look]) => [key, look, look.tint ? new Color(look.tint) : null])
+const _gray = new Color()
+
+/** 雨天：陰天的光線（amount 0 時不呼叫，年代光線逐位不變） */
+function applyRain(current, amount) {
+  const t = Math.min(1, amount)
+  for (const [key] of NUMBER_KEYS) current[key] = rainNumber(key, current[key], t)
+  for (const [key, look, tint] of RAIN_COLORS) {
+    const color = current[key]
+    const l = color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722
+    color.lerp(_gray.setRGB(l, l, l), look.gray * t).multiplyScalar(1 + (look.dark - 1) * t)
+    if (tint) color.lerp(tint, look.mix * t)
+  }
 }
 
 /** 方位角（度，0 = 北 −z、90 = 東 +x）與仰角 → 單位向量 */
@@ -132,7 +150,19 @@ function apply() {
   directionFrom(current.azimuth, current.elevation, current.sunDirection)
   directionFrom(current.azimuth, Math.max(current.elevation, 24), current.lightDirection)
   directionFrom(current.fillAzimuth, current.fillElevation, current.fillDirection)
+  if (atmosphere.overlay.rain > 0) applyRain(current, atmosphere.overlay.rain)
   atmosphere.version++
+}
+
+/**
+ * 天氣的疊加（精緻畫質的雨天每個影格更新雨勢）：數值改變時重新算一次 current。
+ * 全部是 0 時 current 和沒有疊加時逐位相同。
+ */
+export function setAtmosphereOverlay({ rain = 0 } = {}) {
+  const value = Math.max(0, Math.min(1, rain))
+  if (atmosphere.overlay.rain === value) return
+  atmosphere.overlay.rain = value
+  if (atmosphere.to) apply()
 }
 
 /** 直接套用某個年代（初次載入） */

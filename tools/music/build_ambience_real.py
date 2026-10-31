@@ -12,7 +12,7 @@
   車鈴這類短暫尖峰先用峰值限制（最多降 9 dB）處理，仍超過才整體降低音量。
 
 用法：
-  python3 tools/music/build_ambience_real.py <來源資料夾> [輸出資料夾]   （需要 numpy 與 ffmpeg）
+  python3 tools/music/build_ambience_real.py <來源資料夾> [輸出資料夾] [名稱...]   （需要 numpy 與 ffmpeg；指定名稱時只輸出那幾個）
   來源資料夾裡沒有的檔案會依 SOURCES 的網址下載（Freesound 用免登入的高品質預覽 MP3；原始 WAV 需要登入）。
   下載的檔案先放在來源資料夾（隔離），確認內容與授權後才執行這個工具輸出到 public/。
 """
@@ -43,6 +43,7 @@ SOURCES = {
     'fs350323': 'https://cdn.freesound.org/previews/350/350323_2205380-hq.mp3',
     'wc_bach1915': 'https://upload.wikimedia.org/wikipedia/commons/8/89/Concerto_for_two_violins_Part_1_%281915_recording%29.mp3',
     'fs686530': 'https://cdn.freesound.org/previews/686/686530_14954609-hq.mp3',
+    'fs826025': 'https://cdn.freesound.org/previews/826/826025_5828667-hq.mp3',
 }
 
 
@@ -221,6 +222,13 @@ def radio(src):
     return buf
 
 
+def rain(src):
+    # 雨天（第 14 階段，只在精緻畫質）：老社區中庭入口雨棚下的大雨，屋簷漏水滴在地面與草地上。
+    # 剪 120–142 秒（雨勢平穩、沒有雷聲與人聲）；去掉 80 Hz 以下的低頻轟聲
+    x = load(src, 'fs826025')
+    return loop_from(band(cut(x, 120.0, 22.0), lo=80), 20, 2.0)
+
+
 BUILD = {
     'river-lap': river_lap,
     'oars': oars,
@@ -229,6 +237,7 @@ BUILD = {
     'gramophone': gramophone,
     'trishaw': trishaw,
     'radio': radio,
+    'rain': rain,
 }
 
 
@@ -273,7 +282,10 @@ def main():
     src.mkdir(parents=True, exist_ok=True)
     out_dir = Path(sys.argv[2] if len(sys.argv) > 2 else 'public/audio/ambience')
     out_dir.mkdir(parents=True, exist_ok=True)
+    only = set(sys.argv[3:])
     for name, fn in BUILD.items():
+        if only and name not in only:
+            continue
         sig = normalize(fn(src))
         D = len(sig) / SR
         mp3 = encode(name, sig, out_dir)

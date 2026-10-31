@@ -9,7 +9,7 @@
 每個檔案是單聲道 22.05 kHz、可無縫循環：循環區間用環狀（FFT）濾波與環繞放置事件產生，
 輸出時前後各多 1 秒循環內容（同 generate_drafts.py 的作法），網頁以 loopStart／loopEnd 循環。
 
-用法：python3 tools/music/generate_ambience.py [輸出資料夾]   （需要 numpy 與 ffmpeg）
+用法：python3 tools/music/generate_ambience.py [輸出資料夾] [名稱...]   （需要 numpy 與 ffmpeg；指定名稱時只輸出那幾個）
 """
 import subprocess
 import sys
@@ -344,6 +344,20 @@ def scooter(D=12):
     return normalize(out, -25)
 
 
+def rain(D=12):
+    # 雨天（第 14 階段）的備援：寬頻的雨聲底噪（緩慢起伏）＋屋簷滴落的水滴（短促的高頻敲擊）
+    n = n_of(D)
+    out = bandpass(noise(n), 400, 7000) * np.clip(0.75 + 0.25 * lowpass(noise(n), 0.4) / 0.3, 0.4, 1.2)
+    out += bandpass(noise(n), 120, 600) * 0.35
+    for _ in range(90):
+        d = rng.uniform(0.01, 0.03)
+        t = np.arange(n_of(d)) / SR
+        f = rng.uniform(1800, 4200)
+        drop = np.sin(2 * np.pi * f * t) * np.exp(-t / (d * 0.3)) * rng.uniform(0.3, 0.9)
+        add_wrapped(out, drop * out.std() * 3, rng.integers(0, n))
+    return normalize(out, -22)
+
+
 SOUNDS = {
     'river-lap': river_lap,
     'wharf-calls': wharf_calls,
@@ -356,6 +370,7 @@ SOUNDS = {
     'trishaw': trishaw,
     'radio': radio,
     'scooter': scooter,
+    'rain': rain,  # 放在最後：前面的聲音用到的亂數序列不變
 }
 
 
@@ -382,9 +397,10 @@ def encode(name, sig, out_dir):
 def main():
     out_dir = Path(sys.argv[1] if len(sys.argv) > 1 else 'public/audio/ambience/synth')
     out_dir.mkdir(parents=True, exist_ok=True)
+    only = set(sys.argv[2:])
     for name, fn in SOUNDS.items():
         sig = fn()  # 移除的聲音也照樣產生（亂數序列不變，其餘音檔的結果和以前相同），只是不輸出
-        if name in REMOVED:
+        if name in REMOVED or (only and name not in only):
             continue
         mp3 = encode(name, sig, out_dir)
         print(f'{name}: {len(sig) / SR:.1f}s 循環 → {mp3} ({mp3.stat().st_size / 1024:.0f} KB)')

@@ -1,4 +1,5 @@
 import { Color, CustomBlending, DoubleSide, Matrix4, SrcColorFactor, ShaderMaterial, Vector3, ZeroFactor } from 'three'
+import { RIPPLE_GLSL } from './rainShader.js'
 
 /**
  * 淡水河的水面與倒影（著色器）
@@ -9,6 +10,7 @@ import { Color, CustomBlending, DoubleSide, Matrix4, SrcColorFactor, ShaderMater
  * - 反光：依波紋的法線把太陽反射到鏡頭的地方點出閃爍的亮片（夕陽時在河面上連成一條金色的光帶），
  *   斜看水面時混入天空地平線的顏色（菲涅耳）；
  * - 燈火倒影：入夜的年代（glow 高）靠岸的水面有暖色、隨波紋斷開的光帶。
+ * - 雨點（精緻畫質的雨天，uRain > 0；只加在有倒影的那一份著色器）：雨點打在河面上的一圈圈漣漪，扭曲倒影、亮一圈細環。
  *
  * 岸上的倒影（只在精緻畫質，material.userData.planarReflection）：取樣 RiverReflection 畫的平面反射貼圖，
  * 依波紋的斜率扭曲；斜看水面時倒影較清楚（菲涅耳），並帶一點河水的顏色。流暢畫質的著色器原樣不變。
@@ -26,6 +28,8 @@ export const waterUniforms = {
   uNight: { value: 0 },
   uWarm: { value: new Color('#ffb066') },
   uEdgeX: { value: 0 },
+  // 雨勢（weather.js；精緻畫質的雨天才大於 0）
+  uRain: { value: 0 },
 }
 
 /** 平面反射（精緻畫質）：倒影貼圖、世界座標 → 貼圖座標的矩陣、強度與河水色調 */
@@ -58,6 +62,22 @@ const REFLECT_APPLY = /* glsl */ `
             gl_FragColor.rgb = mix(gl_FragColor.rgb, refl, uReflect * mix(0.3, 0.95, smoothstep(0.0, 0.6, fres)));
           }
 `
+
+// 雨點的漣漪（只在精緻畫質的水面著色器，也就是有倒影的那一份；晴天 uRain = 0 時整段略過）
+const RAIN_HEAD = /* glsl */ `
+  uniform float uRain;
+`
+const RAIN_RIPPLES = /* glsl */ `
+        // 近處才算漣漪；遠處的細環小於一個像素
+        vec3 wRain = vec3(0.0);
+        if (uRain > 0.001) {
+          float near = 1.0 - smoothstep(25.0, 60.0, length(vWaterPos.xz - cameraPosition.xz));
+          wRain = rainRipples(vWaterPos.xz * 1.6, uTime) * uRain * near;
+          wGrad += wRain.xy * 0.06;
+        }`
+const RAIN_RING = /* glsl */ `
+          // 雨點漣漪的細環：天光的顏色
+          gl_FragColor.rgb += uSky * clamp(wRain.z, 0.0, 1.0) * 0.1;`
 
 const WAVES = /* glsl */ `
   uniform float uTime;
@@ -98,13 +118,13 @@ export function patchWaterMaterial(material) {
         uniform float uNight;
         uniform vec3 uWarm;
         uniform float uEdgeX;
-        ${reflect ? REFLECT_HEAD : ''}${WAVES}`,
+        ${reflect ? REFLECT_HEAD + RAIN_HEAD : ''}${WAVES}${reflect ? RIPPLE_GLSL : ''}`,
       )
       .replace(
         '#include <map_fragment>',
         `#include <map_fragment>
         vec3 wWave = waterWaves(vWaterPos.xz);
-        vec2 wGrad = wWave.yz;
+        vec2 wGrad = wWave.yz;${reflect ? RAIN_RIPPLES : ''}
         diffuseColor.rgb *= 0.97 + 0.05 * (wWave.x / 0.04);`,
       )
       .replace(
@@ -123,7 +143,7 @@ export function patchWaterMaterial(material) {
           float bank = smoothstep(uEdgeX - 9.0, uEdgeX - 0.5, vWaterPos.x);
           float broken = smoothstep(0.7, 0.95, sin(vWaterPos.z * 1.3 + wGrad.x * 25.0) * 0.5 + 0.5);
           float ripple = smoothstep(0.55, 0.95, sin(vWaterPos.x * 7.0 + wGrad.y * 30.0 + uTime * 0.9) * 0.5 + 0.5);
-          gl_FragColor.rgb += uWarm * (uNight * bank * broken * ripple * 0.22);
+          gl_FragColor.rgb += uWarm * (uNight * bank * broken * ripple * 0.22);${reflect ? RAIN_RING : ''}
         }`,
       )
   }

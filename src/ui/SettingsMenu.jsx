@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { ERAS, getEra } from '../data/eras.js'
 import { getQualitySettings } from '../game/quality.js'
+import { WEATHER_IDS, weatherAvailable } from '../game/weather.js'
 import { useGameStore } from '../state/useGameStore.js'
 import { AmbienceSettings } from './AmbienceSettings.jsx'
 import { MusicSettings } from './MusicSettings.jsx'
@@ -130,10 +131,48 @@ function ViewModeSection() {
 }
 
 /**
+ * 天氣：晴／雨（第 14 階段）。只在精緻畫質顯示；流暢畫質（iPad）沒有這一段，畫面一律是晴天。
+ * 選擇記在這台裝置上，切到流暢畫質再切回來時仍然記得。
+ */
+function WeatherSection() {
+  const weather = useGameStore((state) => state.weather)
+  const setWeather = useGameStore((state) => state.setWeather)
+  const t = useT()
+  return (
+    <section className="settings-section" aria-labelledby="settings-weather-heading" data-weather-section>
+      <p className="hud-menu__heading">
+        <span id="settings-weather-heading">{t('settings.weather')}</span>
+      </p>
+      <div className="mode-options" role="radiogroup" aria-labelledby="settings-weather-heading">
+        {WEATHER_IDS.map((id) => {
+          const active = weather === id
+          return (
+            <button
+              key={id}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              data-weather-option={id}
+              className={`mode-option${active ? ' is-active' : ''}`}
+              onClick={() => setWeather(id)}
+            >
+              <strong>{t(`settings.weather.${id}`)}</strong>
+              <small>{t(`settings.weather.${id}Hint`)}</small>
+            </button>
+          )
+        })}
+      </div>
+      <p className="hud-menu__note">{t('settings.weatherNote')}</p>
+    </section>
+  )
+}
+
+/**
  * 右上角的設定（齒輪）：
  * - 年代：五個年代的切換
  * - 觀看模式：探索／建築觀賞（含隱藏介面）
  * - 畫質：流暢（適合 iPad）／精緻（適合電腦），切換後立即套用到 3D 畫面，不需要重新整理
+ * - 天氣：晴／雨（只在精緻畫質顯示）
  * - 背景音樂：開／關與音量
  * 畫質與音樂的選擇會記在這台裝置上。
  */
@@ -214,6 +253,7 @@ export function SettingsMenu() {
             })}
           </div>
           <p className="hud-menu__note">{t('settings.qualityNote')}</p>
+          {weatherAvailable(mode) && <WeatherSection />}
           <MusicSettings />
           <AmbienceSettings />
           <section className="settings-section" aria-labelledby="settings-lang-heading">
