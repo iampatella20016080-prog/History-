@@ -1,0 +1,10 @@
+{
+  "stats": {
+    "modern/high": {
+      "calls": 260,
+      "meshes": 126,
+      "lightPools": true
+    }
+  },
+  "errors": []
+}

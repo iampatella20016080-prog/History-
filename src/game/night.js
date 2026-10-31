@@ -145,6 +145,8 @@ export const NIGHT_ERAS = {
     lanternGlow: 0.6,
     lift: 0.04,
     exposure: 2.1,
+    ambientIntensity: 1.3,
+    hemiIntensity: 1.9,
     windowTint: '#ffb866',
     tintAmount: 0.4,
     electric: true,
@@ -159,6 +161,8 @@ export const NIGHT_ERAS = {
     lanternGlow: 0.8,
     lift: 0.035,
     exposure: 1.75,
+    ambientIntensity: 1.3,
+    hemiIntensity: 1.9,
     windowTint: '#ffc878',
     tintAmount: 0.35,
     electric: true,
@@ -207,6 +211,8 @@ export function nightNumber(key, value, amount, eraNight = null) {
   let target = NIGHT_LOOK.to[key]
   // 窗光、燈籠與暗部提亮依年代（清末的河岸正對月亮，暗部提太多會整片灰霧；騎樓深的酒樓繁華、摩登要多提一點）
   if (eraNight && (key === 'glow' || key === 'lanternGlow' || key === 'lift')) target = eraNight[key]
+  // 騎樓深、街面暗的年代：夜裡的天空光與環境光多給一些（月光照不到的地方也看得到）
+  if (eraNight && (key === 'ambientIntensity' || key === 'hemiIntensity') && eraNight[key] !== undefined) target = eraNight[key]
   let v = value
   if (target !== undefined) v = value + (target - value) * t
   const m = NIGHT_LOOK.mul[key]
