@@ -115,11 +115,14 @@ export const atmosphere = {
 const RAIN_COLORS = Object.entries(RAIN_LOOK.colors).map(([key, look]) => [key, look, look.tint ? new Color(look.tint) : null])
 const NIGHT_COLORS = Object.entries(NIGHT_LOOK.colors).map(([key, hex]) => [key, new Color(hex)])
 const _gray = new Color()
+const RAIN_HAZE_KEYS = new Set(['fogNear', 'fogFar', 'air_density', 'air_max', 'air_start', 'air_heightFalloff', 'riverMist', 'vignette', 'contrast', 'saturation', 'exposure'])
 
 /** 雨天：陰天的光線（amount 0 時不呼叫，年代光線逐位不變）；夜裡下雨時天色不往亮灰色混 */
 function applyRain(current, amount, night) {
   const t = Math.min(1, amount)
-  for (const [key] of NUMBER_KEYS) current[key] = rainNumber(key, current[key], t)
+  // 雨夜：霧、空氣與河面薄霧不再加濃，對比與飽和也不降（夜色本來就暗，再加只會蓋上一層灰）
+  const haze = t * (1 - 0.8 * night)
+  for (const [key] of NUMBER_KEYS) current[key] = rainNumber(key, current[key], RAIN_HAZE_KEYS.has(key) ? haze : t)
   for (const [key, look, tint] of RAIN_COLORS) {
     const color = current[key]
     const l = color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722
