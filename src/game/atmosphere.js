@@ -1,6 +1,7 @@
 import { Color, MathUtils, Vector3 } from 'three'
 import { AIR_KEYS, airValues } from './aerial.js'
 import { RAIN_LOOK, rainNumber } from './weather.js'
+import { NIGHT_LOOK, nightNumber } from './night.js'
 
 /**
  * 年代氛圍（光線、天空、霧氣、調色、燈火）
@@ -107,23 +108,31 @@ export const atmosphere = {
   progress: 1,
   current: createCurrent(),
   version: 0,
-  // 疊在年代光線上的天氣（只在精緻畫質大於 0；見 weather.js 與 setAtmosphereOverlay）
-  overlay: { rain: 0 },
+  // 疊在年代光線上的天氣與時段（只在精緻畫質大於 0；見 weather.js、night.js 與 setAtmosphereOverlay）
+  overlay: { rain: 0, night: 0, nightEra: null },
 }
 
 const RAIN_COLORS = Object.entries(RAIN_LOOK.colors).map(([key, look]) => [key, look, look.tint ? new Color(look.tint) : null])
+const NIGHT_COLORS = Object.entries(NIGHT_LOOK.colors).map(([key, hex]) => [key, new Color(hex)])
 const _gray = new Color()
 
-/** 雨天：陰天的光線（amount 0 時不呼叫，年代光線逐位不變） */
-function applyRain(current, amount) {
+/** 雨天：陰天的光線（amount 0 時不呼叫，年代光線逐位不變）；夜裡下雨時天色不往亮灰色混 */
+function applyRain(current, amount, night) {
   const t = Math.min(1, amount)
   for (const [key] of NUMBER_KEYS) current[key] = rainNumber(key, current[key], t)
   for (const [key, look, tint] of RAIN_COLORS) {
     const color = current[key]
     const l = color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722
     color.lerp(_gray.setRGB(l, l, l), look.gray * t).multiplyScalar(1 + (look.dark - 1) * t)
-    if (tint) color.lerp(tint, look.mix * t)
+    if (tint) color.lerp(tint, look.mix * t * (1 - 0.85 * night))
   }
+}
+
+/** 夜晚：夜空、月光、窗光與燈火加強（amount 0 時不呼叫） */
+function applyNight(current, amount, eraNight) {
+  const t = Math.min(1, amount)
+  for (const [key] of NUMBER_KEYS) current[key] = nightNumber(key, current[key], t, eraNight)
+  for (const [key, color] of NIGHT_COLORS) current[key].lerp(color, t)
 }
 
 /** 方位角（度，0 = 北 −z、90 = 東 +x）與仰角 → 單位向量 */
@@ -150,7 +159,15 @@ function apply() {
   directionFrom(current.azimuth, current.elevation, current.sunDirection)
   directionFrom(current.azimuth, Math.max(current.elevation, 24), current.lightDirection)
   directionFrom(current.fillAzimuth, current.fillElevation, current.fillDirection)
-  if (atmosphere.overlay.rain > 0) applyRain(current, atmosphere.overlay.rain)
+  const { rain, night, nightEra } = atmosphere.overlay
+  if (night > 0) applyNight(current, night, nightEra)
+  if (rain > 0) applyRain(current, rain, night)
+  if (night > 0 || rain > 0) {
+    // 方向依疊加後的方位角與仰角重算（夜裡太陽換成月亮）
+    directionFrom(current.azimuth, current.elevation, current.sunDirection)
+    directionFrom(current.azimuth, Math.max(current.elevation, 24), current.lightDirection)
+    directionFrom(current.fillAzimuth, current.fillElevation, current.fillDirection)
+  }
   atmosphere.version++
 }
 
@@ -158,10 +175,15 @@ function apply() {
  * 天氣的疊加（精緻畫質的雨天每個影格更新雨勢）：數值改變時重新算一次 current。
  * 全部是 0 時 current 和沒有疊加時逐位相同。
  */
-export function setAtmosphereOverlay({ rain = 0 } = {}) {
-  const value = Math.max(0, Math.min(1, rain))
-  if (atmosphere.overlay.rain === value) return
-  atmosphere.overlay.rain = value
+export function setAtmosphereOverlay({ rain = 0, night = 0, nightEra = null } = {}) {
+  const o = atmosphere.overlay
+  const r = Math.max(0, Math.min(1, rain))
+  const n = Math.max(0, Math.min(1, night))
+  const era = n > 0 ? nightEra : null
+  if (o.rain === r && o.night === n && o.nightEra === era) return
+  o.rain = r
+  o.night = n
+  o.nightEra = era
   if (atmosphere.to) apply()
 }
 
