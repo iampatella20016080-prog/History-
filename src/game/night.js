@@ -77,11 +77,12 @@ export const NIGHT_LOOK = {
     azimuth: 262,
     elevation: 11,
     stars: 1,
-    riverMist: 0.32,
+    riverMist: 0.18,
     air_rays: 0,
-    air_sunScatter: 0.12,
+    // 往月亮方向的空氣不帶月暈色（河岸往西看正對月亮，太亮會整片灰霧）
+    air_sunScatter: 0.03,
     air_horizon: 0.6,
-    lift: 0.035,
+    lift: 0.02, // 沒有指定年代時的預設；各年代見 NIGHT_ERAS
     shadowR: 0.88,
     shadowG: 0.94,
     shadowB: 1.14,
@@ -91,14 +92,14 @@ export const NIGHT_LOOK = {
   },
   mul: {
     saturation: 0.86,
-    contrast: 0.94,
+    contrast: 1.02,
     exposure: 1.02,
     vignette: 1.25,
     fogNear: 0.85,
     fogFar: 0.92,
     // 夜裡空氣遠近感淡一點（霧色很暗，太濃會整片灰濛濛）
-    air_density: 0.7,
-    air_max: 0.75,
+    air_density: 0.5,
+    air_max: 0.6,
   },
   colors: {
     sunColor: '#a8bce0', // 月光
@@ -120,7 +121,7 @@ export const NIGHT_LOOK = {
 
 /**
  * 各年代的夜間照明（夜晚時窗光、燈籠與燈泡的強度與顏色）。
- * glow：窗內透光與燈火的強度（atmosphere 的 glow；白天的年代 0、酒樓繁華的傍晚 1）；lanternGlow：燈籠、燈泡與光暈；
+ * glow：窗內透光與燈火的強度（atmosphere 的 glow；白天的年代 0、酒樓繁華的傍晚 1）；lanternGlow：燈籠、燈泡與光暈；lift：暗部提亮；
  * windowTint：亮窗與暖色玻璃的發光顏色（往這個顏色移 tintAmount）。
  * evidence：有出處（sources.js 的 id）；reconstructed：查不到大稻埕本地紀錄、依旁證推測的「歷史情境重建」。
  */
@@ -128,6 +129,7 @@ export const NIGHT_ERAS = {
   'qing-port': {
     glow: 0.85,
     lanternGlow: 0.9,
+    lift: 0.012,
     windowTint: '#ff9f4a',
     tintAmount: 0.55,
     electric: false,
@@ -140,6 +142,7 @@ export const NIGHT_ERAS = {
   banquet: {
     glow: 1.0,
     lanternGlow: 0.8,
+    lift: 0.04,
     windowTint: '#ffb866',
     tintAmount: 0.4,
     electric: true,
@@ -152,6 +155,7 @@ export const NIGHT_ERAS = {
   modern: {
     glow: 1.0,
     lanternGlow: 0.8,
+    lift: 0.035,
     windowTint: '#ffc878',
     tintAmount: 0.35,
     electric: true,
@@ -164,6 +168,7 @@ export const NIGHT_ERAS = {
   postwar: {
     glow: 1.0,
     lanternGlow: 0.85,
+    lift: 0.025,
     windowTint: '#e9f1ff',
     tintAmount: 0.4,
     electric: true,
@@ -176,6 +181,7 @@ export const NIGHT_ERAS = {
   revival: {
     glow: 1.0,
     lanternGlow: 0.85,
+    lift: 0.025,
     windowTint: '#ffc98a',
     tintAmount: 0.3,
     electric: true,
@@ -196,7 +202,8 @@ export function nightNumber(key, value, amount, eraNight = null) {
   if (!(amount > 0)) return value
   const t = Math.min(1, amount)
   let target = NIGHT_LOOK.to[key]
-  if (eraNight && (key === 'glow' || key === 'lanternGlow')) target = eraNight[key]
+  // 窗光、燈籠與暗部提亮依年代（清末的河岸正對月亮，暗部提太多會整片灰霧；騎樓深的酒樓繁華、摩登要多提一點）
+  if (eraNight && (key === 'glow' || key === 'lanternGlow' || key === 'lift')) target = eraNight[key]
   let v = value
   if (target !== undefined) v = value + (target - value) * t
   const m = NIGHT_LOOK.mul[key]

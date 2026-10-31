@@ -1,8 +1,17 @@
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { BufferAttribute, BufferGeometry, Color, DoubleSide, MeshBasicMaterial } from 'three'
 import { atmosphere } from '../atmosphere.js'
+import { QUALITY_MODES } from '../quality.js'
+import { useGameStore } from '../../state/useGameStore.js'
 import { useNoOutlineLayer } from './Sky.jsx'
+
+/**
+ * 精緻畫質有隔岸天際線（OppositeBank）時，觀音山的剪影以原點為中心等比例放大到更遠的地方：
+ * 從碼頭看的大小與形狀不變，但退到對岸的房子與大樓後面（原本 410 公尺，對岸在 330–530 公尺）。
+ * 流暢畫質倍率 1，遠景和以前完全相同。
+ */
+export const GUANYIN_PUSH = 1.8
 
 /**
  * 層層遠山（剪紙般的分層色塊，營造景深）。
@@ -130,10 +139,25 @@ export function Mountains() {
     layers.material.color.copy(atmosphere.current.mountains)
   })
 
+  const oppositeBank = useGameStore((state) => Boolean(QUALITY_MODES[state.qualityMode]?.oppositeBank))
+  const guanyin = useRef()
+  useEffect(() => {
+    guanyin.current?.scale.setScalar(oppositeBank ? GUANYIN_PUSH : 1)
+  }, [oppositeBank])
+
   return (
     <group ref={group}>
       {layers.geometries.map((geometry, i) => (
-        <mesh key={i} geometry={geometry} material={layers.material} renderOrder={-900 + i} frustumCulled={false} userData={{ reflect: true }} />
+        <mesh
+          key={i}
+          ref={i === 3 ? guanyin : undefined}
+          name={i === 3 ? 'guanyin' : undefined}
+          geometry={geometry}
+          material={layers.material}
+          renderOrder={-900 + i}
+          frustumCulled={false}
+          userData={{ reflect: true }}
+        />
       ))}
     </group>
   )

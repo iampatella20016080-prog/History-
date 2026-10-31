@@ -5,6 +5,7 @@ import { EraScene } from './components/EraScene.jsx'
 import { InteractionSystem } from './components/InteractionSystem.jsx'
 import { Lighting, SceneFog } from './components/Lighting.jsx'
 import { Mountains } from './components/Mountains.jsx'
+import { OppositeBank } from './components/OppositeBank.jsx'
 import { ObjectStage } from './components/ObjectStage.jsx'
 import { Player } from './components/Player.jsx'
 import { RouteGuides } from './components/RouteGuides.jsx'
@@ -31,6 +32,8 @@ export function World({ world, promptLayer, onSwap }) {
       <Sky />
       <Mountains />
       <River eraId={world.eraId} />
+      {/* 隔岸天際線：只在精緻畫質，依年代 */}
+      <OppositeBank eraId={world.eraId} />
       <EraDirector onSwap={onSwap} />
       <EraScene key={world.eraId} world={world} />
       {/* 天氣（雨天）：只在精緻畫質，流暢畫質不掛載任何東西 */}
