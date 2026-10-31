@@ -3,7 +3,7 @@ import { getTheme, shopYearText } from '../data/shops.js'
 import { getSource } from '../data/sources.js'
 import { useGameStore } from '../state/useGameStore.js'
 import { shopSummary } from '../i18n/lang.js'
-import { useT } from '../i18n/useT.js'
+import { useLocalizer, useT } from '../i18n/useT.js'
 
 /**
  * 右上角的「店家名錄」：列出目前年代街上的店家。
@@ -23,6 +23,7 @@ export function StoreDirectory({ era, shops }) {
   const container = useRef(null)
   const t = useT()
   const lang = useGameStore((state) => state.lang)
+  const L = useLocalizer()
 
   useEffect(() => {
     if (!open) return undefined
@@ -81,7 +82,7 @@ export function StoreDirectory({ era, shops }) {
                   {shop.eraLabel && <span className="menu-shop__note is-era">{shop.eraLabel}</span>}
                   {shop.reconstruction && <span className="menu-shop__note">{t('directory.reconstruction')}</span>}
                   {shop.scenarioNote && <span className="menu-shop__note">{shop.scenarioNote}</span>}
-                  {shop.theme && <span className="menu-shop__note is-theme">{t('directory.theme', { title: getTheme(shop.theme)?.title })}</span>}
+                  {shop.theme && <span className="menu-shop__note is-theme">{t('directory.theme', { title: L(getTheme(shop.theme))?.title })}</span>}
                   <ShopSummary shop={shop} lang={lang} t={t} />
                   {(shop.yearNote || shop.sourceIds?.length) && <ShopSources shop={shop} />}
                   <div className="menu-shop__actions">
@@ -121,7 +122,8 @@ export function StoreDirectory({ era, shops }) {
 /** 年份記載不一的說明與資料來源（可展開） */
 function ShopSources({ shop }) {
   const t = useT()
-  const sources = (shop.sourceIds ?? []).map(getSource).filter(Boolean)
+  const L = useLocalizer()
+  const sources = (shop.sourceIds ?? []).map((id) => L(getSource(id))).filter(Boolean)
   return (
     <details className="menu-shop__sources">
       <summary>{t('directory.sources')}</summary>

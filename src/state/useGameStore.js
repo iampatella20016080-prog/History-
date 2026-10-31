@@ -7,7 +7,7 @@ import { QUALITY_MODES, initialQualityMode, saveQualityMode } from '../game/qual
 import { addJournalEntry, loadJournal, saveJournal } from '../game/journal.js'
 import { objectJournalId } from '../game/objectInspect.js'
 import { advanceTalk, chooseFollowUp, startTalkSession, talkJournalId } from '../game/talk.js'
-import { initialLang, isLang, saveLang } from '../i18n/lang.js'
+import { applyDocumentLang, initialLang, isLang, saveLang } from '../i18n/lang.js'
 
 /** 網址可指定一開始的年代，例如 ?era=modern */
 function initialEra() {
@@ -333,7 +333,7 @@ export const useGameStore = create((set, get) => ({
   setLang: (lang) => {
     if (!isLang(lang)) return
     saveLang(lang)
-    if (typeof document !== 'undefined') document.documentElement.lang = lang
+    applyDocumentLang(lang)
     set({ lang })
   },
   setLicensesOpen: (open) => set((state) => ({ licensesOpen: open ?? !state.licensesOpen, qualityOpen: false, menuOpen: false })),

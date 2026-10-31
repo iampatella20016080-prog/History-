@@ -188,7 +188,7 @@ export function SettingsMenu() {
           </p>
           <div className="quality-options" role="radiogroup" aria-label={t('settings.qualityMode')}>
             {MODE_ORDER.map((id) => {
-              const q = getQualitySettings(id)
+              const q = L(getQualitySettings(id))
               const active = mode === id
               return (
                 <button

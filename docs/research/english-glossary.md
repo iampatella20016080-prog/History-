@@ -79,6 +79,11 @@
 
 稻舍（Rice & Shine，現代店名）沿用其官方英文名。
 
+| 滬尾 | Hobe (Huwei) | 清代西文作 Hobe；現代說明寫 Tamsui，必要時加 Huwei |
+| 小藝埕 | Little ArtYard (Xiaoyicheng) | 屈臣氏大藥房舊址 |
+| 德記／怡記／和記 | Tait & Co. / Elles & Co. / Boyd & Co. | 淡水的外商茶行（依英文文獻通行寫法） |
+| 怡和 | Jardine, Matheson & Co. | |
+
 ## 人名（歷史人物）
 
 | 中文 | English |

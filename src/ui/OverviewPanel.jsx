@@ -107,7 +107,8 @@ function EraChips({ eraIds }) {
 }
 
 function SourceLinks({ sourceIds }) {
-  const sources = (sourceIds ?? []).map(getSource).filter(Boolean)
+  const L = useLocalizer()
+  const sources = (sourceIds ?? []).map((id) => L(getSource(id))).filter(Boolean)
   if (!sources.length) return null
   return (
     <span className="overview-sources">

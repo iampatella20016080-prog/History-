@@ -5,6 +5,7 @@
  */
 export const STRINGS = {
   'zh-Hant': {
+    'app.title': '大稻埕食光街｜走進170年的飲食記憶',
     'lang.label': '語言',
     'lang.zh-Hant': '中文',
     'lang.en': 'English',
@@ -260,6 +261,7 @@ export const STRINGS = {
     'chapter.enlargeMeta': '拖曳旋轉・縮放{actions}',
   },
   en: {
+    'app.title': 'Dadaocheng Food Street | 170 years of food memories',
     'lang.label': 'Language',
     'lang.zh-Hant': '中文',
     'lang.en': 'English',
