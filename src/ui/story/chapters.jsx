@@ -4,7 +4,7 @@ import { getSource } from '../../data/sources.js'
 import { useGameStore } from '../../state/useGameStore.js'
 import { FoodIllustration } from '../FoodIllustration.jsx'
 import { PHOTOS } from './photos.js'
-import { useT } from '../../i18n/useT.js'
+import { useLocalizer, useT } from '../../i18n/useT.js'
 
 /**
  * 店家介紹的章節版型。所有店家共用；版型由章節資料的 type 決定：
@@ -14,7 +14,8 @@ import { useT } from '../../i18n/useT.js'
 
 function SourceNote({ sourceIds, onShowSources }) {
   const t = useT()
-  const sources = (sourceIds ?? []).map(getSource).filter(Boolean)
+  const L = useLocalizer()
+  const sources = (sourceIds ?? []).map((id) => L(getSource(id))).filter(Boolean)
   if (!sources.length) return null
   return (
     <p className="chapter__source">
@@ -180,7 +181,8 @@ export function FoodsChapter({ chapter, onShowSources }) {
 
 export function SourcesChapter({ chapter }) {
   const t = useT()
-  const sources = (chapter.sourceIds ?? []).map(getSource).filter(Boolean)
+  const L = useLocalizer()
+  const sources = (chapter.sourceIds ?? []).map((id) => L(getSource(id))).filter(Boolean)
   return (
     <article className="chapter chapter--sources">
       <h3 className="chapter__title">{chapter.title}</h3>
@@ -345,7 +347,8 @@ export function ProcessChapter({ chapter, onShowSources }) {
 export function ObjectChapter({ chapter, onShowSources }) {
   const t = useT()
   const openInspect = useGameStore((state) => state.openInspect)
-  const object = getInspectObject(chapter.object)
+  const L = useLocalizer()
+  const object = L(getInspectObject(chapter.object))
   return (
     <article className="chapter chapter--object">
       <h3 className="chapter__title">{chapter.title}</h3>

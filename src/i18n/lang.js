@@ -33,6 +33,13 @@ export function initialLang(search = typeof window === 'undefined' ? '' : window
   return langFromSearch(search) ?? loadLang()
 }
 
+/** 把 <html lang> 與分頁標題同步成目前語言 */
+export function applyDocumentLang(lang) {
+  if (typeof document === 'undefined') return
+  document.documentElement.lang = lang
+  document.title = translate(lang, 'app.title')
+}
+
 export function saveLang(lang, storage = typeof window === 'undefined' ? null : window.localStorage) {
   try {
     storage?.setItem(STORAGE_KEY, lang)

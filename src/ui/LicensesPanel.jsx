@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { CODE_LICENSE, CONTENT_LICENSE, OPEN_DATA, PHOTO_CREDITS, countSources, groupSourcesByPublisher } from '../data/licenses.js'
 import { useGameStore } from '../state/useGameStore.js'
-import { useT } from '../i18n/useT.js'
+import { useLocalizer, useT } from '../i18n/useT.js'
 
 /**
  * 「授權與出處」視窗：文字與插圖的授權、程式碼授權、開放資料、老照片，以及所有引用文獻（依出版單位分組）。
@@ -12,7 +12,9 @@ export function LicensesPanel() {
   const open = useGameStore((state) => state.licensesOpen)
   const setOpen = useGameStore((state) => state.setLicensesOpen)
   const t = useT()
-  const groups = useMemo(() => groupSourcesByPublisher(), [])
+  const lang = useGameStore((state) => state.lang)
+  const L = useLocalizer()
+  const groups = useMemo(() => groupSourcesByPublisher(undefined, lang), [lang])
 
   useEffect(() => {
     if (!open) return undefined
@@ -47,26 +49,26 @@ export function LicensesPanel() {
           </button>
         </header>
         <div className="story__body" data-scrollable>
-          <div className="story__page" lang="zh-Hant">
+          <div className="story__page" lang={lang}>
             <h3>{t('licenses.contentHeading')}</h3>
             <p>
               <a href={CONTENT_LICENSE.url} target="_blank" rel="noopener noreferrer">
-                {CONTENT_LICENSE.name}
+                {L(CONTENT_LICENSE).name}
               </a>
             </p>
             <ul>
-              {CONTENT_LICENSE.terms.map((term) => (
+              {L(CONTENT_LICENSE).terms.map((term) => (
                 <li key={term}>{term}</li>
               ))}
             </ul>
-            <p>{CONTENT_LICENSE.scope}</p>
+            <p>{L(CONTENT_LICENSE).scope}</p>
 
             <h3>{t('licenses.codeHeading')}</h3>
-            <p>{CODE_LICENSE.text}</p>
+            <p>{L(CODE_LICENSE).text}</p>
 
             <h3>{t('licenses.dataHeading')}</h3>
             <ul>
-              {OPEN_DATA.map((item) => (
+              {L(OPEN_DATA).map((item) => (
                 <li key={item.id}>
                   <strong>{item.name}</strong>：{item.license}。{item.note}
                 </li>
@@ -74,7 +76,7 @@ export function LicensesPanel() {
             </ul>
 
             <h3>{t('licenses.photoHeading')}</h3>
-            <p>{PHOTO_CREDITS.text}</p>
+            <p>{L(PHOTO_CREDITS).text}</p>
 
             <h3>{t('licenses.sourcesHeading', { count: countSources() })}</h3>
             {groups.map((group) => (

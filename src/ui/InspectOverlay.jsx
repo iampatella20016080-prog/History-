@@ -5,7 +5,7 @@ import { inspectRuntime } from '../game/inspectRuntime.js'
 import { rotateInspect, toggleInspectAction, zoomInspect } from '../game/objectInspect.js'
 import { useGameStore } from '../state/useGameStore.js'
 import { usePresence } from './usePresence.js'
-import { useT } from '../i18n/useT.js'
+import { useLocalizer, useT } from '../i18n/useT.js'
 
 /**
  * 器物 3D 檢視的介面層：器物本身畫在主畫面的畫布（components/ObjectStage.jsx），
@@ -13,6 +13,7 @@ import { useT } from '../i18n/useT.js'
  */
 export function InspectOverlay() {
   const t = useT()
+  const L = useLocalizer()
   const inspect = useGameStore((state) => state.inspect)
   const closeInspect = useGameStore((state) => state.closeInspect)
   const { mounted, state } = usePresence(!!inspect, 300)
@@ -27,10 +28,10 @@ export function InspectOverlay() {
 
   const last = useRef(null)
   if (inspect) last.current = inspect
-  const object = last.current ? getInspectObject(last.current.objectId) : null
+  const object = last.current ? L(getInspectObject(last.current.objectId)) : null
   if (!mounted || !object) return null
 
-  const sources = (object.sourceIds ?? []).map(getSource).filter(Boolean)
+  const sources = (object.sourceIds ?? []).map((id) => L(getSource(id))).filter(Boolean)
 
   const onPointerDown = (event) => {
     event.currentTarget.setPointerCapture?.(event.pointerId)

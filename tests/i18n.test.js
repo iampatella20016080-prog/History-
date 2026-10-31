@@ -128,3 +128,10 @@ test('localize：年代資料換成英文後，所有年代都有英文名稱與
     assert.match(en.description, /^[\x20-\x7e]+$/, era.id)
   }
 })
+
+test('app.title：兩種語言都有分頁標題，中文與 index.html 的標題一致', async () => {
+  const { readFileSync } = await import('node:fs')
+  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
+  assert.ok(html.includes(`<title>${translate('zh-Hant', 'app.title')}</title>`))
+  assert.match(translate('en', 'app.title'), /^[\x20-\x7e|]+$/)
+})

@@ -53,16 +53,17 @@ export const PHOTO_CREDITS = {
 }
 
 /** 文獻依 publisher 分組（組內維持 sources.js 的順序） */
-export function groupSourcesByPublisher(sources = SOURCES) {
+export function groupSourcesByPublisher(sources = SOURCES, lang = 'zh-Hant') {
+  const en = lang === 'en'
   const groups = new Map()
   for (const source of Object.values(sources)) {
-    const key = source.publisher ?? '其他'
+    const key = (en && source.publisherEn) || source.publisher || (en ? 'Other' : '其他')
     if (!groups.has(key)) groups.set(key, [])
-    groups.get(key).push({ id: source.id, citation: source.citation, url: source.url ?? null })
+    groups.get(key).push({ id: source.id, citation: (en && source.citationEn) || source.citation, url: source.url ?? null })
   }
   return [...groups.entries()]
     .map(([publisher, items]) => ({ publisher, items }))
-    .sort((a, b) => b.items.length - a.items.length || a.publisher.localeCompare(b.publisher, 'zh-Hant'))
+    .sort((a, b) => b.items.length - a.items.length || a.publisher.localeCompare(b.publisher, lang === 'en' ? 'en' : 'zh-Hant'))
 }
 
 export function countSources(sources = SOURCES) {

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { getEra } from '../data/eras.js'
 import { getShopsByEra } from '../data/shops.js'
 import { useGameStore } from '../state/useGameStore.js'
+import { applyDocumentLang } from '../i18n/lang.js'
 import { useLocalizer, useT } from '../i18n/useT.js'
 import { LicensesPanel } from './LicensesPanel.jsx'
 import { ChapterCard } from './ChapterCard.jsx'
@@ -220,7 +221,7 @@ export function Hud() {
   const L = useLocalizer()
   const era = L(getEra(eraId))
   useEffect(() => {
-    document.documentElement.lang = lang
+    applyDocumentLang(lang)
   }, [lang])
   const shops = useMemo(() => L(getShopsByEra(era)), [era, L])
 

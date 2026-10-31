@@ -2,7 +2,7 @@
 export const CJK = /[㐀-鿿]/
 export const hasCjk = (s) => typeof s === 'string' && CJK.test(s)
 /** 不需要英文的欄位：內部識別、招牌圖集上的原樣文字、台語／羅馬拼音原文 */
-export const EXEMPT_KEYS = new Set(['seals', 'smallSign', 'hangingSign', 'lanterns', 'sign', 'signText', 'signLines', 'original', 'quote', 'taiwanese', 'romanization', 'zh', 'hanzi', 'script'])
+export const EXEMPT_KEYS = new Set(['url', 'seals', 'smallSign', 'hangingSign', 'lanterns', 'sign', 'signText', 'signLines', 'original', 'quote', 'taiwanese', 'romanization', 'zh', 'hanzi', 'script'])
 
 /** 遍歷資料物件：每個含中文的字串，檢查同層有沒有 `${key}En` */
 const SIGN_KEYS = new Set(['sign', 'smallSign', 'hangingSign', 'lanterns'])

@@ -2,7 +2,7 @@ import { Html } from '@react-three/drei'
 import { inspectablesOfEra } from '../../data/inspectObjects.js'
 import { talkForNpc } from '../../data/talk.js'
 import { useGameStore } from '../../state/useGameStore.js'
-import { useT } from '../../i18n/useT.js'
+import { useLocalizer, useT } from '../../i18n/useT.js'
 
 /**
  * 街上的互動提示（第 10 階段）：
@@ -10,8 +10,10 @@ import { useT } from '../../i18n/useT.js'
  * - 街上可以近看的器物：走近時浮現「近看」提示
  * 做法同店家的 ShopPrompt（drei Html 投影到 3D 位置，掛在 promptLayer）。
  */
-function TalkPrompt({ npc, talk }) {
+function TalkPrompt({ npc, talk: zhTalk }) {
   const t = useT()
+  const L = useLocalizer()
+  const talk = L(zhTalk)
   const visible = useGameStore(
     (state) =>
       state.started &&
@@ -42,8 +44,10 @@ function TalkPrompt({ npc, talk }) {
   )
 }
 
-function InspectPrompt({ item }) {
+function InspectPrompt({ item: zhItem }) {
   const t = useT()
+  const L = useLocalizer()
+  const item = L(zhItem)
   const visible = useGameStore(
     (state) =>
       state.started &&

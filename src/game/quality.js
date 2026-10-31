@@ -14,7 +14,9 @@ export const QUALITY_MODES = {
   smooth: {
     id: 'smooth',
     label: '流暢',
+    labelEn: 'Smooth',
     hint: '適合 iPad',
+    hintEn: 'Best for iPad',
     dprMax: 1.25,
     dprMin: 0.8,
     shadowMapSize: 1024,
@@ -34,7 +36,9 @@ export const QUALITY_MODES = {
   fine: {
     id: 'fine',
     label: '精緻',
+    labelEn: 'Detailed',
     hint: '適合電腦',
+    hintEn: 'Best for desktop',
     dprMax: 1.75,
     dprMin: 1,
     shadowMapSize: 2048,

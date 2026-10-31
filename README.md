@@ -1283,3 +1283,10 @@ node tests/e2e/era-switching.e2e.mjs http://127.0.0.1:4173/
 - 25 家店的名稱、類別、章節、食物圖鑑、熱點、年代說明、門牌、年份標示都有英文（`*En` 欄位；依年代分開的年代說明用 `'<年代 id>En'` 鍵）；`shopYearText(shop, lang)` 英文只寫年份。
 - 對話框、探索手記、故事視窗、店家提示、名錄一律在邊界用 `L()`；手記記錄時同時存 `titleEn`／`textEn`，切換語言後已記下的手記也會換語言。
 - 譯文先在各店家區段分開翻譯再合併；`tests/englishCoverage.test.js` 的 `COMPLETE` 納入 `shops.js`。出處說明（`sources.js`）下一批補完，英文模式的出處標題暫時顯示中文。
+### 第 5 批（最後一批）：出處說明、分頁標題與全站檢查
+- `sources.js` 253 筆文獻補英文（`citationEn`、`publisherEn`、`titleEn`、`contextEn`、`usageEn`、`supportsEn`、`recordsEn`…）：中文書名、篇名在英文後面括號保留原文；授權頁依 `publisherEn` 分組。
+- 其他：對話路人與器物提示、畫質選項、授權頁條款、飲食主題名稱、器物動作標籤都接上 `L()`；分頁標題 `app.title` 隨語言切換。
+- 覆蓋率測試 `tests/englishCoverage.test.js` 現在掃描 `src/data` 全部檔案；`tests/englishGlossary.test.js` 檢查譯名表的禁用寫法。
+- **全站檢查** `tests/e2e/englishAudit.e2e.mjs`（Playwright，需開發版 `window.__DDC__`）：`?lang=en` 逐一打開五個年代、每家開放店家的每一章，以及設定、名錄、手記、總覽、授權頁，列出畫面上還看得到的中文；招牌、印章與插圖上的單字、古文原文（李春生履歷）、「兩種寫法比較」的原文字形、括號內附的中文原名視為刻意保留（清單在腳本裡）。目前結果：沒有遺漏。`SHOTS=docs/english` 會順便截圖。
+- 英文版截圖：`docs/english/`（江山樓故事視窗、店家名錄、設定選單、酒樓繁華與老屋新生街景）。
+- 測試狀態：單元測試 987 項通過；英文版全站檢查通過。
