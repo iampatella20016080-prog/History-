@@ -141,7 +141,8 @@ export const NIGHT_ERAS = {
   },
   banquet: {
     glow: 1.0,
-    lanternGlow: 0.8,
+    // 燈籠多、光暈大：夜裡調小一點，不然一團一團的光暈讓整條街像蒙了一層霧
+    lanternGlow: 0.6,
     lift: 0.04,
     windowTint: '#ffb866',
     tintAmount: 0.4,
@@ -212,4 +213,4 @@ export function nightNumber(key, value, amount, eraNight = null) {
 }
 
 /** 夜晚時精緻畫質的光暈（bloom）再加強多少（燈籠、路燈的光暈） */
-export const NIGHT_BLOOM = 0.25
+export const NIGHT_BLOOM = 0.1

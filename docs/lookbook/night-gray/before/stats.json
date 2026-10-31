@@ -1,0 +1,10 @@
+{
+  "stats": {
+    "banquet/high": {
+      "calls": 206,
+      "meshes": 134,
+      "lightPools": true
+    }
+  },
+  "errors": []
+}
