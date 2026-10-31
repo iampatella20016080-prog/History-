@@ -158,7 +158,9 @@ describe('夜晚：各年代的照明依史料', () => {
   })
 
   test('清末的河岸正對月亮：暗部提亮最少（不會整片灰霧）；騎樓深的酒樓繁華、摩登提得多', () => {
-    for (const id of ['banquet', 'modern', 'postwar', 'revival']) assert.ok(NIGHT_ERAS['qing-port'].lift < NIGHT_ERAS[id].lift, id)
+    for (const id of ['banquet', 'modern', 'postwar']) assert.ok(NIGHT_ERAS['qing-port'].lift < NIGHT_ERAS[id].lift, id)
+    // 老屋新生的雨夜也容易灰，和清末一樣只提一點
+    assert.ok(NIGHT_ERAS['qing-port'].lift <= NIGHT_ERAS.revival.lift)
     setAtmosphereOverlay({ night: 0 })
     setAtmosphere(getEra('qing-port'))
     setAtmosphereOverlay({ night: 1, nightEra: nightEra('qing-port') })
