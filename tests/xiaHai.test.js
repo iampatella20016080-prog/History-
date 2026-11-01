@@ -52,10 +52,10 @@ describe('霞海城隍廟：店家資料', () => {
     assert.ok(!shop.chapters.some((chapter) => chapter.type === 'foods'))
   })
 
-  test('四個章節都是文字與文獻；每一章都有存在的出處，文獻章列出所有引用', () => {
+  test('五個章節（三章文字、經典閱讀：勸和論、文獻）；每一章都有存在的出處，文獻章列出所有引用', () => {
     assert.deepEqual(
       shop.chapters.map((chapter) => chapter.type),
-      ['text', 'text', 'text', 'sources'],
+      ['text', 'text', 'text', 'classic', 'sources'],
     )
     for (const chapter of shop.chapters) {
       assert.ok(chapter.sourceIds?.length, chapter.tab)

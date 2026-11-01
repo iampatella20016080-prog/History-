@@ -1821,6 +1821,196 @@ kbd {
 }
 
 /* 網站延伸整理的摘要（與館方展板原文分開標示） */
+/* 經典閱讀：背景 → 原文與翻譯 → 詞語 → 連結今天 → 反思 → 查證狀態（兩種畫質共用的純 DOM 版型） */
+.classic-work {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0 0 20px;
+  border: 1px solid var(--line-strong);
+}
+
+.classic-work__row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.classic-work__row:nth-child(odd) {
+  border-right: 1px solid var(--line);
+}
+
+.classic-work__row:nth-last-child(-n + 2) {
+  border-bottom: none;
+}
+
+.classic-work dt {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--vermilion);
+}
+
+.classic-work dd {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.75;
+}
+
+.classic-step {
+  margin-top: 26px;
+}
+
+.classic-step__title {
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  font-size: 17px;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.classic-excerpt {
+  margin-bottom: 20px;
+}
+
+.classic-excerpt__original {
+  margin: 0 0 10px;
+  padding: 12px 18px;
+  font-size: 18px;
+  line-height: 2.1;
+  white-space: pre-line;
+  background: rgba(255, 251, 242, 0.7);
+  border-left: 4px solid var(--vermilion);
+}
+
+.classic-excerpt__plain {
+  margin-bottom: 8px;
+  font-size: 16px;
+  line-height: 1.95;
+  white-space: pre-line;
+}
+
+.classic-excerpt__label {
+  display: inline-block;
+  margin: 0 8px 4px 0;
+  padding: 1px 8px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--paper-light);
+  background: var(--ink-soft);
+  border-radius: 2px;
+}
+
+.classic-excerpt__note {
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--ink-soft);
+}
+
+.classic-excerpt--none {
+  padding: 12px 18px;
+  background: rgba(255, 251, 242, 0.6);
+  border: 1px dashed rgba(165, 64, 44, 0.45);
+}
+
+.classic-excerpt__none-title {
+  margin-bottom: 6px;
+  font-weight: 700;
+  color: var(--vermilion);
+}
+
+.classic-points {
+  margin: 6px 0 0;
+}
+
+.classic-points__row {
+  display: flex;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.classic-points dt {
+  flex: none;
+  min-width: 3.2em;
+  font-weight: 700;
+  color: var(--vermilion);
+}
+
+.classic-points dd {
+  margin: 0;
+  line-height: 1.8;
+}
+
+.classic-reflect__question {
+  margin-bottom: 10px;
+  padding: 12px 18px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.9;
+  background: rgba(255, 251, 242, 0.7);
+  border: 1px solid rgba(165, 64, 44, 0.45);
+}
+
+.classic-reflect__prompts {
+  margin: 0 0 8px;
+  padding-left: 1.4em;
+  font-size: 16px;
+  line-height: 1.95;
+}
+
+.classic-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.classic-check {
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.classic-check__status {
+  display: inline-block;
+  min-width: 5.2em;
+  margin-right: 8px;
+  padding: 0 8px;
+  font-size: 12px;
+  text-align: center;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+}
+
+.classic-check__status.is-sourced {
+  color: #3f6b3a;
+}
+
+.classic-check__status.is-pending {
+  color: var(--vermilion);
+}
+
+.classic-check__status.is-omitted {
+  color: var(--ink-soft);
+}
+
+@media (max-width: 620px) {
+  .classic-work {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .classic-work__row:nth-child(odd) {
+    border-right: none;
+  }
+
+  .classic-work__row:nth-last-child(2) {
+    border-bottom: 1px solid var(--line);
+  }
+}
+
 .chapter-summary {
   padding: 12px 18px 14px;
   margin-bottom: 18px;

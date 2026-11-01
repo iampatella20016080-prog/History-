@@ -39,10 +39,11 @@ const text = chapterText(chapter)
 const sentences = (item) => [...(item.paragraphs ?? []), ...(item.facts ?? []).map((i) => i.value), ...(item.timeline ?? []).map((i) => i.text)].flatMap((p) => p.split(/[。；]/))
 
 describe('蔣渭水人物小節：掛載位置', () => {
-  test('是江山樓故事裡的新分頁（食物圖鑑之後、文獻章之前），純文字', () => {
+  test('是江山樓故事裡的新分頁（食物圖鑑之後；後面接「經典閱讀：臨床講義」與文獻章），純文字', () => {
     assert.equal(JIANG_WEISHUI_ERA_ID, 'banquet')
     const index = shop.chapters.findIndex((item) => item.id === chapter.id)
-    assert.equal(index, shop.chapters.length - 2)
+    assert.equal(index, shop.chapters.length - 3)
+    assert.equal(shop.chapters[index + 1].type, 'classic')
     assert.equal(shop.chapters[index - 1].type, 'foods')
     assert.equal(shop.chapters.at(-1).type, 'sources')
     assert.equal(chapter.type, 'text')
