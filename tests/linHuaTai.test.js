@@ -5,6 +5,9 @@ import { getShop, getShopBuilding } from '../src/data/shops.js'
 import { LIN_HUA_TAI_BY_ERA, LIN_HUA_TAI_ID, linHuaTaiVariantForEra } from '../src/data/linHuaTaiEraConfig.js'
 import { LHT_ERA_HOTSPOTS, LHT_ERA_SITE, LHT_SHELL, LHT_VARIANTS, lhtEraToWorld } from '../src/data/linHuaTaiLayout.js'
 import { getInspectObject, inspectablesOfEra } from '../src/data/inspectObjects.js'
+import { getSource } from '../src/data/sources.js'
+import { TALK_RADIUS, talkForNpc } from '../src/data/talk.js'
+import { pickInteraction } from '../src/game/interactionPick.js'
 import { NPC_LOOKS, NPC_POSES, buildNpcGeometry } from '../src/game/character/npcBuilder.js'
 import { raycastBoxes, resolvePlayerPosition } from '../src/game/collision.js'
 import { CAMERA, PLAYER } from '../src/game/config.js'
@@ -311,21 +314,41 @@ describe('林華泰茶行：情境人物與可以近看的器物', () => {
     }
   })
 
-  test('每個年代的室內有兩三件可以近看的器物，走得到提示半徑內', () => {
+  test('每個年代的室內有兩三件可以近看的器物：有站得到的位置，而且那裡器物比可以交談的人更近（才會提示器物）', () => {
     for (const eraId of LATER) {
+      const world = worlds[eraId]
+      const talkers = world.npcs.filter((npc) => talkForNpc(eraId, npc.id))
       const items = inspectablesOfEra(eraId).filter((item) => item.shopId === LIN_HUA_TAI_ID)
       assert.ok(items.length >= 2 && items.length <= 3, `${eraId} ${items.length}`)
       for (const item of items) {
         assert.ok(getInspectObject(item.objectId), item.id)
         const [x, , z] = item.position
-        const spots = []
-        for (const ring of [item.radius - 0.35, item.radius - 0.7]) {
-          for (let i = 0; i < 16; i++) {
-            const a = (i / 16) * Math.PI * 2
-            spots.push([x + Math.cos(a) * ring, z + Math.sin(a) * ring])
-          }
+        const wins = (sx, sz) => {
+          const d = Math.hypot(sx - x, sz - z)
+          const picked = pickInteraction({
+            inspectable: { id: item.id, distance: d },
+            talk: talkers.map((npc) => ({ id: npc.id, distance: Math.hypot(sx - npc.position[0], sz - npc.position[2]) })).filter((t) => t.distance < TALK_RADIUS).sort((a, b) => a.distance - b.distance)[0] ?? null,
+          })
+          return d < item.radius && picked.inspectable?.id === item.id
         }
-        assert.ok(spots.some(([sx, sz]) => walkableAt(worlds[eraId], sx, sz)), item.id)
+        let found = false
+        for (let gx = x - item.radius; gx <= x + item.radius && !found; gx += 0.1) {
+          for (let gz = z - item.radius; gz <= z + item.radius && !found; gz += 0.1) found = walkableAt(world, gx, gz) && wins(gx, gz)
+        }
+        assert.ok(found, item.id)
+      }
+    }
+  })
+
+  test('每個年代有一位店裡的人物可以交談，說完可以近看一件器物；對話的出處都存在', () => {
+    for (const eraId of LATER) {
+      const talks = variantOf(eraId).npcs.map((npc) => talkForNpc(eraId, npc.id)).filter(Boolean)
+      assert.equal(talks.length, 1, eraId)
+      const [talk] = talks
+      assert.ok(getInspectObject(talk.objectId), eraId)
+      for (const line of [...talk.lines, ...talk.followUps.flatMap((f) => f.lines)]) {
+        assert.ok(['sourced', 'fiction'].includes(line.label) && line.textEn, `${eraId} ${line.text}`)
+        if (line.label === 'sourced') for (const id of line.sourceIds) assert.ok(getSource(id), `${eraId} ${id}`)
       }
     }
   })

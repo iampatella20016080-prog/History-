@@ -49,7 +49,7 @@ function buildSquarePacket({ detail }) {
   return {
     radius: 0.11,
     centerY: 0.03,
-    viewPitch: -0.55,
+    viewPitch: 0.5,
     parts: [
       { id: 'packet', geometry: body.build() },
       { id: 'lid', geometry: lid.build(), pivot: [0, H, -D / 2], animate: { action: 'open', axis: 'x', from: 0, to: -2.4 } },
@@ -83,7 +83,7 @@ function buildSortingTray({ detail }) {
   return {
     radius: 0.36,
     centerY: 0.04,
-    viewPitch: -0.75,
+    viewPitch: 0.6,
     parts: [
       { id: 'tray', geometry: tray.build() },
       { id: 'tea', geometry: tea.build() },
@@ -120,6 +120,7 @@ function buildCharcoalPit({ detail }) {
   return {
     radius: 0.62,
     centerY: 0.42,
+    viewPitch: 0.4,
     parts: [
       { id: 'pit', geometry: pit.build() },
       { id: 'basket', geometry: basket.build(), pivot: [0, y0, 0], animate: { action: 'lift', kind: 'slide', axis: 'y', from: 0, to: 0.5, drift: [0.62, 0, 0.1] } },
@@ -152,6 +153,7 @@ function buildPlatformScale({ detail }) {
   return {
     radius: 0.62,
     centerY: 0.6,
+    viewPitch: 0.15,
     parts: [
       { id: 'frame', geometry: frame.build() },
       { id: 'beam', geometry: beam.build(), pivot: [-0.27, 1.13, 0], animate: { action: 'weigh', axis: 'z', from: 0.08, to: 0 } },
@@ -178,7 +180,7 @@ function buildJasmineScenting({ detail }) {
   return {
     radius: 0.42,
     centerY: 0.1,
-    viewPitch: -0.6,
+    viewPitch: 0.55,
     parts: [
       { id: 'heap', geometry: mat.build() },
       { id: 'flowers', geometry: flowers.build(), pivot: [0, 0.185, 0], animate: { action: 'sift', kind: 'slide', axis: 'y', from: 0, to: 0.12, drift: [0.48, -0.17, 0] } },
@@ -201,7 +203,7 @@ function buildTastingTray({ detail }) {
   return {
     radius: 0.17,
     centerY: 0.03,
-    viewPitch: -0.55,
+    viewPitch: 0.5,
     parts: [{ id: 'tray', geometry: tray.build(), pivot: [S / 2, 0, 0], animate: { action: 'tilt', axis: 'z', from: 0, to: -0.45 } }],
   }
 }
@@ -231,6 +233,7 @@ function buildTeaDrum({ detail }) {
   return {
     radius: 0.66,
     centerY: 0.6,
+    viewPitch: 0.3,
     parts: [
       { id: 'drum', geometry: drum.build() },
       { id: 'lid', geometry: lid.build(), pivot: [0, H, 0], animate: { action: 'open', kind: 'slide', axis: 'y', from: 0, to: 0.22, drift: [0.62, -0.1, 0] } },

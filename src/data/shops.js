@@ -3153,8 +3153,8 @@ export const SHOPS = [
     sealEn: 'Tea Hong',
     summary: '1883年起做毛茶的篩選與精製，是臺北最老的茶行之一；重慶北路的「前店後廠」至今以大鐵桶陳列茶葉、批發為主。',
     summaryEn: 'Since 1883 it has sorted and refined rough tea, making it one of the oldest tea hongs in Taipei; its “shop in front, factory behind” on Chongqing North Road still displays tea in large iron drums and deals mainly in wholesale.',
-    note: '林華泰最初的店址與遷到重慶北路現址的年份，本站引用的文獻沒有記載；街上的店面與各年代的招牌都是情境示意。',
-    noteEn: 'The literature this site cites does not record Lin Huatai’s first location or the year it moved to its present site on Chongqing North Road; the shopfront on the street and the signs of each era are scenario illustrations.',
+    note: '林華泰最初的店址與遷到重慶北路現址的年份，本站引用的文獻沒有記載；街上的店面、各年代的招牌與店內格局都是情境示意（現在的樓房約在1965–66年改建，街上仍畫成舊式街屋）。',
+    noteEn: 'The literature this site cites does not record Lin Huatai’s first location or the year it moved to its present site on Chongqing North Road; the shopfront on the street, the signs of each era and the interior layouts are scenario illustrations (the present building was rebuilt around 1965–66, but the street still shows an older shophouse).',
     position: { x: -22, z: -4.5 },
     facing: 'south',
     interaction: { radius: 3.2 },
@@ -3199,13 +3199,13 @@ export const SHOPS = [
       banquetEn:
         'In the Japanese period Dadaocheng’s tea trade flourished, with more than two hundred tea hongs at its height. Taiwan Crafts records that the row of several tea hongs across Chongqing North Road were all part of the Lin Huatai group, “typical tea merchants selling to Chinese communities”; the literature does not record Lin Huatai’s own exports in this period.',
       modern:
-        '家族口述：1930年代的炭焙暖房有三十幾個直徑約兩尺的圓火坑分成四排，茶葉在竹焙籠上以炭火烘焙。這個年代的店面是情境示意。',
+        '家族口述：林家的炭焙暖房有三十幾個直徑約兩尺、深兩尺半的圓火坑，在兩條走道兩旁排成四長排，相思木炭蓋著稻糠悶燒，茶葉放在兩尺高的竹焙籠裡烘焙。回憶沒有寫明年代，本站把暖房放在這個年代是推定；店面與店內格局是情境示意。',
       modernEn:
-        'Family oral history: the charcoal-roasting warm room of the 1930s had thirty-odd round fire pits, each about two chi across, in four rows, where tea was roasted over charcoal in bamboo roasting baskets. The shopfront in this era is a scenario illustration.',
+        'Family oral history: the Lin family’s charcoal-roasting warm room had thirty-odd round fire pits, each about two chi across and two and a half deep, in four long rows beside two aisles, with acacia charcoal smouldering under rice husk and the tea roasted in bamboo baskets two chi tall. The recollection gives no date, so placing the room in this era is this site’s inference; the shopfront and interior layout are scenario illustrations.',
       postwar:
-        '家族口述：戰後的林華泰以批發為主，茶季的早上院子裡有幾十上百位茶農背著茶包進出，傍晚貨運卡車把茶出貨到島內各地的茶莊；入夜後茉莉花農騎腳踏車送花來薰製花茶。炭焙坑從三十幾個縮減到八個、再剩兩個，改用大型乾燥機。',
+        '家族口述：戰後的林華泰以批發為主，茶季的早上院子裡有幾十上百位茶農背著茶包進出，傍晚貨運卡車把茶出貨到島內各地的茶莊；入夜後茉莉花農騎腳踏車送花來薰製花茶。炭焙坑從三十幾個縮減到八個、再剩兩個，改用大型乾燥機。現在的店面樓房在1965年前後因道路工程改建（國家文化記憶庫）；1883年創設時是一層樓的精製包裝廠。',
       postwarEn:
-        'Family oral history: after the war Lin Huatai dealt mainly in wholesale. On tea-season mornings dozens or even a hundred tea farmers came and went in the yard with bags of tea on their backs, and in the evening freight trucks shipped the tea to tea shops across the island; after dark, jasmine growers came on bicycles to deliver flowers for scenting jasmine tea. The charcoal roasting pits were reduced from thirty-odd to eight, then to two, and large drying machines were adopted.',
+        'Family oral history: after the war Lin Huatai dealt mainly in wholesale. On tea-season mornings dozens or even a hundred tea farmers came and went in the yard with bags of tea on their backs, and in the evening freight trucks shipped the tea to tea shops across the island; after dark, jasmine growers came on bicycles to deliver flowers for scenting jasmine tea. The charcoal roasting pits were reduced from thirty-odd to eight, then to two, and large drying machines were adopted. The present shop building was rebuilt around 1965 for road works (Taiwan Cultural Memory Bank); when founded in 1883 it was a single-storey refining and packing works.',
       revival:
         '重慶北路二段193號的「前店後廠」：店裡陳列近百個大小茶桶，用老秤計量；店後的大型乾燥機仍在使用，炭焙坑封存留作遺址。2011年家族分家，老二林茂森在隔壁另開林茂森茶行；林華泰接受學校的校外教學申請。',
       revivalEn:
@@ -3293,12 +3293,12 @@ export const SHOPS = [
         leadEn: 'The shopfront is a wholesale tea hong and behind it is a tea-refining factory: nearly a hundred large iron drums hold teas of every kind and grade, weighed on an old steelyard and scooped into bags with a metal shovel.',
         paragraphs: [
           '林華泰自稱是全臺唯一僅存的「前店後廠」。走進店裡，看到的是近百個大小茶桶排在四周，裝著不同種類與等級的茶葉；因為是批發商，散茶用的是超大號的圓鐵桶。茶葉用老式的秤計量、金屬鏟裝進簡單的袋子，店裡的老秤已經用了五十多年。',
-          '店後的工廠把農家送來的茶葉分類，送進大型烘茶機烘焙、篩選、曬涼。運作了半個世紀的大型乾燥機仍在使用；1930年代以炭火烘焙的暖房有三十幾個圓火坑，後來縮減到八個、再剩兩個，現在封存留作遺址（家族口述）。',
+          '店後的工廠把農家送來的茶葉分類，送進大型烘茶機烘焙、篩選、曬涼。運作了半個世紀的大型乾燥機仍在使用；以炭火烘焙的暖房原本有三十幾個圓火坑，後來縮減到八個、再剩兩個，現在封存留作遺址（家族口述）。',
           '《臺灣工藝》記載，重慶北路對街一排數家茶行均為林華泰系列，是當時典型銷往華人社會的茶商，至今仍保留大部分精製茶的設備；重慶北路二段的茶葉公園，過去是閩客茶商與茶農交易的場所。',
         ],
         paragraphsEn: [
           'Lin Huatai describes itself as the only remaining “shop in front, factory behind” in Taiwan. Walking into the shop, you see nearly a hundred tea drums of various sizes ranged around the walls, holding different kinds and grades of tea; because it is a wholesaler, loose tea is kept in extra-large round iron drums. Tea is weighed on an old-style steelyard and scooped into plain bags with a metal shovel, and the old steelyard in the shop has been in use for more than fifty years.',
-          'In the factory behind the shop, tea delivered by farms is sorted, then roasted, sieved and left to cool in large tea-roasting machines. The large drying machine, which has run for half a century, is still in use; the warm room where tea was roasted over charcoal in the 1930s had thirty-odd round fire pits, later reduced to eight and then two, and today they are sealed and kept as a relic (family oral history).',
+          'In the factory behind the shop, tea delivered by farms is sorted, then roasted, sieved and left to cool in large tea-roasting machines. The large drying machine, which has run for half a century, is still in use; the warm room where tea was roasted over charcoal once had thirty-odd round fire pits, later reduced to eight and then two, and today they are sealed and kept as a relic (family oral history).',
           'Taiwan Crafts records that the row of several tea hongs across Chongqing North Road were all part of the Lin Huatai group, typical tea merchants of the time selling to Chinese communities, and that most of their tea-refining equipment is still preserved; the Tea Park on Chongqing North Road, Section 2, was formerly a place where Hokkien and Hakka tea merchants traded with tea farmers.',
         ],
         lists: [
