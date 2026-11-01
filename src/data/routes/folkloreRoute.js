@@ -16,8 +16,8 @@ export const FOLKLORE_FIGURES = [
   { id: 'folk-xiahai', eraId: 'qing-port', look: 'qingPickerBlue', pose: 'stand', position: [19.3, -2.2], rotationY: Math.PI + 0.5 },
   // 酒樓繁華：街西段北側，從安溪來的茶工
   { id: 'folk-fazhu', eraId: 'banquet', look: 'riceMiller', pose: 'stand', position: [-8.5, -2.2], rotationY: 0.4 },
-  // 庶民生活：街西段北側，賣歌仔冊的人
-  { id: 'folk-kua', eraId: 'postwar', look: 'postwarKuehVendor', pose: 'wave', position: [-24.0, -2.2], rotationY: 0.3 },
+  // 庶民生活：街西段北側，賣歌仔冊的人（林華泰四層樓的騎樓柱西側）
+  { id: 'folk-kua', eraId: 'postwar', look: 'postwarKuehVendor', pose: 'wave', position: [-26.2, -2.2], rotationY: 0.3 },
 ]
 
 const route = (id) => `route-${id}`

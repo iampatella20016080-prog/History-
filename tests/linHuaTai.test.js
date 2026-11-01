@@ -16,6 +16,8 @@ import { buildEraInteriorSync, buildEraWorldSync } from '../src/game/world/build
 import { getLotPlan } from '../src/game/world/lots.js'
 import { DRUM_SIZES, FURNITURE, drumCount } from '../src/game/builders/linHuaTai/linHuaTaiFurniture.js'
 import { lhtEraObstacles } from '../src/game/builders/linHuaTai/linHuaTaiEras.js'
+import { LHT_1965, lht1965Columns } from '../src/game/builders/linHuaTai/linHuaTaiBuilding1965.js'
+import { STREET } from '../src/game/config.js'
 import { inLinHuaTaiLot } from './helpers.js'
 
 /*
@@ -187,6 +189,71 @@ describe('林華泰茶行：室內只畫這一棟、不與其他建築重疊', (
     assert.ok(drums >= 20 && drums < 100, `${drums}`)
     assert.ok(DRUM_SIZES.large.r > DRUM_SIZES.medium.r && DRUM_SIZES.medium.r > DRUM_SIZES.small.r)
   })
+})
+
+describe('林華泰茶行：庶民生活與老屋新生是 1965 年前後改建的四層樓', () => {
+  const lotBlockers = (world) =>
+    world.blockers.filter((r) => r.minX < LHT_ERA_SITE.x + LHT_SHELL.half - 0.05 && r.maxX > LHT_ERA_SITE.x - LHT_SHELL.half + 0.05 && r.maxZ > LHT_ERA_SITE.z - 11 && r.minZ < LHT_ERA_SITE.z + STREET.walkwayDepth + 1)
+  const lhtSigns = (world) => world.signs.filter((sign) => sign.text === '林華泰茶行' && Math.abs(sign.position[0] - LHT_ERA_SITE.x) < LHT_SHELL.half + 0.1)
+
+  test('高度：庶民生活與老屋新生的樓房（含屋頂退縮的第四層）超過 12 公尺，酒樓繁華與摩登仍是低矮的街屋（不到 10 公尺，含行道樹）', () => {
+    for (const eraId of LATER) {
+      const top = Math.max(...lotBlockers(worlds[eraId]).map((r) => r.maxY))
+      if (eraId === 'postwar' || eraId === 'revival') assert.ok(top > LHT_1965.topY + LHT_1965.penthouse.h, `${eraId}：${top}`)
+      else assert.ok(top < 10, `${eraId}：${top}`)
+    }
+  })
+
+  test('招牌：騎樓上方的橫招牌與轉角直立招牌（正面、側面）只在四層樓的年代', () => {
+    for (const eraId of LATER) {
+      const signs = lhtSigns(worlds[eraId])
+      const vertical = signs.filter((sign) => sign.vertical)
+      const upper = signs.filter((sign) => !sign.vertical && sign.position[1] > LHT_1965.groundH)
+      if (eraId === 'postwar' || eraId === 'revival') {
+        assert.equal(vertical.length, 2, eraId)
+        assert.equal(upper.length, 1, eraId)
+        // 招牌都在立面前（步道上方），不伸到隔壁地段
+        for (const sign of signs) assert.ok(Math.abs(sign.position[0] - LHT_ERA_SITE.x) <= LHT_SHELL.half + 0.01, `${eraId} ${sign.position}`)
+      } else {
+        assert.equal(vertical.length, 0, eraId)
+      }
+    }
+  })
+
+  for (const eraId of ['postwar', 'revival']) {
+    const world = worlds[eraId]
+    test(`${eraId}：騎樓柱不能穿越；柱子後面的步道可以從一頭走到另一頭（步長 0.05／0.15／0.4）`, () => {
+      for (const c of lht1965Columns()) {
+        const p = W((c.minX + c.maxX) / 2, (c.minZ + c.maxZ) / 2)
+        assert.ok(!walkableAt(world, p.x, p.z), JSON.stringify(c))
+      }
+      for (const stepSize of [0.05, 0.15, 0.4]) {
+        const end = walkRoute(world, W(-2.3, 0.75), [W(2.3, 0.75)], stepSize)
+        assert.ok(Math.hypot(end.x - W(2.3, 0.75).x, end.z - W(2.3, 0.75).z) < 0.3, `步長 ${stepSize}：停在 (${end.x.toFixed(2)}, ${end.z.toFixed(2)})`)
+        const back = walkRoute(world, end, [W(-2.3, 0.75)], stepSize)
+        assert.ok(Math.hypot(back.x - W(-2.3, 0.75).x, back.z - W(-2.3, 0.75).z) < 0.3, `步長 ${stepSize}：走回 (${back.x.toFixed(2)}, ${back.z.toFixed(2)})`)
+      }
+    })
+
+    test(`${eraId}：步道上可以站的位置，頭頂不在樓上的遮擋方塊裡；騎樓上方的樓層擋住鏡頭`, () => {
+      const blockers = lotBlockers(world)
+      for (let x = -2.6; x <= 2.6; x += 0.2) {
+        for (let z = 0.1; z <= STREET.walkwayDepth; z += 0.2) {
+          const p = W(x, z)
+          if (!walkableAt(world, p.x, p.z)) continue
+          const head = 1.6
+          assert.ok(!blockers.some((r) => p.x > r.minX && p.x < r.maxX && head > r.minY && head < r.maxY && p.z > r.minZ && p.z < r.maxZ), `(${x.toFixed(1)}, ${z.toFixed(1)})`)
+        }
+      }
+      // 從街上往樓上看：視線被樓上的立面擋住（鏡頭不會穿進二樓）
+      const from = { x: LHT_ERA_SITE.x, y: 2, z: LHT_ERA_SITE.z + STREET.walkwayDepth + 2.5 }
+      const to = { x: LHT_ERA_SITE.x, y: 6, z: LHT_ERA_SITE.z - 3 }
+      const dir = { x: to.x - from.x, y: to.y - from.y, z: to.z - from.z }
+      const len = Math.hypot(dir.x, dir.y, dir.z)
+      const hit = raycastBoxes(from, { x: dir.x / len, y: dir.y / len, z: dir.z / len }, len, blockers)
+      assert.ok(hit < len, `沒有擋住（${hit}）`)
+    })
+  }
 })
 
 describe('林華泰茶行：走進去、走出來（碰撞）', () => {

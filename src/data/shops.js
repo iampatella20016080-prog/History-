@@ -3180,8 +3180,8 @@ export const SHOPS = [
       'qing-port': { condition: 'new', archetype: 'lin-hua-tai', variant: LIN_HUA_TAI_BY_ERA['qing-port'].variant },
       banquet: { condition: 'mature', archetype: 'lin-hua-tai', variant: LIN_HUA_TAI_BY_ERA.banquet.variant, sign: { text: '林華泰茶行', style: 'gold' } },
       modern: { condition: 'mature', archetype: 'lin-hua-tai', variant: LIN_HUA_TAI_BY_ERA.modern.variant, sign: { text: '林華泰茶行', style: 'lacquer' } },
-      postwar: { condition: 'aged', archetype: 'lin-hua-tai', variant: LIN_HUA_TAI_BY_ERA.postwar.variant, sign: { text: '林華泰茶行', style: 'painted' } },
-      revival: { condition: 'restored', archetype: 'lin-hua-tai', variant: LIN_HUA_TAI_BY_ERA.revival.variant, sign: { text: '林華泰茶行', style: 'lacquer' } },
+      postwar: { condition: 'aged', archetype: 'lin-hua-tai', variant: LIN_HUA_TAI_BY_ERA.postwar.variant, sign: { text: '林華泰茶行', style: 'letters' } },
+      revival: { condition: 'restored', archetype: 'lin-hua-tai', variant: LIN_HUA_TAI_BY_ERA.revival.variant, sign: { text: '林華泰茶行', style: 'letters' } },
     },
     // 每個年代室內的資訊熱點（用 getShop('lin-hua-tai', eraId) 取得）
     eras: {
@@ -3207,9 +3207,9 @@ export const SHOPS = [
       postwarEn:
         'Family oral history: after the war Lin Huatai dealt mainly in wholesale. On tea-season mornings dozens or even a hundred tea farmers came and went in the yard with bags of tea on their backs, and in the evening freight trucks shipped the tea to tea shops across the island; after dark, jasmine growers came on bicycles to deliver flowers for scenting jasmine tea. The charcoal roasting pits were reduced from thirty-odd to eight, then to two, and large drying machines were adopted. The present shop building was rebuilt around 1965 for road works (Taiwan Cultural Memory Bank); when founded in 1883 it was a single-storey refining and packing works.',
       revival:
-        '重慶北路二段193號的「前店後廠」：店裡陳列近百個大小茶桶，用老秤計量；店後的大型乾燥機仍在使用，炭焙坑封存留作遺址。2011年家族分家，老二林茂森在隔壁另開林茂森茶行；林華泰接受學校的校外教學申請。',
+        '重慶北路二段193號的「前店後廠」：店裡陳列近百個大小茶桶，用老秤計量；店後的大型乾燥機仍在使用，炭焙坑封存留作遺址。2011年家族分家，老二林茂森在隔壁另開林茂森茶行；林華泰接受學校的校外教學申請。街上的店面是1965年前後改建的四層樓：一樓騎樓，二、三樓是灰色洗石子牆與白色直立鰭片，屋頂上往後退一層；騎樓上方的木條招牌與轉角的直立招牌是金字（依2008–2021年的公開照片）。',
       revivalEn:
-        'The “shop in front, factory behind” at 193 Chongqing North Road, Section 2: the shop displays nearly a hundred tea drums of various sizes, with tea weighed on an old steelyard; the large drying machine behind the shop is still in use, and the charcoal roasting pits are sealed and kept as a relic. In 2011 the family divided, and the second son, Lin Maosen, opened Lin Maosen Tea Hong next door; Lin Huatai accepts applications from schools for field trips.',
+        'The “shop in front, factory behind” at 193 Chongqing North Road, Section 2: the shop displays nearly a hundred tea drums of various sizes, with tea weighed on an old steelyard; the large drying machine behind the shop is still in use, and the charcoal roasting pits are sealed and kept as a relic. In 2011 the family divided, and the second son, Lin Maosen, opened Lin Maosen Tea Hong next door; Lin Huatai accepts applications from schools for field trips. The shopfront on the street is the four-storey building rebuilt around 1965: an arcade on the ground floor, grey granolithic (washed-stone) walls with white vertical fins on the second and third floors, and a set-back storey on the roof; the slatted wooden signboard above the arcade and the upright sign on the corner carry gold characters (from published photographs of 2008–2021).',
     },
     // 按 E 探索時的鏡頭：斜角取景，留在街道的路面上（路面 z ±2.8，不進對面的騎樓）
     camera: { distance: 6.6, height: 4.2, side: 5, lookHeight: 3.2 },
@@ -3418,11 +3418,13 @@ export const SHOPS = [
           'tcmb-tea-trade',
           'ntcri-77-xinfangchun',
           'davidson-formosa-1903',
+          'tcmb-linhuatai-500830',
+          'commons-linhuatai-facade',
         ],
         disclaimer:
-          '林華泰官網只能以 http 開啟，內容多為圖片；〈林華泰的歷史〉是第四代的家族回憶，本站標為「家族口述」。本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建；建築外觀、招牌、擺設與店家位置僅供情境想像，並非精確復原。港口商街版的室內（前店、秤茶桌、焙茶區）格局查無，為歷史情境重建；焙坑與焙籠的形制依 Davidson（1903，日治初期記載，推定相近）。',
+          '林華泰官網只能以 http 開啟，內容多為圖片；〈林華泰的歷史〉是第四代的家族回憶，本站標為「家族口述」。本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建；建築外觀、招牌、擺設與店家位置僅供情境想像，並非精確復原。港口商街版的室內（前店、秤茶桌、焙茶區）格局查無，為歷史情境重建；焙坑與焙籠的形制依 Davidson（1903，日治初期記載，推定相近）。庶民生活與老屋新生的店面是1965年前後改建的四層樓，外觀依公開照片；真的樓房有四個店面寬，街景裡縮成一個店面寬。',
         disclaimerEn:
-          'The Lin Huatai website can be opened only over http, and its content is mostly images; “The History of Lin Huatai” is the fourth generation’s family recollection, which this site marks as “family oral history”. The 3D street scene on this website is a conceptual reconstruction of the atmosphere of Dadaocheng’s commercial district in each period; building exteriors, signs, furnishings and shop locations are for imaginative context only and are not exact reconstructions. The layout of the interior in the Harbour Merchant Street version (front shop, tea-weighing table, roasting area) is not documented and is a reconstructed historical scene; the form of the roasting pits and baskets follows Davidson (1903, an early Japanese-period account, presumed to be similar).',
+          'The Lin Huatai website can be opened only over http, and its content is mostly images; “The History of Lin Huatai” is the fourth generation’s family recollection, which this site marks as “family oral history”. The 3D street scene on this website is a conceptual reconstruction of the atmosphere of Dadaocheng’s commercial district in each period; building exteriors, signs, furnishings and shop locations are for imaginative context only and are not exact reconstructions. The layout of the interior in the Harbour Merchant Street version (front shop, tea-weighing table, roasting area) is not documented and is a reconstructed historical scene; the form of the roasting pits and baskets follows Davidson (1903, an early Japanese-period account, presumed to be similar). In the Everyday Life and Old Houses Reborn eras the shop is the four-storey building rebuilt around 1965, modelled on published photographs; the real building is four shopfronts wide, and the street scene narrows it to one.',
       },
     ],
   },
