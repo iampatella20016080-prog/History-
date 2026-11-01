@@ -1,3 +1,4 @@
+import { TEA_SCALE_CLASSIC_NOTE } from './classicsData.js'
 import { LHT_ERA_INSPECT_SPOTS } from './linHuaTaiLayout.js'
 
 /**
@@ -538,6 +539,7 @@ export const LHT_OBJECT_LAYERS = {
         textEn: 'A photograph of the scales actually used in a late-Qing Dadaocheng hong: not found.',
         status: 'pending',
       },
+      TEA_SCALE_CLASSIC_NOTE,
     ],
   },
   'roasting-basket': {

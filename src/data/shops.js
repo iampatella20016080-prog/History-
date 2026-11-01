@@ -48,6 +48,7 @@ import {
   XIYUAN_DISCLAIMER_TEXT_EN,
 } from './xiyuanData.js'
 import { LI_CHUNSHENG_DISCLAIMER_TEXT, LI_CHUNSHENG_DISCLAIMER_TEXT_EN, LI_CHUNSHENG_PERSON_CHAPTER, LI_CHUNSHENG_SOURCE_IDS } from './liChunShengData.js'
+import { CLINICAL_LECTURE_CHAPTER, QUAN_HE_LUN_CHAPTER, YI_GAN_CHENG_ZAI_CHAPTER } from './classicsData.js'
 import { JIANG_WEISHUI_DISCLAIMER_TEXT, JIANG_WEISHUI_DISCLAIMER_TEXT_EN, JIANG_WEISHUI_PERSON_CHAPTER, JIANG_WEISHUI_SOURCE_IDS } from './jiangWeiShuiData.js'
 import { WANG_JINGQUAN_DISCLAIMER_TEXT, WANG_JINGQUAN_DISCLAIMER_TEXT_EN, WANG_JINGQUAN_PERSON_CHAPTER, WANG_JINGQUAN_SOURCE_IDS } from './wangJingQuanData.js'
 import {
@@ -2976,6 +2977,8 @@ export const SHOPS = [
         ],
         sourceIds: ['moi-xiahai-temple', 'moi-xiahai-landscape', 'gvm-city-2025-temples'],
       },
+      // 經典閱讀：鄭用錫〈勸和論〉（資料在 classicsData.js；查證紀錄 docs/research/classics-three.md）
+      QUAN_HE_LUN_CHAPTER,
       {
         id: 'sources',
         type: 'sources',
@@ -2993,6 +2996,7 @@ export const SHOPS = [
           'gvm-city-2025-temples',
           'pts-2024-xiahai',
           'mirror-2024-xiahai',
+          ...QUAN_HE_LUN_CHAPTER.sourceIds,
         ],
         disclaimer:
           '祭祀的牲禮、供品與廟口飲食查無可靠出處，本站一律不寫；廟的坪數兩說矛盾，不寫；聖誕日期依官方登錄的「五月十三」，異說不採；月老捐獻者的身分只依官方網站。國家文化資產網與廟方官網的原頁未能開啟，古蹟級別沿革標「待核」。街上這座廟是情境示意，規模、格局與相對位置並非精確復原。',
@@ -3188,6 +3192,8 @@ export const SHOPS = [
       'qing-port': { hotspots: hotspotsToWorld(LHT_HOTSPOTS, lhtToWorld) },
       ...Object.fromEntries(['banquet', 'modern', 'postwar', 'revival'].map((eraId) => [eraId, { hotspots: hotspotsToWorld(LHT_ERA_HOTSPOTS[LIN_HUA_TAI_BY_ERA[eraId].variant], lhtEraToWorld) }])),
     },
+    // 只在某個年代多出來的章節，插在文獻章之前（shopForEra）：酒樓繁華的經典閱讀，賴和〈一桿「稱仔」〉（1926）
+    eraChapters: { banquet: [YI_GAN_CHENG_ZAI_CHAPTER] },
     // 各年代介紹視窗上方的「此時期的林華泰茶行」；家族口述整理自官網〈林華泰的歷史〉
     eraNotes: {
       'qing-port':
@@ -3897,6 +3903,8 @@ export const SHOPS = [
       },
       // 第 8 階段：人物小節（純文字，資料在 jiangWeiShuiData.js）
       JIANG_WEISHUI_PERSON_CHAPTER,
+      // 經典閱讀：蔣渭水〈臨床講義〉（原文是日文、沒有取得可核對的版本，只放摘要）
+      CLINICAL_LECTURE_CHAPTER,
       {
         id: 'sources',
         type: 'sources',
@@ -3915,6 +3923,7 @@ export const SHOPS = [
           'wiki-jiang-shan-lou',
           'factpedia-jiang-shan-lou',
           ...JIANG_WEISHUI_SOURCE_IDS,
+          ...CLINICAL_LECTURE_CHAPTER.sourceIds.filter((id) => !JIANG_WEISHUI_SOURCE_IDS.includes(id)),
         ],
         disclaimer:
           `江山樓的開業年份與拆除年份各資料記載不一，本站並列出處；皇太子午宴的記載都是研究者的二手整理，本站沒有讀到當年的報紙原件。江山樓原址在日新町（今歸綏街一帶），不在迪化街；本網站的 3D 街景為大稻埕各時期商業街區氛圍的概念性重建，建築外觀、招牌、擺設與店家位置僅供情境想像，並非精確復原。${JIANG_WEISHUI_DISCLAIMER_TEXT}`,
@@ -4593,12 +4602,29 @@ export function shopYearText(shop, lang = 'zh-Hant') {
  * 同一個 ID、同一棟建築。回傳的物件會快取，同一個年代每次都是同一個物件（互動位置的快取依物件區分）。
  */
 const eraShopCache = new Map()
+/** shop.eraChapters[eraId]：只在這個年代多出來的章節，插在文獻章之前（沒有文獻章就接在最後） */
+function withEraChapters(shop, eraId) {
+  const extra = shop.eraChapters?.[eraId]
+  if (!extra?.length || !shop.chapters) return shop
+  const at = shop.chapters.findIndex((chapter) => chapter.type === 'sources')
+  const index = at < 0 ? shop.chapters.length : at
+  const chapters = [...shop.chapters.slice(0, index), ...extra, ...shop.chapters.slice(index)]
+  // 文獻章也列出新章節的出處（只在這個年代）
+  const sourcesAt = chapters.findIndex((chapter) => chapter.type === 'sources')
+  if (sourcesAt >= 0) {
+    const sourceIds = [...new Set([...(chapters[sourcesAt].sourceIds ?? []), ...extra.flatMap((chapter) => chapter.sourceIds ?? [])])]
+    chapters[sourcesAt] = { ...chapters[sourcesAt], sourceIds }
+  }
+  return { ...shop, chapters }
+}
+
 export function shopForEra(shop, eraId) {
   if (!shop?.eras || !eraId) return shop
   const key = `${shop.id}@${eraId}`
   if (!eraShopCache.has(key)) {
     const override = shop.eras[eraId]
-    eraShopCache.set(key, override ? { ...shop, ...override, era: eraId } : shop)
+    const forEra = override ? { ...shop, ...override, era: eraId } : shop
+    eraShopCache.set(key, withEraChapters(forEra, eraId))
   }
   return eraShopCache.get(key)
 }

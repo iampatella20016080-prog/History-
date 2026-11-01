@@ -9,7 +9,8 @@ import { useLocalizer, useT } from '../../i18n/useT.js'
 /**
  * 店家介紹的章節版型。所有店家共用；版型由章節資料的 type 決定：
  * text（文字）、foods（食物圖鑑）、sources（文獻）、process（步驟動畫，例如碾米）、
- * object（器物：開啟主畫面同一個畫布的 3D 檢視，例如米斗、茶箱）。
+ * object（器物：開啟主畫面同一個畫布的 3D 檢視，例如米斗、茶箱）、
+ * classic（經典閱讀：原文節選、白話或英文翻譯、反思問題，資料在 data/classicsData.js）。
  */
 
 function SourceNote({ sourceIds, onShowSources }) {
@@ -378,10 +379,132 @@ export function ObjectChapter({ chapter, onShowSources }) {
   )
 }
 
+/**
+ * 經典閱讀（data/classicsData.js）：背景 → 原文節選與翻譯 → 詞語 → 連結今天 → 反思問題 → 查證狀態。
+ * 原文是古文或日治時期的白話文，保留不翻；中文模式下方是白話翻譯，英文模式下方是英文翻譯（plain／plainEn）。
+ */
+export function ClassicChapter({ chapter, onShowSources }) {
+  const t = useT()
+  const hasExcerpts = chapter.excerpts?.length > 0
+  return (
+    <article className="chapter chapter--classic">
+      <h3 className="chapter__title">{chapter.title}</h3>
+      <p className="chapter__lead">{chapter.lead}</p>
+
+      <dl className="classic-work" aria-label={t('classic.work')}>
+        {chapter.work.map((row) => (
+          <div key={row.label} className="classic-work__row">
+            <dt>{row.label}</dt>
+            <dd>{row.value}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <section className="classic-step">
+        <h4 className="classic-step__title">{t('classic.background')}</h4>
+        {chapter.background.map((paragraph, i) => (
+          <p key={i} className="chapter__p">
+            {paragraph}
+          </p>
+        ))}
+      </section>
+
+      <section className="classic-step">
+        <h4 className="classic-step__title">{t('classic.original')}</h4>
+        {hasExcerpts ? (
+          chapter.excerpts.map((excerpt) => (
+            <div key={excerpt.id} className="classic-excerpt">
+              <blockquote className="classic-excerpt__original" lang="zh-Hant">
+                {excerpt.original}
+              </blockquote>
+              <p className="classic-excerpt__plain">
+                <span className="classic-excerpt__label">{t('classic.plain')}</span>
+                {excerpt.plain}
+              </p>
+              {excerpt.note && <p className="classic-excerpt__note">{excerpt.note}</p>}
+            </div>
+          ))
+        ) : (
+          <div className="classic-excerpt classic-excerpt--none">
+            <p className="classic-excerpt__none-title">{t('classic.noExcerpt')}</p>
+            <p className="chapter__p">{chapter.excerptNote}</p>
+            {chapter.points && (
+              <>
+                <p className="classic-excerpt__label">{t('classic.points')}</p>
+                <dl className="classic-points">
+                  {chapter.points.map((point) => (
+                    <div key={point.label} className="classic-points__row">
+                      <dt>{point.label}</dt>
+                      <dd>{point.text}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </>
+            )}
+          </div>
+        )}
+        <p className="chapter__footnote">{chapter.edition}</p>
+      </section>
+
+      {chapter.glossary && (
+        <section className="classic-step">
+          <h4 className="classic-step__title">{t('classic.understand')}</h4>
+          <aside className="glossary">
+            <h4 className="glossary__title">{t('chapter.glossary')}</h4>
+            <dl>
+              {chapter.glossary.map((entry) => (
+                <div key={entry.term} className="glossary__row">
+                  <dt>{entry.term}</dt>
+                  <dd>{entry.definition}</dd>
+                </div>
+              ))}
+            </dl>
+          </aside>
+        </section>
+      )}
+
+      <section className="classic-step">
+        <h4 className="classic-step__title">{t('classic.connect')}</h4>
+        {chapter.connect.map((paragraph, i) => (
+          <p key={i} className="chapter__p">
+            {paragraph}
+          </p>
+        ))}
+      </section>
+
+      <section className="classic-step classic-reflect">
+        <h4 className="classic-step__title">{t('classic.reflect')}</h4>
+        <p className="classic-reflect__question">{chapter.reflection.question}</p>
+        <ul className="classic-reflect__prompts">
+          {chapter.reflection.prompts.map((prompt, i) => (
+            <li key={i}>{prompt}</li>
+          ))}
+        </ul>
+        <p className="chapter__footnote">{t('classic.reflectHint')}</p>
+      </section>
+
+      <section className="classic-step">
+        <h4 className="classic-step__title">{t('classic.checks')}</h4>
+        <ul className="classic-checks">
+          {chapter.checks.map((check, i) => (
+            <li key={i} className="classic-check">
+              <span className={`classic-check__status is-${check.status}`}>{t(`classic.${check.status}`)}</span>
+              {check.text}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <SourceNote sourceIds={chapter.sourceIds} onShowSources={onShowSources} />
+    </article>
+  )
+}
+
 export const CHAPTER_VIEWS = {
   text: TextChapter,
   foods: FoodsChapter,
   sources: SourcesChapter,
   process: ProcessChapter,
   object: ObjectChapter,
+  classic: ClassicChapter,
 }
