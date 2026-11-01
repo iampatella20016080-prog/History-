@@ -2,10 +2,12 @@ import { LHT_SHELL, LHT_VARIANTS, lhtEraToWorld } from '../../../data/linHuaTaiL
 import { buildShophouse } from '../shophouse.js'
 import { shade, stool } from '../props.js'
 import { FURNITURE, furnitureBounds, furnitureFootprint } from './linHuaTaiFurniture.js'
+import { buildLinHuaTai1965, lht1965Columns } from './linHuaTaiBuilding1965.js'
 
 /**
  * 林華泰茶行・酒樓繁華到老屋新生（第 11 階段；港口商街版在 builders/linHuaTaiQing.js）：
- * 外觀沿用一般閩南街屋（buildShophouse，walkIn 讓門面留空），這裡補上：
+ * 酒樓繁華與摩登的外觀沿用一般閩南街屋（buildShophouse，walkIn 讓門面留空）；
+ * 庶民生活與老屋新生是 1965 年前後改建的四層樓（linHuaTaiBuilding1965.js）。這裡補上：
  * - 門面兩側的門板（日治）、捲門（戰後）或敞開的店面（現在）
  * - 室內的外殼（地坪、內牆、天花、前店與工作間之間的隔間牆、後牆的小窗）
  * - 碰撞、鏡頭遮擋與室內範圍；擺設（器物清單，data/linHuaTaiLayout.js）在 buildLinHuaTaiEraInterior 按需載入
@@ -14,11 +16,18 @@ import { FURNITURE, furnitureBounds, furnitureFootprint } from './linHuaTaiFurni
 const S = LHT_SHELL
 
 /** 各年代外殼的材質與顏色 */
+// building1965：1965 年前後改建的四層樓（linHuaTaiBuilding1965.js）；庶民生活的樓還新、老屋新生的洗石子已經舊了
 const LOOKS = {
   baozhongHong: { floor: ['earth', '#9a8468'], wall: '#e8dcc2', ceiling: 'beams', partition: 'planks', wood: '#c4a685' },
   charcoalRoastery: { floor: ['stone', '#a39684'], wall: '#e4d8bf', ceiling: 'beams', partition: 'planks', wood: '#b99a78' },
-  wholesaleHong: { floor: ['stone', '#9c978c'], wall: '#ddd5c2', ceiling: 'plaster', partition: 'brick', wood: '#a88d70' },
-  heritageHong: { floor: ['stone', '#aaa498'], wall: '#ece6d6', ceiling: 'plaster', partition: 'planks', wood: '#7e5f45', partitionWindows: true },
+  wholesaleHong: {
+    floor: ['stone', '#9c978c'], wall: '#ddd5c2', ceiling: 'plaster', partition: 'brick', wood: '#a88d70',
+    building1965: { facadeTint: '#b4b2a6', finTint: '#e6e3da', frameTint: '#5d7266', grime: 0.08 },
+  },
+  heritageHong: {
+    floor: ['stone', '#aaa498'], wall: '#ece6d6', ceiling: 'plaster', partition: 'planks', wood: '#7e5f45', partitionWindows: true,
+    building1965: { facadeTint: '#a19f93', finTint: '#d6d3ca', frameTint: '#4f6157', grime: 0.3 },
+  },
 }
 
 export function lhtEraVariant(config) {
@@ -177,7 +186,10 @@ export function linHuaTaiEraCollision(config, transform) {
     inB(partition.doorMinX + 0.05, partition.doorMaxX - 0.05, partition.z - 0.1, partition.z + 0.12),
     inB(room.minX + 0.05, room.maxX - 0.05, room.minZ + 0.05, partition.z - 0.08),
   ]
-  const obstacles = lhtEraObstacles(variant).map((r) => rectOf(transform, r.minX, r.maxX, r.minZ, r.maxZ))
+  const local = lhtEraObstacles(variant)
+  // 四層樓的騎樓柱（在步道兩端）
+  if (LOOKS[config.variant]?.building1965) local.push(...lht1965Columns(config.width ?? half * 2))
+  const obstacles = local.map((r) => rectOf(transform, r.minX, r.maxX, r.minZ, r.maxZ))
   return { walkable, obstacles }
 }
 
@@ -186,7 +198,9 @@ export function linHuaTaiEraCollision(config, transform) {
 export function buildLinHuaTaiEra(b, cfg = {}, detail = null) {
   const variant = lhtEraVariant(cfg)
   const look = LOOKS[cfg.variant]
-  const result = buildShophouse(b, { ...cfg, walkIn: true, goods: false, display: null }, detail) ?? {}
+  const result = look.building1965
+    ? buildLinHuaTai1965(b, cfg, look.building1965)
+    : buildShophouse(b, { ...cfg, walkIn: true, goods: false, display: null }, detail) ?? {}
   const openingH = Math.min(2.62, (result.groundHeight ?? S.groundH) - 0.6)
   interiorShell(b, variant, look)
   storefront(b, variant, look, openingH)

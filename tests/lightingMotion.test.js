@@ -30,6 +30,8 @@ import { buildEraWorldSync } from '../src/game/world/buildWorld.js'
 const DAYLIGHT = JSON.parse(readFileSync(new URL('./fixtures/daylightLighting.json', import.meta.url), 'utf8'))
 /** #53 合併前（89c4aa0^1）各年代的批次數與蒸氣來源（tests/fixtures/preMotionWorld.json） */
 const PRE_MOTION = JSON.parse(readFileSync(new URL('./fixtures/preMotionWorld.json', import.meta.url), 'utf8'))
+// #53 之後刻意加的招牌（同一張圖集，不增加繪製呼叫）：林華泰 1965 年改建的四層樓多了騎樓上的橫招牌與轉角直立招牌的兩面
+const LATER_SIGNS = { postwar: 3, revival: 3 }
 const source = (path) => readFileSync(new URL(`../src/${path}`, import.meta.url), 'utf8')
 
 function hexToRgb(hex) {
@@ -220,7 +222,7 @@ describe('流暢畫質和 #53 之前相同', () => {
       assert.equal(world.batches.length, pre.batches)
       // 細部批次只在精緻畫質畫（EraScene 的 visible={detail}）；細部（#57）把接地暗影併進這裡，多一批不影響流暢畫質
       assert.ok((world.detailBatches ?? []).length >= pre.detailBatches)
-      assert.equal(world.signs.length, pre.signs)
+      assert.equal(world.signs.length, pre.signs + (LATER_SIGNS[era.id] ?? 0))
       assert.equal(world.banners.length, pre.banners)
       assert.equal(world.lanterns.length, pre.lanterns)
     })

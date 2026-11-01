@@ -134,7 +134,7 @@
 | 11 | 霞海城隍廟、慈聖宮 | 港口商街；酒樓繁華、摩登 | 廟口主題 |
 
 - ☑ 第 1 項：寶順洋行與林華泰的港口商街室內在第 10 階段已經完成（`builders/doddTeaHouse*.js`、`linHuaTaiQing*.js`）。
-- ☑ 第 3 項（2026-11-01）：林華泰茶行四個年代的室內——酒樓繁華「揀茶與包種茶」、摩登「炭焙暖房」（四長排火坑）、庶民生活「批發茶行與乾燥機」（八個火坑、窨茉莉花）、老屋新生「前店後廠」（灰綠大鐵桶、老秤、封存的兩口焙坑）。同一個店家 ID、建築樣式 `lin-hua-tai` 依年代的 variant（`data/linHuaTaiEraConfig.js`，港口商街也併進來）；擺設用「器物清單」同時產生模型、碰撞與鏡頭遮擋（`builders/linHuaTai/`）。每間兩三件可以近看的器物，並建立**器物分層資訊**（外觀構造 → 食材與做法 → 使用場合 → 在哪家店可以接觸到 → 照片與文獻，`data/inspectLayers.js`），林華泰是第一個完整範例（`data/linHuaTaiObjects.js`）。查證紀錄見 `docs/research/lin-hua-tai.md` 的「室內與器物」；待辦：老屋新生的立面仍是舊式街屋（現在的四層洗石子樓約 1965–66 年改建）。
+- ☑ 第 3 項（2026-11-01）：林華泰茶行四個年代的室內——酒樓繁華「揀茶與包種茶」、摩登「炭焙暖房」（四長排火坑）、庶民生活「批發茶行與乾燥機」（八個火坑、窨茉莉花）、老屋新生「前店後廠」（灰綠大鐵桶、老秤、封存的兩口焙坑）。同一個店家 ID、建築樣式 `lin-hua-tai` 依年代的 variant（`data/linHuaTaiEraConfig.js`，港口商街也併進來）；擺設用「器物清單」同時產生模型、碰撞與鏡頭遮擋（`builders/linHuaTai/`）。每間兩三件可以近看的器物，並建立**器物分層資訊**（外觀構造 → 食材與做法 → 使用場合 → 在哪家店可以接觸到 → 照片與文獻，`data/inspectLayers.js`），林華泰是第一個完整範例（`data/linHuaTaiObjects.js`）。查證紀錄見 `docs/research/lin-hua-tai.md` 的「室內與器物」；庶民生活與老屋新生的街上改成 1965 年前後改建的四層樓（依 Wikimedia Commons 照片，`builders/linHuaTai/linHuaTaiBuilding1965.js`）。
 - 之後的店家沿用同樣的寫法：器物清單（`FURNITURE` 的 build／footprint／height）、靠牆的障礙物補到牆裡、器物的 `layers`。
 - 廟的室內：神像、供品與祭祀細節沒有出處就不畫、不寫（第 5 階段霞海城隍廟的原則）。
 - 仍在營業的店家依公開照片建模，不寫店家沒有公開的經營細節。
