@@ -1242,7 +1242,7 @@ node tests/e2e/era-switching.e2e.mjs http://127.0.0.1:4173/
 
 ## 測試狀態
 
-- 林華泰茶行四個年代的室內（第 11 階段）：新增 `tests/linHuaTai.test.js` 30 項；改 `tests/teaInteriors.test.js`、`tests/yongle.test.js`、`tests/inspect.test.js`（林華泰五個年代都有室內）；`tests/fixtures/smoothBaseline.json` 更新酒樓繁華到老屋新生四個年代（港口商街逐位不變、批次數不變）。`npm test` 1074 項全部通過、`npm run build` 成功。瀏覽器端 `tests/e2e/linHuaTai.e2e.mjs`：桌面精緻畫質一輪全部通過（四個年代走進走出、十件器物的五個分頁、四位人物交談、連續進出 3 次、店裡切換 5 次年代、沒有頁面錯誤）；iPad 流暢畫質在各輪分段跑過四個年代的走進走出、器物與交談，最後一次完整的 iPad 跑法見 PR 說明。e2e 抓到並修正的問題：茉莉花共用幾何（頂點跑到別的地段）、層架與牆之間卡人的窄縫、提示卡重疊（含港口商街版的桿秤）、乾燥機擋住走近窨茉莉花的位置。沒有在 iPad 實機量幀率；繪製呼叫只有室內的批次數（每間 10–11 批），沒有在 SwiftShader 上量整個影格。
+- 林華泰茶行四個年代的室內（第 11 階段）：新增 `tests/linHuaTai.test.js` 29 項；改 `tests/teaInteriors.test.js`、`tests/yongle.test.js`、`tests/inspect.test.js`（林華泰五個年代都有室內）；`tests/fixtures/smoothBaseline.json` 更新酒樓繁華到老屋新生四個年代（港口商街逐位不變、批次數不變）。`npm test` 1074 項全部通過、`npm run build` 成功。瀏覽器端 `tests/e2e/linHuaTai.e2e.mjs`：桌面精緻畫質一輪全部通過（四個年代走進走出、十件器物的五個分頁、四位人物交談、連續進出 3 次、店裡切換 5 次年代、沒有頁面錯誤）；iPad 流暢畫質在各輪分段跑過四個年代的走進走出、器物與交談，最後一次完整的 iPad 跑法見 PR 說明。e2e 抓到並修正的問題：茉莉花共用幾何（頂點跑到別的地段）、層架與牆之間卡人的窄縫、提示卡重疊（含港口商街版的桿秤）、乾燥機擋住走近窨茉莉花的位置。沒有在 iPad 實機量幀率；繪製呼叫只有室內的批次數（每間 10–11 批），沒有在 SwiftShader 上量整個影格。
 - 酒樓繁華與摩登的夜晚再調亮（使用者意見：仍太黑看不到）：這兩個年代夜裡的環境光 1.3、天空光 1.9（其他年代 0.65／1.05），月光照不到的騎樓與街面也看得清楚；只改精緻畫質。截圖在 `docs/lookbook/night-bright/`。
 - 夜晚亮度與雨夜偏灰的再調整（第 14 階段，只在精緻畫質，使用者意見）：年代的夜間曝光酒樓繁華 ×2.1、摩登 ×1.75（太黑看不到）；雨夜時天色與燈光的顏色只往灰色洗 25%、老屋新生夜裡的暗部提亮 0.025 → 0.012（太灰）。`npm test` 全部通過；對照在 `docs/lookbook/night-gray/after/`。
 - 夜晚與雨夜偏灰的修正（第 14 階段，只在精緻畫質）：雨夜時雨天的霧、空氣、河面薄霧、暈影與降低的對比、飽和、曝光只套用兩成（`atmosphere.js` 的 `RAIN_HAZE_KEYS`）；夜晚的光暈加強 0.25 → 0.1、酒樓繁華夜裡的燈籠 0.8 → 0.6、曝光 ×1.75（使用者反映太黑看不到）。另補上第 14 階段 25 筆出處的英文欄位（和英文版 #77 合併後 `englishCoverage` 測試會擋）。`npm test` 1036 項全部通過；前後對照 `docs/lookbook/night-gray/`。
