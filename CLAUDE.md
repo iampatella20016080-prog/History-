@@ -85,6 +85,12 @@ node tests/e2e/viewer.e2e.mjs http://127.0.0.1:5173/
 - 相鄰建築依 `src/data/actionBarLayout.js` 定位，不要讓模型重疊。
 - 展板用 `exhibit` 材質與 `rendering/exhibitAtlas.js` 的圖集。
 
+**經典閱讀**（鄭用錫〈勸和論〉等，章節型態 `classic`）：
+
+- 資料在 `src/data/classicsData.js`，查證紀錄在 `docs/research/classics-three.md`；章節直接掛在對應店家的 `chapters`（只在某個年代出現的用 `shop.eraChapters`，見 `shopForEra`）。
+- 原文節選要逐字出自公版的底本（`tests/fixtures/classics/` 放了維基文庫轉錄全文，`tests/classics.test.js` 比對）；白話與英文翻譯自己寫，不抄譯本。**取不到可核對的原文（例如〈臨床講義〉是日文）就不放節選**，只放篇名、背景與自己整理的重點，並在 `checks` 標清楚。
+- 每篇都要有「有出處」「待核」「查無，不寫」三種狀態，不把沒有證據的事（例如作者到過大稻埕）寫成事實。
+
 **同一種食物的跨年代版本**（例如魷魚羹、米苔目）：
 
 - 每個年代各是一家店，共用同一個 `theme` id。

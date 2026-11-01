@@ -9,7 +9,7 @@
  *   作為「今日可去的地方」，有文化局新聞稿原文。
  * - 年代：人物的活動多在「酒樓繁華」1895–1930 的後半（1916–1930），章節裡明寫。
  * - 待核：生年（1888／1890／1891 並列）、文協成立日 17 日與靜修女學校地點、大安醫院門牌（27／31／33／35 號各說，網站只寫太平町不寫門牌）。
- * - 不寫：墓地遷葬與登錄、紀念公園、路線之爭、政治或歷史評價、稱號；〈臨床講義〉原文查無不寫。語氣只寫行動與事件。
+ * - 不寫：墓地遷葬與登錄、紀念公園、路線之爭、政治或歷史評價、稱號；〈臨床講義〉原文查無不寫（後來新增的「經典閱讀」章也沒有取得原文，只放摘要，見 docs/research/classics-three.md）。語氣只寫行動與事件。
  */
 
 export const JIANG_WEISHUI_HOST_SHOP_ID = 'jiang-shan-lou'
@@ -74,7 +74,7 @@ export const JIANG_WEISHUI_PERSON_CHAPTER = {
 
 /** 接在江山樓文獻章免責文字後面 */
 export const JIANG_WEISHUI_DISCLAIMER_TEXT =
-  '「人物：蔣渭水」一節只寫文獻記下的行動與事件，不作政治或歷史評價，也不用後人給的稱號；生年三說並列、大安醫院門牌、文化協會成立日與地點都標待核。春風得意樓的入股與歇業細節只有莊永明一篇，本站照引出處。查無或與大稻埕街景無關而不寫：墓地的遷葬與登錄、紀念公園、〈臨床講義〉原文、渭水驛站的歷史建築登錄年份。'
+  '「人物：蔣渭水」一節只寫文獻記下的行動與事件，不作政治或歷史評價，也不用後人給的稱號；生年三說並列、大安醫院門牌、文化協會成立日與地點都標待核。春風得意樓的入股與歇業細節只有莊永明一篇，本站照引出處。查無或與大稻埕街景無關而不寫：墓地的遷葬與登錄、紀念公園、〈臨床講義〉的原文（下一章「經典閱讀：臨床講義」只有本站整理的摘要）、渭水驛站的歷史建築登錄年份。'
 
 /**
  * 年表上的大事（只加有出處的年份）：
@@ -108,4 +108,4 @@ export const JIANG_WEISHUI_MAP_PLACE = {
 
 /** 英文版：免責文字（對應 JIANG_WEISHUI_DISCLAIMER_TEXT） */
 export const JIANG_WEISHUI_DISCLAIMER_TEXT_EN =
-  'The section “Person: Jiang Weishui” records only actions and events found in the sources, without political or historical judgement and without the titles later given to him. The three birth years are shown side by side; the street number of Daan Hospital and the date and place of the Cultural Association’s founding are marked to be verified. The details of his stake in and the closure of Chunfeng Deyi Lou come from a single essay by Zhuang Yongming, and this site quotes the source as it stands. Left out because no source was found or because they are unrelated to the Dadaocheng street scene: the reburial and registration of his grave, the memorial park, the original text of “Clinical Lectures”, and the year Weishui Station was designated a historic building.'
+  'The section “Person: Jiang Weishui” records only actions and events found in the sources, without political or historical judgement and without the titles later given to him. The three birth years are shown side by side; the street number of Daan Hospital and the date and place of the Cultural Association’s founding are marked to be verified. The details of his stake in and the closure of Chunfeng Deyi Lou come from a single essay by Zhuang Yongming, and this site quotes the source as it stands. Left out because no source was found or because they are unrelated to the Dadaocheng street scene: the reburial and registration of his grave, the memorial park, the original text of “Clinical Lectures” (the next chapter, “Classic reading: Clinical Lectures”, offers only this site’s own summary), and the year Weishui Station was designated a historic building.'
