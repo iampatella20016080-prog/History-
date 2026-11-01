@@ -4357,6 +4357,20 @@ SOURCES['tcmb-linhuatai-500830'] = {
   context: '店面與工廠相接；店內擺放巨大的鐵桶盛裝茶葉，也保留許多過去的製茶與販賣工具；現在的店面建築在1965年因道路工程改建過一次。條目寫「第一代林大村」，與官網的世代（第三代）不同，本站以官網為準。',
   contextEn: 'The shop and the factory are joined; huge iron drums in the shop hold the tea, and many old tea-making and selling tools are kept; the present shop building was rebuilt once, in 1965, for road works. The entry calls Lin Dacun the “first generation”, which differs from the official website (third generation); this site follows the official website.',
 }
+SOURCES['commons-linhuatai-facade'] = {
+  id: 'commons-linhuatai-facade',
+  citation: 'Wikimedia Commons，〈Lin Hua Tai Tea Shop front view 20210926.jpg〉（Solomon203 攝，2021-09-26，CC BY-SA 4.0）、〈Lin Hua Tai Tea Shop and Chongqing North Road 20181026.jpg〉（Tbatb 攝，2018-10-26，CC BY-SA 4.0）、〈林華泰茶行 20080523.jpg〉（臺北市大同區公所，2008-05-23，CC BY 3.0）。',
+  citationEn: 'Wikimedia Commons, “Lin Hua Tai Tea Shop front view 20210926.jpg” (photo by Solomon203, 26 September 2021, CC BY-SA 4.0), “Lin Hua Tai Tea Shop and Chongqing North Road 20181026.jpg” (photo by Tbatb, 26 October 2018, CC BY-SA 4.0), and “林華泰茶行 20080523.jpg” (Datong District Office, Taipei City, 23 May 2008, CC BY 3.0).',
+  publisher: 'Wikimedia Commons',
+  publisherEn: 'Wikimedia Commons',
+  title: 'Category: Lin Hua Tai Tea Shop',
+  titleEn: 'Category: Lin Hua Tai Tea Shop',
+  url: 'https://commons.wikimedia.org/wiki/File:Lin_Hua_Tai_Tea_Shop_front_view_20210926.jpg',
+  published: '2008–2021年拍攝；2026年11月查閱',
+  publishedEn: 'Photographed 2008–2021; consulted November 2026',
+  context: '庶民生活與老屋新生的店面外觀依這三張照片：一樓騎樓與方柱、中央玻璃門與門楣上的小招牌；二、三樓灰色洗石子牆、白色直立鰭片一路通到屋頂上的框架、鋼框窗與窗下的小通氣孔；騎樓上方深色木條招牌與左邊轉角的直立箱形招牌都是金字；屋頂上往後退的一層。照片沒有室內，也看不出各層的用途。',
+  contextEn: 'The shopfront in the Everyday Life and Old Houses Reborn eras follows these three photographs: an arcade with square columns on the ground floor, a glass door in the centre with a small sign above it; grey granolithic walls on the second and third floors, white vertical fins running up to a frame on the roof, steel-framed windows with small vents beneath; a dark slatted signboard above the arcade and an upright box sign on the left corner, both with gold characters; and a set-back storey on the roof. The photographs show no interior and do not reveal what each floor is used for.',
+}
 SOURCES['tcmb-linhuatai-601589'] = {
   id: 'tcmb-linhuatai-601589',
   citation: '〈曾經是臺灣最大內銷茶供應商的林華泰茶行〉，國家文化記憶庫。',
