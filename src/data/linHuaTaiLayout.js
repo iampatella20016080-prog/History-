@@ -187,7 +187,8 @@ export const LHT_ERA_HOTSPOTS = {
       note: '包種茶：兩張毛邊紙包四兩茶，蓋上茶名與行號', noteEn: 'Baozhong: four taels of tea in two sheets of rough paper, stamped with the tea’s name and the firm’s',
       chapter: 'foods',
       level: 0, radius: 1.8,
-      point: [-0.85, -3.3], prompt: [-0.85, 1.5, -3.3],
+      // 提示移到左上方，不和四方包的近看提示疊在一起（觸控時點得到）
+      point: [-0.85, -3.3], prompt: [-1.45, 2.1, -3.3],
       camera: { position: [0.9, 1.75, -1.7], target: [-1.0, 0.85, -3.5] },
     },
     {
@@ -208,7 +209,7 @@ export const LHT_ERA_HOTSPOTS = {
       note: '四長排火坑、兩條走道；相思木炭蓋著稻糠悶燒，沒有一點煙', noteEn: 'Four long rows of pits and two aisles; acacia charcoal smoulders under rice husk, without a wisp of smoke',
       chapter: 'workshop',
       level: 0, radius: 2.2,
-      point: [-0.1, -5.1], prompt: [-0.1, 1.7, -5.1],
+      point: [-0.1, -5.1], prompt: [0.2, 1.9, -5.1],
       camera: { position: [1.25, 2.1, -4.9], target: [-0.6, 0.4, -8.4] },
     },
   ],

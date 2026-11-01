@@ -86,7 +86,7 @@ const PLAN = Object.fromEntries(
     const hotspots = getShop(ID, eraId).hotspots.map((h) => [h.point.x, h.point.z, h.radius])
     const npcs = talkers
       .filter((npc) => npc.zone === ID)
-      .map((npc) => ({ id: npc.id, stand: standNear(world, npc.position, TALK_RADIUS, [...inspectables.map((item) => [item.position[0], item.position[2], item.radius]), ...hotspots]) }))
+      .map((npc) => ({ id: npc.id, eraId, stand: standNear(world, npc.position, TALK_RADIUS, [...inspectables.map((item) => [item.position[0], item.position[2], item.radius]), ...hotspots]) }))
     return [eraId, { items, npcs }]
   }),
 )
@@ -254,8 +254,9 @@ async function runDevice(browser, device) {
     await frames(8)
     return ok
   }
-  const interactVisible = async () => {
-    if (touch) await page.locator('.shop-prompt.is-visible .shop-prompt__card').first().tap()
+  /** 按 E，或在觸控時點寫著 name 的那張提示卡（店家熱點的提示可能同時出現） */
+  const interactVisible = async (name) => {
+    if (touch) await page.locator('.street-prompt.is-visible .shop-prompt__card').filter({ hasText: name }).first().tap()
     else await page.keyboard.press('KeyE')
   }
   const shot = async (name, position, target) => {
@@ -283,7 +284,7 @@ async function runDevice(browser, device) {
     const near = await waitFor(page, (id) => window.__DDC__.useGameStore.getState().nearbyInspectableId === id, item.id, 20000)
     if (!near) return { ok: false, detail: `沒有提示（${JSON.stringify(await state(page))}）` }
     await frames(4)
-    await interactVisible()
+    await interactVisible(item.label)
     const open = await waitFor(page, () => document.querySelector('.inspect-layer[data-state="open"] .inspect-layers'), null, 20000)
     if (!open) return { ok: false, detail: '沒有開啟分層檢視' }
     const tabs = await page.locator('.inspect-layers__tab').count()
@@ -310,7 +311,7 @@ async function runDevice(browser, device) {
     const near = await waitFor(page, (id) => window.__DDC__.useGameStore.getState().nearbyTalkNpcId === id, npc.id, 20000)
     if (!near) return false
     await frames(4)
-    await interactVisible()
+    await interactVisible(talkForNpc(npc.eraId, npc.id).role)
     const open = await waitFor(page, () => document.querySelector('.dialogue-layer[data-state="open"] .dialogue__line'), null, 15000)
     await press(page.locator('.dialogue__close'))
     await waitFor(page, () => !window.__DDC__.useGameStore.getState().talk, null, 10000)

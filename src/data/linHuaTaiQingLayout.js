@@ -97,7 +97,8 @@ export const LHT_HOTSPOTS = [
     level: 0,
     radius: 1.8,
     point: [-0.7, -2.9],
-    prompt: [-0.7, 1.5, -2.9],
+    // 提示放高一點，不和桿秤的近看提示疊在一起（觸控時點得到）
+    prompt: [-0.7, 2.3, -2.9],
     camera: { position: [0.9, 1.7, -1.4], target: [-0.9, 0.9, -3.1] },
   },
   {

@@ -341,6 +341,17 @@ describe('林華泰茶行：情境人物與可以近看的器物', () => {
     }
   })
 
+  test('店內熱點的提示和器物的近看提示不疊在一起（觸控時兩張卡片都點得到；含港口商街）', () => {
+    for (const era of ERAS) {
+      for (const hotspot of getShop(LIN_HUA_TAI_ID, era.id).hotspots) {
+        for (const item of inspectablesOfEra(era.id)) {
+          const d = Math.hypot(...hotspot.prompt.map((v, i) => v - item.prompt[i]))
+          assert.ok(d > 0.9, `${era.id}：${hotspot.id} 與 ${item.id} 只差 ${d.toFixed(2)} 公尺`)
+        }
+      }
+    }
+  })
+
   test('每個年代有一位店裡的人物可以交談（有站得到、而且比器物與熱點都近的位置），說完可以近看一件器物；對話的出處都存在', () => {
     for (const eraId of LATER) {
       const world = worlds[eraId]
