@@ -1243,7 +1243,7 @@ node tests/e2e/era-switching.e2e.mjs http://127.0.0.1:4173/
 
 ## 測試狀態
 
-- 林華泰茶行 1965 年改建的四層樓（庶民生活、老屋新生）：`tests/linHuaTai.test.js` 新增 6 項（高度、招牌、騎樓柱與步道、鏡頭遮擋）；`tests/lightingMotion.test.js` 招牌數另列四層樓多的 3 塊；`tests/fixtures/smoothBaseline.json` 只更新庶民生活與老屋新生（批次數 27／37 不變）；路線人物「賣歌仔冊的人」（`folk-kua`）原本站的地方離新的騎樓柱太近，往西移 2.2 公尺。`npm test` 1080 項全部通過、`npm run build` 成功；立面截圖桌面精緻與 iPad 流暢各 3 張。這次沒有重跑瀏覽器端的 `linHuaTai.e2e.mjs`；沒有在 iPad 實機看過。
+- 林華泰茶行 1965 年改建的四層樓（庶民生活、老屋新生）：`tests/linHuaTai.test.js` 新增 6 項（高度、招牌、騎樓柱與步道、鏡頭遮擋）；`tests/lightingMotion.test.js` 招牌數另列四層樓多的 3 塊；`tests/fixtures/smoothBaseline.json` 只更新庶民生活與老屋新生（批次數 27／37 不變）；路線人物「賣歌仔冊的人」（`folk-kua`）原本站的地方離新的騎樓柱太近，往西移 2.2 公尺。`npm test` 1080 項全部通過、`npm run build` 成功；立面截圖桌面精緻與 iPad 流暢各 3 張。瀏覽器端 `linHuaTai.e2e.mjs` 桌面精緻與 iPad 流暢一輪共 56 項全部通過；沒有在 iPad 實機看過。
 - 林華泰茶行四個年代的室內（第 11 階段）：新增 `tests/linHuaTai.test.js` 29 項；改 `tests/teaInteriors.test.js`、`tests/yongle.test.js`、`tests/inspect.test.js`（林華泰五個年代都有室內）；`tests/fixtures/smoothBaseline.json` 更新酒樓繁華到老屋新生四個年代（港口商街逐位不變、批次數不變）。`npm test` 1074 項全部通過、`npm run build` 成功。瀏覽器端 `tests/e2e/linHuaTai.e2e.mjs`：桌面精緻畫質一輪全部通過（四個年代走進走出、十件器物的五個分頁、四位人物交談、連續進出 3 次、店裡切換 5 次年代、沒有頁面錯誤）；iPad 流暢畫質完整一輪 28 項全部通過。e2e 抓到並修正的問題：茉莉花共用幾何（頂點跑到別的地段）、層架與牆之間卡人的窄縫、提示卡重疊（含港口商街版的桿秤）、乾燥機擋住走近窨茉莉花的位置。沒有在 iPad 實機量幀率；繪製呼叫只有室內的批次數（每間 10–11 批），沒有在 SwiftShader 上量整個影格。
 - 酒樓繁華與摩登的夜晚再調亮（使用者意見：仍太黑看不到）：這兩個年代夜裡的環境光 1.3、天空光 1.9（其他年代 0.65／1.05），月光照不到的騎樓與街面也看得清楚；只改精緻畫質。截圖在 `docs/lookbook/night-bright/`。
 - 夜晚亮度與雨夜偏灰的再調整（第 14 階段，只在精緻畫質，使用者意見）：年代的夜間曝光酒樓繁華 ×2.1、摩登 ×1.75（太黑看不到）；雨夜時天色與燈光的顏色只往灰色洗 25%、老屋新生夜裡的暗部提亮 0.025 → 0.012（太灰）。`npm test` 全部通過；對照在 `docs/lookbook/night-gray/after/`。
