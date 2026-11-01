@@ -24,6 +24,7 @@ import { pathToFileURL } from 'node:url'
 import { LIN_HUA_TAI_BY_ERA } from '../../src/data/linHuaTaiEraConfig.js'
 import { lhtEraToWorld } from '../../src/data/linHuaTaiLayout.js'
 import { getEra } from '../../src/data/eras.js'
+import { getShop } from '../../src/data/shops.js'
 import { inspectablesOfEra } from '../../src/data/inspectObjects.js'
 import { talkForNpc, TALK_RADIUS } from '../../src/data/talk.js'
 import { resolvePlayerPosition } from '../../src/game/collision.js'
@@ -81,9 +82,11 @@ const PLAN = Object.fromEntries(
     const items = inspectables
       .filter((item) => item.shopId === ID)
       .map((item) => ({ ...item, stand: standNear(world, item.position, item.radius, talkers.map((npc) => [npc.position[0], npc.position[2], TALK_RADIUS])) }))
+    // 路人和器物、路人和店家的熱點都是只提示比較近的：站的位置要離路人最近
+    const hotspots = getShop(ID, eraId).hotspots.map((h) => [h.point.x, h.point.z, h.radius])
     const npcs = talkers
       .filter((npc) => npc.zone === ID)
-      .map((npc) => ({ id: npc.id, stand: standNear(world, npc.position, TALK_RADIUS, inspectables.map((item) => [item.position[0], item.position[2], item.radius])) }))
+      .map((npc) => ({ id: npc.id, stand: standNear(world, npc.position, TALK_RADIUS, [...inspectables.map((item) => [item.position[0], item.position[2], item.radius]), ...hotspots]) }))
     return [eraId, { items, npcs }]
   }),
 )

@@ -340,11 +340,26 @@ describe('林華泰茶行：情境人物與可以近看的器物', () => {
     }
   })
 
-  test('每個年代有一位店裡的人物可以交談，說完可以近看一件器物；對話的出處都存在', () => {
+  test('每個年代有一位店裡的人物可以交談（有站得到、而且比器物與熱點都近的位置），說完可以近看一件器物；對話的出處都存在', () => {
     for (const eraId of LATER) {
+      const world = worlds[eraId]
       const talks = variantOf(eraId).npcs.map((npc) => talkForNpc(eraId, npc.id)).filter(Boolean)
       assert.equal(talks.length, 1, eraId)
       const [talk] = talks
+      const npc = world.npcs.find((item) => item.id === talk.npcId)
+      const rivals = [
+        ...inspectablesOfEra(eraId).map((item) => [item.position[0], item.position[2], item.radius]),
+        ...getShop(LIN_HUA_TAI_ID, eraId).hotspots.map((h) => [h.point.x, h.point.z, h.radius]),
+      ]
+      let found = false
+      for (let gx = npc.position[0] - TALK_RADIUS; gx <= npc.position[0] + TALK_RADIUS && !found; gx += 0.1) {
+        for (let gz = npc.position[2] - TALK_RADIUS; gz <= npc.position[2] + TALK_RADIUS && !found; gz += 0.1) {
+          const d = Math.hypot(gx - npc.position[0], gz - npc.position[2])
+          if (d >= TALK_RADIUS || !walkableAt(world, gx, gz)) continue
+          found = rivals.every(([x, z, r]) => Math.hypot(gx - x, gz - z) >= r || Math.hypot(gx - x, gz - z) > d)
+        }
+      }
+      assert.ok(found, `${eraId} ${talk.npcId}`)
       assert.ok(getInspectObject(talk.objectId), eraId)
       for (const line of [...talk.lines, ...talk.followUps.flatMap((f) => f.lines)]) {
         assert.ok(['sourced', 'fiction'].includes(line.label) && line.textEn, `${eraId} ${line.text}`)
