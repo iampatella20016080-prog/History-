@@ -6,6 +6,7 @@ import { OLD_HOUSE_BUILDERS } from './routeObjects/oldHouseObjects.js'
 import { NEWS_BUILDERS } from './routeObjects/newsObjects.js'
 import { FOLKLORE_BUILDERS } from './routeObjects/folkloreObjects.js'
 import { NEIGHBOUR_BUILDERS } from './routeObjects/neighbourObjects.js'
+import { LHT_INSPECT_BUILDERS } from './linHuaTai/linHuaTaiInspect.js'
 
 /**
  * 器物 3D 檢視的程式建模（第 10 階段）：對照照片與文獻建模，不用 AI 生成的模型。
@@ -19,8 +20,9 @@ import { NEIGHBOUR_BUILDERS } from './routeObjects/neighbourObjects.js'
 
 const box = (x, y, z) => new BoxGeometry(x, y, z)
 
-/* 第 12 階段主題路線的器物（每條路線一個檔案，接受 { detail }）：builders/routeObjects/*.js */
-const ROUTE_BUILDERS = { ...PASTRY_BUILDERS, ...TEMPLE_MEAL_BUILDERS, ...OLD_HOUSE_BUILDERS, ...NEWS_BUILDERS, ...FOLKLORE_BUILDERS, ...NEIGHBOUR_BUILDERS }
+/* 第 12 階段主題路線的器物（每條路線一個檔案，接受 { detail }）：builders/routeObjects/*.js；
+ * 第 11 階段林華泰各年代室內的器物（同樣接受 { detail }）：builders/linHuaTai/linHuaTaiInspect.js */
+const ROUTE_BUILDERS = { ...PASTRY_BUILDERS, ...TEMPLE_MEAL_BUILDERS, ...OLD_HOUSE_BUILDERS, ...NEWS_BUILDERS, ...FOLKLORE_BUILDERS, ...NEIGHBOUR_BUILDERS, ...LHT_INSPECT_BUILDERS }
 
 /* ── 顏色 ── */
 const PINE = '#c8a66c'

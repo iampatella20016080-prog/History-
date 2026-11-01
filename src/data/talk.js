@@ -1,7 +1,8 @@
 /**
  * 路人對話的總表：每個年代有對話的路人（npcId 對應街景的人物）。
  * 對話的格式與標示見 game/talk.js；港口商街的碼頭與茶行（第 10 階段）在 qingPortTalk.js，
- * 第 12 階段主題路線的對話寫在各路線的資料檔（data/routes/*.js 的 TALK，每段對話有 eraId）。
+ * 第 12 階段主題路線的對話寫在各路線的資料檔（data/routes/*.js 的 TALK，每段對話有 eraId）；
+ * 林華泰茶行各年代室內的對話在 linHuaTaiTalk.js。
  */
 import { QING_PORT_TALK } from './qingPortTalk.js'
 import { PASTRY_TALK } from './routes/pastryRoute.js'
@@ -10,8 +11,10 @@ import { OLD_HOUSE_TALK } from './routes/oldHouseRoute.js'
 import { NEWS_TALK } from './routes/newsRoute.js'
 import { FOLKLORE_TALK } from './routes/folkloreRoute.js'
 import { NEIGHBOUR_TALK } from './routes/neighbourRoute.js'
+import { LHT_TALK } from './linHuaTaiTalk.js'
 
-const ROUTE_TALK = [...PASTRY_TALK, ...TEMPLE_MEAL_TALK, ...OLD_HOUSE_TALK, ...NEWS_TALK, ...FOLKLORE_TALK, ...NEIGHBOUR_TALK]
+// 林華泰茶行各年代室內的人物（第 11 階段；data/linHuaTaiTalk.js）也依 eraId 併進來
+const ROUTE_TALK = [...PASTRY_TALK, ...TEMPLE_MEAL_TALK, ...OLD_HOUSE_TALK, ...NEWS_TALK, ...FOLKLORE_TALK, ...NEIGHBOUR_TALK, ...LHT_TALK]
 
 function byEra(talks) {
   const map = { 'qing-port': [...QING_PORT_TALK] }

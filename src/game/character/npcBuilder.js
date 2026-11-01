@@ -145,6 +145,15 @@ export const NPC_LOOKS = {
   banquetTeaSorter: { era: 'banquet', skin: '#e0bb93', hair: 'bun', top: { kind: 'long', color: '#7a6a8a', trim: '#665877' }, bottom: '#3a3f4c', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#e0d6bf' } },
   banquetApprentice: { era: 'banquet', skin: '#d8ad84', hair: 'short', top: { kind: 'long', color: '#a08a62', trim: '#8a764f' }, bottom: '#45403a', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#d6cbb0' } },
   banquetGrandma: { era: 'banquet', skin: '#d9b28c', hair: 'bun', hairColor: '#bdb7ae', top: { kind: 'long', color: '#3f4656', trim: '#343a48' }, bottom: '#2f2c2a', shoes: ['#2a2622', '#2a2622'] },
+  // 林華泰茶行各年代的室內（第 11 階段；不具名的情境人物）
+  lhtBanquetKeeper: { era: 'banquet', skin: '#dcb089', hair: 'short', top: { kind: 'long', color: '#46505e', trim: '#3a4350' }, bottom: '#2f2b28', shoes: ['#2a2622', '#2a2622'] },
+  lhtSorter: { era: 'banquet', skin: '#e2bd96', hair: 'bun', top: { kind: 'long', color: '#8a6c5c', trim: '#74594b' }, bottom: '#39404e', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#e4dac4' } },
+  lhtSorterBlue: { era: 'banquet', skin: '#d9b48e', hair: 'bun', top: { kind: 'long', color: '#56708a', trim: '#465d74' }, bottom: '#443e38', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#dfd4bc' } },
+  lhtModernClerk: { era: 'modern', skin: '#e0b48c', hair: 'short', top: { kind: 'long', color: '#5a6470', trim: '#4a535e' }, bottom: '#34312e', shoes: ['#2a2622', '#2a2622'] },
+  lhtModernRoaster: { era: 'modern', skin: '#c99a70', hair: 'short', top: { kind: 'singlet', color: '#ece5d4' }, bottom: '#4a4740', shoes: ['#3a2c22', '#3a2c22'], extras: { towel: '#e6dfcf', apron: '#7a6c58' } },
+  lhtPostwarClerk: { era: 'postwar', skin: '#dcae86', hair: 'short', top: { kind: 'shirt', color: '#e9e6dc', trim: '#d3cfc2' }, bottom: '#454a54', shoes: ['#2a2622', '#c9bfab'] },
+  lhtPostwarWorker: { era: 'postwar', skin: '#c99a6e', hair: 'short', top: { kind: 'singlet', color: '#ebe6da' }, bottom: '#3f4550', shoes: ['#2a2622', '#c9bfab'], extras: { towel: '#e6dfcf', apron: '#6c6658' } },
+  lhtRevivalStaff: { era: 'revival', hair: 'bob', top: { kind: 'shirt', color: '#8a9a8c', trim: '#768679' }, bottom: '#2f3238', shoes: ['#2a2b2f', '#5c5d60'], extras: { apron: '#3a3a3c' } },
 }
 
 /* ───────────── 姿勢 ───────────── */

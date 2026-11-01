@@ -1779,8 +1779,8 @@ SOURCES['panorama-dadaocheng-1981'] = {
 /* ── 林華泰茶行（查證紀錄見 docs/research/lin-hua-tai.md） ── */
 SOURCES['linhuatai-site'] = {
   id: 'linhuatai-site',
-  citation: '林華泰茶行官方網站，〈基本簡介〉、〈百年老店林華泰〉、〈下一個百年〉、〈林華泰的歷史 1/5–5/5〉，2016年1月。',
-  citationEn: 'Official website of the Lin Huatai Tea Hong (林華泰茶行官方網站), “Basic Introduction” (〈基本簡介〉), “The Century-Old Lin Huatai” (〈百年老店林華泰〉), “The Next Hundred Years” (〈下一個百年〉), “The History of Lin Huatai, parts 1/5–5/5” (〈林華泰的歷史 1/5–5/5〉), January 2016.',
+  citation: '林華泰茶行官方網站，〈基本簡介〉、〈百年老店林華泰〉、〈下一個百年〉、〈我們的專業領域〉、〈過去的採訪紀錄與老照片〉、〈林華泰的歷史 1/5–5/5〉，2016年1月。',
+  citationEn: 'Official website of the Lin Huatai Tea Hong (林華泰茶行官方網站), “Basic Introduction” (〈基本簡介〉), “The Century-Old Lin Huatai” (〈百年老店林華泰〉), “The Next Hundred Years” (〈下一個百年〉), “Our Speciality” (〈我們的專業領域〉), “Past Interviews and Old Photographs” (〈過去的採訪紀錄與老照片〉), “The History of Lin Huatai, parts 1/5–5/5” (〈林華泰的歷史 1/5–5/5〉), January 2016.',
   publisher: '林華泰茶行',
   publisherEn: 'Lin Huatai Tea Hong (林華泰茶行)',
   title: '林華泰茶行官方網站',
@@ -4263,6 +4263,170 @@ Object.assign(SOURCES["zh-wiki-taipei-flood-defense-japanese"], { citationEn: "C
 Object.assign(SOURCES["sinica-taipei-history-map"], { citationEn: "GIS Center, Research Center for Humanities and Social Sciences, Academia Sinica, “Taipei Historical Maps” WMTS service (「臺北百年歷史地圖」).", publisherEn: "Academia Sinica (中央研究院)", titleEn: "Taipei Historical Maps (臺北百年歷史地圖)", contextEn: "Old maps of Taipei 1895–1945, the 1913 Tamsui River plan, 1944–1945 US aerial photographs and post-war aerial photographs, for reading the far-bank landscape." })
 Object.assign(SOURCES["sinica-1945-taipei-poster"], { citationEn: "Academia Sinica Maps and Remote Sensing Digital Archives, “1945 Taipei City Map and Aerial Photograph Poster” (〈1945年臺北城市地圖與空照影像海報〉), 24 July 2014.", publisherEn: "Academia Sinica (中央研究院)", titleEn: "1945 Taipei City Map and Aerial Photograph Poster (1945年臺北城市地圖與空照影像海報)", contextEn: "A poster of Taipei compiled from 1944–1945 US aerial photographs and city maps, showing both banks of the Tamsui River at the end of the war." })
 Object.assign(SOURCES["zh-wiki-guanyinshan"], { citationEn: "Chinese Wikipedia, “Guanyinshan (New Taipei City)” (〈觀音山 (新北市)〉).", publisherEn: "Wikipedia (維基百科)", titleEn: "Guanyinshan, New Taipei City (觀音山)", contextEn: "The main peak, Yinghanling, is about 616 m (609 m in the article text), on the south bank of the Tamsui estuary; “Guanyin breathing mist” was one of the old Eight Views of Tamsui." })
+
+/* ── 第 11 階段：林華泰茶行各年代的室內與器物（查證紀錄見 docs/research/lin-hua-tai.md 的「室內與器物」） ── */
+const NMTH_1904_BOOK = '臺灣總督府殖產局《福爾摩沙烏龍茶》（1904）圖版'
+const NMTH_1904_BOOK_EN = 'plate from Formosa Oolong Tea (《福爾摩沙烏龍茶》), Bureau of Productive Industries, Government-General of Taiwan, 1904'
+const nmth1904 = (id, rno, title, titleEn, usage, usageEn) => {
+  SOURCES[id] = {
+    id,
+    citation: `國立臺灣歷史博物館典藏，「${title}」，${NMTH_1904_BOOK}，登錄號${rno}。`,
+    citationEn: `National Museum of Taiwan History collection, “${titleEn}” (「${title}」), ${NMTH_1904_BOOK_EN}, accession no. ${rno}.`,
+    publisher: '國立臺灣歷史博物館',
+    publisherEn: 'National Museum of Taiwan History',
+    title,
+    titleEn: `${titleEn} (${title})`,
+    url: `https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=${rno}`,
+    published: '1904年（典藏網，2026年11月查閱）',
+    publishedEn: '1904 (online collection, consulted November 2026)',
+    usage,
+    usageEn,
+  }
+}
+nmth1904(
+  'nmth-1904-tea-sorters',
+  '2003.014.0096.0016',
+  '揀茶女',
+  'Tea sorters',
+  '大稻埕的揀茶：婦女圍坐在盛滿茶葉的竹製淺盤旁，孩童與年長者也一同參與，剔除茶枝、茶梗與壞葉；館方說明引 Davidson（1903）估計茶季大稻埕的揀茶女每日超過一萬二千人。',
+  'Tea sorting in Dadaocheng: women sit round bamboo trays heaped with tea, with children and old people joining in, picking out twigs, stalks and spoiled leaves; the museum’s note cites Davidson (1903) estimating more than twelve thousand sorters a day in Dadaocheng in the tea season.',
+)
+nmth1904(
+  'nmth-1904-sifting-tea',
+  '2003.014.0096.0015',
+  '篩選茶葉',
+  'Sifting tea',
+  '五位師傅篩選堆在地上的茶葉，有人拿畚箕、有人拿篩，旁邊疊著茶箱與一袋袋茶葉；館方說明：成品若運往大稻埕多用布袋盛裝，稱為「袋茶」，遠洋運送才改用箱子。',
+  'Five workers sift tea heaped on the floor, some with dustpan-scoops and some with sieves, beside stacked tea chests and bags of tea; the museum’s note says tea bound for Dadaocheng was usually carried in cloth bags, called “bag tea”, and only packed in chests for shipping overseas.',
+)
+nmth1904(
+  'nmth-1904-roasting-room',
+  '2003.014.0096.0013',
+  '烘焙室內部',
+  'Inside the roasting room',
+  '烘焙室：左側牆邊一排木架放淺盤，對面牆邊擺著盛茶的焙籠，轉角砌成灶座，一臺磅秤（推測用來在倒入焙籠前秤茶），光線只從唯一的門口照進來。',
+  'The roasting room: a row of wooden racks for shallow trays along the left wall, roasting baskets of tea along the opposite wall, a stove built into the corner, and a scale (thought to be for weighing tea before it goes into the baskets); light comes in only through the single doorway.',
+)
+nmth1904(
+  'nmth-1904-roasting-baskets',
+  '2003.014.0096.0014',
+  '烘焙室的焙籠',
+  'Roasting baskets in the roasting room',
+  '室內兩側擺滿焙籠；焙籠與炭火相距約一尺，炭火覆上灰燼，不冒煙也不燒成大火；加烘時先燒 50 至 70 斤木炭 12 至 15 小時，炭火覆灰後爐溫可維持約 7 至 10 天，約 7 斤茶葉入焙籠烘 7 至 8 小時。',
+  'Both sides of the room are lined with roasting baskets; the basket sits about a foot above the charcoal, which is banked with ash so it neither smokes nor flares; for re-firing, 50–70 catties of charcoal are burned for 12–15 hours, and once banked with ash the pit stays hot for about 7–10 days, with about 7 catties of tea roasted in a basket for 7–8 hours.',
+)
+SOURCES['nmth-steelyard-2002-005-0156'] = {
+  id: 'nmth-steelyard-2002-005-0156',
+  citation: '國立臺灣歷史博物館典藏，「秤陀1組」，登錄號2002.005.0156。',
+  citationEn: 'National Museum of Taiwan History collection, “Steelyard and Weight, One Set” (「秤陀1組」), accession no. 2002.005.0156.',
+  publisher: '國立臺灣歷史博物館',
+  publisherEn: 'National Museum of Taiwan History',
+  title: '秤陀1組',
+  titleEn: 'Steelyard and Weight, One Set (秤陀1組)',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2002.005.0156',
+  published: '典藏網（2026年11月查閱）',
+  publishedEn: 'Online collection (consulted November 2026)',
+  usage: '桿秤一組，金屬，153.7×46×12.4公分、5.5公斤；館方說明昭和年間以後開始出現以「磅仔」秤重的方式，大型的磅仔為鐵或銅製，下有四個輪子，上有平臺及秤桿。',
+  usageEn: 'A steelyard set, metal, 153.7 × 46 × 12.4 cm, 5.5 kg; the museum’s note says weighing with a “bōng-á” (platform scale) began to appear from the Shōwa years, the large ones made of iron or copper, with four wheels underneath and a platform and beam on top.',
+}
+SOURCES['nmth-sieve-2002-005-0277'] = {
+  id: 'nmth-sieve-2002-005-0277',
+  citation: '國立臺灣歷史博物館典藏，「竹編大篩」，登錄號2002.005.0277。',
+  citationEn: 'National Museum of Taiwan History collection, “Large Woven Bamboo Sieve” (「竹編大篩」), accession no. 2002.005.0277.',
+  publisher: '國立臺灣歷史博物館',
+  publisherEn: 'National Museum of Taiwan History',
+  title: '竹編大篩',
+  titleEn: 'Large Woven Bamboo Sieve (竹編大篩)',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2002.005.0277',
+  published: '典藏網（2026年11月查閱）',
+  publishedEn: 'Online collection (consulted November 2026)',
+  usage: '竹編，66.3×65×18.5公分、807.2公克；緣口內外加厚竹片、藤皮纏繞；館方說明是篩粟、稻穀用的篩，不是茶專用，本站只借用竹編淺盤的做法與尺度。',
+  usageEn: 'Woven bamboo, 66.3 × 65 × 18.5 cm, 807.2 g; the rim is thickened inside and out with bamboo strips bound with rattan; the museum describes it as a sieve for millet and paddy, not one made for tea, and this site borrows only the construction and scale of a woven bamboo tray.',
+}
+SOURCES['tcmb-linhuatai-500830'] = {
+  id: 'tcmb-linhuatai-500830',
+  citation: '馮宥禎，〈繼續傳承茶香的百年老店〉，國家文化記憶庫（建檔單位：國立台灣工藝研究發展中心）。',
+  citationEn: 'Feng Yu-chen (馮宥禎), “The Century-Old Shop That Carries On the Fragrance of Tea” (〈繼續傳承茶香的百年老店〉), Taiwan Cultural Memory Bank (entry by the National Taiwan Craft Research and Development Institute).',
+  publisher: '文化部國家文化記憶庫',
+  publisherEn: 'Taiwan Cultural Memory Bank, Ministry of Culture (文化部國家文化記憶庫)',
+  title: '繼續傳承茶香的百年老店',
+  titleEn: 'The Century-Old Shop That Carries On the Fragrance of Tea (繼續傳承茶香的百年老店)',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_Place&id=500830',
+  published: '2026年11月查閱',
+  publishedEn: 'Consulted November 2026',
+  context: '店面與工廠相接；店內擺放巨大的鐵桶盛裝茶葉，也保留許多過去的製茶與販賣工具；現在的店面建築在1965年因道路工程改建過一次。條目寫「第一代林大村」，與官網的世代（第三代）不同，本站以官網為準。',
+  contextEn: 'The shop and the factory are joined; huge iron drums in the shop hold the tea, and many old tea-making and selling tools are kept; the present shop building was rebuilt once, in 1965, for road works. The entry calls Lin Dacun the “first generation”, which differs from the official website (third generation); this site follows the official website.',
+}
+SOURCES['tcmb-linhuatai-601589'] = {
+  id: 'tcmb-linhuatai-601589',
+  citation: '〈曾經是臺灣最大內銷茶供應商的林華泰茶行〉，國家文化記憶庫。',
+  citationEn: '“Lin Huatai Tea Hong, Once Taiwan’s Largest Supplier of Tea for the Domestic Market” (〈曾經是臺灣最大內銷茶供應商的林華泰茶行〉), Taiwan Cultural Memory Bank.',
+  publisher: '文化部國家文化記憶庫',
+  publisherEn: 'Taiwan Cultural Memory Bank, Ministry of Culture (文化部國家文化記憶庫)',
+  title: '曾經是臺灣最大內銷茶供應商的林華泰茶行',
+  titleEn: 'Lin Huatai Tea Hong, Once Taiwan’s Largest Supplier of Tea for the Domestic Market (曾經是臺灣最大內銷茶供應商的林華泰茶行)',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_Place&id=601589',
+  published: '2026年11月查閱',
+  publishedEn: 'Consulted November 2026',
+  context: '1883年創設時是一層樓的精製包裝廠，現在的建築可能是1966年重慶北路拓寬時所建（推測）；據說店內有一個老闆專用的木製評茶盤，因為常用手抓茶嗅聞而凹陷；早期茶葉用報紙等紙材包裝，後改印刷紙袋，1960年代以後城中分店才用鐵罐。',
+  contextEn: 'When founded in 1883 it was a single-storey refining and packing works; the present building was probably built when Chongqing North Road was widened in 1966 (an inference); it is said that the owner had his own wooden tea-judging tray, worn hollow from his hand scooping up tea to smell it; early on tea was wrapped in newspaper and other paper, later in printed paper bags, and only from the 1960s did the Chengzhong branch use tins.',
+}
+SOURCES['tcmb-tea-judging-tray-258501'] = {
+  id: 'tcmb-tea-judging-tray-258501',
+  citation: '〈審茶盤演進〉，國家文化記憶庫（茶業改良場評茶室的審茶盤）。',
+  citationEn: '“The Evolution of the Tea-Judging Tray” (〈審茶盤演進〉), Taiwan Cultural Memory Bank (trays in the tea-judging room of the Tea Research and Extension Station).',
+  publisher: '文化部國家文化記憶庫',
+  publisherEn: 'Taiwan Cultural Memory Bank, Ministry of Culture (文化部國家文化記憶庫)',
+  title: '審茶盤演進',
+  titleEn: 'The Evolution of the Tea-Judging Tray (審茶盤演進)',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?id=258501&indexCode=Culture_Object',
+  published: '2026年11月查閱',
+  publishedEn: 'Consulted November 2026',
+  usage: '審茶盤在茶葉感官品評時盛裝茶葉：最早是木製，之後換成鐵製，現在多用塑膠；長方形或正方形，可盛 150 至 200 公克，早期的盤有倒茶樣用的缺口。',
+  usageEn: 'The judging tray holds the tea during sensory evaluation: the earliest were wooden, later replaced by iron, and today mostly plastic; oblong or square, holding 150–200 g, the early trays had a notch for pouring out the sample.',
+}
+SOURCES['tcmb-jasmine-scenting-196112'] = {
+  id: 'tcmb-jasmine-scenting-196112',
+  citation: '邱喬嵩，〈臺灣早期茶葉發展主力─茉莉窨花〉，國家文化記憶庫（資料來源：徐英祥《台灣之茶》，2009）。',
+  citationEn: 'Chiu Chiao-sung (邱喬嵩), “Jasmine Scenting, a Mainstay of Taiwan’s Early Tea Trade” (〈臺灣早期茶葉發展主力─茉莉窨花〉), Taiwan Cultural Memory Bank (source: Hsu Ying-hsiang, Taiwan’s Tea (《台灣之茶》), 2009).',
+  publisher: '文化部國家文化記憶庫',
+  publisherEn: 'Taiwan Cultural Memory Bank, Ministry of Culture (文化部國家文化記憶庫)',
+  title: '臺灣早期茶葉發展主力─茉莉窨花',
+  titleEn: 'Jasmine Scenting, a Mainstay of Taiwan’s Early Tea Trade (臺灣早期茶葉發展主力─茉莉窨花)',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_Object&id=196112',
+  published: '2026年11月查閱',
+  publishedEn: 'Consulted November 2026',
+  usage: '傳統花香包種茶：茶葉烘乾後配以茉莉等香花，茶葉 100 斤以茉莉鮮花 30 斤混合，靜置約 20 小時，揀除花後再乾燥。',
+  usageEn: 'Traditional flower-scented baozhong: after drying, the tea is paired with jasmine or other fragrant flowers, 100 catties of tea mixed with 30 catties of fresh jasmine and left for about 20 hours, after which the flowers are picked out and the tea dried again.',
+}
+SOURCES['tcmb-scenting-329600'] = {
+  id: 'tcmb-scenting-329600',
+  citation: '羅士凱，〈薰花茶窨製〉，國家文化記憶庫。',
+  citationEn: 'Lo Shih-kai (羅士凱), “Scenting Flower Tea” (〈薰花茶窨製〉), Taiwan Cultural Memory Bank.',
+  publisher: '文化部國家文化記憶庫',
+  publisherEn: 'Taiwan Cultural Memory Bank, Ministry of Culture (文化部國家文化記憶庫)',
+  title: '薰花茶窨製',
+  titleEn: 'Scenting Flower Tea (薰花茶窨製)',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_Event&id=329600',
+  published: '2026年11月查閱',
+  publishedEn: 'Consulted November 2026',
+  usage: '窨花：在花香最濃時把花和茶葉併堆，每次約 12 小時以上，花香散失前把花篩出，茶與花分別乾燥；可以重複幾次（單薰、雙薰、三薰）。',
+  usageEn: 'Scenting: when the flowers are at their most fragrant they are heaped together with the tea, each time for 12 hours or more; before the scent fades the flowers are sieved out and tea and flowers dried separately; it can be repeated (single, double, triple scenting).',
+}
+SOURCES['tcmb-jasmine-1900-500865'] = {
+  id: 'tcmb-jasmine-1900-500865',
+  citation: '張簡紹君，〈日治時期之茉莉花田影像〉，國家文化記憶庫（影像出自《Formosa Oolong Tea》，1900）。',
+  citationEn: 'Changchien Shao-chun (張簡紹君), “Jasmine Fields in the Japanese Era” (〈日治時期之茉莉花田影像〉), Taiwan Cultural Memory Bank (image from Formosa Oolong Tea, 1900).',
+  publisher: '文化部國家文化記憶庫',
+  publisherEn: 'Taiwan Cultural Memory Bank, Ministry of Culture (文化部國家文化記憶庫)',
+  title: '日治時期之茉莉花田影像',
+  titleEn: 'Jasmine Fields in the Japanese Era (日治時期之茉莉花田影像)',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_Object&id=500865',
+  published: '2026年11月查閱',
+  publishedEn: 'Consulted November 2026',
+  usage: '日治時期的窨花做法：容器底鋪一層茶、其上鋪鮮花，重複三至四次，最上面再鋪茶封住香氣，靜置約 7 至 8 小時，攪拌後再等約 5 小時，然後把花和茶分開、乾燥。',
+  usageEn: 'Scenting in the Japanese era: a layer of tea in the bottom of the container, fresh flowers on top, repeated three or four times, with a final layer of tea to seal in the scent; left for about 7–8 hours, stirred, left about 5 hours more, then flowers and tea separated and dried.',
+}
 
 export function getSource(id) {
   return SOURCES[id] ?? null

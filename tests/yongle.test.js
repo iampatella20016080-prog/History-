@@ -97,7 +97,8 @@ describe('永樂市場：只在「老屋新生」的街底', () => {
       // 1930 與 1945 只有稻舍（迪化街329號店屋）與十字軒糕餅舖的室內與觀賞範圍（見 tests/riceAndShine.test.js、
       // tests/shizixuan.test.js）；港口商街有寶順洋行與林華泰（第 10 階段，見 tests/teaInteriors.test.js）；
       // 戰後另外有慈聖宮廟埕後段的觀賞範圍（豆花攤與糕粿攤，見 tests/templeSnacks.test.js）；任何年代都沒有市場的
-      const expected = { 'qing-port': ['dodd-tea-house', 'lin-hua-tai'], modern: ['rice-and-shine-329', 'shizixuan'], postwar: ['rice-and-shine-329', 'shizixuan'] }[era.id] ?? []
+      // 林華泰茶行五個年代都可以走進去（第 11 階段，見 tests/linHuaTai.test.js）
+      const expected = { 'qing-port': ['dodd-tea-house', 'lin-hua-tai'], banquet: ['lin-hua-tai'], modern: ['lin-hua-tai', 'rice-and-shine-329', 'shizixuan'], postwar: ['lin-hua-tai', 'rice-and-shine-329', 'shizixuan'] }[era.id] ?? []
       assert.deepEqual([...world.interiors.map((item) => item.id)].sort(), expected.sort(), era.id)
       const walkIn = era.id === 'modern' || era.id === 'postwar'
       assert.equal(world.viewerRegions.filter(inRiceAndShineLot).length, walkIn ? 5 : 0, `${era.id} 稻舍`)

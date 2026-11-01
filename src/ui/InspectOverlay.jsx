@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
-import { getInspectObject } from '../data/inspectObjects.js'
+import { getInspectObject, inspectPlaces } from '../data/inspectObjects.js'
 import { getSource } from '../data/sources.js'
 import { inspectRuntime } from '../game/inspectRuntime.js'
 import { rotateInspect, toggleInspectAction, zoomInspect } from '../game/objectInspect.js'
 import { useGameStore } from '../state/useGameStore.js'
 import { usePresence } from './usePresence.js'
 import { useLocalizer, useT } from '../i18n/useT.js'
+import { InspectLayers } from './InspectLayers.jsx'
 
 /**
  * 器物 3D 檢視的介面層：器物本身畫在主畫面的畫布（components/ObjectStage.jsx），
  * 這一層只有手勢區（拖曳旋轉、滾輪或雙指縮放）與下方的說明卡片（標題、小動作、說明與出處）。
+ * 有分層資訊的器物（第 11 階段，data/inspectLayers.js）用五個分頁取代「說明與出處」。
  */
 export function InspectOverlay() {
   const t = useT()
@@ -19,11 +21,14 @@ export function InspectOverlay() {
   const { mounted, state } = usePresence(!!inspect, 300)
   // 小動作按鈕的文字要跟著做了沒（檢視狀態在 inspectRuntime，不觸發 React）：自己記一份目標
   const [actionOn, setActionOn] = useState({})
+  const [layer, setLayer] = useState('form')
   const pointers = useRef(new Map())
   const pinch = useRef(0)
 
   useEffect(() => {
-    if (inspect) setActionOn({})
+    if (!inspect) return
+    setActionOn({})
+    setLayer('form')
   }, [inspect])
 
   const last = useRef(null)
@@ -100,13 +105,17 @@ export function InspectOverlay() {
             ))}
           </div>
         )}
-        <details className="inspect-card__more">
-          <summary>{t('inspect.more')}</summary>
-          {object.paragraphs?.map((paragraph, i) => (
-            <p key={i}>{paragraph}</p>
-          ))}
-          {sources.length > 0 && <p className="inspect-card__sources">{t('common.sourcesLine', { list: sources.map((source) => source.title).join('；') })}</p>}
-        </details>
+        {object.layers ? (
+          <InspectLayers object={object} places={inspectPlaces(object.id)} layer={layer} onLayer={setLayer} />
+        ) : (
+          <details className="inspect-card__more">
+            <summary>{t('inspect.more')}</summary>
+            {object.paragraphs?.map((paragraph, i) => (
+              <p key={i}>{paragraph}</p>
+            ))}
+            {sources.length > 0 && <p className="inspect-card__sources">{t('common.sourcesLine', { list: sources.map((source) => source.title).join('；') })}</p>}
+          </details>
+        )}
       </section>
     </div>
   )
