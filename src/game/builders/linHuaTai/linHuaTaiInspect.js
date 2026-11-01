@@ -231,8 +231,8 @@ function buildTeaDrum({ detail }) {
   const strokes = detail ? 5 : 3
   for (let i = 0; i < strokes; i++) lid.add(SEAL, box(R * (0.85 - i * 0.12), 0.004, 0.03), { p: [-0.02, H + 0.051, -R * 0.4 + i * (R * 0.8) / (strokes - 1)], r: [0, 0.06 * (i - 1), 0] })
   return {
-    radius: 0.66,
-    centerY: 0.6,
+    radius: 0.85,
+    centerY: 0.58,
     viewPitch: 0.3,
     parts: [
       { id: 'drum', geometry: drum.build() },

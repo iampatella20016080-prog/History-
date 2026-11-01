@@ -61,12 +61,12 @@ function walkableAt(world, x, z) {
  * 走近 target 的位置：站得到、在 radius 裡，而且 target 比其他會搶提示的對象（others，路人與器物只提示比較近的）更近；
  * 取 target 最占優勢的一點（遊戲的取捨規則見 game/interactionPick.js）。
  */
-function standNear(world, [x, , z], radius, others) {
+function standNear(world, [x, , z], radius, others, minDistance = 0) {
   let best = null
   for (let gx = x - radius; gx <= x + radius; gx += 0.1) {
     for (let gz = z - radius; gz <= z + radius; gz += 0.1) {
       const d = Math.hypot(gx - x, gz - z)
-      if (d > radius - 0.3 || !walkableAt(world, gx, gz)) continue
+      if (d > radius - 0.3 || d < minDistance || !walkableAt(world, gx, gz)) continue
       const rival = Math.min(...others.map(([ox, oz, r]) => (Math.hypot(gx - ox, gz - oz) < r ? Math.hypot(gx - ox, gz - oz) : Infinity)))
       const margin = rival - d
       if (margin > 0.25 && (!best || margin > best.margin)) best = { x: gx, z: gz, margin }
@@ -86,7 +86,7 @@ const PLAN = Object.fromEntries(
     const hotspots = getShop(ID, eraId).hotspots.map((h) => [h.point.x, h.point.z, h.radius])
     const npcs = talkers
       .filter((npc) => npc.zone === ID)
-      .map((npc) => ({ id: npc.id, eraId, stand: standNear(world, npc.position, TALK_RADIUS, [...inspectables.map((item) => [item.position[0], item.position[2], item.radius]), ...hotspots]) }))
+      .map((npc) => ({ id: npc.id, eraId, at: { x: npc.position[0], z: npc.position[2] }, stand: standNear(world, npc.position, TALK_RADIUS, [...inspectables.map((item) => [item.position[0], item.position[2], item.radius]), ...hotspots], 1.2) }))
     return [eraId, { items, npcs }]
   }),
 )
@@ -230,12 +230,17 @@ async function runDevice(browser, device) {
     const r = await page.evaluate(() => ({ i: window.__lhtRoute.i, stuck: window.__lhtRoute.stuck, p: window.__DDC__.playerState.position.toArray() }))
     return { ok: done && !r.stuck && r.i >= points.length, ...r }
   }
-  const teleport = (p) =>
-    page.evaluate((p) => {
-      const d = window.__DDC__
-      d.playerState.position.set(p.x, 0, p.z)
-      d.cameraState.snap = true
-    }, p)
+  /** 瞬移到 p；給了 face 時鏡頭轉到人物背後、面向 face（像走過去時一樣看得到提示） */
+  const teleport = (p, face = null) =>
+    page.evaluate(
+      ({ p, face }) => {
+        const d = window.__DDC__
+        d.playerState.position.set(p.x, 0, p.z)
+        if (face) d.cameraState.targetYaw = d.cameraState.yaw = Math.atan2(-(face.x - p.x), -(face.z - p.z))
+        d.cameraState.snap = true
+      },
+      { p, face },
+    )
   const openSettings = async () => {
     if (await page.locator('#quality-panel').count()) return
     await press(page.locator('.hud-quality__toggle'))
@@ -262,16 +267,23 @@ async function runDevice(browser, device) {
   const shot = async (name, position, target) => {
     if (!SHOTS) return
     mkdirSync(SHOTS, { recursive: true })
-    await page.evaluate(({ position, target }) => {
-      window.__DDC__.cameraOverride = { position, target }
+    // 拍照時主角先站到店門外的簷下（不擋住店內的構圖；仍在室內的載入範圍裡）
+    const away = W(2.3, 1.0)
+    await page.evaluate(({ position, target, away }) => {
+      const d = window.__DDC__
+      window.__lhtBack = d.playerState.position.toArray()
+      d.playerState.position.set(away.x, 0, away.z)
+      d.cameraOverride = { position, target }
       document.documentElement.classList.add('lht-shot')
-    }, { position, target })
+    }, { position, target, away })
     await frames(24)
     await page.screenshot({ path: join(SHOTS, `${name}-${device}.png`), timeout: TIMEOUT })
     await page.evaluate(() => {
-      delete window.__DDC__.cameraOverride
+      const d = window.__DDC__
+      delete d.cameraOverride
+      d.playerState.position.fromArray(window.__lhtBack)
       document.documentElement.classList.remove('lht-shot')
-      window.__DDC__.cameraState.snap = true
+      d.cameraState.snap = true
     })
     await frames(6)
   }
@@ -280,7 +292,7 @@ async function runDevice(browser, device) {
   /** 走近一件器物、開啟檢視、檢查五個分頁與小動作 */
   const inspectItem = async (eraId, item, shotName) => {
     if (!item.stand) return { ok: false, detail: '找不到可以站的位置' }
-    await teleport(item.stand)
+    await teleport(item.stand, { x: item.position[0], z: item.position[2] })
     const near = await waitFor(page, (id) => window.__DDC__.useGameStore.getState().nearbyInspectableId === id, item.id, 20000)
     if (!near) return { ok: false, detail: `沒有提示（${JSON.stringify(await state(page))}）` }
     await frames(4)
@@ -307,7 +319,8 @@ async function runDevice(browser, device) {
   }
   const talkTo = async (npc) => {
     if (!npc.stand) return false
-    await teleport(npc.stand)
+    // 人物的提示在頭頂上方：站在 1.2 公尺以外、面向人物，提示才在畫面裡
+    await teleport(npc.stand, npc.at)
     const near = await waitFor(page, (id) => window.__DDC__.useGameStore.getState().nearbyTalkNpcId === id, npc.id, 20000)
     if (!near) return false
     await frames(4)
@@ -348,7 +361,7 @@ async function runDevice(browser, device) {
       await shot('05-1945-front', at(-0.9, 1.8, -0.4), at(1.2, 0.8, -3.8))
       await shot('06-1945-dryer', at(-0.3, 2.0, -5.4), at(0.6, 0.6, -9.2))
     } else {
-      await shot('07-2000-drums', at(1.2, 1.8, -0.4), at(-1.0, 0.7, -3.6))
+      await shot('07-2000-drums', at(1.3, 1.85, -1.4), at(-1.0, 0.7, -3.6))
       await shot('08-2000-back', at(0.2, 2.1, -5.7), at(-0.8, 0.5, -9.4))
     }
 
