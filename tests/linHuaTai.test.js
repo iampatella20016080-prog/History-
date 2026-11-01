@@ -329,7 +329,8 @@ describe('林華泰茶行：情境人物與可以近看的器物', () => {
             inspectable: { id: item.id, distance: d },
             talk: talkers.map((npc) => ({ id: npc.id, distance: Math.hypot(sx - npc.position[0], sz - npc.position[2]) })).filter((t) => t.distance < TALK_RADIUS).sort((a, b) => a.distance - b.distance)[0] ?? null,
           })
-          return d < item.radius && picked.inspectable?.id === item.id
+          // 和 e2e 一樣留一點餘裕：離提示半徑的邊緣 0.3 公尺以內、器物比交談的人近 0.25 公尺以上
+          return d < item.radius - 0.3 && picked.inspectable?.id === item.id && talkers.every((npc) => Math.hypot(sx - npc.position[0], sz - npc.position[2]) >= TALK_RADIUS || Math.hypot(sx - npc.position[0], sz - npc.position[2]) - d > 0.25)
         }
         let found = false
         for (let gx = x - item.radius; gx <= x + item.radius && !found; gx += 0.1) {

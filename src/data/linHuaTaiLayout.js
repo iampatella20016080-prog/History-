@@ -108,7 +108,7 @@ export const LHT_VARIANTS = {
       { type: 'platformScale', x: 0.2, z: -4.0, rotationY: Math.PI / 2, style: 'iron' },
       { type: 'chestStack', x: 1.95, z: -4.5, count: 4 },
       { type: 'pitStrip', minX: -2.5, maxX: -0.75, minZ: -9.5, maxZ: -5.9, pits: [[-2.05, -6.35], [-1.2, -6.35], [-2.05, -7.25], [-1.2, -7.25], [-2.05, -8.15], [-1.2, -8.15], [-2.05, -9.05], [-1.2, -9.05]], baskets: [[-2.05, -6.35], [-1.2, -7.25], [-2.05, -8.15]] },
-      { type: 'dryer', x: 1.6, z: -7.3, length: 3.2, width: 1.5, height: 1.55 },
+      { type: 'dryer', x: 1.6, z: -6.9, length: 2.6, width: 1.5, height: 1.55 },
       { type: 'jasmineHeap', x: 0.6, z: -9.85, width: 1.5, depth: 0.9 },
       { type: 'bambooBaskets', x: 2.15, z: -9.85 },
     ],
