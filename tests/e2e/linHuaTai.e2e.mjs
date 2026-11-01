@@ -261,8 +261,23 @@ async function runDevice(browser, device) {
   }
   /** 按 E，或在觸控時點寫著 name 的那張提示卡（店家熱點的提示可能同時出現） */
   const interactVisible = async (name) => {
-    if (touch) await page.locator('.street-prompt.is-visible .shop-prompt__card').filter({ hasText: name }).first().tap()
-    else await page.keyboard.press('KeyE')
+    if (!touch) return page.keyboard.press('KeyE')
+    const card = page.locator('.street-prompt.is-visible .shop-prompt__card').filter({ hasText: name }).first()
+    // 提示卡要在畫面裡才點得到（玩家會轉鏡頭）：不在畫面裡就把鏡頭往左右轉，直到看得到
+    const viewport = page.viewportSize()
+    for (const turn of [0, 0.6, -0.6, 1.2, -1.2, 2.0, -2.0, Math.PI]) {
+      if (turn) {
+        await page.evaluate((turn) => {
+          const d = window.__DDC__
+          d.cameraState.targetYaw = d.cameraState.yaw = d.cameraState.yaw + turn
+          d.cameraState.snap = true
+        }, turn)
+        await frames(6)
+      }
+      const box = await card.boundingBox().catch(() => null)
+      if (box && box.x >= 0 && box.y >= 0 && box.x + box.width <= viewport.width && box.y + box.height <= viewport.height) break
+    }
+    await card.tap({ timeout: 30000 })
   }
   const shot = async (name, position, target) => {
     if (!SHOTS) return
