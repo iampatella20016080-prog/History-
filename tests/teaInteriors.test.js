@@ -58,24 +58,25 @@ describe('寶順洋行與林華泰（港口商街）：室內只在這個年代'
       assert.ok(zone.entry && zone.door && zone.camera && zone.ceiling > 2.5, zone.id)
       assert.ok(zone.loadRadius >= 10 && zone.showRadius > zone.loadRadius, zone.id)
     }
+    // 寶順洋行只在港口商街；林華泰五個年代都可以走進去（第 11 階段，見 tests/linHuaTai.test.js）
     for (const era of ERAS.filter((item) => item.id !== 'qing-port')) {
       const world = buildEraWorldSync(era.id)
-      assert.ok(!world.interiors.some((zone) => zone.id === 'dodd-tea-house' || zone.id === 'lin-hua-tai'), era.id)
+      assert.ok(!world.interiors.some((zone) => zone.id === 'dodd-tea-house'), era.id)
+      assert.ok(world.interiors.some((zone) => zone.id === 'lin-hua-tai'), era.id)
     }
   })
 
-  test('林華泰的地段不旋轉（配置資料的世界座標換算依此假設）、其他年代仍是一般街屋', () => {
+  test('林華泰的地段不旋轉（配置資料的世界座標換算依此假設）；港口商街是 qingPort 版本', () => {
     const lot = getLotPlan().lots.find((item) => item.storeId === 'lin-hua-tai')
     assert.ok(lot)
     assert.equal(lot.rotationY, 0)
     assert.equal(lot.x, LHT_SITE.x)
     assert.equal(lot.z, LHT_SITE.z)
     const shop = getShop('lin-hua-tai')
-    assert.equal(shop.buildingByEra['qing-port'].archetype, 'lin-hua-tai-qing')
-    for (const eraId of ['banquet', 'modern', 'postwar', 'revival']) {
-      assert.ok(!shop.buildingByEra[eraId].archetype, eraId)
-      assert.ok(!getShop('lin-hua-tai', eraId).hotspots, `${eraId} 沒有室內熱點`)
-    }
+    assert.equal(shop.buildingByEra['qing-port'].archetype, 'lin-hua-tai')
+    assert.equal(shop.buildingByEra['qing-port'].variant, 'qingPort')
+    // 其他年代各有自己的版本與熱點（第 11 階段，見 tests/linHuaTai.test.js）
+    for (const eraId of ['banquet', 'modern', 'postwar', 'revival']) assert.notEqual(shop.buildingByEra[eraId].variant, 'qingPort', eraId)
     assert.ok(getShop('lin-hua-tai', 'qing-port').hotspots.length >= 3)
   })
 
@@ -190,13 +191,14 @@ describe('寶順洋行與林華泰：走進去、走出來（碰撞）', () => {
     assert.ok(!walkableAt(qing, ox + 1.8, oz + LHT.partition.z))
   })
 
-  test('換到其他年代時，站在店裡的人物會被移回戶外', () => {
-    for (const door of [DOOR.dodd, DOOR.lht]) {
-      const banquet = buildEraWorldSync('banquet')
-      const p = { x: door.x, z: door.z - 4 }
-      resolvePlayerPosition(p, PLAYER.radius, banquet.collision, 0, { relocate: true })
-      assert.ok(p.z > -4.5, `移到 (${p.x.toFixed(2)}, ${p.z.toFixed(2)})`)
-    }
+  test('換到其他年代時，站在寶順洋行裡的人物會被移回戶外；林華泰在其他年代也能走進去，人物留在店裡可以站的地方', () => {
+    const banquet = buildEraWorldSync('banquet')
+    const p = { x: DOOR.dodd.x, z: DOOR.dodd.z - 4 }
+    resolvePlayerPosition(p, PLAYER.radius, banquet.collision, 0, { relocate: true })
+    assert.ok(p.z > -4.5, `移到 (${p.x.toFixed(2)}, ${p.z.toFixed(2)})`)
+    const q = { x: DOOR.lht.x, z: DOOR.lht.z - 4 }
+    resolvePlayerPosition(q, PLAYER.radius, banquet.collision, 0, { relocate: true })
+    assert.ok(walkableAt(banquet, q.x, q.z), `林華泰 (${q.x.toFixed(2)}, ${q.z.toFixed(2)})`)
   })
 })
 

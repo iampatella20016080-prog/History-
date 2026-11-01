@@ -74,7 +74,8 @@ test('街上的器物：年代存在、objectId 有資料、位置在碼頭南�
   }
   assert.equal(getInspectable('wharf-tea-chest').objectId, 'tea-chest')
   assert.equal(inspectablesOfEra('qing-port').length, 5)
-  assert.equal(inspectablesOfEra('banquet').length, 0)
+  // 酒樓繁華以後的器物都在林華泰的室內（第 11 階段，見 tests/linHuaTai.test.js）
+  assert.ok(inspectablesOfEra('banquet').every((item) => item.shopId === 'lin-hua-tai'))
   // 位置貼著南側的茶箱堆（走近就能近看）
   const south = stackBox(TEA_STACKS.find((stack) => stack.id === 'south'))
   const [x, , z] = getInspectable('wharf-tea-chest').position

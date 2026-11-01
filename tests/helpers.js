@@ -202,3 +202,11 @@ export function inTeaHouseLots(rect) {
     (lot) => rect.minX >= lot.minX - 1e-6 && rect.maxX <= lot.maxX + 1e-6 && rect.minZ >= lot.minZ - 1e-6 && rect.maxZ <= lot.maxZ + 1e-6,
   )
 }
+
+/**
+ * 範圍是否在林華泰茶行的地段裡（x=-22、z=-4.5、面寬 6、進深 11，加上簷下步道與店門口）：
+ * 這家店五個年代都可以走進去（第 10、11 階段）；其他店家的測試檢查「這個年代沒有室內」時用它排除。
+ */
+export function inLinHuaTaiLot(rect) {
+  return rect.minX >= -25 - 1e-6 && rect.maxX <= -19 + 1e-6 && rect.minZ >= -15.5 - 1e-6 && rect.maxZ <= -4.5 + 1.7 + 2.4 + 0.5 + 1e-6
+}

@@ -20,7 +20,7 @@ import { templeKuehStallCollision } from '../builders/templeKuehStall.js'
 import { yongleMiTaiMuCollision, yongleMiTaiMuFootprint } from '../builders/yongleMiTaiMuExterior.js'
 import { riceAndShineCollision } from '../builders/riceAndShine/riceAndShineExterior.js'
 import { doddCollision, doddFootprint } from '../builders/doddTeaHouse.js'
-import { linHuaTaiQingCollision } from '../builders/linHuaTaiQing.js'
+import { linHuaTaiCollision } from '../builders/linHuaTai/linHuaTai.js'
 import { shizixuanCollision, shizixuanFootprint } from '../builders/shizixuan/shizixuanExterior.js'
 
 /**
@@ -397,12 +397,12 @@ export function createEraLayout(era) {
           extraWalkable.push(walk)
           extraObstacles.push(...obstacles)
         }
-        // 林華泰茶行・港口商街版：一般地段，這個年代可以走進去（簷下步道、前店、隔間門與焙茶區）
-        if (config.archetype === 'lin-hua-tai-qing') {
+        // 林華泰茶行：一般地段，五個年代都可以走進去（簷下步道、前店、隔間門與店後的工作間；依年代的 variant）
+        if (config.archetype === 'lin-hua-tai') {
           const cos = Math.cos(lot.rotationY)
           const sin = Math.sin(lot.rotationY)
           const transform = (x, z) => ({ x: lot.x + x * cos + z * sin, z: lot.z - x * sin + z * cos })
-          const collision = linHuaTaiQingCollision(config, transform)
+          const collision = linHuaTaiCollision(config, transform)
           extraWalkable.push(...collision.walkable)
           extraObstacles.push(...collision.obstacles)
         }

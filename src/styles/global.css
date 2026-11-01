@@ -3282,6 +3282,91 @@ kbd {
   opacity: 0.68;
 }
 
+/* 第 11 階段：器物的分層資訊（外觀構造 → 食材與做法 → 使用場合 → 在哪家店 → 照片與文獻） */
+.inspect-layers {
+  margin-top: 10px;
+  font-size: 0.8rem;
+}
+
+.inspect-layers__tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.inspect-layers__tab {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 34px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.inspect-layers__tab[aria-selected='true'] {
+  background: color-mix(in srgb, var(--vermilion) 12%, transparent);
+  border-color: color-mix(in srgb, var(--vermilion) 55%, transparent);
+  color: var(--vermilion);
+}
+
+.inspect-layers__step {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 0.68rem;
+  border: 1px solid currentColor;
+  opacity: 0.75;
+}
+
+.inspect-layers__panel {
+  margin-top: 6px;
+}
+
+.inspect-layers__note,
+.inspect-layers__places {
+  margin: 6px 0 0;
+  line-height: 1.6;
+}
+
+.inspect-layers__places {
+  padding-left: 1.2em;
+}
+
+.inspect-layers__status {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 5px;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  border-radius: 2px;
+  border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
+  opacity: 0.85;
+  vertical-align: 1px;
+}
+
+.inspect-layers__status--pending,
+.inspect-layers__status--reconstruction {
+  color: var(--vermilion);
+  border-color: rgba(165, 64, 44, 0.45);
+}
+
+.inspect-layers__cite {
+  display: block;
+  font-size: 0.72rem;
+  opacity: 0.6;
+}
+
 /* 器物章節：開啟 3D 檢視的按鈕（取代原本的 CSS 立體模型） */
 .object-launch {
   display: flex;

@@ -23,6 +23,8 @@ import {
 import { HUANG_YUJIE_HOTSPOTS, MUSEUM, MUSEUM_SITE, museumToWorld } from './huangYujieLayout.js'
 import { DODD_HOTSPOTS, doddToWorld } from './doddLayout.js'
 import { LHT_HOTSPOTS, lhtToWorld } from './linHuaTaiQingLayout.js'
+import { LHT_ERA_HOTSPOTS, lhtEraToWorld } from './linHuaTaiLayout.js'
+import { LIN_HUA_TAI_BY_ERA } from './linHuaTaiEraConfig.js'
 import { MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN } from './huangYujieMuseum.js'
 import { ACTION_BAR_SITE } from './actionBarLayout.js'
 import { LI_TING_XIANG_ID, LI_TING_XIANG_SOURCE_IDS, LTX_CHAPTERS, LTX_ERA_NOTES, LTX_YEAR_NOTE, LTX_YEAR_NOTE_EN } from './liTingXiangData.js'
@@ -3172,16 +3174,20 @@ export const SHOPS = [
       goods: 'tea',
       sign: { text: '林華泰茶行', style: 'wood' },
     },
+    // 同一棟建築、同一個地段，五個年代都可以走進去：依年代的 variant 換外殼、擺設、人物與熱點（data/linHuaTaiEraConfig.js）。
+    // 港口商街是第 10 階段（builders/linHuaTaiQing.js），其他四個年代是第 11 階段（builders/linHuaTai/）；格局都是歷史情境重建
     buildingByEra: {
-      // 第 10 階段：港口商街版可以走進去（前店、秤茶桌、焙茶區；歷史情境重建，builders/linHuaTaiQing.js）
-      'qing-port': { condition: 'new', archetype: 'lin-hua-tai-qing' },
-      banquet: { condition: 'mature', sign: { text: '林華泰茶行', style: 'gold' } },
-      modern: { condition: 'mature', sign: { text: '林華泰茶行', style: 'lacquer' } },
-      postwar: { condition: 'aged', sign: { text: '林華泰茶行', style: 'painted' } },
-      revival: { condition: 'restored', sign: { text: '林華泰茶行', style: 'lacquer' } },
+      'qing-port': { condition: 'new', archetype: 'lin-hua-tai', variant: LIN_HUA_TAI_BY_ERA['qing-port'].variant },
+      banquet: { condition: 'mature', archetype: 'lin-hua-tai', variant: LIN_HUA_TAI_BY_ERA.banquet.variant, sign: { text: '林華泰茶行', style: 'gold' } },
+      modern: { condition: 'mature', archetype: 'lin-hua-tai', variant: LIN_HUA_TAI_BY_ERA.modern.variant, sign: { text: '林華泰茶行', style: 'lacquer' } },
+      postwar: { condition: 'aged', archetype: 'lin-hua-tai', variant: LIN_HUA_TAI_BY_ERA.postwar.variant, sign: { text: '林華泰茶行', style: 'painted' } },
+      revival: { condition: 'restored', archetype: 'lin-hua-tai', variant: LIN_HUA_TAI_BY_ERA.revival.variant, sign: { text: '林華泰茶行', style: 'lacquer' } },
     },
-    // 只有港口商街的版本有室內的資訊熱點（秤茶桌、焙茶區；其他年代仍是一般店面）
-    eras: { 'qing-port': { hotspots: hotspotsToWorld(LHT_HOTSPOTS, lhtToWorld) } },
+    // 每個年代室內的資訊熱點（用 getShop('lin-hua-tai', eraId) 取得）
+    eras: {
+      'qing-port': { hotspots: hotspotsToWorld(LHT_HOTSPOTS, lhtToWorld) },
+      ...Object.fromEntries(['banquet', 'modern', 'postwar', 'revival'].map((eraId) => [eraId, { hotspots: hotspotsToWorld(LHT_ERA_HOTSPOTS[LIN_HUA_TAI_BY_ERA[eraId].variant], lhtEraToWorld) }])),
+    },
     // 各年代介紹視窗上方的「此時期的林華泰茶行」；家族口述整理自官網〈林華泰的歷史〉
     eraNotes: {
       'qing-port':

@@ -6,6 +6,7 @@ import { OLD_HOUSE_OBJECTS } from './routes/oldHouseRoute.js'
 import { NEWS_OBJECTS } from './routes/newsRoute.js'
 import { FOLKLORE_OBJECTS } from './routes/folkloreRoute.js'
 import { NEIGHBOUR_OBJECTS } from './routes/neighbourRoute.js'
+import { LHT_INSPECTABLES, LHT_OBJECTS, LHT_OBJECT_LAYERS } from './linHuaTaiObjects.js'
 
 /**
  * 器物 3D 檢視的器物資料（第 10 階段）：標題、說明、小動作與出處。
@@ -14,6 +15,8 @@ import { NEIGHBOUR_OBJECTS } from './routes/neighbourRoute.js'
  *
  * reconstruction：形制查無、依文獻描述與一般樣式重建的器物，介面標「歷史情境重建」。
  * 第 12 階段主題路線的器物寫在各路線的資料檔（data/routes/*.js 的 OBJECTS），合併進這張表。
+ * 第 11 階段林華泰各年代室內的器物在 data/linHuaTaiObjects.js：分層資訊（layers，格式見 data/inspectLayers.js）
+ * 的第一個完整範例；林華泰原有的桿秤、焙籠與茶籌也補上分層資訊（LHT_OBJECT_LAYERS）。
  */
 
 export const INSPECT_OBJECTS = {
@@ -113,7 +116,9 @@ export const INSPECT_OBJECTS = {
   ...NEWS_OBJECTS,
   ...FOLKLORE_OBJECTS,
   ...NEIGHBOUR_OBJECTS,
+  ...LHT_OBJECTS,
 }
+for (const [id, layers] of Object.entries(LHT_OBJECT_LAYERS)) INSPECT_OBJECTS[id] = { ...INSPECT_OBJECTS[id], layers }
 
 export function getInspectObject(id) {
   return INSPECT_OBJECTS[id] ?? null
@@ -139,6 +144,7 @@ export const STREET_INSPECTABLES = [
   {
     id: 'dodd-tea-tally',
     eraId: 'qing-port',
+    shopId: 'dodd-tea-house',
     objectId: 'tea-tally',
     label: '揀茶的茶籌',
     labelEn: 'Tea tallies',
@@ -147,6 +153,7 @@ export const STREET_INSPECTABLES = [
   {
     id: 'dodd-roasting-basket',
     eraId: 'qing-port',
+    shopId: 'dodd-tea-house',
     objectId: 'roasting-basket',
     label: '待用的焙籠',
     labelEn: 'Roasting basket',
@@ -156,6 +163,7 @@ export const STREET_INSPECTABLES = [
   {
     id: 'lht-tea-scale',
     eraId: 'qing-port',
+    shopId: 'lin-hua-tai',
     objectId: 'tea-scale',
     label: '秤茶桌上的桿秤',
     labelEn: 'Steelyard on the weighing table',
@@ -164,15 +172,29 @@ export const STREET_INSPECTABLES = [
   {
     id: 'lht-roasting-basket',
     eraId: 'qing-port',
+    shopId: 'lin-hua-tai',
     objectId: 'roasting-basket',
     label: '待用的焙籠',
     labelEn: 'Roasting basket',
     ...LHT_INSPECT_SPOTS['lht-roasting-basket'],
   },
+  // 林華泰茶行酒樓繁華到老屋新生的室內（第 11 階段；data/linHuaTaiObjects.js）
+  ...LHT_INSPECTABLES,
 ]
 
 export function inspectablesOfEra(eraId) {
   return STREET_INSPECTABLES.filter((item) => item.eraId === eraId)
+}
+
+/**
+ * 這件器物在街上（店裡）可以近看的地方：年代、店家與標籤，依年代順序。
+ * 器物分層資訊的「在哪家店可以接觸到」由這裡自動列出（data/inspectLayers.js）。
+ */
+export function inspectPlaces(objectId) {
+  const order = ['qing-port', 'banquet', 'modern', 'postwar', 'revival']
+  return STREET_INSPECTABLES.filter((item) => item.objectId === objectId)
+    .map(({ id, eraId, shopId, label, labelEn }) => ({ id, eraId, shopId: shopId ?? null, label, labelEn }))
+    .sort((a, b) => order.indexOf(a.eraId) - order.indexOf(b.eraId))
 }
 
 export function getInspectable(id) {

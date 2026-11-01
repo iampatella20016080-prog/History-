@@ -64,8 +64,7 @@ import { sceneBox, sceneNpcs, scenesForEra } from '../../data/streetPropsLayout.
 import { routeFigureBox, routeFigureNpcs, routeFiguresOfEra } from '../../data/routeFigures.js'
 import { buildDoddTeaHouse } from '../builders/doddTeaHouse.js'
 import { buildDoddTeaHouseInterior } from '../builders/doddTeaHouseInterior.js'
-import { buildLinHuaTaiQing } from '../builders/linHuaTaiQing.js'
-import { buildLinHuaTaiQingInterior } from '../builders/linHuaTaiQingInterior.js'
+import { buildLinHuaTai, buildLinHuaTaiInterior } from '../builders/linHuaTai/linHuaTai.js'
 import { getEra } from '../../data/eras.js'
 import { createEraLayout } from './eraLayout.js'
 
@@ -74,9 +73,10 @@ import { createEraLayout } from './eraLayout.js'
  */
 export const BUILDING_BUILDERS = {
   minnan: buildShophouse,
-  // 港口商街的寶順洋行（精製茶廠）與林華泰茶行（前店＋焙茶區）：可以走進去（第 10 階段）
+  // 港口商街的寶順洋行（精製茶廠）：可以走進去（第 10 階段）
   'dodd-tea-house': buildDoddTeaHouse,
-  'lin-hua-tai-qing': buildLinHuaTaiQing,
+  // 林華泰茶行：同一棟建築依年代的 variant 換外殼與室內（港口商街第 10 階段、其他年代第 11 階段；data/linHuaTaiEraConfig.js）
+  'lin-hua-tai': buildLinHuaTai,
   baroque: buildArcadeBuilding,
   deco: buildArcadeBuilding,
   postwar: buildArcadeBuilding,
@@ -151,7 +151,7 @@ export const BUILDING_BUILDERS = {
  */
 export const BUILDING_INTERIORS = {
   'dodd-tea-house': buildDoddTeaHouseInterior,
-  'lin-hua-tai-qing': buildLinHuaTaiQingInterior,
+  'lin-hua-tai': buildLinHuaTaiInterior,
   'yongle-market': buildYongleInterior,
   'action-bar': buildActionBarInterior,
   'luguo-cafe': buildLuguoCafeInterior,
