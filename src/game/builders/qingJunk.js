@@ -163,9 +163,16 @@ export function buildJunkDeck(b, detail = b) {
   b.cylinder('dark', 0.16, 0.13, 0.38, 8, [-0.1, DECK_Y + 0.19, 0.7], { tint: '#6b5240' })
   b.cylinder('wood', 0.15, 0.13, 0.3, 8, [0.2, DECK_Y + 0.15, 0.7], { tint: '#8d6c4d' })
   detail.cylinder('dark', 0.13, 0.13, 0.02, 8, [-0.1, DECK_Y + 0.39, 0.7], { tint: '#4a3f33' })
+  // 後甲板右舷角落：兩個疊起的鴉片箱（進口貨，等著卸上岸；外觀查無，只畫木箱與麻繩，不畫內容物）
+  for (const [y, rot] of [[0.02, 0.05], [0.38, -0.08]]) {
+    b.group([-3.7, DECK_Y + y, -1.47], rot, () => {
+      b.box('wood', [0.46, 0.36, 0.42], [0, 0.18, 0], { tint: '#8a6a4a', grime: 0.4 })
+      detail.box('dark', [0.48, 0.03, 0.44], [0, 0.26, 0], { tint: '#5a4a38' })
+    })
+  }
   // 後甲板：繩索捲與水桶
-  b.cylinder('dark', 0.3, 0.3, 0.16, 10, [-3.2, DECK_Y + 0.08, -1.2], { tint: '#6b5a44' })
-  detail.cylinder('dark', 0.2, 0.2, 0.2, 10, [-3.2, DECK_Y + 0.1, -1.2], { tint: '#7a6850' })
+  b.cylinder('dark', 0.3, 0.3, 0.16, 10, [-3.0, DECK_Y + 0.08, -0.35], { tint: '#6b5a44' })
+  detail.cylinder('dark', 0.2, 0.2, 0.2, 10, [-3.0, DECK_Y + 0.1, -0.35], { tint: '#7a6850' })
   b.cylinder('wood', 0.14, 0.12, 0.3, 8, [-2.4, DECK_Y + 0.15, -1.35], { tint: '#8d6c4d' })
   // 甲板上散落的篾條與一張草蓆（精緻畫質）
   detail.box('bamboo', [1.1, 0.02, 0.6], [-3.9, DECK_Y + 0.045, 0.9], { tint: '#cdb98a' })

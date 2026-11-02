@@ -88,6 +88,8 @@ export const DECK_OBSTACLES = [
   { id: 'mast', minX: MAST.x - MAST.radius, maxX: MAST.x + MAST.radius, minZ: -MAST.radius, maxZ: MAST.radius, height: MAST.height },
   { id: 'hatch', ...HATCH, height: 0.95 },
   { id: 'bow', minX: 4.7, maxX: 5.5, minZ: -1.75, maxZ: 1.75, height: 0.6 },
+  // 後甲板右舷角落：等著卸上岸的鴉片箱（進口貨；只有箱子）
+  { id: 'opium-chests', minX: -3.95, maxX: -3.45, minZ: -1.72, maxZ: -1.22, height: 0.75 },
 ]
 
 /** 棧橋頭：換年代、落水或回程時人物回到這裡，面向街道（+x） */
@@ -272,6 +274,7 @@ export const DECK_INSPECT_SPOTS = {
   'junk-camphor-box': { local: [2.2, 0.75, -0.55], prompt: [2.2, 1.5, -0.55], radius: 1.4 },
   // 壓艙石的提示點在艙口左舷的框邊（站在艙口旁往下看），和茶箱、樟腦箱各有自己最近的站位
   'junk-ballast-stones': { local: [2.7, 0.3, 0.7], prompt: [2.7, 1.7, 0.7], radius: 1.3 },
+  'junk-opium-chest': { local: [-3.7, 0.5, -1.47], prompt: [-3.7, 1.4, -1.47], radius: 1.4 },
   'junk-boat-eye': { local: [5.1, 0.6, 1.4], prompt: [5.0, 1.5, 1.2], radius: 1.7 },
 }
 
