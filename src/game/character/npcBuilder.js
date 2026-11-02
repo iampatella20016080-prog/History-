@@ -157,6 +157,8 @@ export const NPC_LOOKS = {
   lhtModernRoaster: { era: 'modern', skin: '#c99a70', hair: 'short', top: { kind: 'singlet', color: '#ece5d4' }, bottom: '#4a4740', shoes: ['#3a2c22', '#3a2c22'], extras: { towel: '#e6dfcf', apron: '#7a6c58' } },
   lhtPostwarClerk: { era: 'postwar', skin: '#dcae86', hair: 'short', top: { kind: 'shirt', color: '#e9e6dc', trim: '#d3cfc2' }, bottom: '#454a54', shoes: ['#2a2622', '#c9bfab'] },
   lhtPostwarWorker: { era: 'postwar', skin: '#c99a6e', hair: 'short', top: { kind: 'singlet', color: '#ebe6da' }, bottom: '#3f4550', shoes: ['#2a2622', '#c9bfab'], extras: { towel: '#e6dfcf', apron: '#6c6658' } },
+  // 昭和浪漫洗濯屋（老屋新生）：吧台裡的店員（不具名、不說話）
+  showaStaff: { era: 'revival', hair: 'bob', top: { kind: 'tee', color: '#e9e3d5' }, bottom: '#2f3238', shoes: ['#2a2b2f', '#5c5d60'], extras: { apron: '#3d4a5c' } },
   lhtRevivalStaff: { era: 'revival', hair: 'bob', top: { kind: 'shirt', color: '#8a9a8c', trim: '#768679' }, bottom: '#2f3238', shoes: ['#2a2b2f', '#5c5d60'], extras: { apron: '#3a3a3c' } },
   // 第 11 階段有記名茶各年代室內的人物（不具名的情境人物）：刷嘜頭的夥計、揀茶女、焙茶師傅、南管樂人
   yjBanquetMarker: { era: 'banquet', skin: '#d4a67c', hair: 'short', top: { kind: 'long', color: '#6a6250', trim: '#585140' }, bottom: '#3a3632', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#bfb39a' } },
@@ -262,6 +264,16 @@ export const NPC_POSES = {
     left: { shoulder: 0.62, spread: 0.06, twist: -0.22, elbow: 1.0 },
     anim: { elbow: [1.05, 2.25], period: 3.0, nod: 0.12, turn: 0.08 },
     holds: 'chopsticks',
+  },
+  // 坐著吃霜淇淋（昭和浪漫洗濯屋的客人）：右手拿著甜筒在胸前與嘴邊之間來回，左手放在桌上
+  softServe: {
+    seated: true,
+    lean: 0.1,
+    head: 0.16,
+    right: { shoulder: 0.55, spread: 0.06, twist: -0.3, elbow: 1.5 },
+    left: { shoulder: 0.6, spread: 0.08, twist: -0.2, elbow: 0.95 },
+    anim: { elbow: [1.4, 2.1], period: 4.2, nod: 0.08, turn: 0.1 },
+    holds: 'cone',
   },
 }
 
@@ -391,6 +403,10 @@ function forearm(parts, look, holds, frame) {
   } else if (holds === 'ladle') {
     parts.add('#b9bec0', tube(0.008, 0.008, 0.42, 6), { p: [0, -FOREARM - 0.02, 0.17], r: [Math.PI / 2 - 0.5, 0, 0], frame })
     parts.add('#aeb3b5', new SphereGeometry(0.05, 10, 6, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), { p: [0, -FOREARM - 0.2, 0.36], frame })
+  } else if (holds === 'cone') {
+    // 餅乾甜筒與白色的霜淇淋（尖端朝上）
+    parts.add('#c98f4e', tube(0.032, 0.006, 0.11, 8), { p: [0, -FOREARM - 0.02, 0.06], r: [Math.PI, 0, 0], frame })
+    parts.add('#f4efe4', tube(0.012, 0.036, 0.07, 10), { p: [0, -FOREARM + 0.07, 0.06], frame })
   } else if (holds === 'phone') {
     parts.add('#26272b', box(0.075, 0.012, 0.14), { p: [0.03, -FOREARM - 0.03, 0.03], r: [0.2, 0, 0], frame })
   }

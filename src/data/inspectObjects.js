@@ -10,6 +10,7 @@ import { LHT_INSPECTABLES, LHT_OBJECTS, LHT_OBJECT_LAYERS } from './linHuaTaiObj
 import { QING_BOARDING_INSPECTABLES, QING_BOARDING_OBJECTS } from './qingBoardingObjects.js'
 import { YJ_INSPECTABLES, YJ_OBJECTS, YJ_WHERE } from './youJiObjects.js'
 import { XFC_EXTRA_NOTES, XFC_INSPECTABLES, XFC_OBJECTS } from './xinFangChunObjects.js'
+import { SHOWA_INSPECTABLES, SHOWA_OBJECTS } from './showaLaundryObjects.js'
 
 /**
  * 器物 3D 檢視的器物資料（第 10 階段）：標題、說明、小動作與出處。
@@ -126,6 +127,8 @@ export const INSPECT_OBJECTS = {
   ...YJ_OBJECTS,
   // 新芳春茶行各年代室內（第 11 階段；data/xinFangChunObjects.js）：切茶機、優良茶獎狀、外銷鐵罐、算盤
   ...XFC_OBJECTS,
+  // 昭和浪漫洗濯屋（老屋新生）：舊招牌、霜淇淋模型、炭火熨斗、木桶與洗衣板（data/showaLaundryObjects.js）
+  ...SHOWA_OBJECTS,
 }
 for (const [id, layers] of Object.entries(LHT_OBJECT_LAYERS)) INSPECT_OBJECTS[id] = { ...INSPECT_OBJECTS[id], layers }
 // 共用器物在其他店家的補充說明（「在哪家店可以接觸到」這一層）
@@ -202,6 +205,8 @@ export const STREET_INSPECTABLES = [
   ...YJ_INSPECTABLES,
   // 新芳春茶行各年代的室內（level 1 在二樓；data/xinFangChunObjects.js）
   ...XFC_INSPECTABLES,
+  // 昭和浪漫洗濯屋的門口與一樓（data/showaLaundryObjects.js）
+  ...SHOWA_INSPECTABLES,
 ]
 
 export function inspectablesOfEra(eraId) {

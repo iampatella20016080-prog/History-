@@ -80,6 +80,8 @@ import { RICE_AND_SHINE_ID, riceAndShineEraConfig } from './riceAndShineEraConfi
 import { RICE_HOTSPOTS, RS, riceToWorld } from './riceAndShineLayout.js'
 import { RICE_CHAPTERS, RICE_ERA_NOTES, RICE_RECORD } from './riceAndShineData.js'
 import { SHIZIXUAN_ID, shizixuanEraConfig } from './shizixuanEraConfig.js'
+import { SHOWA_CHAPTERS, SHOWA_ERA_NOTE, SHOWA_ERA_NOTE_EN, SHOWA_LAUNDRY_ID, SHOWA_SOURCE_IDS } from './showaLaundryData.js'
+import { SHOWA_HOTSPOTS, SHOWA_SHELL, SHOWA_SITE, SHOWA_VARIANT, showaToWorld } from './showaLaundryLayout.js'
 import { EARLY, EARLY_SITE, MODERN, POSTWAR, SZX_HOTSPOTS, WIDE_SITE, szxToWorld } from './shizixuanLayout.js'
 import { SZX_CHAPTERS, SZX_ERA_NOTES, SZX_RECORD } from './shizixuanData.js'
 import {
@@ -4536,6 +4538,44 @@ export const SHOPS = [
           },
         ]),
     ),
+  },
+  // 昭和浪漫洗濯屋（安西街3號）：老洗衣店改建的霜淇淋專賣店，只在「老屋新生」。河岸廣場東南角的轉角老屋，
+  // 一樓可以走進去（共用的街屋室內）、二樓不開放；位置、器物與人物在 data/showaLaundryLayout.js，章節在 showaLaundryData.js
+  {
+    id: SHOWA_LAUNDRY_ID,
+    name: '昭和浪漫洗濯屋',
+    nameEn: 'Showa Roman Laundry',
+    status: 'open',
+    year: 2022,
+    yearLabel: '2022年開幕',
+    yearLabelEn: 'Opened in 2022',
+    yearNote: '2022年7月30日正式開幕（媒體報導）。據說建築是約80年的老洗衣店，也有一篇寫1937年的老宅，都還沒有核對，不寫成屋齡。',
+    yearNoteEn: 'Officially opened on 30 July 2022 (press reports). Reportedly the building is a laundry about 80 years old, and one article says a house built in 1937; neither has been verified, so no building age is given.',
+    category: '霜淇淋・和菓子・老屋',
+    categoryEn: 'Soft serve | Wagashi | Old house',
+    seal: '霜淇淋',
+    sealEn: 'Soft serve',
+    address: '臺北市大同區安西街3號',
+    addressEn: '3 Anxi Street, Datong District, Taipei',
+    summary: '安西街角的老洗衣店改成的霜淇淋專賣店：灰白斑駁的牆、鐵皮兩坡頂、門口留著「僑隆洗染」的舊招牌；賣每月更換口味的霜淇淋、三色烤糰子與苦甜布丁。',
+    summaryEn: 'A soft-serve shop in a former laundry on the corner of Anxi Street: mottled grey-white walls, a pitched tin roof and, at the door, the old “Qiaolong Laundry and Dyeing” sign; it sells soft serve in flavours that change monthly, grilled three-colour dango and a bittersweet pudding.',
+    sourceIds: SHOWA_SOURCE_IDS,
+    hasInterior: true,
+    // position 為店門口（立面線上、門的中央）；從店家名錄前往時站在簷下步道、面向店門，再自己走進去
+    position: showaToWorld((SHOWA_VARIANT.door.minX + SHOWA_VARIANT.door.maxX) / 2, 0),
+    facing: 'north',
+    interaction: { radius: 1.2, distance: 1.3 },
+    travelYawOffset: 0.3,
+    site: { ...SHOWA_SITE, replaces: [...SHOWA_SITE.replaces] },
+    building: { archetype: 'showa-laundry', width: SHOWA_SHELL.half * 2, depth: SHOWA_SHELL.depth },
+    buildingByEra: {
+      revival: { variant: 'iceCream', condition: 'aged' },
+    },
+    eraNotes: { revival: SHOWA_ERA_NOTE, revivalEn: SHOWA_ERA_NOTE_EN },
+    // 從店家名錄開啟介紹：從迪化街斜看長立面與朝廣場的山牆
+    camera: { distance: 8.5, height: 2.6, side: 3.2, lookHeight: 3.1 },
+    hotspots: hotspotsToWorld(SHOWA_HOTSPOTS, showaToWorld),
+    chapters: SHOWA_CHAPTERS,
   },
   // 十字軒糕餅舖（延平北路二段68號）：同一個店家 ID、同一個地段，隨年代替換立面、招牌、擺設與室內（見 getShop(id, eraId)）
   {

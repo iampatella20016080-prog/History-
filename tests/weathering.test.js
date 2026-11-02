@@ -62,7 +62,8 @@ describe('灰泥牆：風化程度', () => {
     const stains = {}
     for (const era of ERAS) {
       const results = weatherEra(era.id)
-      assert.ok(results.length > 10, era.id)
+      // 老屋新生有很多店家取代一般地段（例如昭和浪漫洗濯屋取代 south-13 與 plaza-1-1），一般建築比其他年代少
+      assert.ok(results.length > (era.id === 'revival' ? 8 : 10), era.id)
       stains[era.id] = results.flatMap((r) => r.plan.stains)
     }
     assert.ok(stains.postwar.length > stains['qing-port'].length * 2)
@@ -89,7 +90,8 @@ describe('灰泥牆：海報與鐵窗花', () => {
       const grilles = plans.flatMap((p) => p.grilles)
       if (era.id === 'postwar') assert.ok(posters.length >= 6, `庶民生活的海報 ${posters.length}`)
       else assert.equal(posters.length, 0, era.id)
-      if (GRILLE_ERAS.includes(era.id)) assert.ok(grilles.length >= 3, `${era.id} 的鐵窗 ${grilles.length}`)
+      // 老屋新生的一般建築較少（見上），至少一棟有鐵窗花
+      if (GRILLE_ERAS.includes(era.id)) assert.ok(grilles.length >= (era.id === 'revival' ? 1 : 3), `${era.id} 的鐵窗 ${grilles.length}`)
       else assert.equal(grilles.length, 0, era.id)
     }
   })
