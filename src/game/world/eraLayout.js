@@ -22,6 +22,7 @@ import { yongleMiTaiMuCollision, yongleMiTaiMuFootprint } from '../builders/yong
 import { riceAndShineCollision } from '../builders/riceAndShine/riceAndShineExterior.js'
 import { doddCollision, doddFootprint } from '../builders/doddTeaHouse.js'
 import { linHuaTaiCollision } from '../builders/linHuaTai/linHuaTai.js'
+import { youJiCollision } from '../builders/youJi/youJi.js'
 import { shizixuanCollision, shizixuanFootprint } from '../builders/shizixuan/shizixuanExterior.js'
 
 /**
@@ -349,6 +350,8 @@ const LOT_COLLISION = {
   },
   // 林華泰茶行：五個年代都可以走進去（簷下步道、前店、隔間門與店後的工作間；依年代的 variant）
   'lin-hua-tai': linHuaTaiCollision,
+  // 有記名茶：騎樓、前店、焙籠間、樓梯與二樓（依年代的 variant）
+  'you-ji': youJiCollision,
   // 迪化街329號店屋（稻舍）：依年代的 variant 決定能不能走進去（騎樓、前進、天井、後進、樓梯與二樓）
   'rice-and-shine': riceAndShineCollision,
 }

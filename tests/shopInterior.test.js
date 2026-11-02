@@ -79,7 +79,9 @@ describe('共用的街屋室內：障礙物', () => {
     const partition = VARIANT.partition
     assert.equal(snapToWalls({ minX: 1.8, maxX: 2.2, minZ: -3, maxZ: -2 }, room, partition).maxX, room.maxX + 0.3)
     assert.equal(snapToWalls({ minX: -2.3, maxX: -1.8, minZ: -3, maxZ: -2 }, room, partition).minX, room.minX - 0.3)
-    assert.equal(snapToWalls({ minX: -2, maxX: -1.4, minZ: -5.9, maxZ: -5.4 }, room, partition).maxZ, partition.z + 0.05)
+    // 補到隔間牆的中線：前店與店後的擺設不會互相重疊
+    assert.equal(snapToWalls({ minX: -2, maxX: -1.4, minZ: -5.9, maxZ: -5.4 }, room, partition).maxZ, partition.z)
+    assert.equal(snapToWalls({ minX: -2, maxX: -1.4, minZ: -4.8, maxZ: -4.0 }, room, partition).minZ, partition.z)
     const atDoor = { minX: -0.3, maxX: 0.3, minZ: -5.9, maxZ: -5.4 }
     assert.deepEqual(snapToWalls(atDoor, room, partition), atDoor)
   })

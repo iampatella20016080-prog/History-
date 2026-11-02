@@ -25,6 +25,8 @@ import { DODD_HOTSPOTS, doddToWorld } from './doddLayout.js'
 import { LHT_HOTSPOTS, lhtToWorld } from './linHuaTaiQingLayout.js'
 import { LHT_ERA_HOTSPOTS, lhtEraToWorld } from './linHuaTaiLayout.js'
 import { LIN_HUA_TAI_BY_ERA } from './linHuaTaiEraConfig.js'
+import { YJ_HOTSPOTS, yjToWorld } from './youJiLayout.js'
+import { YOU_JI_BY_ERA } from './youJiEraConfig.js'
 import { MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN } from './huangYujieMuseum.js'
 import { ACTION_BAR_SITE } from './actionBarLayout.js'
 import { LI_TING_XIANG_ID, LI_TING_XIANG_SOURCE_IDS, LTX_CHAPTERS, LTX_ERA_NOTES, LTX_YEAR_NOTE, LTX_YEAR_NOTE_EN } from './liTingXiangData.js'
@@ -3467,12 +3469,16 @@ export const SHOPS = [
       sign: { text: '王有記茶行', style: 'gold' },
       parapet: 'scroll',
     },
+    // 同一棟兩層的紅磚騎樓街屋、同一個地段，四個年代都可以走進去、上二樓：依年代的 variant 換擺設、人物與熱點
+    // （data/youJiEraConfig.js；1949 年以前的兩個年代是歷史情境重建）。立面依官網照片：紅磚、樓上一排 7 扇直長格子窗
     buildingByEra: {
-      banquet: { condition: 'new' },
-      modern: { condition: 'mature', shopfront: 'display', shopType: 'tea' },
-      postwar: { condition: 'aged', sign: { text: '王有記茶行', style: 'painted' } },
-      revival: { condition: 'restored', sign: { text: '有記名茶', style: 'modern' } },
+      banquet: { condition: 'new', archetype: 'you-ji', variant: YOU_JI_BY_ERA.banquet.variant },
+      modern: { condition: 'mature', archetype: 'you-ji', variant: YOU_JI_BY_ERA.modern.variant },
+      postwar: { condition: 'aged', archetype: 'you-ji', variant: YOU_JI_BY_ERA.postwar.variant, sign: { text: '王有記茶行', style: 'painted' } },
+      revival: { condition: 'restored', archetype: 'you-ji', variant: YOU_JI_BY_ERA.revival.variant, sign: { text: '有記名茶', style: 'modern' } },
     },
+    // 每個年代室內的資訊熱點（用 getShop('you-ji', eraId) 取得）
+    eras: Object.fromEntries(['banquet', 'modern', 'postwar', 'revival'].map((eraId) => [eraId, { hotspots: hotspotsToWorld(YJ_HOTSPOTS[YOU_JI_BY_ERA[eraId].variant], yjToWorld) }])),
     // 各年代介紹視窗上方的「此時期的有記名茶」（整理自官網沿革與國家文化記憶庫）
     eraNotes: {
       banquet:

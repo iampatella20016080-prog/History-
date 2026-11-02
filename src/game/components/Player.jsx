@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { CanvasTexture, MeshBasicMaterial, SRGBColorSpace } from 'three'
 import { LAYERS, PLAYER } from '../config.js'
-import { exitPointAt, groundAt, hasLevel, resolvePlayerPosition } from '../collision.js'
+import { exitPointAt, groundAt, hasLevel, resolvePlayerPosition, standsOn } from '../collision.js'
 import { cameraTooCloseToCharacter } from '../viewerCamera.js'
 import { moveInput } from '../input.js'
 import { boardingState, cameraState, playerState } from '../runtime.js'
@@ -154,8 +154,9 @@ export function Player({ collision, shopModels }) {
         playerState.heading = exit.heading
         cameraState.targetYaw = cameraState.yaw = exit.heading + Math.PI
       }
-      // 新的年代沒有角色所在的樓層（例如在爐鍋咖啡的二樓切換年代）：回到一樓，再推到最近的街道上
-      if (!hasLevel(collision, playerState.level)) playerState.level = 0
+      // 新的年代沒有角色所在的樓層（例如在爐鍋咖啡的二樓切換年代），或那一層在這裡站不下（只有別棟的二樓，例如摩登的有記名茶）：
+      // 回到一樓，再推到最近的街道上
+      if (!hasLevel(collision, playerState.level) || (playerState.level !== 0 && !standsOn(pos, PLAYER.radius, collision, playerState.level))) playerState.level = 0
       resolvePlayerPosition(pos, PLAYER.radius, collision, playerState.level, { relocate: true })
       settleOnGround(pos, collision, pos.y)
       if (!first && Math.hypot(pos.x - beforeX, pos.y - beforeY, pos.z - beforeZ) > 1.5) {

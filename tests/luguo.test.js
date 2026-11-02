@@ -6,7 +6,7 @@ import { ART_YARD, LUGUO_CAFE, LUGUO_HOTSPOTS, LUGUO_STAIRS, artYardToWorld } fr
 import { getShop } from '../src/data/shops.js'
 import { getSource } from '../src/data/sources.js'
 import { CAFE_ITEMS } from '../src/game/builders/luguoCafeInterior.js'
-import { groundAt, hasLevel, raycastBoxes, resolvePlayerPosition } from '../src/game/collision.js'
+import { groundAt, hasLevel, raycastBoxes, resolvePlayerPosition, standsOn } from '../src/game/collision.js'
 import { CAMERA, PLAYER } from '../src/game/config.js'
 import { QUALITY_MODES } from '../src/game/quality.js'
 import {
@@ -162,7 +162,8 @@ describe('爐鍋咖啡：只在「老屋新生」的小藝埕二樓', () => {
       assert.ok(!world.interiors.some((item) => item.id === 'luguo-cafe'), era.id)
       for (const id of ART_YARD.site.replaces) assert.ok(world.buildings.some((item) => item.id === id), `${era.id} ${id}`)
       assert.equal(buildEraInteriorSync(era.id, 'site-luguo-cafe').batches.length, 0, era.id)
-      assert.equal(hasLevel(world.collision, 1), false, `${era.id} 沒有二樓`)
+      // 小藝埕的位置沒有二樓（酒樓繁華以後別的地段有二樓，例如有記名茶，見 tests/youJi.test.js）
+      for (const [x, z] of [[-0.75, -1.0], [1.4, -7.6], [3.05, -13.1]]) assert.equal(standsOn(P(x, z), PLAYER.radius, world.collision, 1), false, `${era.id} 沒有二樓`)
     }
     for (const id of ART_YARD.site.replaces) assert.ok(!revival.buildings.some((item) => item.id === id), id)
     assert.equal(hasLevel(revival.collision, 1), true)
@@ -310,7 +311,7 @@ describe('爐鍋咖啡：從迪化街走上二樓、再走回街上（分樓層�
     ]) {
       const p = player(P(x, z).x, P(x, z).z, level, y)
       // 與 Player 相同：新的年代沒有這個樓層時回到一樓，再推出、落到地面
-      if (!hasLevel(modern.collision, p.level)) p.level = 0
+      if (!hasLevel(modern.collision, p.level) || (p.level !== 0 && !standsOn(p, PLAYER.radius, modern.collision, p.level))) p.level = 0
       resolvePlayerPosition(p, PLAYER.radius, modern.collision, p.level)
       const ground = groundAt(p, modern.collision, p.level, p.y)
       assert.deepEqual(ground, { level: 0, y: 0 })

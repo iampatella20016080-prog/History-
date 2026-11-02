@@ -8,6 +8,7 @@ import { FOLKLORE_OBJECTS } from './routes/folkloreRoute.js'
 import { NEIGHBOUR_OBJECTS } from './routes/neighbourRoute.js'
 import { LHT_INSPECTABLES, LHT_OBJECTS, LHT_OBJECT_LAYERS } from './linHuaTaiObjects.js'
 import { QING_BOARDING_INSPECTABLES, QING_BOARDING_OBJECTS } from './qingBoardingObjects.js'
+import { YJ_INSPECTABLES, YJ_OBJECTS, YJ_WHERE } from './youJiObjects.js'
 
 /**
  * 器物 3D 檢視的器物資料（第 10 階段）：標題、說明、小動作與出處。
@@ -120,8 +121,15 @@ export const INSPECT_OBJECTS = {
   ...LHT_OBJECTS,
   // 清末搭船：帆船甲板上的樟腦箱、壓艙石與船眼（data/qingBoardingObjects.js）
   ...QING_BOARDING_OBJECTS,
+  // 有記名茶各年代室內（第 11 階段；data/youJiObjects.js）：嘜頭、稻殼焙窟、風選機、南管樂器
+  ...YJ_OBJECTS,
 }
 for (const [id, layers] of Object.entries(LHT_OBJECT_LAYERS)) INSPECT_OBJECTS[id] = { ...INSPECT_OBJECTS[id], layers }
+// 共用器物在其他店家的補充說明（「在哪家店可以接觸到」這一層）
+for (const [id, notes] of Object.entries(YJ_WHERE)) {
+  const object = INSPECT_OBJECTS[id]
+  INSPECT_OBJECTS[id] = { ...object, layers: { ...object.layers, where: [...(object.layers?.where ?? []), ...notes] } }
+}
 
 export function getInspectObject(id) {
   return INSPECT_OBJECTS[id] ?? null
@@ -185,6 +193,8 @@ export const STREET_INSPECTABLES = [
   ...LHT_INSPECTABLES,
   // 清末搭船：帆船甲板上的器物（level 是甲板的樓層；data/qingBoardingObjects.js）
   ...QING_BOARDING_INSPECTABLES,
+  // 有記名茶各年代的室內（level 1 在二樓；data/youJiObjects.js）
+  ...YJ_INSPECTABLES,
 ]
 
 export function inspectablesOfEra(eraId) {

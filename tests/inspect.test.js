@@ -75,8 +75,8 @@ test('街上的器物：年代存在、objectId 有資料、位置在碼頭南�
   assert.equal(getInspectable('wharf-tea-chest').objectId, 'tea-chest')
   // 碼頭的茶箱、寶順洋行與林華泰的室內各兩件，加上帆船甲板上的五件（清末搭船）
   assert.equal(inspectablesOfEra('qing-port').length, 10)
-  // 酒樓繁華以後的器物都在林華泰的室內（第 11 階段，見 tests/linHuaTai.test.js）
-  assert.ok(inspectablesOfEra('banquet').every((item) => item.shopId === 'lin-hua-tai'))
+  // 酒樓繁華以後的器物都在林華泰與有記名茶的室內（第 11 階段，見 tests/linHuaTai.test.js、tests/youJi.test.js）
+  assert.ok(inspectablesOfEra('banquet').every((item) => item.shopId === 'lin-hua-tai' || item.shopId === 'you-ji'))
   // 位置貼著南側的茶箱堆（走近就能近看）
   const south = stackBox(TEA_STACKS.find((stack) => stack.id === 'south'))
   const [x, , z] = getInspectable('wharf-tea-chest').position
