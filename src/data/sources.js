@@ -4802,6 +4802,80 @@ SOURCES['denby-frus-1888'] = {
   contextEn: 'A report on the Formosa tea trade by Charles Denby, U.S. minister to China.',
 }
 
+/* ── 有記名茶的室內（第 11 階段；查證見 docs/research/interior-you-ji.md） ── */
+SOURCES['wangtea-ewkee-blog'] = {
+  id: 'wangtea-ewkee-blog',
+  citation: '有記名茶官方網站部落格，〈Ewkee〉，2017年1月18日。',
+  citationEn: 'Youji Tea (有記名茶) official blog, “Ewkee”, 18 January 2017.',
+  publisher: '有記名茶',
+  publisherEn: 'Youji Tea (有記名茶)',
+  title: 'Ewkee',
+  titleEn: 'Ewkee',
+  url: 'https://wangtea.com.tw/blog/2017/1/18/ewkee',
+  published: '2017年1月18日（2026年11月查閱）',
+  publishedEn: '18 January 2017 (consulted November 2026)',
+  supports: ['英文名 Ong Ew Kee Tea Hong 是閩南語音譯；當年約佔泰國茶葉市場一半以上', '嘜頭是模板：竹編箱不能印刷，用嘜頭逐一刷上有記、收貨店號、品名、重量，字形留斷點', '茶箱內層木板釘製、外層竹篾編織護罩，防潮'],
+  supportsEn: ['The English name Ong Ew Kee Tea Hong is a Hokkien transliteration; the firm once held over half the Thai tea market', 'Shipping marks were stencils: bamboo-jacketed chests could not be printed, so the firm, consignee, tea and weight were brushed on one by one, the letterforms keeping bridges', 'The chests had an inner box of nailed boards and an outer woven-bamboo jacket against damp'],
+  usage: '嘜頭、外銷茶箱的器物說明與刷嘜頭夥計的對白。',
+  usageEn: 'The shipping-mark stencil and export chest, and the marker’s lines.',
+  context: '有記名茶官網部落格介紹英文商號與外銷泰國時的包裝。',
+  contextEn: 'A post on Youji’s blog about its English trade name and export packaging for Thailand.',
+}
+SOURCES['smiletaiwan-3760-wangtea'] = {
+  id: 'smiletaiwan-3760-wangtea',
+  citation: '《微笑台灣》，有記名茶專文（文章編號3760）。',
+  citationEn: 'Smile Taiwan (微笑台灣), feature on Youji Tea (article 3760).',
+  publisher: '天下雜誌《微笑台灣》',
+  publisherEn: 'CommonWealth Magazine, Smile Taiwan',
+  title: '有記名茶',
+  titleEn: 'Youji Tea',
+  url: 'https://smiletaiwan.cw.com.tw/article/3760',
+  published: '線上文章（2026年11月查閱）',
+  publishedEn: 'Online article (consulted November 2026)',
+  supports: ['焙籠間以紅磚搭出成排的坑，填入炭灰後把焙籠放在上方，以中溫乾燥茶葉', '焙火材料是木炭與稻殼燒成的炭灰，約二到三週', '保存舊風選機；清源堂週六下午有南管表演'],
+  supportsEn: ['The roasting room has rows of pits built of red brick, filled with charcoal ash, the baskets set on top to dry the tea at a moderate heat', 'The fuel is charcoal and rice husk burnt to ash, for about two to three weeks', 'The old winnowing machine is kept; Qingyuan Hall has nanguan on Saturday afternoons'],
+  usage: '稻殼焙窟的形制（紅磚砌坑）。',
+  usageEn: 'The construction of the rice-husk pits (red-brick rows).',
+  context: '介紹有記名茶焙籠間與清源堂的雜誌專文。',
+  contextEn: 'A magazine feature on Youji’s roasting room and Qingyuan Hall.',
+}
+SOURCES['yam-2025-wangtea'] = {
+  id: 'yam-2025-wangtea',
+  citation: '蕃薯藤新聞，有記名茶報導，2025年12月18日。',
+  citationEn: 'Yam News (蕃薯藤), report on Youji Tea, 18 December 2025.',
+  publisher: '蕃薯藤',
+  publisherEn: 'Yam (蕃薯藤)',
+  title: '有記名茶報導',
+  titleEn: 'Report on Youji Tea',
+  url: 'https://n.yam.com/Article/20251218689061',
+  published: '2025年12月18日（2026年11月查閱）',
+  publishedEn: '18 December 2025 (consulted November 2026)',
+  supports: ['焙窟做法：木炭敲碎、鋪碳化稻殼（隔熱、擋煙，茶只吸熱氣不帶火氣），熱氣足夠才放焙籠', '大稻埕僅存仍在運作的焙窟與焙籠', '二樓每週六下午南管表演，預約免費；門市有兩個泡茶區'],
+  supportsEn: ['How the pits work: crushed charcoal under carbonised husk (insulating and holding back smoke, so the tea takes heat without fire-taint); baskets go on when the heat is right', 'The last working pits and baskets in Dadaocheng', 'Nanguan upstairs every Saturday afternoon, free with a booking; two tea-tasting areas in the shop'],
+  usage: '稻殼焙窟的做法、南管演奏的時間與預約。',
+  usageEn: 'How the husk pits work; when the nanguan is played and how to book.',
+  context: '新聞網站對有記名茶焙籠間與清源堂的報導。',
+  contextEn: 'A news site’s report on Youji’s roasting room and Qingyuan Hall.',
+}
+SOURCES['commons-xfc-winnower'] = {
+  id: 'commons-xfc-winnower',
+  citation: '氏子，〈新芳春茶行風選機.jpg〉，Wikimedia Commons，CC BY-SA 4.0。',
+  citationEn: 'Ujiko (氏子), “新芳春茶行風選機.jpg” (Xinfangchun Tea Hong winnowing machine), Wikimedia Commons, CC BY-SA 4.0.',
+  publisher: 'Wikimedia Commons',
+  publisherEn: 'Wikimedia Commons',
+  title: '新芳春茶行風選機.jpg',
+  titleEn: 'Xinfangchun Tea Hong winnowing machine (新芳春茶行風選機.jpg)',
+  url: 'https://commons.wikimedia.org/wiki/File:%E6%96%B0%E8%8A%B3%E6%98%A5%E8%8C%B6%E8%A1%8C%E9%A2%A8%E9%81%B8%E6%A9%9F.jpg',
+  published: '照片（2026年11月查閱）',
+  publishedEn: 'Photograph (consulted November 2026)',
+  supports: ['〔照片〕新芳春的風選機：木作斜槽從高處木格箱斜下、深色鐵漏斗、大鐵飛輪與皮帶，主體深灰藍漆，長約四到五公尺（目測）'],
+  supportsEn: ['[Photo] Xinfangchun’s winnower: a wooden chute sloping from a high lattice box, a dark iron hopper, a big iron flywheel and belt, painted grey-blue, about 4–5 m long (by eye)'],
+  usage: '風選機的形制對照（新芳春的那一具）。',
+  usageEn: 'For comparison of the winnower’s form (the Xinfangchun machine).',
+  context: '維基共享資源上新芳春茶行風選機的照片。',
+  contextEn: 'A photograph of the Xinfangchun Tea Hong winnowing machine on Wikimedia Commons.',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }

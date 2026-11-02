@@ -51,6 +51,16 @@ function collisionForLevel(world, level) {
   return entry
 }
 
+/**
+ * 角色在這個樓層的這個位置站不站得下（不會被推開）。換年代時用：新的年代有這個樓層、但是是別棟建築的二樓
+ * （例如從爐鍋咖啡的二樓換到摩登，那一層只有有記名茶的二樓），角色要回到一樓再移到戶外，不能被推進別棟的樓上。
+ */
+export function standsOn(position, radius, world, level) {
+  const p = { x: position.x, z: position.z }
+  resolvePlayerPosition(p, radius, world, level)
+  return Math.hypot(p.x - position.x, p.z - position.z) < 1e-6
+}
+
 /** 這份碰撞資料有沒有這個樓層（沒有時角色要回到一樓） */
 export function hasLevel(world, level) {
   return collisionForLevel(world, level).level === level
