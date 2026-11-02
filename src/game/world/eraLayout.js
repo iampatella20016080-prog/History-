@@ -23,6 +23,7 @@ import { riceAndShineCollision } from '../builders/riceAndShine/riceAndShineExte
 import { doddCollision, doddFootprint } from '../builders/doddTeaHouse.js'
 import { linHuaTaiCollision } from '../builders/linHuaTai/linHuaTai.js'
 import { youJiCollision } from '../builders/youJi/youJi.js'
+import { showaLaundryCollision, showaLaundryFootprint } from '../builders/showaLaundry/showaLaundry.js'
 import { shizixuanCollision, shizixuanFootprint } from '../builders/shizixuan/shizixuanExterior.js'
 
 /**
@@ -95,8 +96,8 @@ const PROPS_BY_ERA = {
     { type: 'goodsPile', position: [26.8, 0, -2.3], rotationY: -0.1, kind: 'sacks' },
   ],
   revival: [
+    // 廣場南側只留一張長凳（東邊那一張的位置是昭和浪漫洗濯屋的山牆，見 data/showaLaundryLayout.js）
     { type: 'bench', position: [-41.2, 0, 6.7], rotationY: Math.PI, modern: true },
-    { type: 'bench', position: [-38.2, 0, 6.7], rotationY: Math.PI, modern: true },
     { type: 'bench', position: [-41.2, 0, -6.7], rotationY: 0, modern: true },
     // 停在涼州街邊（不擋住從河岸廣場走進涼州街的路）
     { type: 'bicycle', position: [-37.95, 0, -12.6], rotationY: Math.PI / 2 },
@@ -337,6 +338,8 @@ const SITE_COLLISION = {
   'huang-yujie-museum': huangYujieCollision,
   // 十字軒糕餅舖：騎樓、入口與店內（依年代的 variant 決定前舖、後坊或結帳區與展示櫃）
   shizixuan: shizixuanCollision,
+  // 昭和浪漫洗濯屋（老屋新生）：簷下步道、一樓店內與山牆一側的走道；店外的長凳、霜淇淋模型與路人是障礙物
+  'showa-laundry': showaLaundryCollision,
 }
 /**
  * 一般地段上的店家建築（以 position 預留地段）額外的可行走範圍與障礙物。
@@ -366,6 +369,7 @@ const SITE_FOOTPRINT = {
   'yong-le-mi-tai-mu': yongleMiTaiMuFootprint,
   'huang-yujie-museum': huangYujieFootprint,
   shizixuan: shizixuanFootprint,
+  'showa-laundry': showaLaundryFootprint,
 }
 
 function siteTransform({ x, z, rotationY = 0 }) {
