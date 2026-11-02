@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { boardingState } from '../game/runtime.js'
 import { getEra } from '../data/eras.js'
 import { getShopsByEra } from '../data/shops.js'
 import { useGameStore } from '../state/useGameStore.js'
@@ -163,6 +164,55 @@ function ObjectiveHint({ shops, touch }) {
   return <div className={`hud-objective${text ? ' is-visible' : ''}`}>{text && <span>{text}</span>}</div>
 }
 
+/**
+ * 清末搭船的畫面：划船時的黑幕與說明（可以略過）、落水時的黑幕與一句話。
+ * 黑幕的濃淡每個影格由 runtime.boardingState.fade 直接寫到樣式，不經過 React 狀態。
+ * 說明文字標「歷史情境重建」（划船）與「虛構情節」（落水）：落水不是史實。
+ */
+function BoardingOverlay() {
+  const t = useT()
+  const phase = useGameStore((state) => state.boardingPhase)
+  const requestBoarding = useGameStore((state) => state.requestBoarding)
+  const veil = useRef()
+  useEffect(() => {
+    if (phase === 'ashore' || phase === 'aboard') {
+      let raf = 0
+      // 到岸後的淡入：繼續讀幾秒
+      const tick = () => {
+        if (veil.current) veil.current.style.opacity = String(boardingState.fade)
+        if (boardingState.fade > 0.001) raf = requestAnimationFrame(tick)
+      }
+      raf = requestAnimationFrame(tick)
+      return () => cancelAnimationFrame(raf)
+    }
+    let raf = 0
+    const tick = () => {
+      if (veil.current) veil.current.style.opacity = String(boardingState.fade)
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [phase])
+  const riding = phase === 'departing' || phase === 'returning'
+  const active = riding || phase === 'fallen'
+  return (
+    <div className={`boarding-layer${active ? ' is-active' : ''}`} data-boarding-phase={phase}>
+      <div ref={veil} className="boarding-veil" style={{ opacity: 0 }} />
+      {active && (
+        <div className="boarding-caption paper">
+          <span className="boarding-caption__text">{t(phase === 'fallen' ? 'boarding.fallen' : phase === 'departing' ? 'boarding.departing' : 'boarding.returning')}</span>
+          <span className="boarding-caption__tag">{t(phase === 'fallen' ? 'boarding.fiction' : 'boarding.reconstruction')}</span>
+          {riding && (
+            <button type="button" className="button-ghost boarding-skip" data-boarding-skip onClick={() => requestBoarding('skip')}>
+              {t('boarding.skip')}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 /** 建築觀賞模式的工具列（下方中央）：隱藏介面、返回探索 */
 function ViewerBar() {
   const t = useT()
@@ -252,6 +302,7 @@ export function Hud() {
       {touch && !viewer && <Joystick />}
       {started && viewer && <ViewerBar />}
       <ChapterCard />
+      {started && <BoardingOverlay />}
       {uiHidden && <RevealUi />}
     </div>
   )

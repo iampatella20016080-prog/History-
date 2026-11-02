@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import { ERAS } from '../src/data/eras.js'
 import { getSource } from '../src/data/sources.js'
 import { PORTERS, QING_WHARF_ERA, QING_WHARF_SOURCE_IDS, TEA_STACKS, WHARF_BOATS, boatBlocker, qingWharfBoxes, stackBox } from '../src/data/qingWharfLayout.js'
+import { junkBlockers } from '../src/data/qingBoardingLayout.js'
 import { buildNpcGeometry, NPC_LOOKS } from '../src/game/character/npcBuilder.js'
 import { groundAt, resolvePlayerPosition } from '../src/game/collision.js'
 import { CAMERA, PIER, PLAYER, RIVER } from '../src/game/config.js'
@@ -70,6 +71,7 @@ function followRoute(world, p, route, step) {
 describe('清末碼頭：只在港口商街', () => {
   test('茶箱堆、挑夫與接駁小船只在港口商街；其他年代的碰撞、遮擋方塊與人物不變', () => {
     assert.ok(qing.npcs.some((npc) => npc.id.startsWith('qing-wharf-')))
+    // 棧橋頭的駁船船夫（清末搭船）另外算，見 tests/qingBoarding.test.js
     assert.equal(ERAS.find((era) => era.id === QING_WHARF_ERA).streetProps.boats, 'qingWharf')
     for (const era of ERAS.filter((item) => item.id !== QING_WHARF_ERA)) {
       const world = worlds[era.id]
@@ -87,7 +89,9 @@ describe('清末碼頭：只在港口商街', () => {
       assert.ok(qing.collision.obstacles.some((o) => sameBox(o, box)))
       assert.ok(qing.blockers.some((o) => sameBox(o, box) && o.maxY > 0.3))
     }
-    for (const boat of WHARF_BOATS) assert.ok(qing.blockers.some((o) => sameBox(o, boatBlocker(boat))))
+    // 可以上去的帆船（清末搭船）改用分件的遮擋方塊，見 tests/qingBoarding.test.js
+    for (const boat of WHARF_BOATS.filter((item) => !item.deck)) assert.ok(qing.blockers.some((o) => sameBox(o, boatBlocker(boat))))
+    for (const box of junkBlockers()) assert.ok(qing.blockers.some((o) => sameBox(o, box)))
   })
 
   test('共用地段的切分不變（碼頭在河岸廣場，不佔任何地段）', () => {
@@ -158,20 +162,20 @@ describe('清末碼頭：人物進出', () => {
     }
   })
 
-  test('走不進茶箱堆、挑夫、河裡或船上', () => {
+  test('走不進茶箱堆、挑夫或船上；棧橋邊的水面（清末搭船）走得出去但會落水', () => {
     for (const stack of TEA_STACKS) assert.ok(!walkableAt(qing, ...stack.center), stack.id)
     for (const porter of PORTERS) assert.ok(!walkableAt(qing, ...porter.position), porter.id)
     for (const boat of WHARF_BOATS) assert.ok(!walkableAt(qing, boat.position[0], boat.position[2]), boat.type)
     assert.ok(!walkableAt(qing, -48, 4))
-    assert.ok(!walkableAt(qing, -46, -2.4))
+    assert.ok(groundAt({ x: -46, z: -2.4 }, qing.collision, 0).water, '棧橋頭南側是水面')
   })
 
-  test('往船與河裡直走：停在棧橋邊，不會掉進水裡', () => {
-    for (const step of [0.05, 0.2, 0.5]) {
+  test('往船與河裡直走：走出棧橋邊就落水（其他年代停在棧橋邊，見 tests/qingBoarding.test.js）', () => {
+    for (const era of ERAS.filter((item) => item.id !== QING_WHARF_ERA)) {
       for (const z of [4, -4]) {
         const p = { x: -49.5, z: 0, level: 0, y: 0 }
-        walkTo(qing, p, [-49.5, z], step)
-        assert.ok(Math.abs(p.z) <= PIER.halfWidth - PLAYER.radius + 1e-6, `${step} ${z}: z ${p.z}`)
+        walkTo(worlds[era.id], p, [-49.5, z], 0.2)
+        assert.ok(Math.abs(p.z) <= PIER.halfWidth - PLAYER.radius + 1e-6, `${era.id} ${z}: z ${p.z}`)
       }
     }
   })

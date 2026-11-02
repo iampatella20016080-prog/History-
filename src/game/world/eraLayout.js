@@ -1,5 +1,6 @@
 import { PIER, PLAZA, STREET } from '../config.js'
-import { QING_WHARF_ERA, qingWharfBoxes } from '../../data/qingWharfLayout.js'
+import { QING_WHARF_ERA, WHARF_BOATS, qingWharfBoxes } from '../../data/qingWharfLayout.js'
+import { boatmanBox, crewObstacles, deckObstacles, deckWalkable, sampanObstacles, waterWalkable } from '../../data/qingBoardingLayout.js'
 import { addedSceneProps, sceneBox, scenesForEra } from '../../data/streetPropsLayout.js'
 import { routeFigureBox, routeFiguresOfEra } from '../../data/routeFigures.js'
 import { getShop, getShopBuilding, getShopsByEra } from '../../data/shops.js'
@@ -446,7 +447,12 @@ export function createEraLayout(era) {
 
   // 清末碼頭：河岸廣場上的茶箱堆與挑夫（只在港口商街；data/qingWharfLayout.js）
   const qingWharf = era.id === QING_WHARF_ERA
-  if (qingWharf) extraObstacles.push(...qingWharfBoxes().map(({ minX, maxX, minZ, maxZ }) => ({ minX, maxX, minZ, maxZ })))
+  if (qingWharf) {
+    extraObstacles.push(...qingWharfBoxes().map(({ minX, maxX, minZ, maxZ }) => ({ minX, maxX, minZ, maxZ })))
+    // 清末搭船：帆船的甲板（自己的樓層）、甲板與棧橋邊可以走出去落水的水面、甲板上的障礙物、棧橋旁的駁船與船夫
+    const { minX, maxX, minZ, maxZ } = boatmanBox()
+    extraObstacles.push({ minX, maxX, minZ, maxZ }, ...sampanObstacles(WHARF_BOATS), ...deckObstacles(), ...crewObstacles())
+  }
 
   if (era.id === 'banquet') diversifyRows(buildings)
   if (era.id === 'modern') arrangeModernRows(buildings)
@@ -475,6 +481,8 @@ export function createEraLayout(era) {
     { minX: PLAZA.minX, maxX: PLAZA.maxX, minZ: -plazaHalf, maxZ: plazaHalf },
     { minX: PIER.minX, maxX: PIER.maxX + 1, minZ: -PIER.halfWidth, maxZ: PIER.halfWidth },
     ...extraWalkable,
+    // 清末搭船：甲板先列（站在甲板上不算落水），四周與棧橋邊的水面在後
+    ...(qingWharf ? [...deckWalkable(), ...waterWalkable()] : []),
   ]
 
   const obstacles = [...props.filter((prop) => !isAnchor(prop)).map(propObstacle), ...extraObstacles]

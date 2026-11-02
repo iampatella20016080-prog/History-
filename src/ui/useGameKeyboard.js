@@ -19,7 +19,8 @@ export function useGameKeyboard() {
       const store = useGameStore.getState()
       if (event.code === 'KeyE' && !event.repeat) {
         // 依最近的互動對象擇一：對話中前進一句；路人交談、街上的器物近看、店家介紹
-        if (store.started && (store.talk || store.nearbyTalkNpcId || store.nearbyInspectableId || store.nearbyShopId)) {
+        const riding = store.boardingPhase === 'departing' || store.boardingPhase === 'returning'
+        if (store.started && (store.talk || store.nearbyTalkNpcId || store.nearbyInspectableId || store.nearbyShopId || store.nearbyBoardingId || riding)) {
           event.preventDefault()
           store.interact()
         }
@@ -27,7 +28,8 @@ export function useGameKeyboard() {
         const era = ERAS[Number(event.code.slice(5)) - 1]
         if (era) store.requestEra(era.id)
       } else if (event.code === 'Escape') {
-        if (store.uiHidden) store.setUiHidden(false)
+        if (store.boardingPhase === 'departing' || store.boardingPhase === 'returning') store.requestBoarding('skip')
+        else if (store.uiHidden) store.setUiHidden(false)
         else if (store.inspect) store.closeInspect()
         else if (store.talk) store.endTalk()
         else if (store.mode !== 'explore') store.closeShop()

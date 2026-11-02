@@ -73,7 +73,8 @@ test('街上的器物：年代存在、objectId 有資料、位置在碼頭南�
     assert.ok(item.radius > 0 && item.prompt, item.id)
   }
   assert.equal(getInspectable('wharf-tea-chest').objectId, 'tea-chest')
-  assert.equal(inspectablesOfEra('qing-port').length, 5)
+  // 碼頭的茶箱、寶順洋行與林華泰的室內各兩件，加上帆船甲板上的四件（清末搭船）
+  assert.equal(inspectablesOfEra('qing-port').length, 9)
   // 酒樓繁華以後的器物都在林華泰的室內（第 11 階段，見 tests/linHuaTai.test.js）
   assert.ok(inspectablesOfEra('banquet').every((item) => item.shopId === 'lin-hua-tai'))
   // 位置貼著南側的茶箱堆（走近就能近看）

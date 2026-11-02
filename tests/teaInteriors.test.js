@@ -114,7 +114,8 @@ describe('寶順洋行與林華泰（港口商街）：室內只在這個年代'
   })
 
   test('室內可以近看的器物都在室內的可行走範圍附近（走得到提示半徑內）', () => {
-    for (const item of inspectablesOfEra('qing-port').filter((entry) => entry.id !== 'wharf-tea-chest')) {
+    // 帆船甲板上的器物（清末搭船）在自己的樓層，見 tests/qingBoarding.test.js
+    for (const item of inspectablesOfEra('qing-port').filter((entry) => entry.id !== 'wharf-tea-chest' && (entry.level ?? 0) === 0)) {
       const [x, , z] = item.position
       // 器物本身是障礙物（桌上、地上），檢查提示半徑內有可以站的位置
       const ring = item.radius - 0.35

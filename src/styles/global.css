@@ -977,6 +977,103 @@ kbd {
   transform: translateX(-50%) rotate(45deg);
 }
 
+/* ── 清末搭船：併在人物提示卡上的「搭船」按鈕 ──── */
+
+.boarding-inline {
+  display: none;
+  margin: 0 auto 8px;
+  padding: 7px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--vermilion);
+  white-space: nowrap;
+  border: 1px solid var(--ink);
+  border-radius: 3px;
+  box-shadow: 0 8px 20px rgba(35, 24, 16, 0.3);
+  cursor: pointer;
+}
+
+.boarding-inline.is-visible {
+  display: block;
+}
+
+.shop-prompt.is-visible .boarding-inline.is-visible {
+  pointer-events: auto;
+}
+
+.boarding-inline__label {
+  margin-right: 8px;
+  padding: 0 6px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  border: 1px solid rgba(165, 64, 44, 0.4);
+  border-radius: 2px;
+}
+
+/* ── 清末搭船：划船與落水的畫面 ─────────────── */
+
+.boarding-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.boarding-veil {
+  position: absolute;
+  inset: 0;
+  background: #120d0a;
+  opacity: 0;
+}
+
+.boarding-caption {
+  position: absolute;
+  left: 50%;
+  bottom: calc(96px + var(--safe-bottom, 0px));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  border: 1px solid var(--ink);
+  border-radius: 3px;
+  box-shadow: 0 10px 26px rgba(35, 24, 16, 0.3);
+  pointer-events: auto;
+  animation: fade-in 0.35s ease both;
+}
+
+.boarding-caption__tag {
+  padding: 1px 6px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--vermilion);
+  border: 1px solid rgba(165, 64, 44, 0.4);
+  border-radius: 2px;
+}
+
+.boarding-skip {
+  padding: 4px 12px;
+  font-size: 13px;
+}
+
+.hud.is-touch .boarding-caption {
+  bottom: calc(206px + var(--safe-bottom, 0px));
+}
+
+@media (max-width: 720px) {
+  .boarding-caption {
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: calc(100vw - 32px);
+    white-space: normal;
+    text-align: center;
+  }
+}
+
 /* ── 店家介紹視窗 ─────────────────────────── */
 
 .story-layer {

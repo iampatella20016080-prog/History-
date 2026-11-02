@@ -3,7 +3,7 @@ import App from './App.jsx'
 import { ambienceManager } from './audio/AmbienceManager.js'
 import { audioManager } from './audio/AudioManager.js'
 import { inspectRuntime } from './game/inspectRuntime.js'
-import { cameraState, playerState } from './game/runtime.js'
+import { boardingState, cameraState, playerState } from './game/runtime.js'
 import { weatherState } from './game/weather.js'
 import { nightState } from './game/night.js'
 import { transitionState } from './game/transition.js'
@@ -27,7 +27,7 @@ window.addEventListener('keydown', resumeAmbience)
 
 // 開發模式下提供除錯用的全域物件（正式版不會包含）
 if (import.meta.env.DEV) {
-  window.__DDC__ = { useGameStore, playerState, cameraState, transitionState, audioManager, ambienceManager, inspectRuntime, weatherState, nightState }
+  window.__DDC__ = { useGameStore, playerState, cameraState, boardingState, transitionState, audioManager, ambienceManager, inspectRuntime, weatherState, nightState }
 }
 
 // 註：不使用 <StrictMode>。開發模式的重複掛載會讓 Drei <Html>（店家提示框）

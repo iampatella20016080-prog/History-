@@ -5,6 +5,7 @@ import { buildNpcGeometry, npcAnimation } from '../character/npcBuilder.js'
 import { QUALITY_MODES } from '../quality.js'
 import { getMaterials } from '../rendering/materials.js'
 import { useGameStore } from '../../state/useGameStore.js'
+import { boardingState } from '../runtime.js'
 import { hysteresisVisible } from '../visibility.js'
 
 /**
@@ -51,9 +52,13 @@ export function Npc({ npc }) {
   useFrame(({ camera, clock }) => {
     const group = root.current
     if (!group) return
-    const [x, , z] = npc.position
+    // 距離用世界座標判斷（掛在船上的人物 position 是船的本地座標，anchor 才是世界座標）
+    const [x, , z] = npc.anchor ?? npc.position
     // 遲滯：在顯示距離附近來回時不會閃爍
-    const visible = hysteresisVisible(group.visible, Math.hypot(camera.position.x - x, camera.position.z - z), SHOW_DISTANCE)
+    let visible = hysteresisVisible(group.visible, Math.hypot(camera.position.x - x, camera.position.z - z), SHOW_DISTANCE)
+    // 清末搭船：棧橋頭的船夫划船時不在棧橋上（改畫在駁船上）；駁船上的船夫只在划船時畫
+    if (npc.hideWhileRiding && boardingState.riding) visible = false
+    if (npc.showWhileRiding && !boardingState.riding) visible = false
     group.visible = visible
     frame.current++
     const t = clock.elapsedTime

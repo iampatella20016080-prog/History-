@@ -9,6 +9,8 @@ import { TIME_IDS, initialTimeOfDay, saveTimeOfDay } from '../game/night.js'
 import { addJournalEntry, loadJournal, saveJournal } from '../game/journal.js'
 import { objectJournalId } from '../game/objectInspect.js'
 import { advanceTalk, chooseFollowUp, startTalkSession, talkJournalId } from '../game/talk.js'
+import { boardingLocked } from '../game/boarding.js'
+import { BOARDING_SPOTS } from '../data/qingBoardingLayout.js'
 import { applyDocumentLang, initialLang, isLang, saveLang } from '../i18n/lang.js'
 
 /** 網址可指定一開始的年代，例如 ?era=modern */
@@ -113,6 +115,14 @@ export const useGameStore = create((set, get) => ({
   activeRouteId: null,
   routeOpen: false,
 
+  /* ── 清末搭船（game/boarding.js；components/BoardingDirector.jsx 每個影格推進） ── */
+  /** 附近的搭船點（embark 棧橋頭、disembark 甲板的舷梯口；InteractionSystem 每個影格更新） */
+  nearbyBoardingId: null,
+  /** 搭船的階段：ashore（岸上）、departing（駁船去程）、aboard（在甲板上）、returning（回程）、fallen（落水） */
+  boardingPhase: 'ashore',
+  /** 搭船的請求 { action: 'board' | 'return' | 'fall' | 'skip', nonce }，由 BoardingDirector 接手 */
+  boardingRequest: null,
+
   start: () => {
     if (get().started) return
     set((state) => ({
@@ -141,6 +151,39 @@ export const useGameStore = create((set, get) => ({
     if (get().nearbyInspectableId !== id) set({ nearbyInspectableId: id })
   },
 
+  setNearbyBoarding: (id) => {
+    if (get().nearbyBoardingId !== id) set({ nearbyBoardingId: id })
+  },
+
+  /**
+   * 搭船：board（在棧橋頭搭駁船上帆船）、return（在甲板上搭駁船回棧橋）、skip（略過划船的動畫）、
+   * fall（從棧橋邊或甲板邊走出去落水；由角色元件觸發）。划船途中與落水時不能移動、交談、換年代。
+   * 接受時回傳 true。
+   */
+  requestBoarding: (action) => {
+    const state = get()
+    if (!state.started || state.mode !== 'explore' || state.viewMode !== 'explore' || state.transitioning || state.inspect) return false
+    const phase = state.boardingPhase
+    if (action === 'board' && phase !== 'ashore') return false
+    if (action === 'return' && phase !== 'aboard') return false
+    if (action === 'fall' && phase !== 'ashore' && phase !== 'aboard') return false
+    if (action === 'skip' && phase !== 'departing' && phase !== 'returning') return false
+    if (action === 'board' || action === 'return') {
+      const spot = BOARDING_SPOTS.find((item) => item.id === state.nearbyBoardingId)
+      if (!spot || spot.action !== action) return false
+    }
+    set((prev) => ({
+      boardingRequest: { action, nonce: (prev.boardingRequest?.nonce ?? 0) + 1 },
+      ...(action === 'skip' ? {} : { talk: null, nearbyTalkNpcId: null, nearbyInspectableId: null, nearbyShopId: null, nearbyHotspotId: null, nearbyBoardingId: null, menuOpen: false, journalOpen: false, routeOpen: false }),
+    }))
+    return true
+  },
+
+  /** 搭船的階段改變（BoardingDirector 寫入） */
+  setBoardingPhase: (phase) => {
+    if (get().boardingPhase !== phase) set({ boardingPhase: phase })
+  },
+
   /** 記進探索手記（同一個 id 只記一次）並寫回 localStorage */
   recordJournal: (entry) => {
     const journal = addJournalEntry(get().journal, entry)
@@ -160,6 +203,7 @@ export const useGameStore = create((set, get) => ({
   startTalk: (npcId = null) => {
     const state = get()
     if (!state.started || state.mode !== 'explore' || state.viewMode !== 'explore' || state.transitioning || state.talk) return false
+    if (boardingLocked({ phase: state.boardingPhase })) return false
     const talk = talkForNpc(state.eraId, npcId ?? state.nearbyTalkNpcId)
     const session = talk && startTalkSession(talk)
     if (!session) return false
@@ -231,8 +275,14 @@ export const useGameStore = create((set, get) => ({
       if (state.talk.stage === 'line') state.advanceTalk()
       return
     }
-    const { started, mode, nearbyShopId, nearbyHotspotId, nearbyTalkNpcId, nearbyInspectableId, transitioning, viewMode } = state
+    const { started, mode, nearbyShopId, nearbyHotspotId, nearbyTalkNpcId, nearbyInspectableId, nearbyBoardingId, boardingPhase, transitioning, viewMode } = state
     if (!started || mode !== 'explore' || viewMode !== 'explore' || transitioning || state.inspect) return
+    // 划船途中：E 略過動畫
+    if (boardingPhase === 'departing' || boardingPhase === 'returning') {
+      state.requestBoarding('skip')
+      return
+    }
+    if (boardingLocked({ phase: boardingPhase })) return
     if (nearbyTalkNpcId) {
       state.startTalk(nearbyTalkNpcId)
       return
@@ -241,8 +291,12 @@ export const useGameStore = create((set, get) => ({
       state.openInspect(getInspectable(nearbyInspectableId)?.objectId, 'street')
       return
     }
-    if (!nearbyShopId) return
-    if (getShop(nearbyShopId, state.eraId)?.status === 'open') state.openShop(nearbyShopId, hotspotId ?? nearbyHotspotId)
+    if (nearbyShopId && getShop(nearbyShopId, state.eraId)?.status === 'open') {
+      state.openShop(nearbyShopId, hotspotId ?? nearbyHotspotId)
+      return
+    }
+    // 清末搭船：棧橋頭的駁船、甲板的舷梯口
+    if (nearbyBoardingId) state.requestBoarding(BOARDING_SPOTS.find((item) => item.id === nearbyBoardingId)?.action)
   },
 
   /** 開啟店家介紹（建築觀賞模式中不開啟故事）；hotspotId 省略時，若正在這家店的熱點附近就用那個熱點 */
@@ -279,19 +333,25 @@ export const useGameStore = create((set, get) => ({
   toggleMenu: (open) => set((state) => ({ menuOpen: open ?? !state.menuOpen, qualityOpen: false, journalOpen: false })),
 
   /** 從選單前往店家：角色移動到店門口 */
-  travelToShop: (id) =>
+  travelToShop: (id) => {
+    // 划船途中與落水時先等著（在甲板上可以前往：人物離開甲板，搭船的狀態回到岸上）
+    if (boardingLocked({ phase: get().boardingPhase })) return false
     set((state) => ({
       travel: { shopId: id, nonce: (state.travel?.nonce ?? 0) + 1 },
       menuOpen: false,
-    })),
+    }))
+    return true
+  },
 
   /**
    * 切換年代（設定選單、數字鍵）。轉場進行中、閱讀介紹時或選到目前的年代時不接受。
    * 接受時回傳這次請求的 id（流水號），否則回傳 false。
    */
   requestEra: (id) => {
-    const { eraId, transitioning, mode, worldReady, eraRequestSeq, titleSeq } = get()
+    const { eraId, transitioning, mode, worldReady, eraRequestSeq, titleSeq, boardingPhase } = get()
     if (!getEra(id) || transitioning || !worldReady || mode !== 'explore') return false
+    // 清末搭船：划船途中、落水時不能換年代（在甲板上可以，人物會回到棧橋頭）
+    if (boardingLocked({ phase: boardingPhase })) return false
     if (id === eraId) return false
     const requestId = eraRequestSeq + 1
     set({
@@ -305,6 +365,7 @@ export const useGameStore = create((set, get) => ({
       nearbyHotspotId: null,
       nearbyTalkNpcId: null,
       nearbyInspectableId: null,
+      nearbyBoardingId: null,
       talk: null,
       inspect: null,
       menuOpen: false,
@@ -374,7 +435,7 @@ export const useGameStore = create((set, get) => ({
     const state = get()
     if (viewMode === state.viewMode) return false
     if (viewMode === 'viewer') {
-      if (!state.started || state.mode !== 'explore') return false
+      if (!state.started || state.mode !== 'explore' || boardingLocked({ phase: state.boardingPhase })) return false
       set({ viewMode: 'viewer', uiHidden: false, nearbyShopId: null, nearbyHotspotId: null, nearbyTalkNpcId: null, nearbyInspectableId: null, talk: null, inspect: null, menuOpen: false, viewerFocus: null })
       return true
     }

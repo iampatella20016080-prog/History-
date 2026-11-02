@@ -1,10 +1,10 @@
 # 清末搭船（港口商街：搭駁船上戎克船）文獻查證與設計提案
 
-查證日期：2026-11-02。範圍：1860–1895 年淡水河（淡水—大稻埕—艋舺）的戎克船與接駁小船、進出口貨物與裝卸、船夫，以及當時的圖像；順手記下各年代的船隻資料，給之後的「時光渡船」用。
+查證日期：2026-11-02；實作與 ✱ 引文核對同日（見文末「查核更新」與「實作紀錄」）。範圍：1860–1895 年淡水河（淡水—大稻埕—艋舺）的戎克船與接駁小船、進出口貨物與裝卸、船夫，以及當時的圖像；順手記下各年代的船隻資料，給之後的「時光渡船」用。
 沿用既有查證（不重複）：`qing-wharf.md`（碼頭、茶箱、「紅頭船」待核）、`tea-journey-qing-port.md`（Davidson 茶章、陶德封鎖、淡水廳志風俗考）。
 
 只記實際開啟並讀到的網頁或全文（archive.org 的書下載全文後逐段檢索、Davidson 的圖版看過掃描）；搜尋摘要、AI 摘要、學生專題與部落格不採。
-**注意**：本輪由三個子代理分頭檢索，頁碼多由 OCR 頁眉推得，可能差一頁；短引文在實作寫進 `sources.js` 前要回原文再核一次（下表標 ✱ 的）。
+**注意**：本輪由三個子代理分頭檢索，頁碼多由 OCR 頁眉推得，可能差一頁；標 ✱ 的短引文在實作前已回 archive.org 全文核過一次（結果見文末「查核更新」：內容都找得到，爐主的頁碼是 209、「不願靠近大船」是 5 月 21 日），但仍是從 OCR 文字核的，沒有看掃描圖。
 
 ## 結論先講
 
@@ -208,9 +208,51 @@
 - 更新 README（功能段落、自動化測試、測試狀態）與 `docs/roadmap.md`
 - 從最新 `main` 開分支、開 PR；commit 用繁體中文「清末搭船: …」
 
-## 需要使用者決定的事
+## 需要使用者決定的事（2026-11-02 已決定，見「實作紀錄」）
 
 1. 帆船改成照片的形制（單桅、船中蓆篷、12 m），取代現在雙桅、船尾艙房的示意模型——好嗎？
 2. 船上的人：建議 2 位（舵工、水手）＋棧橋的駁船船夫，共 3 位。
 3. 鴉片箱要不要放：有出處且是清末進出口的重點，但屬敏感題材；提案只放箱子與計價、稅額，不畫內容物、不寫吸食。
 4. 轉場：建議「駁船划過去的短動畫（約 6 秒、可略過）」，而不是單純淡出淡入。
+
+---
+
+# 查核更新（2026-11-02，實作前回原文核對 ✱ 的項目）
+
+用 archive.org 的 djvu 全文核對（Davidson `islandofformosap00davi`、海關年報 `reportsontradea03shugoog`／`reportsontradea00shugoog`、陶德 `cu31924023514452`、馬偕 `fromfarformosais00mackrich`）。都是從 OCR 文字核的，頁碼由頁眉推得，可能差一頁；沒有看掃描圖。
+
+| 項目 | 結果 | 頁碼 | 原文短引 | 修正 |
+| --- | --- | --- | --- | --- |
+| 爐主（香爐為信物的船線代理） | 內容確認、頁碼不同 | Davidson **p.209**（原寫 207） | "appointed once a year"、"an incense urn" | 三條線是 Hsiakiao（廈門等）、Siaopeh（上海、寧波等）、Tapeh（山東沿岸、天津等）；OCR 的音譯讀不清（"Lu e/ut"），原書拼法要看掃描圖，網站上寫「爐主」並標待核 |
+| 1889 大稻埕木橋旋轉段 | 確認 | Davidson p.250 | "opened at intervals every day to permit junks and large river boats" | — |
+| 茶以 cargo boats 送到 Hobe 報關 | 確認 | Davidson p.388 | "sent in cargo boats down river to Hobe (Tamsui)" | — |
+| 樟腦襯鉛木箱經香港 | 確認 | Davidson p.432 | "formerly packed in wooden boxes lined with lead" | 「清代」的限定來自 formerly，上下文是否全指日本領台以前未逐句核 |
+| 吃水三呎 | 確認 | 1879 年報約 p.184 | "when despatch is an object, no boat drawing more than three feet can be used between Twatu-tia and the port" | 是稅務司 Walter Lay 引港務長 Brenan |
+| 689 艘、70 噸、壓艙石 | 確認 | 1867 年報 p.80（船數）、p.82（Harbours） | "689 Junks entered this port"、"discharged their ballast into the river" | — |
+| 陶德：over the bar、不願靠近大船 | 部分確認 | p.137（4/19–20）、**p.155（5/21）** | 4/19–20 "Tea is being shipped over the bar"；5/21 "many of them don't care to go alongside"、"before boats can get over the bar a wind generally springs up" | 「不願靠近大船」在 5 月 21 日，不是 4 月；對白已照改 |
+| 馬偕：蓑衣 | 確認 | p.64（Fibrous Plants 第 7 項） | "worn during the heavy rains by peasants and boatmen" | — |
+
+`sources.js` 的 context 已照上表寫；`dodd-blockade-1888` 的 usage 改成「已有 archive.org 全文」。
+
+# 落水（使用者 2026-11-02 的改動：人物可以掉進河裡）
+
+原提案「可走範圍在舷牆內、不會落水」改成：**從甲板邊或棧橋邊走出去就落水**。落水是遊戲裡的情境，不是史實——畫面上的那句話標「虛構情節」，划船的說明標「歷史情境重建」；對白與手記都不寫落水。
+
+做法（`src/game/collision.js`、`src/data/qingBoardingLayout.js`、`src/game/boarding.js`、`components/BoardingDirector.jsx`、`Player.jsx`）：
+
+- **水面是可以走的範圍，標 `water: true`**：甲板四周（甲板的樓層 `BOAT_LEVEL`）與棧橋兩側、盡頭（街道的樓層）各一塊，地板比水位低 0.55 m。可行走範圍仍是矩形聯集，所以人物可以從舷牆（只有 0.14 m 高）或棧橋邊跨出去；`groundAt` 回報的範圍依列出的順序取第一個，甲板與棧橋先列、水面在後，站在甲板或棧橋上不算落水。
+- **落水**：人物中心一踩到水面，角色元件就向 store 要求 `fall`；狀態機進 `fallen`（0.3 秒水花 → 0.55 秒淡出 → 把人物放回棧橋頭、面向街道 → 0.6 秒淡入 → 回到 `ashore`）。落水、划船途中都鎖住移動、交談、器物、店家名錄前往、觀賞模式與換年代。
+- **水花**：一個合併的網格（漣漪一圈加幾顆水珠，一次繪製），只在落水後 0.7 秒畫；黑幕是 DOM 的一層，沒有繪製呼叫。兩種畫質相同，iPad 的繪製預算不變。
+- **不卡住**：棧橋旁的駁船是街道樓層的障礙物（水裡走不上船）；棧橋的範圍、廣場與其他年代都不變（其他年代走到棧橋邊仍停住）。
+- **測試**（`tests/qingBoarding.test.js`「落水」）：從甲板三個不同的邊、棧橋兩側與盡頭走出去，步長 0.05／0.15／0.4，連續 5 次落水再回岸，每次都在棧橋頭、不在水裡、不在建築裡、回岸後走回廣場不卡住；store 的鎖定；e2e（`tests/e2e/qingBoarding.e2e.mjs`）在真實瀏覽器裡走出甲板邊與棧橋邊各落水一次以上，檢查水花、黑幕、回到棧橋頭與面向。
+
+# 實作紀錄（2026-11-02）
+
+使用者的決定：1 帆船換成照片形制（單桅、船中蓆篷、12 m，標推定相近）；2 三位可交談人物（駁船船夫、舵工、水手）；3 **鴉片箱先不做**（等確認），其他四件器物照做；4 約 6 秒、可略過的划船動畫；另加「人物可以落水」（上節）。
+
+- 配置與資料：`src/data/qingBoardingLayout.js`（船、甲板格局、障礙物、水面、遮擋方塊、駁船路線、互動點、人物、器物位置）、`qingBoardingObjects.js`（樟腦箱、壓艙石、船眼的五層資訊與甲板上的四個近看點）、`qingBoardingTalk.js`（三位人物的對話）、`sources.js` 新增 9 條、更新 3 條。
+- 建模：`src/game/builders/qingJunk.js`（船殼與帆畫在 `components/River.jsx` 隨水面起伏；甲板細部按需產生，掛在船殼的群組裡；水花）、`qingJunkInspect.js`（三件器物的檢視模型）。船殼 7 批、甲板流暢畫質 6 批＋精緻細部 3 批，只用街景既有的材質；流暢畫質的街景批次 15/20/25/27/37 與港口商街的室內基準逐位不變（甲板只在指名時產生）。
+- 狀態機 `src/game/boarding.js`（純邏輯）、導演 `components/BoardingDirector.jsx`、角色與鏡頭（`Player.jsx`、`CameraRig.jsx`：划船時鏡頭在棧橋頭）、互動（`InteractionSystem.jsx` 分樓層、`StreetPrompts.jsx` 的搭船提示卡、`ui/Hud.jsx` 的黑幕與略過）。
+- 甲板的碰撞在自己的樓層（`BOAT_LEVEL = 5`），標 `inBuilding` 與 `exitTo`：在船上換年代，人物回到棧橋頭、面向街道（`collision.exitPointAt`）；蓆篷裡用貼近障礙物的鏡頭規則（followAreas）。蓆篷抬高到 1.95 m（照片上的篷較低，為了人物與鏡頭）。
+- 船上的人物與器物在甲板的樓層；水手站在桅與貨艙口之間（原本放在貨艙口旁會把側邊通道擋死，單元測試抓到）。
+- 沒做／待辦：鴉片箱（等使用者確認）；時光渡船（第二步）；爐主的原書音譯（看掃描圖）；在 iPad 實機量幀率。

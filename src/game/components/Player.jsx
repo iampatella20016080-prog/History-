@@ -2,10 +2,11 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { CanvasTexture, MeshBasicMaterial, SRGBColorSpace } from 'three'
 import { LAYERS, PLAYER } from '../config.js'
-import { groundAt, hasLevel, resolvePlayerPosition } from '../collision.js'
+import { exitPointAt, groundAt, hasLevel, resolvePlayerPosition } from '../collision.js'
 import { cameraTooCloseToCharacter } from '../viewerCamera.js'
 import { moveInput } from '../input.js'
-import { cameraState, playerState } from '../runtime.js'
+import { boardingState, cameraState, playerState } from '../runtime.js'
+import { SAMPAN_SEATS } from '../../data/qingBoardingLayout.js'
 import { RIG } from '../character/outfitBuilder.js'
 import { getOutfitMaterial } from '../character/outfitMaterials.js'
 import { getOutfit, getOutfitPalette } from '../character/outfits.js'
@@ -78,7 +79,7 @@ export function Player({ collision, shopModels }) {
   const handLeft = useRef()
   const skirtFront = useRef()
   const skirtBack = useRef()
-  const anim = useRef({ phase: 0, amount: 0, travelNonce: 0, collision: null })
+  const anim = useRef({ phase: 0, amount: 0, travelNonce: 0, teleportNonce: 0, collision: null })
 
   const eraId = useGameStore((state) => state.eraId)
   const outfit = useMemo(() => getOutfit(eraId), [eraId])
@@ -124,13 +125,35 @@ export function Player({ collision, shopModels }) {
       }
     }
 
+    // 清末搭船：駁船到了帆船（或回到棧橋頭、落水後被拉回岸上），把人物放到那裡
+    if (boardingState.teleport && boardingState.teleport.nonce !== anim.current.teleportNonce) {
+      const { x, z, heading, level } = boardingState.teleport
+      anim.current.teleportNonce = boardingState.teleport.nonce
+      pos.set(x, 0, z)
+      playerState.level = hasLevel(collision, level) ? level : 0
+      resolvePlayerPosition(pos, PLAYER.radius, collision, playerState.level)
+      settleOnGround(pos, collision, null)
+      vel.set(0, 0, 0)
+      playerState.heading = heading
+      cameraState.targetYaw = cameraState.yaw = heading + Math.PI
+      cameraState.snap = true
+    }
+
     // 換了年代的街景：原本站的地方（例如永樂市場裡）在新的年代不能走時，角色移到最近的街道上，鏡頭直接跟過去
     if (anim.current.collision !== collision) {
       const first = !anim.current.collision
+      // 原本站的範圍指定了離開點（例如帆船的甲板：回到棧橋頭、面向街道），就直接放到那裡
+      const exit = first ? null : exitPointAt(pos, anim.current.collision, playerState.level)
       anim.current.collision = collision
       const beforeX = pos.x
       const beforeY = pos.y
       const beforeZ = pos.z
+      if (exit) {
+        pos.set(exit.x, 0, exit.z)
+        playerState.level = 0
+        playerState.heading = exit.heading
+        cameraState.targetYaw = cameraState.yaw = exit.heading + Math.PI
+      }
       // 新的年代沒有角色所在的樓層（例如在爐鍋咖啡的二樓切換年代）：回到一樓，再推到最近的街道上
       if (!hasLevel(collision, playerState.level)) playerState.level = 0
       resolvePlayerPosition(pos, PLAYER.radius, collision, playerState.level, { relocate: true })
@@ -141,12 +164,26 @@ export function Player({ collision, shopModels }) {
         // 被推出建築（例如從爐鍋咖啡的二樓回到街上）：鏡頭放在推出去的那一側（街道上），不留在原本建築的方向、貼著騎樓
         const dx = pos.x - beforeX
         const dz = pos.z - beforeZ
-        if (Math.hypot(dx, dz) > 1.5) cameraState.targetYaw = cameraState.yaw = Math.atan2(dx, dz)
+        if (Math.hypot(dx, dz) > 1.5 && !exit) cameraState.targetYaw = cameraState.yaw = Math.atan2(dx, dz)
       }
     }
 
+    // 清末搭船：划船途中人物站在駁船的船尾，跟著船走（不走碰撞）；落水時不能移動
+    const boardingPhase = boardingState.phase
+    const boardingLock = boardingPhase === 'departing' || boardingPhase === 'returning' || boardingPhase === 'fallen'
+    if (boardingState.riding) {
+      const { x, z, yaw } = boardingState.ride
+      const [sx, sy, sz] = SAMPAN_SEATS.player
+      // 駁船沿 x 軸、rotationY = yaw：本地 (sx, sz) → 世界
+      pos.set(x + Math.cos(yaw) * sx + Math.sin(yaw) * sz, sy + boardingState.rideY, z - Math.sin(yaw) * sx + Math.cos(yaw) * sz)
+      vel.set(0, 0, 0)
+      playerState.speed = 0
+      // 面向船頭
+      playerState.heading = Math.atan2(Math.cos(yaw), -Math.sin(yaw))
+    }
+
     // 建築觀賞模式：角色停在原地並隱藏（座標保留，返回探索時從同一個位置繼續）
-    const canMove = st.started && st.mode === 'explore' && st.viewMode === 'explore'
+    const canMove = st.started && st.mode === 'explore' && st.viewMode === 'explore' && !boardingLock
     let forwardInput = 0
     let rightInput = 0
     let stick = 0
@@ -185,12 +222,19 @@ export function Player({ collision, shopModels }) {
 
     const prevX = pos.x
     const prevZ = pos.z
-    pos.x += vel.x * dt
-    pos.z += vel.z * dt
-    resolvePlayerPosition(pos, PLAYER.radius, collision, playerState.level)
-    // 樓梯：沿著看不見的斜面上下樓，過了一半就換到另一層
-    settleOnGround(pos, collision, pos.y)
-    const actualSpeed = dt > 0 ? Math.hypot(pos.x - prevX, pos.z - prevZ) / dt : 0
+    let actualSpeed = 0
+    if (!boardingState.riding) {
+      pos.x += vel.x * dt
+      pos.z += vel.z * dt
+      resolvePlayerPosition(pos, PLAYER.radius, collision, playerState.level)
+      // 樓梯：沿著看不見的斜面上下樓，過了一半就換到另一層
+      const ground = groundAt(pos, collision, playerState.level, pos.y)
+      playerState.level = ground.level
+      pos.y = ground.y
+      // 清末搭船：從棧橋邊或甲板邊走出去，踩到水面就落水（之後由導演把人物拉回棧橋頭）
+      if (ground.water && !boardingLock) st.requestBoarding('fall')
+      actualSpeed = dt > 0 ? Math.hypot(pos.x - prevX, pos.z - prevZ) / dt : 0
+    }
     playerState.speed = actualSpeed
 
     // 轉身：移動時朝向移動方向；探索店家時面向店面
