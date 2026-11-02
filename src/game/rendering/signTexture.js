@@ -26,6 +26,8 @@ import { DISPLAY_FONT, registerFontTexture } from './fonts.js'
  * - 永樂米苔目：mitaimuGold 紅色直條紋主招牌上的金色立體字、mitaimuSmall 右側直寫的「50年老店」、
  *   mitaimuVertical 紅色直立側招牌、takeawayRed「外帶區」紅牌、mitaimuMenu 店內菜單板的直寫店名、tableNumber 紅色的桌號牌
  *
+ * - 昭和浪漫洗濯屋：showaWall 牆上白邊的大字、showaYellow 黃底字板、showaNoren 紫色暖簾、showaOldRed「僑隆洗染」直式舊招牌、
+ *   showaPlate 小牌、showaHouseNo 門牌、showaBench 長凳上的字
  * 橫式招牌依舊日習慣由右至左書寫（modern 除外）；直式招牌由上而下。
  */
 export const SIGN_STYLES = {
@@ -109,6 +111,15 @@ export const SIGN_STYLES = {
   szxCircle: { bg: '#c3242b', bg2: '#b51f26', border: null, text: 'gold', shadow: 'rgba(70,10,10,0.35)', grain: 'rgba(255,255,255,0.02)', ltr: true, circles: true, sizeH: 0.62, sizeW: 0.8 },
   szxSmall: { bg: null, text: 'gold', shadow: 'rgba(70,10,10,0.5)', outline: '#7a1a18', outlineWidth: 0.03, letters: true, ltr: true, sizeH: 0.8, sizeW: 0.7 },
   szxBadge: { bg: null, text: 'gold', shadow: 'rgba(70,10,10,0.5)', badge: true },
+  // 昭和浪漫洗濯屋（2000–現在）：牆上白邊的深灰藍大字、黃底的小字板、紫色暖簾上的白字、紅底白字的「僑隆洗染」直式舊招牌、
+  // 米白底的小牌（受付、廣告字樣）、藍色門牌、長凳上的白字
+  showaWall: { bg: null, text: '#38424f', fill: '#38424f', outline: '#f4f2ec', outlineWidth: 0.12, shadow: 'rgba(30,30,30,0.18)', letters: true, ltr: true, sizeH: 0.82, sizeW: 0.9 },
+  showaYellow: { bg: '#d9b24e', bg2: '#cfa744', border: null, text: '#3a2a1c', shadow: 'rgba(0,0,0,0)', grain: 'rgba(90,60,20,0.08)', ltr: true, sizeH: 0.66, sizeW: 0.9 },
+  showaNoren: { bg: '#3b3358', bg2: '#352e50', border: null, text: '#f4f0e6', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.04)', ltr: true, sizeH: 0.62, sizeW: 0.86 },
+  showaOldRed: { bg: '#b8302a', bg2: '#a92a24', border: '#f1e7d4', text: '#fbf6ec', shadow: 'rgba(60,10,5,0.25)', grain: 'rgba(255,230,210,0.08)', faded: true },
+  showaPlate: { bg: '#f1ebdc', bg2: '#e8e0cd', border: '#8a3a2a', text: '#2b211a', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,95,60,0.06)', ltr: true, sizeH: 0.62, sizeW: 0.86 },
+  showaHouseNo: { bg: null, text: '#ffffff', fill: '#ffffff', outline: '#ffffff', outlineWidth: 0.02, shadow: 'rgba(0,0,0,0)', letters: true, ltr: true, sizeH: 0.85, sizeW: 0.5 },
+  showaBench: { bg: null, text: '#f4f2ec', fill: '#f4f2ec', outline: '#f4f2ec', outlineWidth: 0.02, shadow: 'rgba(0,0,0,0)', letters: true, ltr: true, sizeH: 0.8, sizeW: 0.5 },
 }
 
 /** 十字軒的徽章：兩圈金色圓環、回紋方框與中央的「十」 */

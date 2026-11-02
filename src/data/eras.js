@@ -326,6 +326,8 @@ export const ERAS = [
       'bolero',
       'xin-fang-chun',
       'shizixuan',
+      // 老洗衣店改建的霜淇淋專賣店（安西街3號）：河岸廣場東南角的轉角老屋，只在這個年代
+      'showa-laundry',
     ],
   },
 ]

@@ -67,6 +67,7 @@ import { routeFigureBox, routeFigureNpcs, routeFiguresOfEra } from '../../data/r
 import { buildDoddTeaHouse } from '../builders/doddTeaHouse.js'
 import { buildDoddTeaHouseInterior } from '../builders/doddTeaHouseInterior.js'
 import { buildLinHuaTai, buildLinHuaTaiInterior } from '../builders/linHuaTai/linHuaTai.js'
+import { buildShowaLaundry, buildShowaLaundryInterior } from '../builders/showaLaundry/showaLaundry.js'
 import { getEra } from '../../data/eras.js'
 import { createEraLayout } from './eraLayout.js'
 
@@ -145,6 +146,8 @@ export const BUILDING_BUILDERS = {
     result.cameraOnly = [{ start, end: b.blockers.length }]
     return result
   },
+  // 2000–現在：昭和浪漫洗濯屋（河岸廣場東南角的轉角老屋）：外觀、一樓室內的外殼與店外的情境（共用的街屋室內）
+  'showa-laundry': buildShowaLaundry,
 }
 
 /**
@@ -162,6 +165,7 @@ export const BUILDING_INTERIORS = {
   'huang-yujie-museum': buildHuangYujieInterior,
   'rice-and-shine': buildRiceAndShineInterior,
   shizixuan: buildShizixuanInterior,
+  'showa-laundry': buildShowaLaundryInterior,
 }
 
 const PROP_BUILDERS = {
