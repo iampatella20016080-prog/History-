@@ -425,7 +425,8 @@ describe('熱點、鏡頭、室內與觀賞範圍', () => {
     for (const eraId of ['modern', 'postwar', 'revival']) {
       const world = WORLDS[eraId]
       let checked = 0
-      for (const r of world.collision.walkable.filter((item) => item.inBuilding && !item.ramp)) {
+      // 只看稻舍的店屋（其他可以走進去的店家各有自己的測試）
+      for (const r of world.collision.walkable.filter((item) => item.inBuilding && !item.ramp && inRiceAndShineLot(item))) {
         const level = r.level ?? 0
         const y = (level ? F2 : 0) + 1.6
         for (let x = r.minX + PLAYER.radius; x <= r.maxX - PLAYER.radius; x += 0.3) {

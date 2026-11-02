@@ -68,6 +68,7 @@ import { buildDoddTeaHouse } from '../builders/doddTeaHouse.js'
 import { buildDoddTeaHouseInterior } from '../builders/doddTeaHouseInterior.js'
 import { buildLinHuaTai, buildLinHuaTaiInterior } from '../builders/linHuaTai/linHuaTai.js'
 import { buildYouJi, buildYouJiInterior } from '../builders/youJi/youJi.js'
+import { buildXinFangChun, buildXinFangChunInterior } from '../builders/xinFangChun/xinFangChun.js'
 import { getEra } from '../../data/eras.js'
 import { createEraLayout } from './eraLayout.js'
 
@@ -82,6 +83,8 @@ export const BUILDING_BUILDERS = {
   'lin-hua-tai': buildLinHuaTai,
   // 有記名茶：兩層的紅磚騎樓街屋，酒樓繁華到老屋新生都可以走進去、上二樓（第 11 階段；data/youJiEraConfig.js）
   'you-ji': buildYouJi,
+  // 新芳春茶行：三開間三層的洋樓，摩登到老屋新生都可以走進去、上二樓（第 11 階段；data/xinFangChunEraConfig.js）
+  'xin-fang-chun': buildXinFangChun,
   baroque: buildArcadeBuilding,
   deco: buildArcadeBuilding,
   postwar: buildArcadeBuilding,
@@ -158,6 +161,7 @@ export const BUILDING_INTERIORS = {
   'dodd-tea-house': buildDoddTeaHouseInterior,
   'lin-hua-tai': buildLinHuaTaiInterior,
   'you-ji': buildYouJiInterior,
+  'xin-fang-chun': buildXinFangChunInterior,
   'yongle-market': buildYongleInterior,
   'action-bar': buildActionBarInterior,
   'luguo-cafe': buildLuguoCafeInterior,

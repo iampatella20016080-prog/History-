@@ -165,6 +165,10 @@ export const NPC_LOOKS = {
   yjSorterModernB: { era: 'modern', skin: '#d8b08a', hair: 'bun', top: { kind: 'long', color: '#8a7656', trim: '#756346' }, bottom: '#40403e', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#ddd2ba' } },
   yjSorterPostwar: { era: 'postwar', skin: '#dcb28a', hair: 'bob', top: { kind: 'shirt', color: '#c98a7a', trim: '#b47868' }, bottom: '#3e4452', shoes: ['#2a2622', '#c9bfab'], extras: { apron: '#e8e0cc' } },
   yjRevivalRoaster: { era: 'revival', skin: '#c99a70', hair: 'short', top: { kind: 'shirt', color: '#3e4a52', trim: '#323c44' }, bottom: '#2f3238', shoes: ['#2a2b2f', '#5c5d60'], extras: { towel: '#e6dfcf' } },
+  // 第 11 階段新芳春茶行的人物（不具名）：帳房夥計、揀茶女工、故事館導覽員
+  xfcBookkeeper: { era: 'modern', skin: '#dcb08a', hair: 'short', top: { kind: 'long', color: '#3e4a5a', trim: '#323c4a' }, bottom: '#2f2c2a', shoes: ['#2a2622', '#2a2622'] },
+  xfcSorterModern: { era: 'modern', skin: '#e2bb94', hair: 'bun', top: { kind: 'long', color: '#9a6a5a', trim: '#84584a' }, bottom: '#3c3a40', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#e6dcc6' } },
+  xfcGuide: { era: 'revival', hair: 'bob', top: { kind: 'shirt', color: '#2f4a46', trim: '#263c39' }, bottom: '#2a2b2f', shoes: ['#2a2b2f', '#5c5d60'], extras: { strap: '#c9a64a' } },
   yjMusician: { era: 'revival', hair: 'bun', hairColor: '#3a3230', top: { kind: 'long', color: '#2e3a4e', trim: '#26303f' }, bottom: '#24262c', shoes: ['#2a2b2f', '#2a2b2f'] },
 }
 

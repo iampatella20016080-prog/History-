@@ -32,7 +32,8 @@ const DAYLIGHT = JSON.parse(readFileSync(new URL('./fixtures/daylightLighting.js
 const PRE_MOTION = JSON.parse(readFileSync(new URL('./fixtures/preMotionWorld.json', import.meta.url), 'utf8'))
 // #53 之後刻意加的招牌（同一張圖集，不增加繪製呼叫）：林華泰 1965 年改建的四層樓多了騎樓上的橫招牌與轉角直立招牌的兩面
 // 老屋新生另外加上有記名茶門市與清源堂的兩塊匾（第 11 階段）
-const LATER_SIGNS = { postwar: 3, revival: 5 }
+// 新芳春茶行（第 11 階段）：門聯兩塊與二樓的匾，摩登、庶民生活、老屋新生各多三塊
+const LATER_SIGNS = { modern: 3, postwar: 6, revival: 8 }
 const source = (path) => readFileSync(new URL(`../src/${path}`, import.meta.url), 'utf8')
 
 function hexToRgb(hex) {

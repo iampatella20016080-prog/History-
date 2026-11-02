@@ -18,7 +18,9 @@ import { shade } from './props.js'
  * - extraObstacles(cfg, look)：本地座標的額外障礙物（例如騎樓柱），可省略
  * - buildExtras(b, cfg, variant)：按需載入的室內多放的東西（板凳、吊燈），可省略
  *
- * 二樓（可省略；有記名茶是第一個用的店家）：shell.floor2 = { y, ceiling, room, stair: { minX, maxX, bottomZ, topZ } }
+ * 二樓（可省略；有記名茶是第一個用的店家）：shell.floor2 = { y, ceiling, room, stair: { minX, maxX, bottomZ, topZ, landingZ? }, well? }
+ * - landingZ：一樓樓梯頂端之後被平台蓋住、不能走的範圍到哪裡（預設到後牆；新芳春的樓梯在正廳，平台只有一小段）；
+ * - well：天井（本地矩形，新芳春）：一樓天花、二樓樓板與二樓天花都在這裡開口，上面是天光；一樓可以走，二樓四周有欄杆；
  * - 店後靠牆的木樓梯從 bottomZ（地面）往 topZ 爬到二樓樓板（y），樓板在樓梯上方留樓梯井；
  * - 年代版本的 upstairs = { items, npcs }：二樓的器物清單與人物（人物在二樓，level 1）；
  * - 碰撞：樓梯是 levels [0, 1] 的斜面，二樓的可行走範圍與障礙物標 level 1；樓梯側面與樓梯井有欄杆（只能從兩端上下）；
@@ -88,6 +90,11 @@ export function createShopInterior(spec) {
   /** 樓梯（本地座標的矩形）：一樓天花與二樓樓板在這裡留樓梯井 */
   const stairRect = F ? rect(F.stair.minX, F.stair.maxX, F.stair.topZ, F.stair.bottomZ) : null
   const roomRect = (r) => rect(r.minX, r.maxX, r.minZ, r.maxZ)
+  /** 天井（一樓天花、二樓樓板與天花的開口） */
+  const wellRect = F?.well ? roomRect(F.well) : null
+  /** 樓板與天花的開口：樓梯井與天井 */
+  const holes = [stairRect, wellRect].filter(Boolean)
+  const minusHoles = (r) => holes.reduce((pieces, hole) => pieces.flatMap((piece) => subtractRect(piece, hole)), [r])
 
   /** 室內外殼：地坪、內牆、天花、隔間牆（中央留門）與後牆的小窗 */
   function interiorShell(b, variant, look) {
@@ -98,7 +105,7 @@ export function createShopInterior(spec) {
     const midZ = (room.minZ + room.maxZ) / 2
     b.box(look.floor[0], [width, 0.05, depth], [0, 0.025, midZ], { tint: look.floor[1], grime: 0.1 })
     // 一樓天花（有二樓時在樓梯上方留樓梯井）
-    const ceilingPieces = stairRect ? subtractRect(roomRect(room), stairRect) : [roomRect(room)]
+    const ceilingPieces = minusHoles(roomRect(room))
     for (const r of ceilingPieces) {
       const size = [r.maxX - r.minX, 0, r.maxZ - r.minZ]
       const at = [(r.minX + r.maxX) / 2, 0, (r.minZ + r.maxZ) / 2]
@@ -108,8 +115,11 @@ export function createShopInterior(spec) {
     if (look.ceiling === 'beams') {
       for (let z = room.maxZ - 1.0; z > room.minZ; z -= 1.5) {
         // 樓梯井上方的梁截短（不擋到上樓的頭）
-        const maxX = stairRect && z > stairRect.minZ - 0.1 && z < stairRect.maxZ + 0.1 ? stairRect.minX : room.maxX
-        b.box('wood', [maxX - room.minX, 0.13, 0.13], [(room.minX + maxX) / 2, ceiling - 0.065, z], { tint: '#49392b' })
+        // 樓梯井與天井上方的梁截短（不擋到上樓的頭、不橫過天光）
+        for (const seg of minusHoles(rect(room.minX, room.maxX, z - 0.065, z + 0.065))) {
+          if (seg.maxZ - seg.minZ < 0.12) continue
+          b.box('wood', [seg.maxX - seg.minX, 0.13, 0.13], [(seg.minX + seg.maxX) / 2, ceiling - 0.065, z], { tint: '#49392b' })
+        }
       }
     }
     for (const s of [-1, 1]) b.box('plaster', [0.04, ceiling, depth], [s * (room.maxX + 0.02), ceiling / 2, midZ], { tint: look.wall, grime: 0.2 })
@@ -150,7 +160,7 @@ export function createShopInterior(spec) {
     const midZ = (r2.minZ + r2.maxZ) / 2
     const wall = look.wall2 ?? look.wall
     const floorTint = look.floor2 ?? '#7a5a3e'
-    for (const r of subtractRect(roomRect(r2), stairRect)) {
+    for (const r of minusHoles(roomRect(r2))) {
       b.box('planks', [r.maxX - r.minX, 0.08, r.maxZ - r.minZ], [(r.minX + r.maxX) / 2, y - 0.04, (r.minZ + r.maxZ) / 2], { tint: floorTint, grime: 0.12 })
     }
     for (const s of [-1, 1]) b.box('plaster', [0.04, c2, depth], [s * (r2.maxX + 0.02), y + c2 / 2, midZ], { tint: wall, grime: 0.2 })
@@ -165,7 +175,33 @@ export function createShopInterior(spec) {
       b.box('wood', [pitch - 0.14, 0.06, 0.08], [x, y + 0.67, r2.maxZ - 0.03], { tint: shade(look.wood, 0.75) })
       b.box('wood', [0.04, 1.5, 0.05], [x, y + 1.45, r2.maxZ - 0.03], { tint: shade(look.wood, 0.75) })
     }
-    b.box('plaster', [width, 0.06, depth], [0, y + c2 + 0.03, midZ], { tint: look.ceiling2Tint ?? shade(wall, 0.95) })
+    for (const r of wellRect ? subtractRect(roomRect(r2), wellRect) : [roomRect(r2)]) {
+      b.box('plaster', [r.maxX - r.minX, 0.06, r.maxZ - r.minZ], [(r.minX + r.maxX) / 2, y + c2 + 0.03, (r.minZ + r.maxZ) / 2], { tint: look.ceiling2Tint ?? shade(wall, 0.95) })
+    }
+    if (wellRect) {
+      // 天井：開口四周的樓板邊、二樓的欄杆（洗石子花瓶欄杆示意）與上面的天光（三面紅磚牆往上到天光）
+      const w = wellRect
+      const cx = (w.minX + w.maxX) / 2
+      const cz = (w.minZ + w.maxZ) / 2
+      const ww = w.maxX - w.minX
+      const wd = w.maxZ - w.minZ
+      const shaft = 1.6
+      for (const sx of [w.minX, w.maxX]) b.box('brick', [0.06, shaft, wd], [sx, y + c2 + shaft / 2, cz], { tint: '#b8806a' })
+      for (const sz of [w.minZ, w.maxZ]) b.box('brick', [ww, shaft, 0.06], [cx, y + c2 + shaft / 2, sz], { tint: '#b8806a' })
+      b.box('windowLit', [ww, 0.04, wd], [cx, y + c2 + shaft, cz], { tint: '#e8f0f4' })
+      const rail = look.wellRail ?? '#d8d2c4'
+      for (const [x0, x1, z0, z1] of [[w.minX, w.maxX, w.minZ, w.minZ], [w.minX, w.maxX, w.maxZ, w.maxZ], [w.minX, w.minX, w.minZ, w.maxZ], [w.maxX, w.maxX, w.minZ, w.maxZ]]) {
+        const len = Math.max(x1 - x0, z1 - z0)
+        const alongX = x1 - x0 > z1 - z0
+        b.box('stucco', [alongX ? len : 0.14, 0.1, alongX ? 0.14 : len], [(x0 + x1) / 2, y + 0.92, (z0 + z1) / 2], { tint: rail })
+        b.box('stucco', [alongX ? len : 0.16, 0.08, alongX ? 0.16 : len], [(x0 + x1) / 2, y + 0.04, (z0 + z1) / 2], { tint: shade(rail, 0.9) })
+        const n = Math.round(len / 0.22)
+        for (let i = 1; i < n; i++) {
+          const t = i / n
+          b.box('stucco', [0.07, 0.8, 0.07], [x0 + (x1 - x0) * t, y + 0.48, z0 + (z1 - z0) * t], { tint: rail })
+        }
+      }
+    }
 
     // 木樓梯：從 bottomZ（地面）往 topZ 爬到樓板
     const steps = 16
@@ -258,7 +294,7 @@ export function createShopInterior(spec) {
     if (F) {
       // 樓梯開放那一側的欄杆（最下面兩階以外）與樓梯上段底下：一樓只能從樓梯口走上樓梯
       const st = F.stair
-      list.push(rect(st.minX - 0.1, st.minX, st.topZ, st.bottomZ - 0.5), rect(st.minX - 0.1, S.room.maxX, S.room.minZ, st.topZ))
+      list.push(rect(st.minX - 0.1, st.minX, st.topZ, st.bottomZ - 0.5), rect(st.minX - 0.1, S.room.maxX, st.landingZ ?? S.room.minZ, st.topZ))
     }
     return disjoint(list.map((r) => snapToWalls(r, S.room, variant.partition)))
   }
@@ -273,6 +309,8 @@ export function createShopInterior(spec) {
     const snapped = list.map((r) => snapToWalls(r, F.room, NO_PARTITION))
     // 欄杆不補到牆裡（樓梯口那一端要留給上下樓的人）
     snapped.push(rect(st.minX - 0.1, st.minX, st.topZ, st.bottomZ + 0.1), rect(st.minX, F.room.maxX + 0.3, st.bottomZ, st.bottomZ + 0.1))
+    // 天井四周的欄杆（整個開口擋住）
+    if (wellRect) snapped.push(rect(wellRect.minX - 0.1, wellRect.maxX + 0.1, wellRect.minZ - 0.1, wellRect.maxZ + 0.1))
     return disjoint(snapped).map((r) => ({ ...r, level: 1 }))
   }
 
@@ -307,7 +345,7 @@ export function createShopInterior(spec) {
       const ramp = { axis: 'z', from: transform(0, st.bottomZ).z, to: transform(0, st.topZ).z, y0: 0, y1: F.y }
       walkable.push(inB(st.minX, st.maxX, st.topZ, st.bottomZ, { levels: [0, 1], ramp }))
       const inner = rect(F.room.minX + 0.05, F.room.maxX - 0.05, F.room.minZ + 0.05, F.room.maxZ - 0.05)
-      for (const r of subtractRect(inner, stairRect)) walkable.push(inB(r.minX, r.maxX, r.minZ, r.maxZ, { level: 1, floorY: F.y }))
+      for (const r of minusHoles(inner)) walkable.push(inB(r.minX, r.maxX, r.minZ, r.maxZ, { level: 1, floorY: F.y }))
     }
     const local = obstacles(variant)
     if (spec.extraObstacles) local.push(...spec.extraObstacles(config, lookOf(config)))
@@ -341,7 +379,7 @@ export function createShopInterior(spec) {
     b.addBlocker(partition.doorMinX, partition.doorMaxX, 2.15, ceiling, partition.z - 0.06, partition.z + 0.06)
     if (F) {
       // 二樓：一樓天花到二樓樓板之間（留樓梯井）、二樓天花以上、臨街的樓上立面與騎樓頂
-      for (const r of subtractRect(rect(-half, half, -depth, 0), stairRect)) b.addBlocker(r.minX, r.maxX, ceiling, F.y, r.minZ, r.maxZ)
+      for (const r of minusHoles(rect(-half, half, -depth, 0))) b.addBlocker(r.minX, r.maxX, ceiling, F.y, r.minZ, r.maxZ)
       b.addBlocker(-half, half, F.y + F.ceiling, ridge, -depth, 0)
       b.addBlocker(-half, half, F.y, ridge, F.room.maxZ + 0.02, 0)
       b.addBlocker(-half, half, groundH, ridge, 0, walkD)

@@ -27,6 +27,8 @@ import { LHT_ERA_HOTSPOTS, lhtEraToWorld } from './linHuaTaiLayout.js'
 import { LIN_HUA_TAI_BY_ERA } from './linHuaTaiEraConfig.js'
 import { YJ_HOTSPOTS, yjToWorld } from './youJiLayout.js'
 import { YOU_JI_BY_ERA } from './youJiEraConfig.js'
+import { XFC_HOTSPOTS, xfcToWorld } from './xinFangChunLayout.js'
+import { XIN_FANG_CHUN_BY_ERA } from './xinFangChunEraConfig.js'
 import { MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN } from './huangYujieMuseum.js'
 import { ACTION_BAR_SITE } from './actionBarLayout.js'
 import { LI_TING_XIANG_ID, LI_TING_XIANG_SOURCE_IDS, LTX_CHAPTERS, LTX_ERA_NOTES, LTX_YEAR_NOTE, LTX_YEAR_NOTE_EN } from './liTingXiangData.js'
@@ -3972,11 +3974,14 @@ export const SHOPS = [
       sign: { text: '新芳春茶行', style: 'gold' },
       goods: 'tea',
     },
+    // 同一棟洋樓、同一個地段，三個年代都可以走進去、上二樓：依年代的 variant 換擺設、人物與熱點（data/xinFangChunEraConfig.js）
     buildingByEra: {
-      modern: { condition: 'new' },
-      postwar: { condition: 'aged' },
-      revival: { condition: 'restored' },
+      modern: { condition: 'new', archetype: 'xin-fang-chun', variant: XIN_FANG_CHUN_BY_ERA.modern.variant },
+      postwar: { condition: 'aged', archetype: 'xin-fang-chun', variant: XIN_FANG_CHUN_BY_ERA.postwar.variant },
+      revival: { condition: 'restored', archetype: 'xin-fang-chun', variant: XIN_FANG_CHUN_BY_ERA.revival.variant },
     },
+    // 每個年代室內的資訊熱點（用 getShop('xin-fang-chun', eraId) 取得）
+    eras: Object.fromEntries(['modern', 'postwar', 'revival'].map((eraId) => [eraId, { hotspots: hotspotsToWorld(XFC_HOTSPOTS[XIN_FANG_CHUN_BY_ERA[eraId].variant], xfcToWorld) }])),
     // 各年代介紹視窗上方的「此時期的新芳春茶行」（整理自官方古蹟登錄、國家文化記憶庫與報導）
     eraNotes: {
       modern:

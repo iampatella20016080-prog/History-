@@ -419,8 +419,8 @@ describe('有記名茶：情境人物與可以近看的器物', () => {
     }
     assert.ok(getInspectObject('tea-sorting-tray').layers.where.some((note) => /有記/.test(note.text)))
     assert.ok(getInspectObject('roasting-basket').layers.where.some((note) => /有記/.test(note.text)))
-    // 風選機與新芳春共用（新芳春之後補上）：「在哪家店」列出有記的兩個年代
-    assert.deepEqual(inspectPlaces('winnowing-machine').map((place) => place.eraId), ['postwar', 'revival'])
+    // 風選機與新芳春共用：「在哪家店」列出有記的兩個年代
+    assert.deepEqual(inspectPlaces('winnowing-machine').filter((place) => place.shopId === YOU_JI_ID).map((place) => place.eraId), ['postwar', 'revival'])
   })
 
   test('每個年代有兩件以上可以近看的器物（二樓至少一件）：有站得到的位置，而且那裡這件器物比可以交談的人與其他器物都近', () => {
