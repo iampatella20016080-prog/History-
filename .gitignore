@@ -4,3 +4,9 @@ dist
 .DS_Store
 .vite
 npm-debug.log*
+
+# iCloud Drive 同步衝突產生的複本（例如「relief 2.js」「index 3」），不要提交
+* [0-9]
+* [0-9].*
+* [0-9][0-9]
+* [0-9][0-9].*
