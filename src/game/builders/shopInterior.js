@@ -18,6 +18,12 @@ import { shade } from './props.js'
  * - extraObstacles(cfg, look)：本地座標的額外障礙物（例如騎樓柱），可省略
  * - buildExtras(b, cfg, variant)：按需載入的室內多放的東西（板凳、吊燈），可省略
  *
+ * 二樓（可省略；有記名茶是第一個用的店家）：shell.floor2 = { y, ceiling, room, stair: { minX, maxX, bottomZ, topZ } }
+ * - 店後靠牆的木樓梯從 bottomZ（地面）往 topZ 爬到二樓樓板（y），樓板在樓梯上方留樓梯井；
+ * - 年代版本的 upstairs = { items, npcs }：二樓的器物清單與人物（人物在二樓，level 1）；
+ * - 碰撞：樓梯是 levels [0, 1] 的斜面，二樓的可行走範圍與障礙物標 level 1；樓梯側面與樓梯井有欄杆（只能從兩端上下）；
+ * - 室內範圍：一樓（不含樓梯）與二樓（含樓梯，id 加 -2f），兩個範圍共用同一份按需載入的室內。
+ *
  * 外殼只用街景裡已經有的材質（流暢畫質的批次數不變）；室內擺設按需載入，不投射也不接收陰影。
  */
 
@@ -47,8 +53,9 @@ export function snapToWalls(r, room, partition) {
   if (room.maxX - r.maxX < SNAP) out.maxX = room.maxX + 0.3
   if (r.minZ - room.minZ < SNAP) out.minZ = room.minZ - 0.3
   const clearOfDoor = r.maxX <= partition.doorMinX || r.minX >= partition.doorMaxX
-  if (clearOfDoor && r.minZ > partition.z && r.minZ - partition.z < SNAP) out.minZ = partition.z - 0.05
-  if (clearOfDoor && r.maxZ < partition.z && partition.z - r.maxZ < SNAP) out.maxZ = partition.z + 0.05
+  // 補到隔間牆的中線為止：前店與店後同一段牆前後都有擺設時，兩邊的障礙物不會互相重疊（重疊會被切成好幾塊，切縫會把人來回推）
+  if (clearOfDoor && r.minZ > partition.z && r.minZ - partition.z < SNAP) out.minZ = partition.z
+  if (clearOfDoor && r.maxZ < partition.z && partition.z - r.maxZ < SNAP) out.maxZ = partition.z
   return out
 }
 
@@ -72,8 +79,15 @@ const rectOf = (transform, x0, x1, z0, z1, extra = {}) => {
   return { minX: Math.min(p.x, q.x), maxX: Math.max(p.x, q.x), minZ: Math.min(p.z, q.z), maxZ: Math.max(p.z, q.z), ...extra }
 }
 
+/** 二樓不用隔間牆（snapToWalls 的隔間牆放到很遠的地方） */
+const NO_PARTITION = { z: -1e3, doorMinX: 0, doorMaxX: 0 }
+
 export function createShopInterior(spec) {
   const { id, shell: S, variantOf, lookOf, furniture, siteToWorld } = spec
+  const F = S.floor2 ?? null
+  /** 樓梯（本地座標的矩形）：一樓天花與二樓樓板在這裡留樓梯井 */
+  const stairRect = F ? rect(F.stair.minX, F.stair.maxX, F.stair.topZ, F.stair.bottomZ) : null
+  const roomRect = (r) => rect(r.minX, r.maxX, r.minZ, r.maxZ)
 
   /** 室內外殼：地坪、內牆、天花、隔間牆（中央留門）與後牆的小窗 */
   function interiorShell(b, variant, look) {
@@ -83,11 +97,20 @@ export function createShopInterior(spec) {
     const depth = room.maxZ - room.minZ
     const midZ = (room.minZ + room.maxZ) / 2
     b.box(look.floor[0], [width, 0.05, depth], [0, 0.025, midZ], { tint: look.floor[1], grime: 0.1 })
+    // 一樓天花（有二樓時在樓梯上方留樓梯井）
+    const ceilingPieces = stairRect ? subtractRect(roomRect(room), stairRect) : [roomRect(room)]
+    for (const r of ceilingPieces) {
+      const size = [r.maxX - r.minX, 0, r.maxZ - r.minZ]
+      const at = [(r.minX + r.maxX) / 2, 0, (r.minZ + r.maxZ) / 2]
+      if (look.ceiling === 'beams') b.box('wood', [size[0], 0.07, size[2]], [at[0], ceiling + 0.035, at[2]], { tint: '#584534' })
+      else b.box('plaster', [size[0], 0.06, size[2]], [at[0], ceiling + 0.03, at[2]], { tint: shade(look.wall, 0.96) })
+    }
     if (look.ceiling === 'beams') {
-      b.box('wood', [width, 0.07, depth], [0, ceiling + 0.035, midZ], { tint: '#584534' })
-      for (let z = room.maxZ - 1.0; z > room.minZ; z -= 1.5) b.box('wood', [width, 0.13, 0.13], [0, ceiling - 0.065, z], { tint: '#49392b' })
-    } else {
-      b.box('plaster', [width, 0.06, depth], [0, ceiling + 0.03, midZ], { tint: shade(look.wall, 0.96) })
+      for (let z = room.maxZ - 1.0; z > room.minZ; z -= 1.5) {
+        // 樓梯井上方的梁截短（不擋到上樓的頭）
+        const maxX = stairRect && z > stairRect.minZ - 0.1 && z < stairRect.maxZ + 0.1 ? stairRect.minX : room.maxX
+        b.box('wood', [maxX - room.minX, 0.13, 0.13], [(room.minX + maxX) / 2, ceiling - 0.065, z], { tint: '#49392b' })
+      }
     }
     for (const s of [-1, 1]) b.box('plaster', [0.04, ceiling, depth], [s * (room.maxX + 0.02), ceiling / 2, midZ], { tint: look.wall, grime: 0.2 })
     b.box('plaster', [width, ceiling, 0.04], [0, ceiling / 2, room.minZ - 0.02], { tint: shade(look.wall, 0.97), grime: 0.2 })
@@ -115,6 +138,68 @@ export function createShopInterior(spec) {
     const doorX = (partition.doorMinX + partition.doorMaxX) / 2
     b.box('wood', [doorW + 0.2, 0.14, 0.14], [doorX, 2.15, pz], { tint: shade(look.wood, 0.62) })
     b.box(mat, [doorW, ceiling - 2.22, 0.1], [doorX, (2.22 + ceiling) / 2, pz], { tint })
+  }
+
+  /**
+   * 二樓的外殼（有 floor2 時）：樓板（留樓梯井）、內牆、臨街一排直長窗、天花；木樓梯（踏板、斜樑、扶手）與樓梯井的欄杆
+   */
+  function upperShell(b, look) {
+    const { y, ceiling: c2, room: r2, stair } = F
+    const width = r2.maxX - r2.minX
+    const depth = r2.maxZ - r2.minZ
+    const midZ = (r2.minZ + r2.maxZ) / 2
+    const wall = look.wall2 ?? look.wall
+    const floorTint = look.floor2 ?? '#7a5a3e'
+    for (const r of subtractRect(roomRect(r2), stairRect)) {
+      b.box('planks', [r.maxX - r.minX, 0.08, r.maxZ - r.minZ], [(r.minX + r.maxX) / 2, y - 0.04, (r.minZ + r.maxZ) / 2], { tint: floorTint, grime: 0.12 })
+    }
+    for (const s of [-1, 1]) b.box('plaster', [0.04, c2, depth], [s * (r2.maxX + 0.02), y + c2 / 2, midZ], { tint: wall, grime: 0.2 })
+    b.box('plaster', [width, c2, 0.04], [0, y + c2 / 2, r2.minZ - 0.02], { tint: shade(wall, 0.97), grime: 0.2 })
+    b.box('plaster', [width, c2, 0.04], [0, y + c2 / 2, r2.maxZ + 0.02], { tint: shade(wall, 0.98), grime: 0.15 })
+    // 臨街的一排直長窗（室內那一面）
+    const n = look.windows2 ?? 5
+    const pitch = (width - 0.6) / n
+    for (let i = 0; i < n; i++) {
+      const x = r2.minX + 0.3 + (i + 0.5) * pitch
+      b.box('windowLit', [pitch - 0.22, 1.5, 0.04], [x, y + 1.45, r2.maxZ - 0.01], { tint: '#4a3d2a' })
+      b.box('wood', [pitch - 0.14, 0.06, 0.08], [x, y + 0.67, r2.maxZ - 0.03], { tint: shade(look.wood, 0.75) })
+      b.box('wood', [0.04, 1.5, 0.05], [x, y + 1.45, r2.maxZ - 0.03], { tint: shade(look.wood, 0.75) })
+    }
+    b.box('plaster', [width, 0.06, depth], [0, y + c2 + 0.03, midZ], { tint: look.ceiling2Tint ?? shade(wall, 0.95) })
+
+    // 木樓梯：從 bottomZ（地面）往 topZ 爬到樓板
+    const steps = 16
+    const run = (stair.bottomZ - stair.topZ) / steps
+    const rise = y / steps
+    const sw = stair.maxX - stair.minX
+    const sx = (stair.minX + stair.maxX) / 2
+    const wood = look.stairWood ?? '#6e4f36'
+    for (let i = 0; i < steps; i++) {
+      const z = stair.bottomZ - (i + 0.5) * run
+      b.box('wood', [sw, 0.05, run + 0.03], [sx, (i + 1) * rise - 0.025, z], { tint: shade(wood, 1.05) })
+      b.box('wood', [sw, rise, 0.025], [sx, (i + 0.5) * rise, z + run / 2], { tint: shade(wood, 0.8) })
+    }
+    const len = Math.hypot(stair.bottomZ - stair.topZ, y)
+    const ang = Math.atan2(y, stair.bottomZ - stair.topZ)
+    const midSZ = (stair.bottomZ + stair.topZ) / 2
+    for (const x of [stair.minX + 0.04, stair.maxX - 0.04]) b.box('wood', [0.07, 0.22, len], [x, y / 2 - 0.1, midSZ], { rotation: [ang, 0, 0], tint: shade(wood, 0.7) })
+    // 開放那一側的扶手與欄杆柱
+    const railX = stair.minX - 0.03
+    b.box('wood', [0.05, 0.05, len], [railX, y / 2 + 0.9, midSZ], { rotation: [ang, 0, 0], tint: shade(wood, 0.6) })
+    for (let i = 0; i <= 4; i++) {
+      const z = stair.bottomZ - 0.15 - (i * (stair.bottomZ - stair.topZ - 0.3)) / 4
+      const h = ((stair.bottomZ - z) / (stair.bottomZ - stair.topZ)) * y
+      b.box('wood', [0.05, 0.92, 0.05], [railX, h + 0.46, z], { tint: shade(wood, 0.6) })
+    }
+    // 二樓樓梯井的欄杆（開放的一側與樓梯口那一端）
+    const rail = (x0, x1, z0, z1) => {
+      b.box('wood', [Math.max(0.05, x1 - x0), 0.05, Math.max(0.05, z1 - z0)], [(x0 + x1) / 2, y + 0.92, (z0 + z1) / 2], { tint: shade(wood, 0.6) })
+      b.box('wood', [Math.max(0.03, x1 - x0), 0.03, Math.max(0.03, z1 - z0)], [(x0 + x1) / 2, y + 0.45, (z0 + z1) / 2], { tint: shade(wood, 0.65) })
+      const n = Math.max(2, Math.round(Math.max(x1 - x0, z1 - z0) / 0.6))
+      for (let i = 0; i <= n; i++) b.box('wood', [0.05, 0.92, 0.05], [x0 + ((x1 - x0) * i) / n, y + 0.46, z0 + ((z1 - z0) * i) / n], { tint: shade(wood, 0.6) })
+    }
+    rail(stair.minX - 0.05, stair.minX - 0.05, stair.topZ, stair.bottomZ + 0.05)
+    rail(stair.minX - 0.05, r2.maxX, stair.bottomZ + 0.05, stair.bottomZ + 0.05)
   }
 
   /** 店門口兩側：門板（frontPanels 'boards'）、捲門（'shutter'）或櫥窗的木框下牆（'open'）；中央是可以走進去的門 */
@@ -156,6 +241,10 @@ export function createShopInterior(spec) {
       const fp = itemBounds(furniture, item)
       b.addBlocker(fp.minX, fp.maxX, 0, furniture[item.type].height(item), fp.minZ, fp.maxZ)
     }
+    for (const item of variant.upstairs?.items ?? []) {
+      const fp = itemBounds(furniture, item)
+      b.addBlocker(fp.minX, fp.maxX, F.y, F.y + Math.min(furniture[item.type].height(item), F.ceiling - 0.05), fp.minZ, fp.maxZ)
+    }
     return [{ start, end: b.blockers.length }]
   }
 
@@ -165,9 +254,32 @@ export function createShopInterior(spec) {
    */
   function obstacles(variant) {
     const list = variant.items.map((item) => itemFootprint(furniture, item)).filter(Boolean)
-    for (const npc of variant.npcs) list.push({ minX: npc.x - 0.25, maxX: npc.x + 0.25, minZ: npc.z - 0.25, maxZ: npc.z + 0.25 })
+    for (const npc of variant.npcs) if (!npc.level) list.push({ minX: npc.x - 0.25, maxX: npc.x + 0.25, minZ: npc.z - 0.25, maxZ: npc.z + 0.25 })
+    if (F) {
+      // 樓梯開放那一側的欄杆（最下面兩階以外）與樓梯上段底下：一樓只能從樓梯口走上樓梯
+      const st = F.stair
+      list.push(rect(st.minX - 0.1, st.minX, st.topZ, st.bottomZ - 0.5), rect(st.minX - 0.1, S.room.maxX, S.room.minZ, st.topZ))
+    }
+    return disjoint(list.map((r) => snapToWalls(r, S.room, variant.partition)))
+  }
+
+  /** 二樓的障礙物（本地座標，level 1）：器物、人物與樓梯井的欄杆 */
+  function upstairsObstacles(variant) {
+    if (!F) return []
+    const up = variant.upstairs ?? { items: [], npcs: [] }
+    const st = F.stair
+    const list = up.items.map((item) => itemFootprint(furniture, item)).filter(Boolean)
+    for (const npc of up.npcs) list.push({ minX: npc.x - 0.25, maxX: npc.x + 0.25, minZ: npc.z - 0.25, maxZ: npc.z + 0.25 })
+    const snapped = list.map((r) => snapToWalls(r, F.room, NO_PARTITION))
+    // 欄杆不補到牆裡（樓梯口那一端要留給上下樓的人）
+    snapped.push(rect(st.minX - 0.1, st.minX, st.topZ, st.bottomZ + 0.1), rect(st.minX, F.room.maxX + 0.3, st.bottomZ, st.bottomZ + 0.1))
+    return disjoint(snapped).map((r) => ({ ...r, level: 1 }))
+  }
+
+  /** 切成互不重疊的矩形（聯集不變） */
+  function disjoint(list) {
     const result = []
-    for (const r of list.map((r) => snapToWalls(r, S.room, variant.partition))) {
+    for (const r of list) {
       let pieces = [r]
       for (const placed of result) pieces = pieces.flatMap((piece) => subtractRect(piece, placed))
       result.push(...pieces)
@@ -181,7 +293,7 @@ export function createShopInterior(spec) {
     if (!variant) return { walkable: [], obstacles: [] }
     const { half, walkD, room } = S
     const { door, partition } = variant
-    const inB = (x0, x1, z0, z1) => rectOf(transform, x0, x1, z0, z1, { inBuilding: true })
+    const inB = (x0, x1, z0, z1, extra = {}) => rectOf(transform, x0, x1, z0, z1, { inBuilding: true, ...extra })
     const walkable = [
       inB(-half + 0.1, half - 0.1, -0.05, walkD + 0.35),
       inB(door.minX, door.maxX, room.maxZ, 0.05),
@@ -189,9 +301,19 @@ export function createShopInterior(spec) {
       inB(partition.doorMinX + 0.05, partition.doorMaxX - 0.05, partition.z - 0.1, partition.z + 0.12),
       inB(room.minX + 0.05, room.maxX - 0.05, room.minZ + 0.05, partition.z - 0.08),
     ]
+    if (F) {
+      // 樓梯（斜面，從一樓到二樓）與二樓（樓梯井以外）
+      const st = F.stair
+      const ramp = { axis: 'z', from: transform(0, st.bottomZ).z, to: transform(0, st.topZ).z, y0: 0, y1: F.y }
+      walkable.push(inB(st.minX, st.maxX, st.topZ, st.bottomZ, { levels: [0, 1], ramp }))
+      const inner = rect(F.room.minX + 0.05, F.room.maxX - 0.05, F.room.minZ + 0.05, F.room.maxZ - 0.05)
+      for (const r of subtractRect(inner, stairRect)) walkable.push(inB(r.minX, r.maxX, r.minZ, r.maxZ, { level: 1, floorY: F.y }))
+    }
     const local = obstacles(variant)
     if (spec.extraObstacles) local.push(...spec.extraObstacles(config, lookOf(config)))
-    return { walkable, obstacles: local.map((r) => rectOf(transform, r.minX, r.maxX, r.minZ, r.maxZ)) }
+    const world = local.map((r) => rectOf(transform, r.minX, r.maxX, r.minZ, r.maxZ))
+    for (const r of upstairsObstacles(variant)) world.push(rectOf(transform, r.minX, r.maxX, r.minZ, r.maxZ, { level: 1 }))
+    return { walkable, obstacles: world }
   }
 
   /** 街景裡的部分：外觀、室內外殼、門面、鏡頭遮擋、室內範圍、觀賞範圍與人物 */
@@ -201,6 +323,7 @@ export function createShopInterior(spec) {
     const result = spec.exterior(b, cfg, detail, look) ?? {}
     const openingH = Math.min(2.62, (result.groundHeight ?? S.groundH) - 0.6)
     interiorShell(b, variant, look)
+    if (F) upperShell(b, look)
     storefront(b, variant, look, openingH)
     const cameraOnly = furnitureBlockers(b, variant)
     const { half, room, ceiling, walkD, wallT, depth } = S
@@ -216,7 +339,15 @@ export function createShopInterior(spec) {
     b.addBlocker(room.minX, partition.doorMinX, 0, ceiling, partition.z - 0.06, partition.z + 0.06)
     b.addBlocker(partition.doorMaxX, room.maxX, 0, ceiling, partition.z - 0.06, partition.z + 0.06)
     b.addBlocker(partition.doorMinX, partition.doorMaxX, 2.15, ceiling, partition.z - 0.06, partition.z + 0.06)
-    b.addBlocker(-half, half, ceiling, ridge, -depth, 0)
+    if (F) {
+      // 二樓：一樓天花到二樓樓板之間（留樓梯井）、二樓天花以上、臨街的樓上立面與騎樓頂
+      for (const r of subtractRect(rect(-half, half, -depth, 0), stairRect)) b.addBlocker(r.minX, r.maxX, ceiling, F.y, r.minZ, r.maxZ)
+      b.addBlocker(-half, half, F.y + F.ceiling, ridge, -depth, 0)
+      b.addBlocker(-half, half, F.y, ridge, F.room.maxZ + 0.02, 0)
+      b.addBlocker(-half, half, groundH, ridge, 0, walkD)
+    } else {
+      b.addBlocker(-half, half, ceiling, ridge, -depth, 0)
+    }
 
     const toWorld = (x, z) => {
       const p = b.transformPoint(x, 0, z)
@@ -228,6 +359,37 @@ export function createShopInterior(spec) {
       return { minX: Math.min(p.x, q.x), maxX: Math.max(p.x, q.x), minZ: Math.min(p.z, q.z), maxZ: Math.max(p.z, q.z) }
     }
 
+    const part = (r, extra) => ({ ...zone(r.minX, r.maxX, r.minZ, r.maxZ), ...extra })
+    const upper = F
+      ? [
+          {
+            id: `${id}-2f`,
+            ...zone(F.room.minX, F.room.maxX, F.room.minZ, F.room.maxZ),
+            // 樓梯屬於二樓的範圍（爬樓梯時鏡頭跟著往上）
+            parts: [part(stairRect, { levels: [0, 1] }), part(F.room, { level: 1 })],
+            ceiling: F.ceiling,
+            camera: { distance: 2.8, maxHeight: F.y + F.ceiling - 0.4, minPitch: 0.04, maxPitch: 0.6, lookHeight: 1.45, minDistance: 0.6 },
+            viewerStart: { distance: 2.5 },
+            loadRadius: 15,
+            showRadius: 24,
+          },
+        ]
+      : []
+    const npcOf = (npc, i) => {
+      const p = siteToWorld(npc.x, npc.z)
+      return {
+        id: npc.id,
+        zone: npc.level ? `${id}-2f` : id,
+        look: npc.look,
+        pose: npc.pose,
+        seatY: npc.seatY,
+        ...(npc.level ? { level: npc.level } : {}),
+        position: [p.x, npc.level ? F.y : 0, p.z],
+        rotationY: b.worldRotationY(npc.rotationY),
+        phase: (0.37 + i * 0.29) % 1,
+      }
+    }
+
     return {
       ...result,
       cameraOnly,
@@ -235,6 +397,7 @@ export function createShopInterior(spec) {
         {
           id,
           ...zone(room.minX, room.maxX, room.minZ, room.maxZ),
+          ...(F ? { parts: subtractRect(roomRect(room), stairRect).map((r) => part(r, { level: 0 })) } : {}),
           ceiling,
           entry: zone(door.minX - 1.2, door.maxX + 1.2, room.maxZ, walkD + 0.9),
           entryHold: 0.5,
@@ -245,25 +408,19 @@ export function createShopInterior(spec) {
           loadRadius: 15,
           showRadius: 24,
         },
+        ...upper,
       ],
       viewerRegions: [
         { ...zone(-half + 0.4, half - 0.4, 0.15, walkD - 0.1), maxY: 2.4, cameraMaxY: 3.0 },
         { ...zone(room.minX + 0.3, room.maxX - 0.3, room.minZ + 0.3, -0.15), maxY: 2.2, cameraMaxY: ceiling - 0.3 },
+        ...(F ? [{ ...zone(F.room.minX + 0.3, F.room.maxX - 0.3, F.room.minZ + 0.3, F.room.maxZ - 0.15), minY: F.y + 0.8, maxY: F.y + 2.0, cameraMaxY: F.y + F.ceiling - 0.3 }] : []),
       ],
-      followAreas: [zone(-half, half, room.minZ, walkD), zone(-half - 0.5, half + 0.5, walkD, walkD + 2.4)],
-      npcs: variant.npcs.map((npc, i) => {
-        const p = siteToWorld(npc.x, npc.z)
-        return {
-          id: npc.id,
-          zone: id,
-          look: npc.look,
-          pose: npc.pose,
-          seatY: npc.seatY,
-          position: [p.x, 0, p.z],
-          rotationY: b.worldRotationY(npc.rotationY),
-          phase: (0.37 + i * 0.29) % 1,
-        }
-      }),
+      followAreas: [
+        zone(-half, half, room.minZ, walkD),
+        zone(-half - 0.5, half + 0.5, walkD, walkD + 2.4),
+        ...(F ? [{ ...zone(-half, half, room.minZ, 0), level: 1 }] : []),
+      ],
+      npcs: [...variant.npcs, ...(variant.upstairs?.npcs ?? [])].map(npcOf),
     }
   }
 
@@ -272,8 +429,16 @@ export function createShopInterior(spec) {
     const variant = variantOf(cfg)
     if (!variant) return
     for (const item of variant.items) furniture[item.type].build(b, item, detail)
+    if (F && variant.upstairs) {
+      // 二樓的器物：整組抬到二樓樓板上
+      b.push([0, F.y, 0])
+      if (detail !== b) detail.push([0, F.y, 0])
+      for (const item of variant.upstairs.items) furniture[item.type].build(b, item, detail)
+      if (detail !== b) detail.pop()
+      b.pop()
+    }
     spec.buildExtras?.(b, cfg, variant)
   }
 
-  return { variantOf, obstacles, collision, build, buildInterior }
+  return { variantOf, obstacles, upstairsObstacles, collision, build, buildInterior }
 }

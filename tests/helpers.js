@@ -197,6 +197,8 @@ export function inTeaHouseLots(rect) {
   const lots = [
     { minX: 5.15 - 4.0, maxX: 5.15 + 4.0, minZ: -4.5 - 11.3, maxZ: -0.3 },
     { minX: -22 - 3.6, maxX: -22 + 3.6, minZ: -4.5 - 11.3, maxZ: -0.3 },
+    // 有記名茶（第 11 階段，酒樓繁華到老屋新生；見 tests/youJi.test.js）
+    { minX: 11.6 - 3.6, maxX: 11.6 + 3.6, minZ: -4.5 - 11.3, maxZ: -0.3 },
   ]
   return lots.some(
     (lot) => rect.minX >= lot.minX - 1e-6 && rect.maxX <= lot.maxX + 1e-6 && rect.minZ >= lot.minZ - 1e-6 && rect.maxZ <= lot.maxZ + 1e-6,
@@ -207,6 +209,11 @@ export function inTeaHouseLots(rect) {
  * 範圍是否在林華泰茶行的地段裡（x=-22、z=-4.5、面寬 6、進深 11，加上簷下步道與店門口）：
  * 這家店五個年代都可以走進去（第 10、11 階段）；其他店家的測試檢查「這個年代沒有室內」時用它排除。
  */
+/** 有記名茶的地段（x=11.6、z=-4.5，面寬 6 m、進深 11 m；含騎樓與店前一段街道） */
+export function inYouJiLot(rect) {
+  return rect.minX >= 8.1 - 1e-6 && rect.maxX <= 15.1 + 1e-6 && rect.minZ >= -15.5 - 1e-6 && rect.maxZ <= -4.5 + 1.7 + 2.4 + 0.5 + 1e-6
+}
+
 export function inLinHuaTaiLot(rect) {
   return rect.minX >= -25 - 1e-6 && rect.maxX <= -19 + 1e-6 && rect.minZ >= -15.5 - 1e-6 && rect.maxZ <= -4.5 + 1.7 + 2.4 + 0.5 + 1e-6
 }

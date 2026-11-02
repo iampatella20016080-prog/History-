@@ -67,6 +67,7 @@ import { routeFigureBox, routeFigureNpcs, routeFiguresOfEra } from '../../data/r
 import { buildDoddTeaHouse } from '../builders/doddTeaHouse.js'
 import { buildDoddTeaHouseInterior } from '../builders/doddTeaHouseInterior.js'
 import { buildLinHuaTai, buildLinHuaTaiInterior } from '../builders/linHuaTai/linHuaTai.js'
+import { buildYouJi, buildYouJiInterior } from '../builders/youJi/youJi.js'
 import { buildShowaLaundry, buildShowaLaundryInterior } from '../builders/showaLaundry/showaLaundry.js'
 import { getEra } from '../../data/eras.js'
 import { createEraLayout } from './eraLayout.js'
@@ -80,6 +81,8 @@ export const BUILDING_BUILDERS = {
   'dodd-tea-house': buildDoddTeaHouse,
   // 林華泰茶行：同一棟建築依年代的 variant 換外殼與室內（港口商街第 10 階段、其他年代第 11 階段；data/linHuaTaiEraConfig.js）
   'lin-hua-tai': buildLinHuaTai,
+  // 有記名茶：兩層的紅磚騎樓街屋，酒樓繁華到老屋新生都可以走進去、上二樓（第 11 階段；data/youJiEraConfig.js）
+  'you-ji': buildYouJi,
   baroque: buildArcadeBuilding,
   deco: buildArcadeBuilding,
   postwar: buildArcadeBuilding,
@@ -157,6 +160,7 @@ export const BUILDING_BUILDERS = {
 export const BUILDING_INTERIORS = {
   'dodd-tea-house': buildDoddTeaHouseInterior,
   'lin-hua-tai': buildLinHuaTaiInterior,
+  'you-ji': buildYouJiInterior,
   'yongle-market': buildYongleInterior,
   'action-bar': buildActionBarInterior,
   'luguo-cafe': buildLuguoCafeInterior,

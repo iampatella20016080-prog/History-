@@ -16,6 +16,7 @@ import { clampViewerTarget, interiorAmount, viewerSpaceOf } from '../src/game/vi
 import { buildEraInteriorSync, buildEraWorldSync } from '../src/game/world/buildWorld.js'
 import { getLotPlan } from '../src/game/world/lots.js'
 import { getShopPlacement } from '../src/game/world/placement.js'
+import { inRiceAndShineLot } from './helpers.js'
 
 /**
  * 迪化街一段329號店屋（稻舍 Rice & Shine）：同一棟建築、同一個 ID，五個年代各有不同的版本。
@@ -253,7 +254,7 @@ describe('碰撞：從街上走進去、走過一樓、天井、二樓，再走�
         for (const m of followRoute(world, p, [...route].reverse().slice(1), step)) assert.ok(m.miss < 0.25, `${eraId} 回程 每步 ${step}：${m.id}`)
       }
       // 沒有二樓
-      assert.ok(!world.collision.walkable.some((r) => r.inBuilding && ((r.level ?? 0) === 1 || r.levels)), eraId)
+      assert.ok(!world.collision.walkable.some((r) => r.inBuilding && inRiceAndShineLot(r) && ((r.level ?? 0) === 1 || r.levels)), eraId)
     }
   })
 

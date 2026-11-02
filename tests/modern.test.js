@@ -6,6 +6,7 @@ import { PartBuilder } from '../src/game/builders/PartBuilder.js'
 import { SHOP_TYPES, displayShopfront } from '../src/game/builders/shopDisplays.js'
 import { buildEraWorldSync } from '../src/game/world/buildWorld.js'
 import { createEraLayout } from '../src/game/world/eraLayout.js'
+import { onLevel } from '../src/game/collision.js'
 
 /**
  * 摩登大稻埕（1930–1945）精修：店種與櫥窗、Art Deco 立面、街道設施，以及其他年代不受影響。
@@ -95,7 +96,9 @@ describe('立面與街道', () => {
     const o = layout.obstacles
     for (let i = 0; i < o.length; i++) {
       for (let j = i + 1; j < o.length; j++) {
-        const overlap = o[i].minX < o[j].maxX && o[j].minX < o[i].maxX && o[i].minZ < o[j].maxZ && o[j].minZ < o[i].maxZ
+        // 不同樓層的障礙物（例如有記名茶二樓的揀茶桌）不會碰到彼此
+        const sameLevel = [0, 1].some((level) => onLevel(o[i], level) && onLevel(o[j], level))
+        const overlap = sameLevel && o[i].minX < o[j].maxX && o[j].minX < o[i].maxX && o[i].minZ < o[j].maxZ && o[j].minZ < o[i].maxZ
         assert.ok(!overlap, `障礙物 ${i} 與 ${j} 重疊`)
       }
     }

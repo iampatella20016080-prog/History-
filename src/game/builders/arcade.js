@@ -113,7 +113,8 @@ export function buildArcadeBuilding(b, cfg, detail = null) {
   }
   b.box(wallMat, [innerW, groundH - openingH, wallT], [0, openingH + (groundH - openingH) / 2, -wallT / 2], { tint: wallTint })
   b.box('stone', [innerW, 0.17, 0.4], [0, walkH + 0.01, -0.12], { tint: '#c7bead' })
-  buildGroundShop(b, cfg, rng, { style, innerW, openingH, walkH, condition, darkWood, woodTint, trimTint })
+  // 可以走進去的店家（walkIn，例如有記名茶）：店門口、店內與鏡頭遮擋由該店家的建築產生器處理
+  if (!cfg.walkIn) buildGroundShop(b, cfg, rng, { style, innerW, openingH, walkH, condition, darkWood, woodTint, trimTint })
 
   /* ── 樓上立面 ───────────────────────── */
   b.box(wallMat, [w - 0.02 - cornerR, topY - groundH + 0.02, wallT], [-cornerSide * cornerR / 2, (groundH + topY) / 2, front - wallT / 2], {
@@ -187,7 +188,7 @@ export function buildArcadeBuilding(b, cfg, detail = null) {
     b.cylinder('bamboo', 0.025, 0.025, 0.62, 5, [bx, groundH - 0.12, walkD + 0.24], { rotation: [Math.PI / 2, 0, 0], tint: '#d8c48e' })
     b.addBanner({ text: cfg.banner.text, style: 'cloth', width: 0.44, height: 1.25, position: [bx, groundH - 0.78, walkD + 0.28], rotationY: Math.PI / 2 })
   }
-  if (cfg.storefront !== 'closed') b.addPool(0, walkD * 0.55, Math.min(2.4, w * 0.35), '#ffb468', walkH + 0.02)
+  if (cfg.storefront !== 'closed' && !cfg.walkIn) b.addPool(0, walkD * 0.55, Math.min(2.4, w * 0.35), '#ffb468', walkH + 0.02)
 
   /* ── 屋頂（藏在山頭後方的單坡瓦頂） ── */
   const roofLen = D + front - 0.4
@@ -216,10 +217,11 @@ export function buildArcadeBuilding(b, cfg, detail = null) {
     })
   }
 
-  // 鏡頭遮擋
-  b.addBlocker(-w / 2, w / 2, 0, topY + (defaults.parapetH ?? 1), -D, front)
+  // 鏡頭遮擋（walkIn 的店家自己分成牆面與樓板）
+  const ridgeHeight = topY + (defaults.parapetH ?? 1)
+  if (!cfg.walkIn) b.addBlocker(-w / 2, w / 2, 0, ridgeHeight, -D, front)
 
-  return { groundHeight: groundH, topHeight: topY }
+  return { groundHeight: groundH, topHeight: topY, ridgeHeight }
 }
 
 /** 騎樓上方橫招牌的半寬（立體字比招牌板寬 0.4） */
@@ -238,7 +240,10 @@ function baroqueFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, w
   // 酒樓年代：沒點燈的窗映著暮色（只在這個年代設定 ornate）
   const glass = cfg.ornate ? { glassTint: '#4a5270' } : {}
   // 壁柱（紅磚立面改以兩端的灰泥隅石收邊）
+  // windowRow：樓上一整排直長的格子窗（例如有記名茶的紅磚樓，官網照片二樓 7 扇），不畫壁柱
+  const row = cfg.windowRow ?? 0
   for (let i = 0; i <= count; i++) {
+    if (row) break
     if (brick && (i === 0 || i === count)) continue
     const x = -w / 2 + 0.4 + i * spacing
     const behindSign = signSpan && Math.abs(x) < signSpan.half
@@ -262,7 +267,14 @@ function baroqueFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, w
     const fy = groundH + (f - 1) * upperH
     cornice(b, { y: f === 1 ? fy - 0.02 : fy + 0.18, width: w, z: front, tint: trimTint })
     const windowStyle = cfg.windowStyles?.[f - 1] ?? 'arch'
-    for (let i = 0; i < count; i++) {
+    if (row) {
+      const pitch = (w - 1.3) / row
+      for (let i = 0; i < row; i++) {
+        const x = -w / 2 + 0.65 + pitch * (i + 0.5)
+        rectWindow(b, { x, y: fy + 1.5, width: pitch - 0.16, height: 1.75, z: front, lit: rng() < litChance, frameTint: '#4d3a2c', barTint: '#b89a74', style: 'panes', ...glass })
+      }
+    }
+    for (let i = 0; i < (row ? 0 : count); i++) {
       const x = -w / 2 + 0.4 + spacing * (i + 0.5)
       const lit = rng() < litChance
       if (windowStyle === 'rect' || windowStyle === 'segment') {

@@ -160,6 +160,14 @@ export const NPC_LOOKS = {
   // 昭和浪漫洗濯屋（老屋新生）：吧台裡的店員（不具名、不說話）
   showaStaff: { era: 'revival', hair: 'bob', top: { kind: 'tee', color: '#e9e3d5' }, bottom: '#2f3238', shoes: ['#2a2b2f', '#5c5d60'], extras: { apron: '#3d4a5c' } },
   lhtRevivalStaff: { era: 'revival', hair: 'bob', top: { kind: 'shirt', color: '#8a9a8c', trim: '#768679' }, bottom: '#2f3238', shoes: ['#2a2b2f', '#5c5d60'], extras: { apron: '#3a3a3c' } },
+  // 第 11 階段有記名茶各年代室內的人物（不具名的情境人物）：刷嘜頭的夥計、揀茶女、焙茶師傅、南管樂人
+  yjBanquetMarker: { era: 'banquet', skin: '#d4a67c', hair: 'short', top: { kind: 'long', color: '#6a6250', trim: '#585140' }, bottom: '#3a3632', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#bfb39a' } },
+  yjSorterBanquet: { era: 'banquet', skin: '#e2bd96', hair: 'bun', top: { kind: 'long', color: '#8a5a5a', trim: '#744a4a' }, bottom: '#3c3a44', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#e2d8c2' } },
+  yjSorterModern: { era: 'modern', skin: '#e0b994', hair: 'bun', top: { kind: 'long', color: '#5f7a7a', trim: '#4e6666' }, bottom: '#3a3a42', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#e4dac4' } },
+  yjSorterModernB: { era: 'modern', skin: '#d8b08a', hair: 'bun', top: { kind: 'long', color: '#8a7656', trim: '#756346' }, bottom: '#40403e', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#ddd2ba' } },
+  yjSorterPostwar: { era: 'postwar', skin: '#dcb28a', hair: 'bob', top: { kind: 'shirt', color: '#c98a7a', trim: '#b47868' }, bottom: '#3e4452', shoes: ['#2a2622', '#c9bfab'], extras: { apron: '#e8e0cc' } },
+  yjRevivalRoaster: { era: 'revival', skin: '#c99a70', hair: 'short', top: { kind: 'shirt', color: '#3e4a52', trim: '#323c44' }, bottom: '#2f3238', shoes: ['#2a2b2f', '#5c5d60'], extras: { towel: '#e6dfcf' } },
+  yjMusician: { era: 'revival', hair: 'bun', hairColor: '#3a3230', top: { kind: 'long', color: '#2e3a4e', trim: '#26303f' }, bottom: '#24262c', shoes: ['#2a2b2f', '#2a2b2f'] },
 }
 
 /* ───────────── 姿勢 ───────────── */

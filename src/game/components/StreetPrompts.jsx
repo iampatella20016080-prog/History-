@@ -149,7 +149,8 @@ export function StreetPrompts({ npcs, eraId, promptLayer }) {
       {talkables.map((npc) => (
         <Html
           key={npc.id}
-          position={[npc.position[0], 2.1, npc.position[2]]}
+          // 二樓的人物（例如有記名茶的清源堂）：提示跟著樓板抬高；帆船甲板低於街面的人物仍在 2.1
+          position={[npc.position[0], Math.max(2.1, npc.position[1] + 2.1), npc.position[2]]}
           portal={promptLayer}
           zIndexRange={[12, 0]}
           pointerEvents="none"

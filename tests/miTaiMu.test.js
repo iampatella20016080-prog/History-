@@ -323,7 +323,8 @@ describe('永樂米苔目：店面、走進店裡與碰撞', () => {
       const world = worlds[era.id]
       for (const [x, z] of spots) {
         const p = { ...YL(x, z) }
-        resolvePlayerPosition(p, PLAYER.radius, world.collision, 0)
+        // 換年代時人物用 relocate 移到戶外（這塊地在其他年代是有記名茶，店屋的範圍標 inBuilding）
+        resolvePlayerPosition(p, PLAYER.radius, world.collision, 0, { relocate: true })
         assert.ok(walkableAt(world, p.x, p.z), `${era.id} (${x}, ${z}) → (${p.x.toFixed(2)}, ${p.z.toFixed(2)})`)
         assert.equal(groundAt(p, world.collision, 0, null).y, 0)
         // 港口商街這塊地是霞海城隍廟：站在廟埕（可行走範圍）也是合法的戶外位置
