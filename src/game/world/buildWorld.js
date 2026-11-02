@@ -60,6 +60,8 @@ import { COPLANAR_DELTA, resolveAllCoplanar } from '../builders/coplanar.js'
 import { catenaryPoints, lanternString, wire } from '../builders/wires.js'
 import { pennantShape } from '../builders/shapes.js'
 import { buildQingWharf } from '../builders/qingWharf.js'
+import { buildJunkDeck } from '../builders/qingJunk.js'
+import { JUNK_DECK_ZONE, crewNpcs, deckFollowAreas } from '../../data/qingBoardingLayout.js'
 import { sceneBox, sceneNpcs, scenesForEra } from '../../data/streetPropsLayout.js'
 import { routeFigureBox, routeFigureNpcs, routeFiguresOfEra } from '../../data/routeFigures.js'
 import { buildDoddTeaHouse } from '../builders/doddTeaHouse.js'
@@ -384,7 +386,12 @@ export function* eraWorldSteps(eraId) {
   for (const line of layout.wires) wire(b, line)
   for (const line of layout.lanternStrings) lanternString(b, line)
   buildMooringPosts(b, layout.mooringPosts)
-  if (layout.qingWharf) npcs.push(...buildQingWharf(b, detail).npcs)
+  if (layout.qingWharf) {
+    npcs.push(...buildQingWharf(b, detail).npcs)
+    // 清末搭船：船上的舵工與水手（甲板細部載入時才畫，掛在帆船的群組裡跟著起伏：components/River.jsx）；蓆篷裡鏡頭貼著蓆面
+    npcs.push(...crewNpcs())
+    followAreas.push(...deckFollowAreas())
+  }
   // 街頭的情境人物（車夫、牽腳踏車的人、攤販）與道具：範圍是鏡頭遮擋方塊（data/streetPropsLayout.js）
   for (const scene of scenesForEra(era.id)) b.blockers.push(sceneBox(scene))
   npcs.push(...sceneNpcs(era.id))
@@ -458,6 +465,8 @@ export function* eraWorldSteps(eraId) {
     collision: { walkable: layout.walkable, obstacles: layout.obstacles },
     // 可以走進去的室內（鏡頭在室內拉近壓低、室內細部按需載入）與觀賞模式額外的範圍
     interiors,
+    // 清末搭船：帆船的甲板細部（按需載入，掛在河上的船的群組裡；不列在 interiors，鏡頭不用室內的規則）
+    junkDeck: layout.qingWharf ? { ...JUNK_DECK_ZONE } : null,
     viewerRegions,
     viewerBounds,
     // 第三人稱鏡頭要貼近障礙物的範圍（窄巷；室內另外判斷）
@@ -480,6 +489,12 @@ export function* eraInteriorSteps(eraId, buildingId = null) {
   // 細小的擺飾（例如爐鍋咖啡吧檯上的杯具與商品盒）另外合併：流暢模式下不顯示
   const detail = new PartBuilder()
   const shells = []
+  // 清末搭船：帆船的甲板細部（本地座標，掛在船殼的群組裡跟著起伏）。只在指名要這一份時產生：
+  // 產生整個年代所有室內（流暢畫質基準）時不包含，港口商街的室內基準逐位不變
+  if (buildingId === JUNK_DECK_ZONE.building) {
+    if (layout.qingWharf) buildJunkDeck(b, detail)
+    yield
+  }
   for (const building of layout.buildings) {
     const builder = BUILDING_INTERIORS[building.config.archetype]
     if (!builder || (buildingId && building.id !== buildingId)) continue

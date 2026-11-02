@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { BufferAttribute, CanvasTexture, Color, DoubleSide, Matrix4, MeshBasicMaterial, MeshToonMaterial, SRGBColorSpace } from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
@@ -13,8 +13,13 @@ import { RiverReflection } from './RiverReflection.jsx'
 import { useGameStore } from '../../state/useGameStore.js'
 import { PartBuilder } from '../builders/PartBuilder.js'
 import { buildFerry, buildJunk, buildSampan } from '../builders/environment.js'
+import { buildRiverJunk, splashGeometry } from '../builders/qingJunk.js'
+import { JUNK, SAMPAN_SEATS, worldToJunk } from '../../data/qingBoardingLayout.js'
 import { getMaterials } from '../rendering/materials.js'
 import { getTextures } from '../rendering/textures.js'
+import { boardingState, playerState } from '../runtime.js'
+import { getLoadedInterior, getLoadedInteriorDetail, loadEraInterior } from '../world/worldManager.js'
+import { Npc } from './NpcLayer.jsx'
 import { StaticBatches } from './StaticBatches.jsx'
 
 const WL = RIVER.waterLevel
@@ -68,28 +73,147 @@ function reflectionGeometry(batches) {
   return merged
 }
 
-function Boat({ boat, reflection }) {
+/** 清末搭船：甲板細部的載入距離（人物離船心）與顯示距離 */
+const DECK_LOAD_DISTANCE = 24
+const DECK_SHOW_DISTANCE = 60
+
+/**
+ * 清末搭船：帆船的甲板細部（貨艙口的壓艙石、茶箱堆、樟腦箱、蓆篷裡的鋪位…）與船上的兩位人物。
+ * 和店家的室內一樣按需產生（worldManager.loadEraInterior，本地座標），掛在船殼的群組裡跟著起伏；
+ * 不投射也不接收陰影。人物的 position 是船的本地座標，anchor（世界座標）給距離判斷用。
+ */
+function JunkDeck({ world, detail }) {
+  const zone = world.junkDeck
+  const [batches, setBatches] = useState(() => getLoadedInterior(world, zone))
+  const status = useRef({ requested: false, retryAt: 0, visible: false, mounted: true })
+  const group = useRef()
+  const crew = useMemo(
+    () =>
+      (world.npcs ?? [])
+        .filter((npc) => npc.zone === zone.id)
+        .map((npc) => ({ ...npc, anchor: npc.position, position: worldToJunk(npc.position), rotationY: npc.rotationY - JUNK.rotationY })),
+    [world, zone],
+  )
+  useEffect(() => {
+    const state = status.current
+    state.mounted = true
+    return () => {
+      state.mounted = false
+    }
+  }, [])
+  useFrame(({ clock }) => {
+    const state = status.current
+    const p = playerState.position
+    const distance = Math.hypot(p.x - JUNK.position[0], p.z - JUNK.position[2])
+    const { started } = useGameStore.getState()
+    if (started && !state.requested && (distance < DECK_LOAD_DISTANCE || boardingState.riding) && clock.elapsedTime >= state.retryAt) {
+      state.requested = true
+      loadEraInterior(world, zone)
+        .then((loaded) => {
+          if (state.mounted && loaded) setBatches(loaded)
+        })
+        .catch((error) => {
+          console.warn(`[大稻埕食光街] ${zone.id} 甲板產生失敗，稍後再試：`, error)
+          state.requested = false
+          state.retryAt = clock.elapsedTime + 5
+        })
+    }
+    state.visible = hysteresisVisibleDeck(state.visible, distance)
+    if (group.current) group.current.visible = state.visible
+    if (import.meta.env.DEV && window.__DDC__) {
+      window.__DDC__.interiors ??= {}
+      window.__DDC__.interiors[zone.id] = { requested: state.requested, loaded: Boolean(batches), visible: Boolean(group.current?.visible) }
+    }
+  })
+  if (!batches) return null
+  const small = getLoadedInteriorDetail(world, zone)
+  return (
+    <group ref={group} name="junk-deck">
+      <StaticBatches batches={batches} castShadow={false} receiveShadow={false} dispose={false} fine={detail} />
+      {small.length > 0 && (
+        <group name="junk-deck-detail" visible={detail}>
+          <StaticBatches batches={small} castShadow={false} receiveShadow={false} dispose={false} />
+        </group>
+      )}
+      <group name="junk-deck-npcs">
+        {crew.map((npc) => (
+          <Npc key={npc.id} npc={npc} />
+        ))}
+      </group>
+    </group>
+  )
+}
+
+function hysteresisVisibleDeck(wasVisible, distance) {
+  return wasVisible ? distance < DECK_SHOW_DISTANCE + 6 : distance < DECK_SHOW_DISTANCE
+}
+
+/** 落水的水花（一次繪製、兩種畫質都有）：落水後 0.7 秒內在落水點擴散、淡出 */
+const SPLASH_LIFE = 0.7
+function Splash() {
+  const mesh = useRef()
+  const geometry = useMemo(() => splashGeometry(), [])
+  const material = useMemo(() => new MeshBasicMaterial({ color: '#eaf4f2', transparent: true, depthWrite: false, fog: false }), [])
+  useEffect(() => () => geometry.dispose(), [geometry])
+  useFrame(({ clock }) => {
+    const m = mesh.current
+    if (!m) return
+    const splash = boardingState.splash
+    const age = splash ? clock.elapsedTime - splash.at : Infinity
+    if (!splash || age < 0 || age > SPLASH_LIFE) {
+      m.visible = false
+      return
+    }
+    m.visible = true
+    m.position.set(splash.x, WL + 0.02, splash.z)
+    const k = age / SPLASH_LIFE
+    m.scale.setScalar(0.6 + k * 1.6)
+    material.opacity = 0.9 * (1 - k)
+  })
+  return <mesh ref={mesh} geometry={geometry} material={material} visible={false} renderOrder={6} onUpdate={(m) => m.layers.set(LAYERS.NO_OUTLINE)} />
+}
+
+function Boat({ boat, reflection, world, detail }) {
   const group = useRef()
   const mirror = useRef()
-  const batches = useMemo(() => {
+  const { batches, detailBatches } = useMemo(() => {
     const b = new PartBuilder()
+    const d = new PartBuilder()
     if (boat.type === 'sampan') buildSampan(b, { length: boat.length, beam: boat.beam, canopy: boat.canopy, cargo: boat.cargo })
     else if (boat.type === 'ferry') buildFerry(b, { length: boat.length })
+    else if (boat.model === 'qingJunk') buildRiverJunk(b, d)
     else buildJunk(b, { length: boat.length, beam: boat.beam, sails: boat.sails, furled: boat.furled, sailTint: boat.sailTint, cargo: boat.cargo })
-    return b.build()
+    return { batches: b.build(), detailBatches: d.build() }
   }, [boat])
   const mirrored = useMemo(() => (reflection ? reflectionGeometry(batches) : null), [batches, reflection])
   useEffect(() => () => mirrored?.dispose(), [mirrored])
+  useEffect(() => () => detailBatches.forEach(({ geometry }) => geometry.dispose()), [detailBatches])
 
   useFrame((state) => {
     const t = state.clock.elapsedTime
     const g = group.current
     if (!g) return
-    g.position.y = boat.position[1] + Math.sin(t * 0.9 + boat.bob) * 0.06
-    g.rotation.z = Math.sin(t * 0.7 + boat.bob) * 0.025
-    g.rotation.x = Math.sin(t * 0.55 + boat.bob * 2) * 0.018
+    // 清末搭船：人物在帆船上（或駁船往返中）時，帆船的起伏降到 ±1.5 公分，甲板與碰撞的高度差看不出來
+    const calm = boat.deck && (boardingState.phase === 'aboard' || boardingState.riding)
+    const amp = calm ? 0.25 : 1
+    g.position.y = boat.position[1] + Math.sin(t * 0.9 + boat.bob) * 0.06 * amp
+    g.rotation.z = Math.sin(t * 0.7 + boat.bob) * 0.025 * amp
+    g.rotation.x = Math.sin(t * 0.55 + boat.bob * 2) * 0.018 * amp
     if (boat.drift) {
       g.position.z = boat.position[2] + Math.sin(t * 0.02 + boat.bob) * 6 * Math.sign(boat.drift)
+    }
+    // 清末搭船：載人的駁船沿路線往返（game/boarding.js 的 ridePath），到岸就回到停泊處
+    if (boat.ride) {
+      if (boardingState.riding) {
+        g.position.x = boardingState.ride.x
+        g.position.z = boardingState.ride.z
+        g.rotation.y = boardingState.ride.yaw
+      } else {
+        g.position.x = boat.position[0]
+        g.position.z = boat.position[2]
+        g.rotation.y = boat.rotationY
+      }
+      boardingState.rideY = g.position.y
     }
     // 倒影跟著船上下起伏與漂移：船的世界矩陣對水面鏡射（River 的群組在原點）
     const m = mirror.current
@@ -104,6 +228,14 @@ function Boat({ boat, reflection }) {
     <>
       <group ref={group} position={boat.position} rotation-y={boat.rotationY}>
         <StaticBatches batches={batches} />
+        {detailBatches.length > 0 && (
+          <group visible={detail}>
+            <StaticBatches batches={detailBatches} dispose={false} />
+          </group>
+        )}
+        {boat.deck && world?.junkDeck && <JunkDeck world={world} detail={detail} />}
+        {/* 駁船上撐篙的船夫：只在划船時畫（棧橋頭的那一位同時隱藏） */}
+        {boat.ride && <Npc npc={{ id: 'qing-sampan-boatman', look: 'qingBoatman', pose: 'stand', position: SAMPAN_SEATS.boatman, rotationY: Math.PI / 2, anchor: boat.position, phase: 0.5, showWhileRiding: true }} />}
       </group>
       {mirrored && (
         <mesh
@@ -169,7 +301,7 @@ function RiverMist({ detail }) {
  * 精緻畫質的水面另外有波紋、反光與燈火倒影（rendering/waterShader.js），船也有倒影；
  * 流暢畫質用原本的靜態水面材質、不建立倒影（兩份材質共用同一張貼圖，切換畫質時換材質，不必重新編譯）。
  */
-export function River({ eraId }) {
+export function River({ eraId, world = null }) {
   const materials = useMemo(() => {
     const texture = getTextures().water.clone()
     texture.needsUpdate = true
@@ -228,8 +360,10 @@ export function River({ eraId }) {
       </mesh>
       {boats.map((boat, i) =>
         // 流暢模式不畫遠處河面上的船；倒影只在精緻畫質（每艘船都有）
-        detail || (boat.position[0] > -80 && !boat.detailOnly) ? <Boat key={`${eraId}-${i}`} boat={boat} reflection={motion} /> : null,
+        detail || (boat.position[0] > -80 && !boat.detailOnly) ? <Boat key={`${eraId}-${i}`} boat={boat} reflection={motion} world={world} detail={detail} /> : null,
       )}
+      {/* 清末搭船：落水的水花 */}
+      {world?.junkDeck && <Splash />}
       <RiverMist detail={detail} />
       {reflectScale > 0 && <RiverReflection scale={reflectScale} />}
     </group>

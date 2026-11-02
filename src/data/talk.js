@@ -12,9 +12,10 @@ import { NEWS_TALK } from './routes/newsRoute.js'
 import { FOLKLORE_TALK } from './routes/folkloreRoute.js'
 import { NEIGHBOUR_TALK } from './routes/neighbourRoute.js'
 import { LHT_TALK } from './linHuaTaiTalk.js'
+import { QING_BOARDING_TALK } from './qingBoardingTalk.js'
 
-// 林華泰茶行各年代室內的人物（第 11 階段；data/linHuaTaiTalk.js）也依 eraId 併進來
-const ROUTE_TALK = [...PASTRY_TALK, ...TEMPLE_MEAL_TALK, ...OLD_HOUSE_TALK, ...NEWS_TALK, ...FOLKLORE_TALK, ...NEIGHBOUR_TALK, ...LHT_TALK]
+// 林華泰茶行各年代室內的人物（第 11 階段；data/linHuaTaiTalk.js）與清末搭船的船夫、舵工、水手（data/qingBoardingTalk.js）也依 eraId 併進來
+const ROUTE_TALK = [...PASTRY_TALK, ...TEMPLE_MEAL_TALK, ...OLD_HOUSE_TALK, ...NEWS_TALK, ...FOLKLORE_TALK, ...NEIGHBOUR_TALK, ...LHT_TALK, ...QING_BOARDING_TALK]
 
 function byEra(talks) {
   const map = { 'qing-port': [...QING_PORT_TALK] }

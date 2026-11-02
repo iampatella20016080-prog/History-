@@ -73,6 +73,7 @@ const RAMP_CATCH = 0.6
 export function groundAt(position, world, level = 0, y = null) {
   const entry = collisionForLevel(world, level)
   let floor = null
+  let water = false
   for (const rect of entry.walkable) {
     if (position.x < rect.minX || position.x > rect.maxX || position.z < rect.minZ || position.z > rect.maxZ) continue
     if (rect.ramp) {
@@ -81,9 +82,32 @@ export function groundAt(position, world, level = 0, y = null) {
       const levels = rect.levels ?? [entry.level, entry.level]
       return { level: on.t < 0.5 ? levels[0] : levels[1], y: on.y }
     }
-    floor ??= rect.floorY ?? 0
+    // 先列的範圍優先（例如甲板先於四周的水面：站在甲板上就不算落水）
+    if (floor == null) {
+      floor = rect.floorY ?? 0
+      water = Boolean(rect.water)
+    }
   }
-  return { level: entry.level, y: floor ?? entry.walkable.find((rect) => !rect.ramp)?.floorY ?? 0 }
+  const result = { level: entry.level, y: floor ?? entry.walkable.find((rect) => !rect.ramp)?.floorY ?? 0 }
+  // 踩到水面（清末搭船：從棧橋邊或甲板邊走出去）才多回報 water
+  if (water) result.water = true
+  return result
+}
+
+/**
+ * 人物站的範圍指定的「離開點」（例如帆船的甲板標 exitTo：換年代時人物不是推到最近的戶外，而是放回棧橋頭）。
+ * 回傳 { x, z, heading } 或 null。
+ */
+export function exitPointAt(position, world, level = 0) {
+  if (!world) return null
+  const { walkable } = collisionForLevel(world, level)
+  for (const rect of walkable) {
+    if (!rect.exitTo) continue
+    if (position.x < rect.minX || position.x > rect.maxX || position.z < rect.minZ || position.z > rect.maxZ) continue
+    const [x, z, heading = 0] = rect.exitTo
+    return { x, z, heading }
+  }
+  return null
 }
 
 function pushOutOfBox(position, radius, box) {

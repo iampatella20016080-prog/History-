@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { MathUtils, Raycaster, Vector2, Vector3 } from 'three'
-import { CAMERA, LAYERS } from '../config.js'
+import { CAMERA, LAYERS, RIVER } from '../config.js'
 import { moveInput } from '../input.js'
-import { cameraState, playerState, renderState } from '../runtime.js'
+import { boardingState, cameraState, playerState, renderState } from '../runtime.js'
 import { clamp, damp, dampAngle, dampVector } from '../utils/math.js'
 import {
   VIEWER,
@@ -23,6 +23,7 @@ import {
   streetFacingYaw,
 } from '../viewerCamera.js'
 import { useGameStore } from '../../state/useGameStore.js'
+import { RIDE_CAMERA } from '../../data/qingBoardingLayout.js'
 
 const INTRO_LOOK = new Vector3(-22, 2.4, -0.4)
 const UP = new Vector3(0, 1, 0)
@@ -61,6 +62,9 @@ function horizontalDistanceToSegment(p, a, b) {
  * - 鏡頭不穿牆、不低於地面、不離開街區；返回探索時平滑回到角色身後
  * - 可以走進去的建築（viewerSpace 的額外範圍）：注視點可以移進騎樓與一樓室內，高度不超過天花板
  */
+/** 划船時注視點的基準高度（水位） */
+const RIVER_LOOK_Y = RIVER.waterLevel
+
 export function CameraRig({ eraId, blockers, buildings, shopModels, interiors = [], followAreas = [], viewerSpace }) {
   const camera = useThree((state) => state.camera)
   const gl = useThree((state) => state.gl)
@@ -435,6 +439,15 @@ export function CameraRig({ eraId, blockers, buildings, shopModels, interiors = 
       rig.focus.copy(INTRO_LOOK)
       rig.followLambda = 1.6
       lambda = 1.5
+    } else if (boardingState.riding) {
+      // 清末搭船：划船途中鏡頭放在棧橋頭的河岸邊，緩慢跟著駁船
+      v.phase = 'off'
+      const [cx, cy, cz] = RIDE_CAMERA.position
+      rig.desiredPosition.set(cx, cy, cz)
+      rig.desiredLook.set(boardingState.ride.x, RIVER_LOOK_Y + RIDE_CAMERA.lookHeight, boardingState.ride.z)
+      rig.focus.copy(rig.desiredLook)
+      rig.followLambda = 4
+      lambda = 4
     } else if (mode !== 'explore' && model) {
       // 探索店家：鏡頭靠近店面（從店裡的資訊熱點開啟時，用那個熱點的鏡頭，例如爐鍋咖啡的扭蛋機）
       v.phase = 'off'

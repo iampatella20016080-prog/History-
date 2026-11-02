@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { BoardingDirector } from './components/BoardingDirector.jsx'
 import { CameraRig } from './components/CameraRig.jsx'
 import { EraDirector } from './components/EraDirector.jsx'
 import { EraScene } from './components/EraScene.jsx'
@@ -31,10 +32,12 @@ export function World({ world, promptLayer, onSwap }) {
       <Lighting />
       <Sky />
       <Mountains />
-      <River eraId={world.eraId} />
+      <River eraId={world.eraId} world={world} />
       {/* 隔岸天際線：只在精緻畫質，依年代 */}
       <OppositeBank eraId={world.eraId} />
       <EraDirector onSwap={onSwap} />
+      {/* 清末搭船：駁船往返與落水的狀態機（在角色之前執行） */}
+      <BoardingDirector />
       <EraScene key={world.eraId} world={world} />
       {/* 天氣（雨天）：只在精緻畫質，流暢畫質不掛載任何東西 */}
       <WeatherDirector world={world} />

@@ -2,7 +2,8 @@ import { useFrame } from '@react-three/fiber'
 import { inspectablesOfEra } from '../../data/inspectObjects.js'
 import { TALK_RADIUS, talkForNpc } from '../../data/talk.js'
 import { pickInteraction } from '../interactionPick.js'
-import { playerState } from '../runtime.js'
+import { boardingState, playerState } from '../runtime.js'
+import { BOARDING_SPOTS, QING_BOARDING_ERA } from '../../data/qingBoardingLayout.js'
 import { useGameStore } from '../../state/useGameStore.js'
 
 const EXIT_MARGIN = 0.7
@@ -21,21 +22,24 @@ export function InteractionSystem({ shopModels, npcs = [], eraId }) {
   useFrame(() => {
     const store = useGameStore.getState()
     if (!store.started || store.mode !== 'explore') return
-    if (store.transitioning || store.viewMode !== 'explore') {
+    const boardingLock = boardingState.phase === 'departing' || boardingState.phase === 'returning' || boardingState.phase === 'fallen'
+    if (store.transitioning || store.viewMode !== 'explore' || boardingLock) {
       store.setNearbyShop(null)
       store.setNearbyTalk(null)
       store.setNearbyInspectable(null)
+      store.setNearbyBoarding(null)
+      if (boardingLock && store.talk) store.endTalk()
       return
     }
     const p = playerState.position
     const level = playerState.level ?? 0
 
-    // 有對話的路人（街上與室內都在樓層 0；室內的人物走近時室內一定已經載入）：對話中走遠就結束
+    // 有對話的路人（街上與室內都在樓層 0，帆船甲板上的人物另外標 level；室內的人物走近時室內一定已經載入）：對話中走遠就結束
     let nearestTalk = null
     let talkDistance = Infinity
-    if (level === 0) {
+    {
       for (const npc of npcs) {
-        if (!talkForNpc(eraId, npc.id)) continue
+        if ((npc.level ?? 0) !== level || !talkForNpc(eraId, npc.id)) continue
         const distance = Math.hypot(p.x - npc.position[0], p.z - npc.position[2])
         const radius = TALK_RADIUS + (store.nearbyTalkNpcId === npc.id ? EXIT_MARGIN : 0)
         if (distance < radius && distance < talkDistance) {
@@ -52,8 +56,9 @@ export function InteractionSystem({ shopModels, npcs = [], eraId }) {
     // 街上可以近看的器物
     let nearestInspectable = null
     let inspectableDistance = Infinity
-    if (level === 0) {
+    {
       for (const item of inspectablesOfEra(eraId)) {
+        if ((item.level ?? 0) !== level) continue
         const distance = Math.hypot(p.x - item.position[0], p.z - item.position[2])
         const radius = item.radius + (store.nearbyInspectableId === item.id ? EXIT_MARGIN : 0)
         if (distance < radius && distance < inspectableDistance) {
@@ -96,6 +101,23 @@ export function InteractionSystem({ shopModels, npcs = [], eraId }) {
     store.setNearbyTalk(store.talk ? null : (picked.talk?.id ?? null))
     store.setNearbyInspectable(picked.inspectable?.id ?? null)
     store.setNearbyShop(picked.shop?.id ?? null, picked.shop?.hotspotId ?? null)
+
+    // 清末搭船：棧橋頭的駁船（岸上）與甲板的舷梯口（船上）；和路人、器物可以同時提示（搭船有自己的提示卡）
+    let nearestBoarding = null
+    if (eraId === QING_BOARDING_ERA && !store.talk) {
+      let best = Infinity
+      for (const spot of BOARDING_SPOTS) {
+        if (spot.level !== level) continue
+        if (spot.action === 'board' ? store.boardingPhase !== 'ashore' : store.boardingPhase !== 'aboard') continue
+        const distance = Math.hypot(p.x - spot.position[0], p.z - spot.position[2])
+        const radius = spot.radius + (store.nearbyBoardingId === spot.id ? EXIT_MARGIN : 0)
+        if (distance < radius && distance < best) {
+          nearestBoarding = spot.id
+          best = distance
+        }
+      }
+    }
+    store.setNearbyBoarding(nearestBoarding)
   })
   return null
 }

@@ -100,6 +100,10 @@ export const NPC_LOOKS = {
   qingPorter: { era: 'qing-port', skin: '#c08f64', hair: 'short', top: { kind: 'singlet', color: '#e6dccb' }, bottom: '#4b5560', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#ddd3bf', douli: '#d4b878', queue: true } },
   qingPorterPole: { era: 'qing-port', skin: '#b98a60', hair: 'short', top: { kind: 'singlet', color: '#ded3bf' }, bottom: '#56524a', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#ddd3bf', douli: '#cdb070', queue: true, teaPole: { pole: '#b49a5e', chest: '#c9a77a', paper: '#e0ad58', band: '#5a4634' } } },
   qingPorterJacket: { era: 'qing-port', skin: '#c99a70', hair: 'short', top: { kind: 'long', color: '#4f6275', trim: '#425364' }, bottom: '#3d3a36', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#e3d9c6', queue: true } },
+  // 清末搭船：駁船船夫、帆船的舵工與水手（穿著是歷史情境重建：短衫或赤膊、斗笠、辮子；赤腳查無，仍畫草鞋）
+  qingBoatman: { era: 'qing-port', skin: '#b4835a', hair: 'short', top: { kind: 'singlet', color: '#d9cdb4' }, bottom: '#4a5a66', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#d8cdb6', douli: '#c9ad6a', queue: true } },
+  qingHelmsman: { era: 'qing-port', skin: '#c08f64', hair: 'short', top: { kind: 'long', color: '#5f6a75', trim: '#4e5862' }, bottom: '#3a3a38', shoes: ['#b59c6c', '#b59c6c'], extras: { douli: '#d2b878', queue: true } },
+  qingDeckhand: { era: 'qing-port', skin: '#b98a60', hair: 'short', top: { kind: 'singlet', color: '#e2d8c4' }, bottom: '#56524a', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#ddd3bf', queue: true } },
   // 街頭的情境人物（data/streetPropsLayout.js；歷史情境重建，不對應照片裡的任何人）：
   // 1895–1945 等客的人力車夫（短衫、短褲或綁腿、草鞋、斗笠／鴨舌帽）、1930–1945 牽腳踏車的人
   rickshawPuller: { era: 'banquet', skin: '#c49369', hair: 'short', top: { kind: 'long', color: '#4b5d70', trim: '#3e4e5f' }, bottom: '#3a3936', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#e3dbc9', douli: '#cdb070' } },

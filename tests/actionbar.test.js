@@ -323,7 +323,8 @@ describe('跟隨鏡頭貼著障礙物時不會進到障礙物裡', () => {
       const all = buildEraWorldSync(era.id).followAreas
       const rice = all.filter(inRiceAndShineLot)
       // 港口商街另外有寶順洋行與林華泰店裡與店前的範圍（第 10 階段，見 tests/teaInteriors.test.js）
-      const areas = all.filter((r) => !inRiceAndShineLot(r) && !inTeaHouseLots(r))
+      // 港口商街另外有帆船甲板上的蓆篷（清末搭船，自己的樓層；見 tests/qingBoarding.test.js）
+      const areas = all.filter((r) => !inRiceAndShineLot(r) && !inTeaHouseLots(r) && (r.level ?? 0) === 0)
       if (era.id === 'qing-port') {
         assert.equal(all.filter(inTeaHouseLots).length, 4, era.id)
       }

@@ -1,5 +1,6 @@
 import { createRng } from '../utils/random.js'
 import { PORTERS, POLE, TEA_CHEST, TEA_STACKS, WHARF_BOATS, boatBlocker, qingWharfBoxes, stackChests } from '../../data/qingWharfLayout.js'
+import { BOATMAN, boatmanBox, junkBlockers } from '../../data/qingBoardingLayout.js'
 
 /**
  * 清末碼頭（港口商街）：河岸廣場上的茶箱堆、挑夫放在地上的擔子，以及茶箱堆、挑夫與停靠船隻的鏡頭遮擋方塊。
@@ -56,14 +57,16 @@ function restingLoad(b, detail, [x, z]) {
 }
 
 /**
- * 在街景裡建出清末碼頭；回傳 { npcs }（挑夫，由 NpcLayer 畫出）。
- * 鏡頭遮擋方塊：茶箱堆、挑夫與擔子、接駁小船與河道中的戎克船（船身，忽略起伏）。
+ * 在街景裡建出清末碼頭；回傳 { npcs }（挑夫與棧橋頭的駁船船夫，由 NpcLayer 畫出）。
+ * 鏡頭遮擋方塊：茶箱堆、挑夫與擔子、接駁小船（船身，忽略起伏）；可以上去的帆船用分件的方塊（船殼、蓆篷、桅…），
+ * 鏡頭才能在甲板上跟著人物（data/qingBoardingLayout.js）。
  */
 export function buildQingWharf(b, detail = b) {
   TEA_STACKS.forEach((stack, i) => teaStack(b, detail, stack, 100 + i * 20))
   for (const porter of PORTERS) if (porter.restLoad) restingLoad(b, detail, porter.restLoad)
   for (const box of qingWharfBoxes()) b.blockers.push({ ...box })
-  for (const boat of WHARF_BOATS) b.blockers.push(boatBlocker(boat))
+  for (const boat of WHARF_BOATS) if (!boat.deck) b.blockers.push(boatBlocker(boat))
+  b.blockers.push(...junkBlockers(), boatmanBox())
   const npcs = PORTERS.map((porter, i) => ({
     id: `qing-wharf-${porter.id}`,
     look: porter.look,
@@ -72,5 +75,7 @@ export function buildQingWharf(b, detail = b) {
     rotationY: porter.rotationY,
     phase: (0.17 + i * 0.41) % 1,
   }))
+  // 駁船船夫（清末搭船）：划船時不畫在棧橋上，改畫在駁船上撐篙（components/River.jsx）
+  npcs.push({ id: BOATMAN.id, look: BOATMAN.look, pose: BOATMAN.pose, position: [...BOATMAN.position], rotationY: BOATMAN.rotationY, phase: 0.73, hideWhileRiding: true })
   return { npcs }
 }

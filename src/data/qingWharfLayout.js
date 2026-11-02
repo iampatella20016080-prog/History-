@@ -43,17 +43,17 @@ export const POLE = { length: 1.9, chestOffset: 0.78, shoulderY: 1.46, shoulderX
 /**
  * 船（隨水面起伏，畫在 components/River.jsx）：
  * 大型帆船後來無法靠岸，停在河道中，由小船接駁（國家文化記憶庫〈大稻埕碼頭〉）。
- * - 河道中下錨的戎克船（收帆，甲板上有茶箱）
- * - 棧橋兩側的兩艘接駁小船，載著茶箱
- * 流暢模式不畫北側的小船（detailOnly）。船型、帆與大小查無，都是示意（不稱「紅頭船」：那個說法只見一個來源，待核）。
+ * - 河道中下錨的內河帆船（單桅、船中蓆篷，可以搭駁船上去：data/qingBoardingLayout.js、builders/qingJunk.js）
+ * - 棧橋兩側的兩艘接駁小船（駁船，《淡水廳志》「駁載人貨」），載著茶箱；南側那艘載玩家往返（ride）
+ * 流暢模式不畫北側的小船（detailOnly）。駁船的船型與大小查無，是示意（不稱「紅頭船」：那個說法只見一個來源，待核）。
  */
 export const WHARF_BOATS = [
-  { type: 'sampan', position: [-49.6, RIVER.waterLevel - 0.2, -(PIER.halfWidth + 1.4)], rotationY: Math.PI, length: 5.4, beam: 1.5, canopy: true, bob: 0.6, cargo: 'tea' },
+  { type: 'sampan', position: [-49.6, RIVER.waterLevel - 0.2, -(PIER.halfWidth + 1.4)], rotationY: Math.PI, length: 5.4, beam: 1.5, canopy: true, bob: 0.6, cargo: 'tea', ride: true },
   { type: 'sampan', position: [-50.4, RIVER.waterLevel - 0.2, PIER.halfWidth + 1.35], rotationY: Math.PI + 0.06, length: 4.8, beam: 1.4, canopy: false, bob: 1.7, cargo: 'tea', detailOnly: true },
-  { type: 'junk', position: [-66, RIVER.waterLevel - 0.35, -7.5], rotationY: Math.PI - 0.25, length: 10, beam: 2.7, sails: 2, furled: true, bob: 2.4, cargo: 'tea' },
+  { type: 'junk', model: 'qingJunk', position: [-66, RIVER.waterLevel - 0.35, -7.5], rotationY: Math.PI, length: 12, beam: 3.6, sails: 1, furled: true, bob: 2.4, deck: true },
 ]
 
-/** 船身的鏡頭遮擋方塊（水面以上的船殼與艙房；世界座標，忽略起伏） */
+/** 船身的鏡頭遮擋方塊（水面以上的船殼與艙房；世界座標，忽略起伏）；可以上去的帆船改用分件的方塊（qingBoardingLayout.junkBlockers） */
 export function boatBlocker(boat) {
   const [x, y, z] = boat.position
   const half = boat.length / 2 + Math.abs(Math.sin(boat.rotationY)) * boat.beam

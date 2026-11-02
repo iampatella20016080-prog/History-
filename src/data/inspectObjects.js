@@ -7,6 +7,7 @@ import { NEWS_OBJECTS } from './routes/newsRoute.js'
 import { FOLKLORE_OBJECTS } from './routes/folkloreRoute.js'
 import { NEIGHBOUR_OBJECTS } from './routes/neighbourRoute.js'
 import { LHT_INSPECTABLES, LHT_OBJECTS, LHT_OBJECT_LAYERS } from './linHuaTaiObjects.js'
+import { QING_BOARDING_INSPECTABLES, QING_BOARDING_OBJECTS } from './qingBoardingObjects.js'
 
 /**
  * 器物 3D 檢視的器物資料（第 10 階段）：標題、說明、小動作與出處。
@@ -117,6 +118,8 @@ export const INSPECT_OBJECTS = {
   ...FOLKLORE_OBJECTS,
   ...NEIGHBOUR_OBJECTS,
   ...LHT_OBJECTS,
+  // 清末搭船：帆船甲板上的樟腦箱、壓艙石與船眼（data/qingBoardingObjects.js）
+  ...QING_BOARDING_OBJECTS,
 }
 for (const [id, layers] of Object.entries(LHT_OBJECT_LAYERS)) INSPECT_OBJECTS[id] = { ...INSPECT_OBJECTS[id], layers }
 
@@ -180,6 +183,8 @@ export const STREET_INSPECTABLES = [
   },
   // 林華泰茶行酒樓繁華到老屋新生的室內（第 11 階段；data/linHuaTaiObjects.js）
   ...LHT_INSPECTABLES,
+  // 清末搭船：帆船甲板上的器物（level 是甲板的樓層；data/qingBoardingObjects.js）
+  ...QING_BOARDING_INSPECTABLES,
 ]
 
 export function inspectablesOfEra(eraId) {
