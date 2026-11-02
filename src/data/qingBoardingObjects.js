@@ -3,7 +3,7 @@ import { deckInspectSpot } from './qingBoardingLayout.js'
 /**
  * 清末搭船：帆船甲板上可以近看的器物（第 11 階段的五層資訊格式，見 data/inspectLayers.js）。
  * 查證紀錄見 docs/research/qing-boarding.md；形制查無的部分標「歷史情境重建」（reconstruction）。
- * 鴉片箱先不做（等使用者確認）。
+ * 鴉片箱（2026-11-02 使用者決定加回）：只呈現箱子、價格與稅，每件附出處；不畫內容物、不寫吸食。
  */
 export const QING_BOARDING_OBJECTS = {
   'camphor-box': {
@@ -60,6 +60,34 @@ export const QING_BOARDING_OBJECTS = {
       ],
     },
   },
+  'opium-chest': {
+    id: 'opium-chest',
+    title: '鴉片箱',
+    titleEn: 'Opium chest',
+    lead: '清末淡水、打狗進口的大宗貨之一。買賣、課稅都以「箱」計：封鎖期間南部漲到每箱一千元，城裡的改良捐每箱十一元。這裡只看箱子。',
+    leadEn: 'One of the main imports at late-Qing Tamsui and Takow. It was bought, sold and taxed by the chest: during the blockade the price in the south reached a thousand dollars a chest, and the city improvement levy was eleven dollars a chest. Here we look only at the chest.',
+    actions: [{ id: 'turn', label: '轉過來看側面', labelEn: 'Turn it to see the side', doneLabel: '轉回來', doneLabelEn: 'Turn it back' }],
+    reconstruction: true,
+    sourceIds: ['davidson-formosa-1903'],
+    layers: {
+      form: [
+        { text: '箱子的外觀、尺寸與木料查無：Davidson 書中（已讀到約第 365 頁）沒有描述鴉片箱的樣子。模型只畫木板箱、麻繩與側面一塊空白的記號牌，不畫箱裡的東西。', textEn: 'The chest’s look, size and timber are not found: Davidson (read up to about p. 365) does not describe an opium chest. The model shows only a plank box, rope and a blank marking board on the side, and nothing of what was inside.', status: 'reconstruction' },
+      ],
+      making: [
+        { text: '這件器物只談箱子、價格與稅，不寫內容物怎麼製成或使用。', textEn: 'This object covers only the chest, its price and its tax; it says nothing about how the contents were made or used.', status: 'reconstruction' },
+      ],
+      use: [
+        { text: '1884–85 年法軍封鎖期間，南部的鴉片漲到每箱多達一千元，戎克船為了高運費冒險闖封鎖（Davidson 約第 235 頁）。', textEn: 'During the French blockade of 1884–85 opium in the south rose to as much as a thousand dollars a chest, and junks ran the blockade for the high freights (Davidson, about p. 235).', sourceIds: ['davidson-formosa-1903'] },
+        { text: '臺北城內的改良捐（清賦局）鴉片每箱收十一元，書中註明不含一般的釐金（Davidson 第 212 頁）。', textEn: 'The improvement levy for the walled city of Taipei charged opium eleven dollars a chest, not counting the ordinary likin (Davidson, p. 212).', sourceIds: ['davidson-formosa-1903'] },
+        { text: 'Davidson 另說，除了鴉片，進口貨都免稅；鴉片「多年來」每箱繳一百五十到一百八十元（約第 246 頁）。這筆是什麼稅、從哪一年起，書上這一段沒說清楚，待核。', textEn: 'Davidson also says that imports were exempt except opium, which “for some years” had paid from $150 to $180 a chest (about p. 246). What tax this was, and from which year, the passage does not make clear; to be verified.', status: 'pending', sourceIds: ['davidson-formosa-1903'] },
+      ],
+      where: [{ text: '只在港口商街的帆船後甲板（等著卸上岸的進口貨；擺在這裡是情境重建）。', textEn: 'Only on the junk’s after deck in the Harbour Merchant Street era (imports waiting to be landed; placing them here is a reconstruction).', status: 'reconstruction' }],
+      evidence: [
+        { text: '1860 年代外商在打狗設躉船接收鴉片快船運來的貨，快船也進出淡水；書中說打狗的主要進口貨是鴉片（Davidson 約第 171–177 頁，頁眉殘缺）。', textEn: 'In the 1860s foreign firms kept receiving ships at Takow for the opium brought by their clippers, which also ran into Tamsui; the book says opium was Takow’s chief import (Davidson, about pp. 171–177; running heads damaged).', sourceIds: ['davidson-formosa-1903'] },
+        { text: '頁碼由 OCR 頁眉推得、短引是從全文摘出，沒有對照掃描圖；書的後半（日治的鴉片專賣）還沒讀。', textEn: 'Page numbers are inferred from OCR running heads and the short quotations taken from the full text, not checked against the scans; the later part of the book (the Japanese opium monopoly) has not been read.', status: 'pending' },
+      ],
+    },
+  },
   'boat-eye': {
     id: 'boat-eye',
     title: '船眼',
@@ -95,5 +123,6 @@ export const QING_BOARDING_INSPECTABLES = [
   { id: 'junk-tea-chest', eraId: 'qing-port', objectId: 'tea-chest', label: '艙口板上的茶箱', labelEn: 'Tea chests on the hatch', ...deckInspectSpot('junk-tea-chest') },
   { id: 'junk-camphor-box', eraId: 'qing-port', objectId: 'camphor-box', label: '襯鉛的樟腦箱', labelEn: 'Lead-lined camphor box', ...deckInspectSpot('junk-camphor-box') },
   { id: 'junk-ballast-stones', eraId: 'qing-port', objectId: 'ballast-stones', label: '艙底的壓艙石', labelEn: 'Ballast stones in the hold', ...deckInspectSpot('junk-ballast-stones') },
+  { id: 'junk-opium-chest', eraId: 'qing-port', objectId: 'opium-chest', label: '等著卸上岸的鴉片箱', labelEn: 'Opium chests waiting to be landed', ...deckInspectSpot('junk-opium-chest') },
   { id: 'junk-boat-eye', eraId: 'qing-port', objectId: 'boat-eye', label: '船首的船眼', labelEn: 'Eye on the bow', ...deckInspectSpot('junk-boat-eye') },
 ]

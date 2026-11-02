@@ -94,7 +94,34 @@ function buildBoatEye({ detail = true } = {}) {
   }
 }
 
+/**
+ * 鴉片箱（進口貨）：只畫外箱——木板拼的箱子、麻繩、側面的記號牌（示意，不仿任何商號）；
+ * 外觀與尺寸查無，是重建。不畫內容物，所以動作是轉過來看側面，不開箱。
+ */
+function buildOpiumChest({ detail = true } = {}) {
+  const W = 0.46
+  const D = 0.42
+  const H = 0.36
+  const root = new Parts()
+  root.add('#8a6a4a', box(W, H, D), { p: [0, H / 2, 0] })
+  // 木板接縫與四角的板條
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) root.add('#6f5338', box(0.04, H + 0.004, 0.04), { p: [(sx * (W - 0.03)) / 2, H / 2, (sz * (D - 0.03)) / 2] })
+  if (detail) for (const y of [0.12, 0.24]) root.add('#76593d', box(W + 0.004, 0.008, D + 0.004), { p: [0, y, 0] })
+  // 麻繩（十字綑）
+  root.add('#b59c6c', box(W + 0.02, 0.025, 0.03), { p: [0, H + 0.005, 0] })
+  root.add('#b59c6c', box(0.03, 0.025, D + 0.02), { p: [0, H + 0.005, 0] })
+  for (const s of [-1, 1]) root.add('#b59c6c', box(0.03, H, 0.025), { p: [0, H / 2, s * (D / 2 + 0.008)] })
+  // 側面的記號牌（空白，示意貨主記號的位置）
+  root.add('#d9c9a4', box(0.003, 0.14, 0.2), { p: [W / 2 + 0.003, H * 0.55, 0] })
+  return {
+    radius: 0.46,
+    centerY: H / 2,
+    parts: [{ id: 'chest', geometry: root.build(), pivot: [0, H / 2, 0], animate: { action: 'turn', axis: 'y', from: 0, to: -Math.PI / 2 } }],
+  }
+}
+
 export const QING_JUNK_INSPECT_BUILDERS = {
+  'opium-chest': buildOpiumChest,
   'camphor-box': buildCamphorBox,
   'ballast-stones': buildBallastStones,
   'boat-eye': buildBoatEye,

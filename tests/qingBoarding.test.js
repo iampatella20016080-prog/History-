@@ -505,7 +505,7 @@ describe('清末搭船：互動點、器物與人物', () => {
 
   test('甲板上四件可以近看的器物都在甲板的樓層、站得到；茶箱的「在哪」多了帆船甲板', () => {
     const deckItems = inspectablesOfEra(QING_BOARDING_ERA).filter((item) => item.level === BOAT_LEVEL)
-    assert.equal(deckItems.length, 4)
+    assert.equal(deckItems.length, 5)
     for (const item of deckItems) {
       assert.ok(INSPECT_OBJECTS[item.objectId], item.id)
       assert.ok(standNear(item.position, item.radius, BOAT_LEVEL), `${item.id} 站不到`)
@@ -518,7 +518,7 @@ describe('清末搭船：互動點、器物與人物', () => {
     assert.ok(inspectablesOfEra(QING_BOARDING_ERA).filter((item) => (item.level ?? 0) === 0).every((item) => !item.id.startsWith('junk-')))
   })
 
-  test('樟腦箱、壓艙石、船眼：五層資訊完整、模型可以產生、有小動作、出處都在 sources.js', () => {
+  test('樟腦箱、壓艙石、船眼、鴉片箱：五層資訊完整、模型可以產生、有小動作、出處都在 sources.js', () => {
     for (const object of Object.values(QING_BOARDING_OBJECTS)) {
       assert.ok(hasFullLayers(object, inspectPlaces(object.id)), `${object.id} 分層不完整`)
       for (const id of layerSourceIds(object)) assert.ok(getSource(id), `${object.id}：出處 ${id}`)
@@ -530,8 +530,14 @@ describe('清末搭船：互動點、器物與人物', () => {
         for (const action of object.actions) assert.ok(built.parts.some((part) => part.animate?.action === action.id), `${object.id}：動作 ${action.id}`)
       }
     }
-    // 鴉片箱先不做
-    assert.ok(!INSPECT_OBJECTS['opium-chest'])
+    // 鴉片箱：只有箱子、價格與稅——不開箱（動作是轉過來看側面）、文字不寫吸食
+    const opium = INSPECT_OBJECTS['opium-chest']
+    assert.ok(opium)
+    assert.deepEqual(opium.actions.map((action) => action.id), ['turn'])
+    const texts = [opium.lead, ...Object.values(opium.layers).flat().map((note) => note.text)].join('')
+    assert.ok(!/吸|抽|菸|煙槍|煙館/.test(texts), '不寫吸食')
+    assert.ok(/每箱/.test(texts) && /一千元/.test(texts) && /十一元/.test(texts), '有價格與稅')
+    for (const note of Object.values(opium.layers).flat()) assert.ok(note.status || note.sourceIds?.length, `每一句有出處或標示：${note.text.slice(0, 12)}`)
   })
 
   test('三位人物的對話：格式正確、標示有出處的句子都附出處、都對應街景裡的人物、站得到', () => {
