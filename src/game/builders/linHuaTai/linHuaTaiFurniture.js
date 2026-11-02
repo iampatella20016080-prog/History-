@@ -469,18 +469,6 @@ export const FURNITURE = {
   },
 }
 
-/** 這件器物的障礙物（本地座標）；block: false 或疊在上面的器物不擋路 */
-export function furnitureFootprint(item) {
-  if (item.block === false) return null
-  return FURNITURE[item.type].footprint(item)
-}
-
-/** 鏡頭遮擋用的外框（疊放的茶桶也要擋鏡頭） */
-export function furnitureBounds(item) {
-  const kind = FURNITURE[item.type]
-  return kind.bounds ? kind.bounds(item) : kind.footprint(item)
-}
-
 /** 室內的茶桶數（老屋新生「近百個大小茶桶」只畫出一部分；測試與說明文字用） */
 export function drumCount(items) {
   return items.filter((item) => item.type === 'drums').reduce((sum, item) => sum + item.drums.length, 0)

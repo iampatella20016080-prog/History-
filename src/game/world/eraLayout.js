@@ -337,6 +337,22 @@ const SITE_COLLISION = {
   // 十字軒糕餅舖：騎樓、入口與店內（依年代的 variant 決定前舖、後坊或結帳區與展示櫃）
   shizixuan: shizixuanCollision,
 }
+/**
+ * 一般地段上的店家建築（以 position 預留地段）額外的可行走範圍與障礙物。
+ * transform 是地段的本地 → 世界座標；可以走進去的店家在這裡登記，室內細部登記在 buildWorld.js 的 BUILDING_INTERIORS。
+ */
+const LOT_COLLISION = {
+  // 廟宇（例如慈聖宮）：廟埕可以走、天公爐與榕樹石座是障礙物
+  temple: (config, transform) => {
+    const { walk, obstacles } = templeCollision(config, transform)
+    return { walkable: [walk], obstacles }
+  },
+  // 林華泰茶行：五個年代都可以走進去（簷下步道、前店、隔間門與店後的工作間；依年代的 variant）
+  'lin-hua-tai': linHuaTaiCollision,
+  // 迪化街329號店屋（稻舍）：依年代的 variant 決定能不能走進去（騎樓、前進、天井、後進、樓梯與二樓）
+  'rice-and-shine': riceAndShineCollision,
+}
+
 /** 佔地較大的店家建築（含巷子）：範圍內不產生遠景房屋與遠景的樹 */
 const SITE_FOOTPRINT = {
   'dodd-tea-house': doddFootprint,
@@ -390,29 +406,13 @@ export function createEraLayout(era) {
           storeId: shop.id,
           config: { litWindows, ...config, seed: lot.seed % 1000000, width: lot.width },
         })
-        if (config.archetype === 'temple') {
+        // 可以走進去的店家（一般地段）：可行走範圍與障礙物由建築樣式決定（見 LOT_COLLISION）
+        const lotCollision = LOT_COLLISION[config.archetype]
+        if (lotCollision) {
           const cos = Math.cos(lot.rotationY)
           const sin = Math.sin(lot.rotationY)
           const transform = (x, z) => ({ x: lot.x + x * cos + z * sin, z: lot.z - x * sin + z * cos })
-          const { walk, obstacles } = templeCollision(config, transform)
-          extraWalkable.push(walk)
-          extraObstacles.push(...obstacles)
-        }
-        // 林華泰茶行：一般地段，五個年代都可以走進去（簷下步道、前店、隔間門與店後的工作間；依年代的 variant）
-        if (config.archetype === 'lin-hua-tai') {
-          const cos = Math.cos(lot.rotationY)
-          const sin = Math.sin(lot.rotationY)
-          const transform = (x, z) => ({ x: lot.x + x * cos + z * sin, z: lot.z - x * sin + z * cos })
-          const collision = linHuaTaiCollision(config, transform)
-          extraWalkable.push(...collision.walkable)
-          extraObstacles.push(...collision.obstacles)
-        }
-        // 迪化街329號店屋（稻舍）：同一個地段，依年代的 variant 決定能不能走進去（騎樓、前進、天井、後進、樓梯與二樓）
-        if (config.archetype === 'rice-and-shine') {
-          const cos = Math.cos(lot.rotationY)
-          const sin = Math.sin(lot.rotationY)
-          const transform = (x, z) => ({ x: lot.x + x * cos + z * sin, z: lot.z - x * sin + z * cos })
-          const collision = riceAndShineCollision(config, transform)
+          const collision = lotCollision(config, transform)
           extraWalkable.push(...collision.walkable)
           extraObstacles.push(...collision.obstacles)
         }
