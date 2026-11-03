@@ -5548,3 +5548,140 @@ SOURCES['vocus-yidan-delivery'] = {
 export function getSource(id) {
   return SOURCES[id] ?? null
 }
+
+/* ── 霞海城隍廟殿內（第 11 階段；查證見 docs/research/interior-xia-hai-cheng-huang.md） ── */
+const tpecitygod = (id, page, title, titleEn, context, contextEn) => {
+  SOURCES[id] = {
+    id,
+    citation: `臺北霞海城隍廟官方網站，〈${title}〉。`,
+    citationEn: `Taipei Xiahai City God Temple official website, “${titleEn}” (〈${title}〉).`,
+    publisher: '臺北霞海城隍廟',
+    publisherEn: 'Taipei Xiahai City God Temple',
+    title,
+    titleEn,
+    url: `http://www.tpecitygod.org/${page}`,
+    published: '無署名（2026年11月查閱；https 憑證過期，以 http 讀取）',
+    publishedEn: 'Unsigned (consulted November 2026; the https certificate has expired, read over http)',
+    context,
+    contextEn,
+  }
+}
+tpecitygod('tpecitygod-art-02', 'about-temple-art-02.html', '廟宇藝術：建築格局', 'Temple art: layout',
+  '正殿前附加拜殿的「兩殿式」，左側再延伸配殿與護室；正身一坎約六點五公尺；拜殿中央案桌、左側廟祝櫃臺、右側道士辦公處。',
+  'A two-hall plan—a vestibule before the main hall—with a side chapel and side range to the left; the main body is one bay, about 6.5 m; in the vestibule a central table, the keeper’s counter at left and the priest’s office at right.')
+tpecitygod('tpecitygod-art-03', 'about-temple-art-03.html', '廟宇藝術：建築裝飾', 'Temple art: decoration',
+  '民國六十年以前拜殿為捲棚頂、山牆馬背；擱檁式、殿內無柱；正殿神龕木雕花罩、後方神龕牆面蟠龍彩繪；拜殿與正殿交接處兩側落地神龕供謝范將軍神偶；義勇公龕最簡潔、無花罩。',
+  'Before 1971 the vestibule had a rolled roof and horse-back gables; purlins rest on the walls and the hall has no pillars; the main shrine has a carved canopy and a dragon painted on the wall behind; two floor-standing shrines for Generals Xie and Fan stand where vestibule meets hall; the shrine of the Righteous and Brave is the plainest, with no canopy.')
+tpecitygod('tpecitygod-art-04', 'about-temple-art-04.html', '廟宇藝術：神像', 'Temple art: the images',
+  '開基神像1859年嵌入廟牆；鎮殿城隍三尺六、硬身木雕、公爵帽、刺繡雪衣式神袍、長髯、面容燻黑；龕內配祀尺寸；謝將軍座款光緒元年（1875）；大型謝范神偶同治九年（1870）台北靈安社塑；城隍夫人光緒十九年（1893）；義勇公祿位二尺八、綠底金字。',
+  'The founding image was sealed into the wall in 1859; the hall image is 3 ft 6 in, hard-bodied carved wood, duke’s cap, embroidered robe, long beard, face blackened by smoke; sizes of the attendant images; General Xie’s base dated 1875; the large Xie and Fan figures made by the Taipei Ling’an Society in 1870; the consort carved in 1893; the tablet of the Righteous and Brave 2 ft 8 in, gold on green.')
+tpecitygod('tpecitygod-art-05', 'about-temple-art-05.html', '廟宇藝術：祭祀用具', 'Temple art: ritual objects',
+  '正殿翹頭神案高約五尺、寬約六尺、深約兩尺；主神龕前供桌上銅鑄圓形香爐，爐身約八寸高、直徑約一尺；天公爐1980年置；神轎昔寄放慈聖宮。',
+  'The main altar table with scroll ends is about five feet high, six wide and two deep; on the offering table before the main shrine a round cast-bronze censer about eight inches high and a foot across; the forecourt censer dates from 1980; the sedan chair was once kept at Cisheng Temple.')
+tpecitygod('tpecitygod-art-06', 'about-temple-art-06.html', '廟宇藝術：匾額與楹聯', 'Temple art: plaques and couplets',
+  '「天眼時開」咸豐丙辰（1856）；「其盛矣乎」同治三年（1864）淡水同知鄭元杰；「藻鑑分明」「威靈海內」光緒五年（1879）；「正直無私」光緒十一年（1885）；「昭靈聿應」光緒十六年（1890）；各匾位置；蘇斐然楹聯今在城隍夫人龕內。',
+  '“Heaven’s eye opens in time” 1856; “How flourishing!” 1864, from the Tamsui sub-prefect Zheng Yuanjie; “Clear as a mirror” and “Awesome power within the seas” 1879; “Upright and impartial” 1885; “Bright response” 1890; where each hangs; Su Feiran’s couplet now in the consort’s shrine.')
+tpecitygod('tpecitygod-god-02', 'about-god-02.html', '神明介紹：城隍夫人', 'The deities: the City God’s consort',
+  '引大正十四年（1925）7月5日《臺灣日日新報》：「右室神像城隍娘為鎮殿，是光緒十九年九間仔街阿仙舍創設，蓋兩邊有宮娥」（廟方轉引，原報未核）。',
+  'Quotes the Taiwan Nichinichi Shinpō of 5 July 1925: the consort in the right-hand room was installed in 1893 by Ah-sian of Kau-king-a Street, with palace maids at either side (quoted by the temple; the newspaper itself not checked).')
+tpecitygod('tpecitygod-god-04', 'about-god-04.html', '神明介紹：義勇公', 'The deities: the Righteous and Brave',
+  '引昭和九年（1934）《臺北霞海城隍廟沿革誌》記三十八義勇公的由來，並全列人名。',
+  'Quotes the 1934 temple chronicle on the thirty-eight Righteous and Brave and lists all their names.')
+tpecitygod('tpecitygod-ceremony-01', 'ceremony01.html', '祭典：放軍與收軍', 'Festivals: releasing and recalling the troops',
+  '五月初六放軍，以草編或紙糊的五間五營厝作營頭代表，營頭寫有對聯；五營顏色中黃、北黑、東青、南紅、西白；收軍後焚化。',
+  'On the sixth of the fifth month the troops are released, with five little camp-houses of straw or paper standing for the camps, each bearing a couplet; the colours are yellow centre, black north, green east, red south and white west; they are burned after the recall.')
+
+SOURCES['nchdb-xiahai-monument'] = {
+  id: 'nchdb-xiahai-monument',
+  citation: '文化部文化資產局國家文化資產網，〈台北霞海城隍廟〉（古蹟）。',
+  citationEn: 'Bureau of Cultural Heritage, National Cultural Heritage Database, “Taipei Xiahai City God Temple” (〈台北霞海城隍廟〉) (monument).',
+  publisher: '文化部文化資產局',
+  publisherEn: 'Bureau of Cultural Heritage, Ministry of Culture',
+  title: '台北霞海城隍廟',
+  titleEn: 'Taipei Xiahai City God Temple (台北霞海城隍廟)',
+  url: 'https://nchdb.boch.gov.tw/assets/overview/monument/19850819000011',
+  published: '無署名（2026年11月查閱）',
+  publishedEn: 'Unsigned (consulted November 2026)',
+  context: '直轄市定古蹟，1985年8月19日公告；咸豐九年建廟於今址，奉祀霞海城隍並配祀三十八義勇公；廟格局較小，只有正殿與拜亭。',
+  contextEn: 'Municipal monument, announced 19 August 1985; built on the present site in 1859, enshrining the Xiahai City God together with the thirty-eight Righteous and Brave; a small temple of only a main hall and a pavilion before it.',
+}
+SOURCES['commons-xiahai-interior'] = {
+  id: 'commons-xiahai-interior',
+  citation: 'Wikimedia Commons，Category:Interiors of Taipei Xia-Hai City God Temple（舟集〈PXL_大稻埕霞海城隍爺：正殿.jpg〉2020、Sean Chiu〈大稻埕霞海城隍廟城隍爺.jpg〉2020、阿道〈Interiors…-01〉〈-04〉2023 等，CC BY-SA 4.0）。',
+  citationEn: 'Wikimedia Commons, Category:Interiors of Taipei Xia-Hai City God Temple (photographs by Boattoad 2020, Sean Chiu 2020 and Adao 2023, among others; CC BY-SA 4.0).',
+  publisher: 'Wikimedia Commons',
+  publisherEn: 'Wikimedia Commons',
+  title: 'Category:Interiors of Taipei Xia-Hai City God Temple',
+  titleEn: 'Category:Interiors of Taipei Xia-Hai City God Temple',
+  url: 'https://commons.wikimedia.org/wiki/Category:Interiors_of_Taipei_Xia-Hai_City_God_Temple',
+  published: '2020–2023年拍攝（2026年11月查閱）',
+  publishedEn: 'Photographed 2020–2023 (consulted November 2026)',
+  context: '現況照片：神龕上方三方黑底金字木匾、紅金透雕花罩、白底蟠龍背板、燻黑的鎮殿城隍；義勇公綠底金字牌位與金色蟠龍外框。本站只引用觀察，不放照片。',
+  contextEn: 'Present-day photographs: three black-and-gold plaques above the shrine, a red-and-gold openwork canopy, a white back board with a dragon, the smoke-blackened City God; the green-and-gold tablet of the Righteous and Brave in a gilt dragon frame. This site cites the observations only and shows no photographs.',
+}
+SOURCES['gao-2014-xiahai-festival'] = {
+  id: 'gao-2014-xiahai-festival',
+  citation: '高振宏，〈日治時期大稻埕霞海城隍祭典的組織與審查制度研究〉，《民俗曲藝》186期（2014）。',
+  citationEn: 'Kao Chen-hung, “The organisation and review system of the Xiahai City God festival in Dadaocheng under Japanese rule”, Journal of Chinese Ritual, Theatre and Folklore 186 (2014).',
+  publisher: '財團法人施合鄭民俗文化基金會',
+  publisherEn: 'Shih Ho-Cheng Folk Culture Foundation',
+  title: '日治時期大稻埕霞海城隍祭典的組織與審查制度研究',
+  titleEn: 'The organisation and review system of the Xiahai City God festival in Dadaocheng under Japanese rule',
+  url: 'https://ah.lib.nccu.edu.tw/item?item_id=82057',
+  published: '2014年12月（全文未讀，待核）',
+  publishedEn: 'December 2014 (full text not read; to be verified)',
+  context: '日治時期祭典景況的研究；本站只列為延伸線索，內容待核。',
+  contextEn: 'A study of the festival under Japanese rule; listed here only as a lead, its contents yet to be checked.',
+}
+
+/* 霞海城隍廟殿內補查（2026-11-03，Fable 子代理；docs/research/interior-xia-hai-cheng-huang.md 第 8 節） */
+const addSource = (id, f) => {
+  SOURCES[id] = { id, publisherEn: f.publisher, titleEn: f.title, publishedEn: f.published, contextEn: f.context, citationEn: f.citation, ...f }
+}
+SOURCES['gao-2014-xiahai-festival'] = {
+  ...SOURCES['gao-2014-xiahai-festival'],
+  citation: '高振宏，〈日治時期大稻埕霞海城隍祭典的組織與審查制度研究〉，《民俗曲藝》186期，頁181–229（2014年12月）。',
+  context: '以《臺灣日日新報》為主的研究：海內派與厦郊金同順、1918年衝突、1920年乾元行發起的藝閣審查。本站只讀到摘要（全文 PDF 下載要過驗證），殿內陳設與營厝外形待核。',
+}
+addSource('zhong-2014-bajiang-hui', {
+  citation: '鍾秀雋，〈消逝的將藝：稻江霞海八將會〉，《民俗曲藝》186期，頁231–302（2014）。',
+  citationEn: 'Chung Hsiu-chun, “A vanished martial art: the Eight Generals society of Xiahai in Dadaocheng”, Journal of Chinese Ritual, Theatre and Folklore 186 (2014), 231–302.',
+  publisher: '財團法人施合鄭民俗文化基金會', title: '消逝的將藝：稻江霞海八將會',
+  url: 'https://ritualtheatreandfolkloreat.blogspot.com/2015/03/blog-post_6.html',
+  published: '2014（只讀到摘要）', context: '八將會的源起、發展與散團，田野為主；本站只讀到摘要。',
+})
+addSource('xu-1992-xiahai-study', {
+  citation: '許雪姬，〈大稻埕霞海城隍廟之研究〉，《臺北文獻》直字第102期，頁1–27（1992年12月）。',
+  citationEn: 'Hsu Hsueh-chi, “A study of the Xiahai City God Temple of Dadaocheng”, Taipei Historical Documents 102 (December 1992), 1–27.',
+  publisher: '臺北市文獻委員會', title: '大稻埕霞海城隍廟之研究',
+  url: 'https://ir.sinica.edu.tw/handle/201000000A/69904',
+  published: '1992（只有書目，未讀）', context: '中研院學術典藏只有書目；清末配置與神龕原貌待查紙本。',
+})
+addSource('xiahai-chronicle-1934', {
+  citation: '海內會，《臺北霞海城隍廟沿革誌》（1934；廟方網站神明頁轉引，原書未見）。',
+  citationEn: 'Hainei Society, Chronicle of the Taipei Xiahai City God Temple (1934; quoted on the temple’s website, original not seen).',
+  publisher: '臺北霞海城隍廟', title: '臺北霞海城隍廟沿革誌',
+  url: 'http://www.tpecitygod.org/about-god-04.html',
+  published: '1934（轉引）', context: '義勇公由來：三十八人陣亡後「配祀霞海城隍廟西廡，曰義勇公」。',
+})
+addSource('xiahai-stele-1935', {
+  citation: '〈重修霞海城隍廟碑記〉（1935；廟方網站匾聯頁錄文，碑嵌在正殿右側牆）。',
+  citationEn: '“Record of the restoration of the Xiahai City God Temple” (1935 stele; transcribed on the temple’s website, set in the main hall’s right wall).',
+  publisher: '臺北霞海城隍廟', title: '重修霞海城隍廟碑記',
+  url: 'http://www.tpecitygod.org/about-temple-art-06.html',
+  published: '1935（錄文）', context: '咸豐九年協議建廟、七十六年來「丹青剝落」、「商衢環迫無從寬拓餘地」，1934年在原址修葺。',
+})
+addSource('danshui-tingzhi-1871', {
+  citation: '陳培桂纂，《淡水廳志》卷六典禮志、卷十三古蹟考（1871；維基文庫）。',
+  citationEn: 'Chen Peigui (comp.), Tamsui Sub-prefecture Gazetteer, chapters 6 and 13 (1871; Wikisource).',
+  publisher: '維基文庫', title: '淡水廳志（卷六、卷十三）',
+  url: 'https://zh.wikisource.org/wiki/淡水廳志/卷06',
+  published: '1871（同治十年）', context: '反證用：祠祀只記竹塹廳城隍廟，寺觀未列大稻埕（摘要讀取，待人工翻核）。',
+})
+addSource('commons-cisheng-furnace', {
+  citation: 'Wikimedia Commons，〈Dadaocheng Cisheng Temple2018古老金爐.jpg〉（Taiwankengo 2018）、〈大稻埕慈聖宮舊金爐 20250107.jpg〉（阿道 2025），CC BY-SA 4.0。',
+  citationEn: 'Wikimedia Commons, photographs of Cisheng Temple’s paper-burning furnaces by Taiwankengo (2018) and Adao (2025), CC BY-SA 4.0.',
+  publisher: 'Wikimedia Commons', title: 'Dadaocheng Cisheng Temple 古老金爐',
+  url: 'https://commons.wikimedia.org/wiki/File:Dadaocheng_Cisheng_Temple2018古老金爐.jpg',
+  published: '2018、2025', context: '都是燒金紙的金爐，不是香爐；只用來說明 Commons 沒有慈聖宮香爐的照片。',
+})

@@ -52,7 +52,8 @@ function followCamera(world, p, yaw, pitch = CAMERA.pitch, distance = CAMERA.dis
 
 describe('寶順洋行與林華泰（港口商街）：室內只在這個年代', () => {
   test('兩個室內範圍都在、其他年代沒有（室內 id、入口與鏡頭設定齊全）', () => {
-    const ids = qing.interiors.map((zone) => zone.id).sort()
+    // 港口商街另有霞海城隍廟的殿內（tests/xiaHaiInterior.test.js）
+    const ids = qing.interiors.map((zone) => zone.id).filter((id) => id !== 'xia-hai-cheng-huang').sort()
     assert.deepEqual(ids, ['dodd-tea-house', 'lin-hua-tai'])
     for (const zone of qing.interiors) {
       assert.ok(zone.entry && zone.door && zone.camera && zone.ceiling > 2.5, zone.id)

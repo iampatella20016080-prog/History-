@@ -30,6 +30,7 @@ import { YOU_JI_BY_ERA } from './youJiEraConfig.js'
 import { XFC_HOTSPOTS, xfcToWorld } from './xinFangChunLayout.js'
 import { XIN_FANG_CHUN_BY_ERA } from './xinFangChunEraConfig.js'
 import { JSL_INTERIOR_HOTSPOTS, jslToWorld } from './jiangShanLouLayout.js'
+import { XH_INTERIOR_HOTSPOTS, xhToWorld } from './xiaHaiLayout.js'
 import { MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN } from './huangYujieMuseum.js'
 import { ACTION_BAR_SITE } from './actionBarLayout.js'
 import { LI_TING_XIANG_ID, LI_TING_XIANG_SOURCE_IDS, LTX_CHAPTERS, LTX_ERA_NOTES, LTX_YEAR_NOTE, LTX_YEAR_NOTE_EN } from './liTingXiangData.js'
@@ -2886,8 +2887,10 @@ export const SHOPS = [
       sign: { text: '霞海城隍廟', style: 'gold' },
     },
     buildingByEra: {
-      'qing-port': { condition: 'new', stalls: false },
+      // 第 11 階段起可以走進殿內：拜殿、正殿與右側偏殿（data/xiaHaiLayout.js；尺度是示意）
+      'qing-port': { condition: 'new', stalls: false, interior: 'xiahai' },
     },
+    eras: { 'qing-port': { hotspots: hotspotsToWorld(XH_INTERIOR_HOTSPOTS, xhToWorld) } },
     eraNotes: {
       'qing-port':
         '只出現在「港口商街」。1853年頂下郊拚後，同安人把霞海城隍的神像從艋舺八甲庄迎到大稻埕，1856年在現址籌建、1859年完工；廟至今仍在迪化街一段61號。這座廟是情境示意，不是精確復原。',

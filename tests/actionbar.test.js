@@ -324,7 +324,10 @@ describe('跟隨鏡頭貼著障礙物時不會進到障礙物裡', () => {
       const rice = all.filter(inRiceAndShineLot)
       // 港口商街另外有寶順洋行與林華泰店裡與店前的範圍（第 10 階段，見 tests/teaInteriors.test.js）
       // 港口商街另外有帆船甲板上的蓆篷（清末搭船，自己的樓層；見 tests/qingBoarding.test.js）
-      const areas = all.filter((r) => !inRiceAndShineLot(r) && !inTeaHouseLots(r) && (r.level ?? 0) === 0)
+      // 港口商街另外有霞海城隍廟殿內與拜亭的範圍（第 11 階段，見 tests/xiaHaiInterior.test.js）
+      const inXiaHai = (r) => r.minX >= 15.0 && r.maxX <= 27.2 && r.minZ >= -19.8 && r.maxZ <= -10.0
+      const areas = all.filter((r) => !inRiceAndShineLot(r) && !inTeaHouseLots(r) && !inXiaHai(r) && (r.level ?? 0) === 0)
+      if (era.id === 'qing-port') assert.equal(all.filter(inXiaHai).length, 1, '霞海城隍廟')
       if (era.id === 'qing-port') {
         assert.equal(all.filter(inTeaHouseLots).length, 4, era.id)
       }

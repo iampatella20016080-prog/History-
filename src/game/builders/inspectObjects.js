@@ -11,6 +11,7 @@ import { QING_JUNK_INSPECT_BUILDERS } from './qingJunkInspect.js'
 import { YJ_INSPECT_BUILDERS } from './youJi/youJiInspect.js'
 import { XFC_INSPECT_BUILDERS } from './xinFangChun/xinFangChunInspect.js'
 import { JSL_INSPECT_BUILDERS } from './jiangShanLou/jiangShanLouInspect.js'
+import { XH_INSPECT_BUILDERS } from './xiaHaiInspect.js'
 import { SHOWA_INSPECT_BUILDERS } from './showaLaundry/showaLaundryInspect.js'
 
 /**
@@ -27,7 +28,7 @@ const box = (x, y, z) => new BoxGeometry(x, y, z)
 
 /* 第 12 階段主題路線的器物（每條路線一個檔案，接受 { detail }）：builders/routeObjects/*.js；
  * 第 11 階段林華泰各年代室內的器物（同樣接受 { detail }）：builders/linHuaTai/linHuaTaiInspect.js */
-const ROUTE_BUILDERS = { ...PASTRY_BUILDERS, ...TEMPLE_MEAL_BUILDERS, ...OLD_HOUSE_BUILDERS, ...NEWS_BUILDERS, ...FOLKLORE_BUILDERS, ...NEIGHBOUR_BUILDERS, ...LHT_INSPECT_BUILDERS, ...QING_JUNK_INSPECT_BUILDERS, ...YJ_INSPECT_BUILDERS, ...XFC_INSPECT_BUILDERS, ...JSL_INSPECT_BUILDERS, ...SHOWA_INSPECT_BUILDERS }
+const ROUTE_BUILDERS = { ...PASTRY_BUILDERS, ...TEMPLE_MEAL_BUILDERS, ...OLD_HOUSE_BUILDERS, ...NEWS_BUILDERS, ...FOLKLORE_BUILDERS, ...NEIGHBOUR_BUILDERS, ...LHT_INSPECT_BUILDERS, ...QING_JUNK_INSPECT_BUILDERS, ...YJ_INSPECT_BUILDERS, ...XFC_INSPECT_BUILDERS, ...JSL_INSPECT_BUILDERS, ...XH_INSPECT_BUILDERS, ...SHOWA_INSPECT_BUILDERS }
 
 /* ── 顏色 ── */
 const PINE = '#c8a66c'

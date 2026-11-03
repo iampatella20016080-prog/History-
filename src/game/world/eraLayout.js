@@ -7,6 +7,7 @@ import { getShop, getShopBuilding, getShopsByEra } from '../../data/shops.js'
 import { genericBuildingConfig } from './lineage.js'
 import { getLotPlan } from './lots.js'
 import { templeCollision } from '../builders/specials.js'
+import { xiaHaiCollision } from '../builders/xiaHaiTemple.js'
 import { ziYangCollision } from '../builders/ziyang.js'
 import { yongleCollision, yongleFootprint } from '../builders/yongleMarket.js'
 import { actionBarCollision, actionBarFootprint } from '../builders/actionBar.js'
@@ -316,6 +317,11 @@ const SITE_COLLISION = {
   // 以 site 指定位置的廟宇（例如霞海城隍廟）：廟埕可以走、天公爐與榕樹石座是障礙物
   temple: (config, transform) => {
     const { walk, obstacles } = templeCollision(config, transform)
+    // 霞海城隍廟（港口商街）：再加上石階、拜亭與殿內（地面在台基上；builders/xiaHaiTemple.js）
+    if (config.interior === 'xiahai') {
+      const hall = xiaHaiCollision(transform)
+      return { walkable: [walk, ...hall.walkable], obstacles: [...obstacles, ...hall.obstacles] }
+    }
     return { walkable: [walk], obstacles }
   },
   'yongle-market': yongleCollision,
@@ -351,6 +357,11 @@ const LOT_COLLISION = {
   // 廟宇（例如慈聖宮）：廟埕可以走、天公爐與榕樹石座是障礙物
   temple: (config, transform) => {
     const { walk, obstacles } = templeCollision(config, transform)
+    // 霞海城隍廟（港口商街）：再加上石階、拜亭與殿內（地面在台基上；builders/xiaHaiTemple.js）
+    if (config.interior === 'xiahai') {
+      const hall = xiaHaiCollision(transform)
+      return { walkable: [walk, ...hall.walkable], obstacles: [...obstacles, ...hall.obstacles] }
+    }
     return { walkable: [walk], obstacles }
   },
   // 林華泰茶行：五個年代都可以走進去（簷下步道、前店、隔間門與店後的工作間；依年代的 variant）
