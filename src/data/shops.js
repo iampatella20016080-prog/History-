@@ -29,6 +29,7 @@ import { YJ_HOTSPOTS, yjToWorld } from './youJiLayout.js'
 import { YOU_JI_BY_ERA } from './youJiEraConfig.js'
 import { XFC_HOTSPOTS, xfcToWorld } from './xinFangChunLayout.js'
 import { XIN_FANG_CHUN_BY_ERA } from './xinFangChunEraConfig.js'
+import { JSL_INTERIOR_HOTSPOTS, jslToWorld } from './jiangShanLouLayout.js'
 import { MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN } from './huangYujieMuseum.js'
 import { ACTION_BAR_SITE } from './actionBarLayout.js'
 import { LI_TING_XIANG_ID, LI_TING_XIANG_SOURCE_IDS, LTX_CHAPTERS, LTX_ERA_NOTES, LTX_YEAR_NOTE, LTX_YEAR_NOTE_EN } from './liTingXiangData.js'
@@ -3762,9 +3763,11 @@ export const SHOPS = [
       floors: 4,
       sign: { text: '江山樓', style: 'gold' },
     },
+    // 第 11 階段起可以走進去：一樓門廳與二樓一間宴會廳（建築樣式 'jiang-shan-lou'；格局是歷史情境重建，data/jiangShanLouLayout.js）
     buildingByEra: {
-      banquet: { condition: 'new' },
+      banquet: { condition: 'new', archetype: 'jiang-shan-lou', variant: 'banquetHouse' },
     },
+    eras: { banquet: { hotspots: hotspotsToWorld(JSL_INTERIOR_HOTSPOTS, jslToWorld) } },
     // 介紹視窗上方的「此時期的江山樓」（整理自莊永明、簡伃君論文摘要）
     eraNotes: {
       banquet:

@@ -5252,6 +5252,80 @@ SOURCES['setn-2016-xinfangchun'] = {
   contextEn: 'A news report on the Xinfangchun Tea Hong around its opening.',
 }
 
+/* ── 江山樓的室內（第 11 階段；查證見 docs/research/interior-jiang-shan-lou.md） ── */
+SOURCES['commons-jiangshanlou-banquet'] = {
+  id: 'commons-jiangshanlou-banquet',
+  citation: '黃榮輝，〈Memorybank2019-大稻埕江山樓酒家宴席.jpg〉，Wikimedia Commons，CC BY-SA 4.0（來源國家文化記憶庫）。',
+  citationEn: 'Huang Jung-hui (黃榮輝), “Memorybank2019-大稻埕江山樓酒家宴席.jpg” (Banquet at Jiangshanlou, Dadaocheng), Wikimedia Commons, CC BY-SA 4.0 (from the National Cultural Memory Bank).',
+  publisher: 'Wikimedia Commons',
+  publisherEn: 'Wikimedia Commons',
+  title: 'Memorybank2019-大稻埕江山樓酒家宴席.jpg',
+  titleEn: 'Banquet at Jiangshanlou, Dadaocheng (Memorybank2019-大稻埕江山樓酒家宴席.jpg)',
+  url: 'https://commons.wikimedia.org/wiki/File:Memorybank2019-%E5%A4%A7%E7%A8%BB%E5%9F%95%E6%B1%9F%E5%B1%B1%E6%A8%93%E9%85%92%E5%AE%B6%E5%AE%B4%E5%B8%AD.jpg',
+  published: '老照片（年份未標；2026年11月查閱並目視）',
+  publishedEn: 'Old photograph (undated; consulted and viewed November 2026)',
+  supports: ['檔案說明：室內宴席，有賓客、藝旦、女侍，牆上掛致贈吳江山的賀匾與廣告旗幟', '〔照片〕白桌布的圓桌與深色木的中柱、木椅；牆上高處兩塊深框淺底的題字匾；白底、圓形標誌、直書片假名的啤酒廣告旗；吊扇、白玻璃罩吊燈、彩紙串'],
+  supportsEn: ['File description: a banquet indoors with guests, yidan and waitresses, with plaques presented to Wu Jiangshan and advertising banners on the wall', '[Photo] A round table with a white cloth on a dark wooden pedestal, wooden chairs; two dark-framed, light-faced inscribed boards high on the wall; white beer banners with a round emblem and vertical katakana; a ceiling fan, white-glass pendant lamps and paper streamers'],
+  usage: '江山樓宴會廳的擺設（桌、匾、旗、吊扇）；唯一的室內影像。',
+  usageEn: 'The furnishing of the Jiangshanlou banquet room (table, boards, banners, fan); the only interior image.',
+  context: '國家文化記憶庫上傳、轉存到維基共享資源的江山樓宴席照片。',
+  contextEn: 'A photograph of a Jiangshanlou banquet from the National Cultural Memory Bank, mirrored on Wikimedia Commons.',
+}
+SOURCES['storm-2022-chen-rouchin-jiangshanlou'] = {
+  id: 'storm-2022-chen-rouchin-jiangshanlou',
+  citation: '陳柔縉，《囍事台灣》摘文（江山樓），風傳媒。',
+  citationEn: 'Chen Rou-chin (陳柔縉), excerpt from Xishi Taiwan on Jiangshanlou, Storm Media.',
+  publisher: '風傳媒',
+  publisherEn: 'Storm Media',
+  title: '《囍事台灣》摘文：江山樓',
+  titleEn: 'Excerpt from Xishi Taiwan: Jiangshanlou',
+  url: 'https://www.storm.mg/article/4821919',
+  published: '線上摘文（2026年11月查閱）',
+  publishedEn: 'Online excerpt (consulted November 2026)',
+  supports: ['一樓有廚房和辦公室，二、三樓是宴會場，四樓有花園', '1936 年雜誌訪問經理吳溪水：可辦三百人的宴席', '「半席」上甜點、「完席」上炒飯的台式宴席習慣'],
+  supportsEn: ['The kitchen and office were on the ground floor, the banquet rooms on the second and third, a garden on the fourth', 'A 1936 magazine interview with the manager: banquets for three hundred could be held', 'The Taiwanese custom of dessert at the half-banquet and fried rice at the full'],
+  usage: '江山樓的樓層配置與宴席習慣。',
+  usageEn: 'The floor plan of Jiangshanlou and banquet customs.',
+  context: '陳柔縉談日治時期婚宴與酒樓的書摘。',
+  contextEn: 'A book excerpt by Chen Rou-chin on Japanese-era weddings and banquet houses.',
+}
+SOURCES['commons-taipei-guesthouse-silverware'] = {
+  id: 'commons-taipei-guesthouse-silverware',
+  citation: '〈臺北賓館銀製餐具.jpg〉，Wikimedia Commons，CC0。',
+  citationEn: '“臺北賓館銀製餐具.jpg” (Taipei Guest House silverware), Wikimedia Commons, CC0.',
+  publisher: 'Wikimedia Commons',
+  publisherEn: 'Wikimedia Commons',
+  title: '臺北賓館銀製餐具.jpg',
+  titleEn: 'Taipei Guest House silverware (臺北賓館銀製餐具.jpg)',
+  url: 'https://commons.wikimedia.org/wiki/File:%E8%87%BA%E5%8C%97%E8%B3%93%E9%A4%A8%E9%8A%80%E8%A3%BD%E9%A4%90%E5%85%B7.jpg',
+  published: '照片（2026年11月查閱）',
+  publishedEn: 'Photograph (consulted November 2026)',
+  supports: ['1923-04-24 總督官邸午宴用的菊紋銀製餐具；餐由江山樓承辦，九道菜加湯、甜點、冷飲'],
+  supportsEn: ['The chrysanthemum-crested silver used at the Governor-General’s residence luncheon of 24 April 1923, catered by Jiangshanlou: nine courses with soup, dessert and cold drinks'],
+  usage: '說明行啟午宴不在江山樓、用的是官邸的銀餐具。',
+  usageEn: 'To note that the 1923 luncheon was not held at Jiangshanlou and used the residence’s silver.',
+  context: '臺北賓館（舊總督官邸）的銀製餐具照片。',
+  contextEn: 'A photograph of silverware from the Taipei Guest House (the former Governor-General’s residence).',
+}
+SOURCES['setn-li-huozeng-photos'] = {
+  id: 'setn-li-huozeng-photos',
+  citation: '三立新聞，〈老照片故事〉（李火增攝影作品），LINE TODAY 轉載。',
+  citationEn: 'SET News, “Stories behind old photographs” (photographs by Li Huo-tseng), reprinted on LINE TODAY.',
+  publisher: '三立新聞／LINE TODAY',
+  publisherEn: 'SET News / LINE TODAY',
+  title: '老照片故事',
+  titleEn: 'Stories behind old photographs',
+  url: 'https://today.line.me/tw/v2/article/LvXxvz',
+  published: '線上報導（2026年11月查閱）',
+  publishedEn: 'Online report (consulted November 2026)',
+  supports: ['藝旦不住酒樓，客人需要時才從「藝旦間」請來，酒樓只提供場地、酒水與料理'],
+  supportsEn: ['Yidan did not live at the banquet houses; when guests wanted them they were sent for from their own houses, the restaurant providing only the room, drink and food'],
+  usage: '江山樓跑堂的追問（藝旦）。',
+  usageEn: 'The waiter’s follow-up line on yidan.',
+  context: '介紹李火增老照片的報導；照片版權在出版社，本站不依照片畫。',
+  contextEn: 'A report on Li Huo-tseng’s old photographs; the copyright lies with the publisher, and this site does not draw from them.',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }
