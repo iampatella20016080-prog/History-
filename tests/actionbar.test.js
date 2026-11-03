@@ -326,8 +326,11 @@ describe('跟隨鏡頭貼著障礙物時不會進到障礙物裡', () => {
       // 港口商街另外有帆船甲板上的蓆篷（清末搭船，自己的樓層；見 tests/qingBoarding.test.js）
       // 港口商街另外有霞海城隍廟殿內與拜亭的範圍（第 11 階段，見 tests/xiaHaiInterior.test.js）
       const inXiaHai = (r) => r.minX >= 15.0 && r.maxX <= 27.2 && r.minZ >= -19.8 && r.maxZ <= -10.0
-      const areas = all.filter((r) => !inRiceAndShineLot(r) && !inTeaHouseLots(r) && !inXiaHai(r) && (r.level ?? 0) === 0)
+      // 酒樓繁華、摩登、庶民生活另外有慈聖宮殿內與拜亭的範圍（第 11 階段，在廟埕後方；見 tests/ciShengInterior.test.js）
+      const inCiSheng = (r) => r.minX >= -2.1 && r.maxX <= 10.1 && r.minZ >= 9.0 && r.maxZ <= 19.0
+      const areas = all.filter((r) => !inRiceAndShineLot(r) && !inTeaHouseLots(r) && !inXiaHai(r) && !inCiSheng(r) && (r.level ?? 0) === 0)
       if (era.id === 'qing-port') assert.equal(all.filter(inXiaHai).length, 1, '霞海城隍廟')
+      assert.equal(all.filter(inCiSheng).length, era.id === 'qing-port' ? 0 : 1, `${era.id} 慈聖宮`)
       if (era.id === 'qing-port') {
         assert.equal(all.filter(inTeaHouseLots).length, 4, era.id)
       }

@@ -8,6 +8,7 @@ import { genericBuildingConfig } from './lineage.js'
 import { getLotPlan } from './lots.js'
 import { templeCollision } from '../builders/specials.js'
 import { xiaHaiCollision } from '../builders/xiaHaiTemple.js'
+import { ciShengCollision } from '../builders/ciShengTemple.js'
 import { ziYangCollision } from '../builders/ziyang.js'
 import { yongleCollision, yongleFootprint } from '../builders/yongleMarket.js'
 import { actionBarCollision, actionBarFootprint } from '../builders/actionBar.js'
@@ -322,6 +323,11 @@ const SITE_COLLISION = {
       const hall = xiaHaiCollision(transform)
       return { walkable: [walk, ...hall.walkable], obstacles: [...obstacles, ...hall.obstacles] }
     }
+    // 慈聖宮（酒樓繁華到老屋新生）：同一套石階、拜亭與殿內，器物依年代（builders/ciShengTemple.js）
+    if (config.interior === 'cisheng') {
+      const hall = ciShengCollision(transform, config.variant)
+      return { walkable: [walk, ...hall.walkable], obstacles: [...obstacles, ...hall.obstacles] }
+    }
     return { walkable: [walk], obstacles }
   },
   'yongle-market': yongleCollision,
@@ -360,6 +366,11 @@ const LOT_COLLISION = {
     // 霞海城隍廟（港口商街）：再加上石階、拜亭與殿內（地面在台基上；builders/xiaHaiTemple.js）
     if (config.interior === 'xiahai') {
       const hall = xiaHaiCollision(transform)
+      return { walkable: [walk, ...hall.walkable], obstacles: [...obstacles, ...hall.obstacles] }
+    }
+    // 慈聖宮（酒樓繁華到老屋新生）：同一套石階、拜亭與殿內，器物依年代（builders/ciShengTemple.js）
+    if (config.interior === 'cisheng') {
+      const hall = ciShengCollision(transform, config.variant)
       return { walkable: [walk, ...hall.walkable], obstacles: [...obstacles, ...hall.obstacles] }
     }
     return { walkable: [walk], obstacles }

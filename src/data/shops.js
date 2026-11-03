@@ -31,6 +31,7 @@ import { XFC_HOTSPOTS, xfcToWorld } from './xinFangChunLayout.js'
 import { XIN_FANG_CHUN_BY_ERA } from './xinFangChunEraConfig.js'
 import { JSL_INTERIOR_HOTSPOTS, jslToWorld } from './jiangShanLouLayout.js'
 import { XH_INTERIOR_HOTSPOTS, xhToWorld } from './xiaHaiLayout.js'
+import { CS_INTERIOR_HOTSPOTS } from './ciShengLayout.js'
 import { MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN } from './huangYujieMuseum.js'
 import { ACTION_BAR_SITE } from './actionBarLayout.js'
 import { LI_TING_XIANG_ID, LI_TING_XIANG_SOURCE_IDS, LTX_CHAPTERS, LTX_ERA_NOTES, LTX_YEAR_NOTE, LTX_YEAR_NOTE_EN } from './liTingXiangData.js'
@@ -4397,11 +4398,11 @@ export const SHOPS = [
     sealEn: 'Cisheng',
     address: CI_SHENG_ADDRESS,
     addressEn: CI_SHENG_ADDRESS_EN,
-    yearNote: '初建年份各說不一（1855／1864／1866／1869），日治市區改正遷建（1909／1910）、重建完成（1914／1916）兩說並列，一律待核；古蹟身分只有維基百科一個來源，不寫成事實。',
-    yearNoteEn: 'Accounts of the temple\'s original founding differ (1855 / 1864 / 1866 / 1869). Two versions are given for the Japanese-era urban-improvement relocation (1909 / 1910) and for the completion of the rebuilding (1914 / 1916); all are to be verified. Its status as a designated monument rests on a single source, Wikipedia, so it is not stated as fact.',
+    yearNote: '初建年份各說不一（1855／1864／1866／1869），日治市區改正遷建（1909／1910）、重建完成（1914／1916）兩說並列，一律待核；2020年12月22日公告為直轄市定古蹟（國家文化資產網）。',
+    yearNoteEn: 'Accounts of the temple\'s original founding differ (1855 / 1864 / 1866 / 1869). Two versions are given for the Japanese-era urban-improvement relocation (1909 / 1910) and for the completion of the rebuilding (1914 / 1916); all are to be verified. It was designated a municipal historic monument on 22 December 2020 (National Cultural Heritage Database).',
     scenarioNote: '情境示意',
     scenarioNoteEn: 'Scenario illustration',
-    sourceIds: ['sinica-gis-2025-cisheng', 'wiki-ci-sheng-gong'],
+    sourceIds: ['sinica-gis-2025-cisheng', 'nchdb-cisheng-monument', 'wiki-ci-sheng-gong'],
     summary: '同安人的媽祖廟：1853年頂下郊拚後遷到大稻埕，日治市區改正時再遷到今天保安街49巷的位置（年份各說不一，待核）。街上這座廟是情境示意。',
     summaryEn: 'The Mazu temple of the Tong\'an people. After the Xiajiao clan fight of 1853 they moved to Dadaocheng, and during the Japanese-era urban improvement the temple moved again to its present site on Lane 49, Baoan Street (the years differ between accounts and are to be verified). The temple on the street is a scenario illustration.',
     note: '街上這座廟是情境示意：規模、格局、榕樹與廟埕沿用本站的廟宇原型，相對位置不是精確復原。',
@@ -4412,7 +4413,8 @@ export const SHOPS = [
     // 預設的 distance 9 會把鏡頭放進對街（北側）的店屋裡：改站在街心，看廟埕與廟門（畫面審查）
     camera: { distance: 7, height: 2.8, side: 0, lookHeight: 3.6 },
     chapters: CI_SHENG_CHAPTERS.heritage,
-    hotspots: hotspotsToWorld(ciShengHotspots('banquet'), templeCourtToWorld),
+    // 第 11 階段起四個年代都可以走進殿內：廟埕前的熱點＋殿內的熱點（data/ciShengLayout.js；尺度是示意）
+    hotspots: [...hotspotsToWorld(ciShengHotspots('banquet'), templeCourtToWorld), ...hotspotsToWorld(CS_INTERIOR_HOTSPOTS, templeCourtToWorld)],
     eraNotes: CI_SHENG_ERA_NOTES,
     eras: {
       postwar: {
@@ -4431,7 +4433,7 @@ export const SHOPS = [
         summary: '慈聖宮廟埕前的小吃攤（歷史情境重建）：原汁排骨湯、肉粥、豬腳麵線、四神湯四種食物類型，依現在廟口的攤位整理做法特色，不對應任何實際的店家。',
         summaryEn: 'Snack stalls in front of the Cisheng Temple forecourt (reconstructed historical scene): four kinds of food, namely pork rib soup, meat congee, pig\'s trotter noodles and Four Herb soup, with the characteristics of each drawn from the stalls at the temple front today. They do not correspond to any actual shop.',
         chapters: CI_SHENG_CHAPTERS.postwar,
-        hotspots: hotspotsToWorld(ciShengHotspots('postwar'), templeCourtToWorld),
+        hotspots: [...hotspotsToWorld(ciShengHotspots('postwar'), templeCourtToWorld), ...hotspotsToWorld(CS_INTERIOR_HOTSPOTS, templeCourtToWorld)],
       },
       revival: {
         name: '慈聖宮廟口',
@@ -4448,7 +4450,7 @@ export const SHOPS = [
         summary: '保安街49巷的慈聖宮廟口，現在仍有排骨湯、肉粥、豬腳麵線、四神湯這類小吃攤；本站不寫任何具名的店家。',
         summaryEn: 'At Cisheng Temple on Lane 49, Baoan Street, snack stalls selling pork rib soup, meat congee, pig\'s trotter noodles and Four Herb soup can still be found today; this site does not name any individual shop.',
         chapters: CI_SHENG_CHAPTERS.revival,
-        hotspots: hotspotsToWorld(ciShengHotspots('revival'), templeCourtToWorld),
+        hotspots: [...hotspotsToWorld(ciShengHotspots('revival'), templeCourtToWorld), ...hotspotsToWorld(CS_INTERIOR_HOTSPOTS, templeCourtToWorld)],
       },
     },
     building: {
@@ -4459,14 +4461,17 @@ export const SHOPS = [
     },
     // 慈聖宮於日治時期遷建於此，因此清末時期這個地段仍是一般街屋
     buildingByEra: {
-      banquet: { condition: 'mature', stalls: false },
-      modern: { condition: 'mature', stalls: false },
+      // 第 11 階段起四個年代都可以走進殿內（interior: 'cisheng'，variant 是年代；data/ciShengLayout.js）
+      banquet: { condition: 'mature', stalls: false, interior: 'cisheng', variant: 'banquet' },
+      modern: { condition: 'mature', stalls: false, interior: 'cisheng', variant: 'modern' },
       // 戰後：廟埕西側的前緣另有魷魚羹攤（temple-squid-stall），西側榕樹在攤位上方留出空間；
       // 東側的前緣是米苔目攤（temple-mi-tai-mu-stall，取代那裡原本的一般小吃攤），東側榕樹也讓出空間；
       // 廟埕後段、天公爐兩側是豆花攤（西，temple-douhua-stall）與糕粿攤（東，temple-kueh-stall），取代榕樹後方原本的兩個一般小吃攤
       postwar: {
         condition: 'aged',
         stalls: true,
+        interior: 'cisheng',
+        variant: 'postwar',
         clearing: [TEMPLE_STALL.clearing, DOUHUA_STALL.clearing],
         eastClearing: [MI_TAI_MU_STALL.clearing, KUEH_STALL.clearing],
         frontStall: false,
@@ -4476,7 +4481,7 @@ export const SHOPS = [
         // 廟埕後段的跟隨鏡頭與觀賞模式的範圍（見 builders/specials.js）
         courtCamera: true,
       },
-      revival: { condition: 'restored', stalls: true },
+      revival: { condition: 'restored', stalls: true, interior: 'cisheng', variant: 'revival' },
     },
   },
   // 迪化街一段329號店屋：同一棟建築、同一個 ID，各年代的名稱、章節、熱點與狀態見 eras（由 getShop(id, eraId) 套用）

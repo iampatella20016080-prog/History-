@@ -33,9 +33,9 @@ export const XH_OBJECTS = {
           status: 'pending',
         },
         {
-          text: '慈聖宮：〔照片〕2025 年正殿供桌上一只金色小爐；材質、年款、捐獻者都查無——Commons 檔名裡的「古老金爐」「舊金爐」是燒金紙的金爐，不是香爐。之後慈聖宮的模型借霞海城隍廟的銅爐形制、改成金色。',
-          textEn: 'Cisheng: in a 2025 photograph a small gilt censer stands on the main offering table; material, date and donor are not found—the “old furnaces” in Commons filenames are paper-burning furnaces, not censers. Cisheng’s model will borrow the bronze form of the Xiahai censer and gild it.',
-          sourceIds: ['commons-cisheng-furnace'],
+          text: '慈聖宮：〔照片〕2025 年正殿供桌兩端的金色器物是插百合的花瓶，不是爐；香爐在神將前的長案上，是一件深色圓爐，只有遠景，材質與款識查無——Commons 檔名裡的「古老金爐」「舊金爐」是燒金紙的金爐，不是香爐。本站把深色爐放在供桌正中示意。',
+          textEn: 'Cisheng: in the 2025 photographs the gilt objects at the ends of the offering table are vases holding lilies, not censers; the censer is a dark round one on the long table before the guardians, seen only from a distance, its material and inscription unknown—the “old furnaces” in Commons filenames are paper-burning furnaces, not censers. This site places a dark censer at the centre of the offering table as an illustration.',
+          sourceIds: ['commons-cisheng-interior', 'commons-cisheng-furnace'],
           status: 'pending',
         },
       ],
@@ -54,7 +54,10 @@ export const XH_OBJECTS = {
           status: 'reconstruction',
         },
       ],
-      where: [{ text: '霞海城隍廟正殿的供桌（港口商街）。', textEn: 'The offering table in the main hall of Xiahai (harbour era).' }],
+      where: [
+        { text: '霞海城隍廟正殿的供桌（港口商街，銅爐）。', textEn: 'The offering table in the main hall of Xiahai (harbour era; the bronze censer).' },
+        { text: '慈聖宮正殿（酒樓繁華到老屋新生）：2025 年的照片裡供桌兩端是金色花瓶，不是爐；香爐在旁邊的長案上，是一件深色圓爐，只有遠景，材質與款識查無。', textEn: 'Cisheng’s main hall (banquet to revival eras): in the 2025 photographs the gilt objects at the ends of the offering table are flower vases, not censers; the censer is a dark round one on the long side table, seen only from a distance, its material and inscription unknown.', sourceIds: ['commons-cisheng-interior'], status: 'pending' },
+      ],
       evidence: [
         {
           text: '廟方「廟宇藝術」祭祀用具頁；Wikimedia Commons 殿內照片（2020–2023，CC BY-SA 4.0，本站只引用觀察）。',

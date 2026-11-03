@@ -5685,3 +5685,151 @@ addSource('commons-cisheng-furnace', {
   url: 'https://commons.wikimedia.org/wiki/File:Dadaocheng_Cisheng_Temple2018古老金爐.jpg',
   published: '2018、2025', context: '都是燒金紙的金爐，不是香爐；只用來說明 Commons 沒有慈聖宮香爐的照片。',
 })
+
+/* ── 慈聖宮殿內（第 11 階段；查證見 docs/research/interior-ci-sheng-gong.md） ── */
+addSource('nchdb-cisheng-monument', {
+  citation: '文化部文化資產局國家文化資產網，〈大稻埕慈聖宮〉（直轄市定古蹟，2020-12-22 北市文化文資字第 10930433461 號）。',
+  citationEn: 'Bureau of Cultural Heritage, National Cultural Heritage Database, “Dadaocheng Cisheng Temple” (municipal monument, designated 22 December 2020, Taipei City Cultural Heritage notice no. 10930433461).',
+  publisher: '文化部文化資產局', title: '大稻埕慈聖宮',
+  url: 'https://nchdb.boch.gov.tw/assets/overview/monument/20210118000001',
+  published: '2020-12-22 公告',
+  context: '指定理由：同治五年（1866）已具正殿、前殿、兩廊格局，大正三年（1914）因市區改正遷至現址並增建左右護龍，由名匠陳應彬負責大木工程；保有同治、大正年間之石柱與木雕，正殿三通五瓜格局雄偉、神龕精美。沒有開間數、殿內配置與門神作者。',
+  contextEn: 'Reasons for designation: by 1866 it already had a main hall, front hall and two galleries; in 1914 urban improvement moved it to the present site with side ranges added, the timber work by the master builder Chen Yingbin; it keeps stone pillars and carvings of the Tongzhi and Taishō years, a grand “three-through five-melon” main hall and an exquisite shrine. It gives no bay count, interior layout or door-god maker.',
+})
+addSource('commons-cisheng-interior', {
+  citation: 'Wikimedia Commons，Category:Dadaocheng_Cisheng_Temple 的正殿室內四張（Interior of the Dadaocheng Cisheng Temple-01 至 -04，阿道，2025-01-07，CC BY-SA 4.0）。',
+  citationEn: 'Wikimedia Commons, Category:Dadaocheng_Cisheng_Temple: four interior photographs of the main hall (Interior of the Dadaocheng Cisheng Temple-01 to -04, by Adao, 7 January 2025, CC BY-SA 4.0).',
+  publisher: 'Wikimedia Commons', title: 'Interior of the Dadaocheng Cisheng Temple',
+  url: 'https://commons.wikimedia.org/wiki/Category:Dadaocheng_Cisheng_Temple',
+  published: '2025-01-07',
+  context: '黑色大供桌（兩端兩只金色花瓶；香爐在旁邊長案上，深色）、四座光明燈塔、六角宮燈、弧形黑木拱門；神龕上方匾「海國陽春」，三層階梯上六、七尊以上媽祖金身；黑色圓木柱、磨石子地、側牆一排四尊大型神將。只用來看現況，日治時期的殿內照片查無。',
+  contextEn: 'A long black offering table with two gilt vases at its ends (the censer, dark, stands on a side table), four light towers, hexagonal palace lanterns, a curved black wooden arch; the plaque “Hai guo yang chun” above the shrine and six or seven or more gilt Mazu images on its three tiers; black round pillars, a terrazzo floor and a row of four large guardian figures along a side wall. Used only for the present state; no photograph of the Japanese-period interior was found.',
+})
+addSource('commons-cisheng-pillars', {
+  citation: 'Wikimedia Commons，〈大稻埕慈聖宮同治六年石柱.jpg〉（Outlookxp，2018，CC BY-SA 4.0）。',
+  citationEn: 'Wikimedia Commons, “大稻埕慈聖宮同治六年石柱.jpg” (Outlookxp, 2018, CC BY-SA 4.0).',
+  publisher: 'Wikimedia Commons', title: '大稻埕慈聖宮同治六年石柱',
+  url: 'https://commons.wikimedia.org/wiki/File:大稻埕慈聖宮同治六年石柱.jpg',
+  published: '2018',
+  context: '兩根黑色石柱：右柱楷書「慈孃印菩薩之心西天衣鉢」，上款同治六年丁卯端午日；左柱篆書聯首字「慈」，上款同治六年天中節日。',
+  contextEn: 'Two black stone pillars: the right in regular script, “The compassionate mother bears the Bodhisattva’s heart, the robe and bowl of the Western Heaven”, dated the Duanwu day of 1867; the left in seal script beginning “Ci”, dated to the Duanwu festival of the same year.',
+})
+addSource('commons-cisheng-plaque', {
+  citation: 'Wikimedia Commons，〈Inscribed board of the Dadaocheng Cisheng Temple 20250107.jpg〉（阿道，CC BY-SA 4.0；分類標 1920 works）與〈Dadaocheng Mazu Temple 02 廟名額、匾額.jpg〉（舟集，2024，CC BY-SA 4.0）。',
+  citationEn: 'Wikimedia Commons, “Inscribed board of the Dadaocheng Cisheng Temple 20250107.jpg” (Adao, CC BY-SA 4.0; categorised “1920 works”) and “Dadaocheng Mazu Temple 02 廟名額、匾額.jpg” (Boattoad, 2024, CC BY-SA 4.0).',
+  publisher: 'Wikimedia Commons', title: '慈聖宮三川殿的廟名額與「惠澤覃敷」匾',
+  url: 'https://commons.wikimedia.org/wiki/Category:Dadaocheng_Cisheng_Temple',
+  published: '2024、2025',
+  context: '三川殿中門上方：石門楣上一行金字（未辨讀）、直式雕花木框廟名額「慈聖宮」、紅底金字大匾「惠澤覃敷」；款識右「大正九年元月吉日」、左「稻江平樂社……仝敬獻」，年款大正九年，與分類相符。',
+  contextEn: 'Over the central door of the entrance hall: a line of gold characters on the stone lintel (unread), the vertical carved name board “Cisheng Gong” and the big red plaque “Grace spreads wide”; the dedication reads “first month, ninth year of Taishō” (1920) on the right and “Daojiang Pingle Society … presented together” on the left, matching the category.',
+})
+addSource('commons-cisheng-guardians', {
+  citation: 'Wikimedia Commons，慈聖宮的大型神將（Interior of the Dadaocheng Cisheng Temple-03、-04，阿道，2025）與哼哈二將（2018，CC BY-SA 4.0）。',
+  citationEn: 'Wikimedia Commons, the large guardian figures of Cisheng (Interior of the Dadaocheng Cisheng Temple-03 and -04, Adao, 2025) and the Heng and Ha generals (2018, CC BY-SA 4.0).',
+  publisher: 'Wikimedia Commons', title: '慈聖宮的神將',
+  url: 'https://commons.wikimedia.org/wiki/Category:Dadaocheng_Cisheng_Temple',
+  published: '2018、2025',
+  context: '正殿側牆一排四尊真人高的大型神將，黑面、金冠、藍底金繡袍，最前一尊持羽扇（照片未註明身分；Commons 分類為 Great God Generals、Statues of Heibai Wuchang，是上傳者的歸類）；哼哈二將為木雕立像，裸上身、立於岩座（部落格說在左廂房三寶殿）。',
+  contextEn: 'Along a side wall of the main hall a row of four life-size guardian figures, black-faced, in gold crowns and blue robes embroidered in gold, the foremost holding a feather fan (the photographs do not say who they are; the Commons categories Great God Generals and Statues of Heibai Wuchang are the uploader’s); the Heng and Ha generals are carved standing figures, bare-chested on rock bases (a blog places them in the Three Treasures hall of the left range).',
+})
+addSource('tpomec-dadaocheng-worksheet', {
+  citation: '臺北市政府教育局，大稻埕學習單（含慈聖宮同治五年、六年柱子的提問）。',
+  citationEn: 'Taipei City Department of Education, a Dadaocheng worksheet (with a question on the Tongzhi-year pillars of Cisheng).',
+  publisher: '臺北市政府教育局', title: '大稻埕學習單',
+  url: 'https://tpomec.tp.edu.tw/archive/file/OF-lpKfnqLvln5XlgbXmjqLpmoroh6rlsI7lvI-lrbjnv5LmiYvlhooo5by155OI5paHKQ==5tw6m1aqx.pdf',
+  published: '無署名',
+  context: '提問「現在慈聖宮還保留幾對當時同治年間的古老柱子」，提示同治五年丙寅（1866）與六年丁卯（1867），位置欄為左、右廂廊；配對題把前殿、正殿、左右護龍、後花園對應媽祖、註生娘娘、文昌帝君、龍井公等。',
+  contextEn: 'It asks how many pairs of the old Tongzhi-year pillars Cisheng still keeps, hinting at 1866 and 1867 with the position given as the left and right galleries; a matching exercise pairs the front hall, main hall, side ranges and rear garden with Mazu, the Goddess of Childbirth, Wenchang and the Dragon Well god.',
+})
+addSource('tcmb-chen-yingbin', {
+  citation: '文化部臺灣記憶庫，〈陳應彬〉人物條目。',
+  citationEn: 'Ministry of Culture, Taiwan Memory database, the entry “Chen Yingbin”.',
+  publisher: '文化部臺灣記憶庫', title: '陳應彬',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_People&id=635114',
+  published: '無署名',
+  context: '彬司派特色：大量螭虎栱、藻井「常留中央露出中脊桁」、前殿假四垂與串角柱；作品列北港朝天宮、陳德星堂等，未列慈聖宮（通論，不是慈聖宮的專論）。',
+  contextEn: 'Traits of the Bin school: many chihu brackets, caissons that “often leave the central ridge purlin showing”, a false four-sided roof and linked corner posts on the front hall; its works list Beigang Chaotian Temple and the Chen Dexing hall but not Cisheng (general, not specific to Cisheng).',
+})
+addSource('ntcri-temple-layout-xie', {
+  citation: '謝宗榮，〈臺灣寺廟建築的風格與格局〉，《臺灣工藝》（國立臺灣工藝研究發展中心）。',
+  citationEn: 'Xie Zongrong, “Styles and layouts of temple architecture in Taiwan”, Taiwan Crafts (National Taiwan Craft Research and Development Institute).',
+  publisher: '國立臺灣工藝研究發展中心', title: '臺灣寺廟建築的風格與格局',
+  url: 'https://themefile.culture.tw/ntcri/quarterly/files/734rJtC_f.pdf',
+  published: '無署名（期刊）',
+  context: '正殿明間供主神、次間稍間翼殿供同祀神；拜殿只有屋頂與梁柱、天公爐在此；護龍供同祀神或辦公；裝修重點在神龕、藻井，頂棚多露椽「徹上明造」；神龕周圍信眾不進入。',
+  contextEn: 'The central bay of the main hall holds the chief deity and the flanking bays the associated deities; the worship pavilion has only roof and beams, with the Heaven censer; side ranges house associated deities or offices; the finishing work centres on the shrine and caisson, and ceilings often leave the rafters exposed; worshippers do not enter around the shrine.',
+})
+
+/* 慈聖宮殿內補查（2026-11-04，Fable；docs/research/interior-ci-sheng-gong.md 第 8 節） */
+addSource('commons-cisheng-yange-board', {
+  citation: 'Wikimedia Commons，〈Dadaocheng Mazu Temple 09 沿革.jpg〉（舟集 Boattoad，2024-01-22，CC BY-SA 4.0）：慈聖宮廟方「大稻埕慈聖宮（祠宇媽祖宮）歷史沿革」板，署「大稻埕慈聖宮 謹誌」。',
+  citationEn: 'Wikimedia Commons, “Dadaocheng Mazu Temple 09 沿革.jpg” (Boattoad, 22 Jan 2024, CC BY-SA 4.0): the temple’s own history board, signed “respectfully recorded by Dadaocheng Cisheng Temple”.',
+  publisher: '大稻埕慈聖宮（廟方沿革板，Commons 照片）', title: '大稻埕慈聖宮（祠宇媽祖宮）歷史沿革',
+  url: 'https://commons.wikimedia.org/wiki/File:Dadaocheng_Mazu_Temple_09_沿革.jpg',
+  published: '板無年款；照片 2024',
+  context: '本站逐字看過：咸豐五年（1855）林右藻等發起籌建，同治三年（1864）三月廿六日動工於中街、南街交界，稱「媽祖宮口街」；同治五年改建於長樂街（今民樂街、民生西路口），六年五月十八日興工、八年八月九日完工；宣統二年（1910）拓路被毀，民國三年（1914）李萬福等倡議重建，募款一萬七千餘圓、臺北廳撥四千三百餘圓，遷建於隆記後街現址，民國五年（1916）四月落成；「根據傳說」本尊媽祖是嘉慶年間同安商人自湄洲分靈攜來、先祀艋舺八甲庄。沒有殿內陳設。',
+  contextEn: 'Read in full by this site: fundraising from 1855, a small temple begun in 1864 at the junction of Zhongjie and Nanjie, rebuilt on Changle Street (today’s Minle Street / Minsheng West Road) in 1866–69; demolished for road widening in 1910, rebuilt from 1914 on the initiative of Li Wanfu and others with some 17,000 yen raised and 4,300 yen from the Taihoku prefecture, completed in April 1916 on the present site; “according to tradition” the original image came from Meizhou in the Jiaqing years. Nothing on the interior.',
+})
+addSource('tcmb-cisheng-donation-stele-1917', {
+  citation: '國史館臺灣文獻館藏，〈改築大稻埕慈聖宮捐題碑記拓本（乙）〉（大稻埕慈聖宮董事，1917；登錄號 19580010776），國家文化記憶庫／文化部典藏網。',
+  citationEn: 'Taiwan Historica, “Rubbing of the donors’ stele for the rebuilding of Dadaocheng Cisheng Temple (second stone)” (temple directors, 1917; accession no. 19580010776), via the Taiwan Cultural Memory Bank / Ministry of Culture collections portal.',
+  publisher: '國史館臺灣文獻館（國家文化記憶庫）', title: '改築大稻埕慈聖宮捐題碑記拓本（乙）',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?id=107000023498&indexCode=MOCCOLLECTIONS',
+  published: '1917（大正六年）',
+  context: '典藏說明：碑分刻二石，此為第二件，詳列捐題情形，「地方士紳眾多，商號雲集」；「改建工程自西元 1911 年（明治 44 年）興工，西元 1916 年（大正 5 年）竣工」。原碑寬 143 × 高 74 cm。頁面沒有錄文；（甲）件未找到。',
+  contextEn: 'Catalogue note: the stele is cut on two stones, this being the second, listing the donors (“many local gentry, firms gathered”); “rebuilding began in 1911 and was completed in 1916”. Original stone 143 × 74 cm. No transcription on the page; the first stone was not located.',
+})
+addSource('commons-cisheng-pingleshe', {
+  citation: 'Wikimedia Commons，〈臺北大稻埕慈聖宮平樂社 20260709.jpg〉（阿道，2026-07-09，CC BY-SA 4.0）。',
+  citationEn: 'Wikimedia Commons, “臺北大稻埕慈聖宮平樂社 20260709.jpg” (Adao, 9 July 2026, CC BY-SA 4.0).',
+  publisher: 'Wikimedia Commons', title: '臺北大稻埕慈聖宮平樂社',
+  url: 'https://commons.wikimedia.org/wiki/File:臺北大稻埕慈聖宮平樂社_20260709.jpg',
+  published: '2026',
+  context: '說明「臺北大稻埕慈聖宮平樂社，地址：臺北市大同區保安街 49 巷 36 號」，分類 Beiguan music、Zhentou。用來證明平樂社是慈聖宮的北管軒社、今社址在廟旁；1920 年「惠澤覃敷」匾的題獻者。',
+  contextEn: 'Caption: “the Pingle Society of Dadaocheng Cisheng Temple, no. 36, Lane 49, Baoan Street”, categorised under beiguan music and parade troupes. Shows that the society is the temple’s beiguan troupe, still next door; it presented the 1920 plaque.',
+})
+addSource('hsu-blog-2014-cisheng', {
+  citation: 'Hsu的部落格，〈台北．大稻埕【慈聖宮】〉（2014-02-19，pixnet／xuite）。',
+  citationEn: 'Hsu’s blog, “Taipei, Dadaocheng: Cisheng Temple” (19 Feb 2014).',
+  publisher: '個人部落格', title: '台北．大稻埕【慈聖宮】',
+  url: 'https://hsu042.pixnet.net/blog/posts/16095032132',
+  published: '2014-02-19',
+  context: '證據等級低，只作「據說」：神龕上「海國陽春」匾同治十一年（1872）、正殿外「仁風溥被」匾光緒十年（1884），「兩塊匾都木板拼合」；中門石門框聯「第一門開觀音山拱秀／數千艇聚奎府水流煇」為同治五年石材；三川殿與正殿龍柱落款同治五年；天井迴廊三對付點柱為大正五年新廟石柱；1914 年艋舺商人「李萬得」（沿革板作李萬福）發起重建、1916 完工；七爺八爺、千里眼順風耳是陣頭大仙尪仔；哼哈二將在左廂房三寶殿、造型如日本金剛力士。',
+  contextEn: 'Low-grade evidence, used only as “reportedly”: dates the “Hai guo yang chun” plaque to 1872 and a “Ren feng pu bei” plaque to 1884, both plank-built; transcribes the door-frame couplet; dragon columns dated 1866, courtyard pillars 1916; rebuilding 1914–16; the big guardian figures are parade puppets of Generals Xie and Fan and Qianliyan and Shunfeng’er; the Heng and Ha generals stand in the Three Treasures hall of the left range.',
+})
+addSource('vocus-lefeng-1924-jiao-2', {
+  citation: '樂風，〈1924 年，大稻埕慈聖宮萬人空巷，驚動總督的慶成醮（二）〉，vocus（原刊聚傳媒「樂風」專欄），引《臺灣日日新報》1924-10-26、1924-11-23。',
+  citationEn: 'Lefeng, “1924: the consecration festival of Dadaocheng Cisheng Temple that drew crowds and the Governor-General (part 2)”, vocus (first published in the Lefeng column of Jumedia), citing the Taiwan Nichinichi Shinpō of 26 Oct and 23 Nov 1924.',
+  publisher: 'vocus（聚傳媒專欄）', title: '1924 年，大稻埕慈聖宮萬人空巷，驚動總督的慶成醮（二）',
+  url: 'https://vocus.cc/article/6699acb9fd89780001d09598',
+  published: '2024',
+  context: '1909-06-25 舊廟起拆；經費預定 20,000 圓、募得 17,000 餘圓、臺北廳補助 4,300 圓；1916 年完工但當年報紙未見落成報導；1924-11-01 慶成醮，辜顯榮主任委員，平安社三層醮壇、靈安社較勁，伊澤多喜男總督與後藤文夫總務長官翌日前往看五穀壇、三官壇、「平安社之媽祖壇」。文中「平安社」與「平樂社」是否同一社本站不能確定。報紙原文未讀。',
+  contextEn: 'Demolition from 25 June 1909; budget 20,000 yen, 17,000-odd raised plus 4,300 from the prefecture; completion 1916 with no newspaper report that year; consecration festival from 1 Nov 1924 with altars by the Ping’an and Ling’an societies, visited by Governor-General Izawa. Whether “Ping’an Society” is the Pingle Society is not settled; the newspaper originals were not read.',
+})
+addSource('ylps-dadaocheng-cisheng', {
+  citation: '臺北市永樂國民小學，大稻埕主題式網頁「慈聖宮梯隊」。',
+  citationEn: 'Taipei Yongle Elementary School, Dadaocheng thematic website, “Cisheng Temple team” page.',
+  publisher: '臺北市永樂國民小學', title: '大稻埕主題式網頁：慈聖宮',
+  url: 'https://dadaochen.ylps.tp.edu.tw/content.php?titlename=Tsz_Shing_Temple_echelon&output_menu=true',
+  published: '無署名、無日期',
+  context: '文字與廟方沿革板幾乎相同（應抄自廟方簡介），多一句「正殿主祀天上聖母，兩旁分祀謝將軍、范將軍（即七、八爺）、千里眼將軍、順風耳將軍」。學校網頁，證據等級低，只作「據說」。',
+  contextEn: 'Nearly identical to the temple’s history board (probably copied from a temple leaflet), with one extra sentence placing Generals Xie and Fan and Qianliyan and Shunfeng’er beside Mazu in the main hall. A school web page; low-grade evidence, “reportedly” only.',
+})
+addSource('fu-mingwei-2023-beiguan', {
+  citation: '傅明蔚，〈《臺灣日日新報》中大稻埕北管子弟軒社的聲音景觀〉，《全球客家研究》20（2023-05），國立陽明交通大學機構典藏。',
+  citationEn: 'Fu Mingwei, “The soundscape of Dadaocheng’s beiguan amateur troupes in the Taiwan Nichinichi Shinpō”, Global Hakka Studies 20 (May 2023), NYCU institutional repository.',
+  publisher: '《全球客家研究》', title: '《臺灣日日新報》中大稻埕北管子弟軒社的聲音景觀',
+  url: 'https://ir.lib.nycu.edu.tw/handle/11536/161721',
+  published: '2023-05',
+  context: '研究對象是霞海城隍廟、慈聖宮、法主公廟所屬的北管軒社，以日日新報為主。全文 PDF 這次抓不到，平樂社在文中怎麼寫未讀；列作待讀。',
+  contextEn: 'Studies the beiguan troupes attached to the three Dadaocheng temples through the newspaper. The PDF could not be fetched; what it says about the Pingle Society is unread; listed as to-read.',
+})
+addSource('ptt-datong-2020-cisheng', {
+  citation: 'PTT Datong 板，〈慈聖宮〉相關文章（2020-01-18）。',
+  citationEn: 'PTT Datong board, a post on Cisheng Temple (18 Jan 2020).',
+  publisher: 'PTT 批踢踢實業坊', title: 'Datong 板：慈聖宮',
+  url: 'https://www.ptt.cc/bbs/Datong/M.1579347013.A.F02.html',
+  published: '2020-01-18',
+  context: '遊記，證據等級低：正殿三通五瓜；1914 年重建的水車堵與剪黏；原廟龍柱、石碑、石材、大樑為同安匠師所作。文資網指定理由有沒有提到水車堵與剪黏，本站未核對（頁面要人工開）。',
+  contextEn: 'A forum post, low-grade evidence: the main hall’s three-through five-melon frame; water-wheel panels and cut-and-paste work from the 1914 rebuilding; the old temple’s dragon columns, stelae, stone and beams by Tong’an craftsmen. Whether the heritage register’s reasons mention the panels and roof work has not been checked.',
+})

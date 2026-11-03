@@ -100,7 +100,7 @@ describe('霞海城隍廟殿內：只有港口商街、地段不變、熱點', (
     for (const eraId of OTHER) assert.equal(getShopBuilding(shop, eraId), null, eraId)
   })
 
-  test('慈聖宮（同樣是廟宇原型）沒有殿內、天公爐照舊', () => {
+  test('其他年代沒有霞海城隍廟的殿內（慈聖宮的殿內是另一套，見 tests/ciShengInterior.test.js）', () => {
     for (const eraId of OTHER) {
       assert.ok(!worlds[eraId].interiors.some((zone) => zone.id === ID), eraId)
       assert.ok(!worlds[eraId].collision.walkable.some((r) => r.floorY === Y && inTempleLot(r)), eraId)
