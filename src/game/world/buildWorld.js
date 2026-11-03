@@ -71,6 +71,7 @@ import { buildLinHuaTai, buildLinHuaTaiInterior } from '../builders/linHuaTai/li
 import { buildYouJi, buildYouJiInterior } from '../builders/youJi/youJi.js'
 import { buildXinFangChun, buildXinFangChunInterior } from '../builders/xinFangChun/xinFangChun.js'
 import { buildJiangShanLouInterior, buildJiangShanLouWalkIn } from '../builders/jiangShanLou/jiangShanLouInterior.js'
+import { buildLiTingXiang, buildLiTingXiangInterior } from '../builders/liTingXiang/liTingXiang.js'
 import { buildShowaLaundry, buildShowaLaundryInterior } from '../builders/showaLaundry/showaLaundry.js'
 import { getEra } from '../../data/eras.js'
 import { createEraLayout } from './eraLayout.js'
@@ -90,6 +91,8 @@ export const BUILDING_BUILDERS = {
   'xin-fang-chun': buildXinFangChun,
   // 江山樓（酒樓繁華）：一樓門廳與二樓一間宴會廳可以走進去（第 11 階段；data/jiangShanLouLayout.js）
   'jiang-shan-lou': buildJiangShanLouWalkIn,
+  // 李亭香（老屋新生）：前店與內用座位可以走進去（第 11 階段；data/liTingXiangLayout.js）
+  'li-ting-xiang': buildLiTingXiang,
   baroque: buildArcadeBuilding,
   deco: buildArcadeBuilding,
   postwar: buildArcadeBuilding,
@@ -170,6 +173,7 @@ export const BUILDING_INTERIORS = {
   'you-ji': buildYouJiInterior,
   'xin-fang-chun': buildXinFangChunInterior,
   'jiang-shan-lou': buildJiangShanLouInterior,
+  'li-ting-xiang': buildLiTingXiangInterior,
   'yongle-market': buildYongleInterior,
   'action-bar': buildActionBarInterior,
   'luguo-cafe': buildLuguoCafeInterior,

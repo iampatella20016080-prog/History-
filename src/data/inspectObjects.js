@@ -12,6 +12,7 @@ import { YJ_INSPECTABLES, YJ_OBJECTS, YJ_WHERE } from './youJiObjects.js'
 import { XFC_EXTRA_NOTES, XFC_INSPECTABLES, XFC_OBJECTS } from './xinFangChunObjects.js'
 import { JSL_EXTRA_NOTES, JSL_INSPECTABLES, JSL_OBJECTS } from './jiangShanLouObjects.js'
 import { JSL_OBJECTS_2 } from './jiangShanLouObjects2.js'
+import { LTX_INSPECTABLES, LTX_OBJECTS } from './liTingXiangObjects.js'
 import { XH_INSPECTABLES, XH_OBJECTS } from './xiaHaiObjects.js'
 import { SHOWA_INSPECTABLES, SHOWA_OBJECTS } from './showaLaundryObjects.js'
 
@@ -134,6 +135,8 @@ export const INSPECT_OBJECTS = {
   ...JSL_OBJECTS,
   // 江山樓三樓與樓頂庭園（第 2 段補充；data/jiangShanLouObjects2.js）
   ...JSL_OBJECTS_2,
+  // 李亭香（老屋新生）店內（第 11 階段；data/liTingXiangObjects.js）：平西餅、平安龜
+  ...LTX_OBJECTS,
   // 霞海城隍廟殿內（第 11 階段；data/xiaHaiObjects.js）：香爐（共用）、主神龕、清代匾額、義勇公祿位
   ...XH_OBJECTS,
   // 昭和浪漫洗濯屋（老屋新生）：舊招牌、霜淇淋模型、炭火熨斗、木桶與洗衣板（data/showaLaundryObjects.js）
@@ -217,6 +220,8 @@ export const STREET_INSPECTABLES = [
   ...XFC_INSPECTABLES,
   // 江山樓的室內（level 1 在二樓；data/jiangShanLouObjects.js）
   ...JSL_INSPECTABLES,
+  // 李亭香的店內（老屋新生；data/liTingXiangObjects.js）
+  ...LTX_INSPECTABLES,
   // 霞海城隍廟殿內（港口商街；data/xiaHaiObjects.js）
   ...XH_INSPECTABLES,
   // 昭和浪漫洗濯屋的門口與一樓（data/showaLaundryObjects.js）

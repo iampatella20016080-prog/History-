@@ -231,3 +231,7 @@ export function inJiangShanLouLot(rect) {
 export function inLinHuaTaiLot(rect) {
   return rect.minX >= -25 - 1e-6 && rect.maxX <= -19 + 1e-6 && rect.minZ >= -15.5 - 1e-6 && rect.maxZ <= -4.5 + 1.7 + 2.4 + 0.5 + 1e-6
 }
+
+export function inLiTingXiangLot(rect) {
+  return rect.minX >= 16.7 - 2.7 - 0.5 - 1e-6 && rect.maxX <= 16.7 + 2.7 + 0.5 + 1e-6 && rect.minZ >= 4.5 - 1.7 - 2.4 - 0.5 - 1e-6 && rect.maxZ <= 4.5 + 11 + 1e-6
+}
