@@ -41,7 +41,7 @@ const LATER = ['revival']
 const W = (x, z) => ltxToWorld(x, z)
 
 /** 和 tests/liTingXiangInterior.test.js 相同的路線（店的本地座標）：街上 → 門口 → 展示櫃與櫃台之間 → 內用座位之間 → 後門前 */
-const IN = [[0, 2.2], [0, 1.0], [0, -0.6], [0, -2.4], [0, -4.6], [0, -5.3]]
+const IN = [[-1.45, 2.2], [-1.45, 1.0], [-1.45, -0.6], [0, -1.0], [0, -2.4], [0, -4.6], [0, -5.3]]
 const toWorld = (points) => points.map(([x, z]) => W(x, z))
 const route = () => toWorld(IN)
 
@@ -389,7 +389,7 @@ async function runDevice(browser, device) {
 
   const eraId = 'revival'
   const label = '2000–現在 李亭香'
-  const street = { ...W(0, 2.2), y: 0 }
+  const street = { ...W(-1.45, 2.2), y: 0 }
   await teleport(street)
   await frames(10)
   await startSampler(page)
@@ -405,6 +405,7 @@ async function runDevice(browser, device) {
   await shot('04-mould-wall', at(-0.4, 1.6, -3.0), at(-2.3, 1.4, -4.7))
   await shot('05-counter', at(-0.6, 1.6, -1.2), at(1.6, 1.0, -2.5))
   await shot('06-facade', at(0, 2.2, 6.5), at(0, 2.0, -3.0))
+  await shot('07-building', at(1.0, 1.7, 7.0), at(0, 6.4, 0.8))
 
   const plan = PLAN[eraId]
   for (const [i, item] of plan.items.entries()) {
@@ -418,7 +419,7 @@ async function runDevice(browser, device) {
   await frames(8)
   // 重新開始記錄，只看走出店內的這一段
   await startSampler(page)
-  const OUT = toWorld([[0, -4.6], [0, -2.4], [0, -0.6], [0, 1.0], [0, 2.2]])
+  const OUT = toWorld([[0, -4.6], [0, -2.4], [0, -1.0], [-1.45, -0.6], [-1.45, 1.0], [-1.45, 2.2]])
   const out = await walk(OUT)
   const sampled = await samplerStats(page)
   const y0 = await page.evaluate(() => window.__DDC__.playerState.position.y)
@@ -441,7 +442,7 @@ async function runDevice(browser, device) {
   const switches = []
   await teleport(street)
   await frames(6)
-  await walk(route().slice(1, 5))
+  await walk(route().slice(1, 6))
   for (const target of ['qing-port', 'revival', 'postwar', 'revival']) {
     const ok = await switchEra(target)
     await frames(20)
@@ -452,7 +453,7 @@ async function runDevice(browser, device) {
     if (target === 'revival') {
       await teleport(street)
       await frames(6)
-      await walk(route().slice(1, 5))
+      await walk(route().slice(1, 6))
     }
   }
   record(test, '在店內連續切換年代：人物都在可以站的地方、鏡頭不在方塊裡', switches.every(Boolean), switches.join('、'))

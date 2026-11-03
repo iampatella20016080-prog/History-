@@ -56,7 +56,7 @@ function walkRoute(world, state, points, stepSize) {
   return s
 }
 
-const start = () => ({ ...W(0, 1.3) })
+const start = () => ({ ...W(-1.45, 1.3) })
 /** 世界 → 本地座標（地段轉 180°） */
 const local = (p) => ({ x: LTX_SITE.x - p.x, z: LTX_SITE.z - p.z })
 const near = (s, lx, lz, tol = 0.45) => Math.hypot(s.x - W(lx, lz).x, s.z - W(lx, lz).z) < tol
@@ -77,10 +77,10 @@ function followCamera(world, p, yaw) {
   return { x: target.x + direction.x * d, y: target.y + direction.y * d, z: target.z + direction.z * d }
 }
 
-/** 從街上走進門、經過展示櫃與櫃台之間，到內用座位中間的走道、後門前面（本地座標） */
-const ROUTE = [[0, 1.0], [0, -0.6], [0, -2.4], [0, -4.6], [0, -5.4]]
+/** 從街上走進左邊的門、經過展示櫃與櫃台之間，到內用座位中間的走道、後門前面（本地座標） */
+const ROUTE = [[-1.45, 1.0], [-1.45, -0.6], [0, -1.0], [0, -2.4], [0, -4.6], [0, -5.4]]
 /** 到內用座位旁邊（左邊那張桌子的前面） */
-const SEATS = [[0, 1.0], [0, -0.6], [-0.4, -3.4], [-1.3, -3.55]]
+const SEATS = [[-1.45, 1.0], [-1.45, -0.6], [0, -1.0], [-0.4, -3.4], [-1.3, -3.55]]
 
 describe('李亭香：只有老屋新生換樣式、地段不變、熱點', () => {
   test('建築樣式與版本：老屋新生是 li-ting-xiang／pastryShop；其他年代仍是一般閩南街屋（或沒有）', () => {
@@ -283,7 +283,10 @@ describe('李亭香：鏡頭不穿牆', () => {
         for (let i = 0; i < 12; i++) {
           const cam = followCamera(world, p, (i / 12) * Math.PI * 2)
           const q = local(cam)
-          assert.ok(q.x > room.minX - 0.05 && q.x < room.maxX + 0.05 && q.z > room.minZ - 0.05, `玩家 (${x.toFixed(1)}, ${z.toFixed(1)}) 鏡頭 (${q.x.toFixed(2)}, ${q.z.toFixed(2)})`)
+          // 門口附近：鏡頭可以從門退到騎樓與 224 巷（戶外），只要不在任何遮擋方塊裡
+          const inBlocker = world.blockers.some((b) => cam.x > b.minX && cam.x < b.maxX && cam.y > b.minY && cam.y < b.maxY && cam.z > b.minZ && cam.z < b.maxZ)
+          const inRoom = q.x > room.minX - 0.05 && q.x < room.maxX + 0.05 && q.z > room.minZ - 0.05
+          assert.ok((inRoom || q.z > 0) && !inBlocker, `玩家 (${x.toFixed(1)}, ${z.toFixed(1)}) 鏡頭 (${q.x.toFixed(2)}, ${q.z.toFixed(2)})`)
           assert.ok(q.z > variant.partition.z - 0.05, `鏡頭不到後門後面：z=${q.z.toFixed(2)}`)
           assert.ok(cam.y < ceiling + 0.05, `鏡頭高度 ${cam.y.toFixed(2)}`)
           checked++

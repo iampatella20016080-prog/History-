@@ -37,7 +37,7 @@ const PRE_MOTION = JSON.parse(readFileSync(new URL('./fixtures/preMotionWorld.js
 // 江山樓（第 11 階段擴充）：依臺史博外觀照的「KANG SAN LAU」「ライトビール」「かうさんろう」與側面「高砂麥酒」多四塊；三樓陽臺下多四盞燈籠
 // 新芳春老屋新生的正廳後牆多一塊木匾「新芳春行」（使用者提供的照片）
 // 港口商街：霞海城隍廟殿內的六方匾與一對楹聯（第 11 階段）
-const LATER_SIGNS = { 'qing-port': 6 + 2, banquet: 4, modern: 3, postwar: 3 + 3, revival: 5 + 14 - 3 + 3 + 1 }
+const LATER_SIGNS = { 'qing-port': 6 + 2, banquet: 4, modern: 3, postwar: 3 + 3, revival: 5 + 14 - 3 + 3 + 1 + 1 }
 const LATER_LANTERNS = { banquet: 4 }
 const source = (path) => readFileSync(new URL(`../src/${path}`, import.meta.url), 'utf8')
 

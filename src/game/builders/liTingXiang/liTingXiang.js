@@ -1,11 +1,11 @@
 import { LTX_SHELL, LTX_VARIANTS, ltxToWorld } from '../../../data/liTingXiangLayout.js'
-import { buildShophouse } from '../shophouse.js'
 import { createShopInterior } from '../shopInterior.js'
 import { LTX_FURNITURE } from './liTingXiangFurniture.js'
+import { buildLiTingXiangFacade, ltxArcadeColumns } from './liTingXiangFacade.js'
 
 /**
  * 李亭香・老屋新生（第 11 階段；建築樣式 'li-ting-xiang'，只有這個年代換）：
- * 外觀沿用一般閩南街屋（buildShophouse，walkIn 讓門面留空）；室內的外殼、門面、碰撞、鏡頭遮擋與室內範圍用共用的街屋室內
+ * 外觀依使用者提供的照片（liTingXiangFacade.js：紅磚洋樓、灰色飾帶、石匾、白色店面與黑色雨遮）；室內的外殼、門面、碰撞、鏡頭遮擋與室內範圍用共用的街屋室內
  * （shopInterior.js）；擺設（器物清單，data/liTingXiangLayout.js）在室內按需載入。
  * 店內描述只有旅遊媒體的「融合了紅磚洋樓與白洋房空間」：白牆、紅磚的隔間牆；其餘是歷史情境重建。
  */
@@ -25,7 +25,8 @@ const interior = createShopInterior({
   lookOf: () => LOOK,
   furniture: LTX_FURNITURE,
   siteToWorld: ltxToWorld,
-  exterior: (b, cfg, detail) => buildShophouse(b, { ...cfg, archetype: 'minnan', walkIn: true, goods: false, display: null }, detail),
+  exterior: (b, cfg, detail) => buildLiTingXiangFacade(b, { ...cfg, door: liTingXiangVariant(cfg).door }, detail),
+  extraObstacles: () => ltxArcadeColumns(),
   buildExtras(b, cfg, variant) {
     // 吊燈：白色燈罩（只是燈具，不另外打光）
     const cord = S.ceiling - 0.6

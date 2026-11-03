@@ -27,8 +27,9 @@ export const LTX_SHELL = {
  */
 export const LTX_VARIANTS = {
   pastryShop: {
-    door: { minX: -1.0, maxX: 1.0 },
-    frontPanels: 'open',
+    // 門在左邊（照片：白框玻璃門在左、右邊兩扇圓拱窗）；店面由外觀自己畫（frontPanels 'none'）
+    door: { minX: -1.95, maxX: -0.95 },
+    frontPanels: 'none',
     partition: { z: -6.0, doorMinX: -0.9, doorMaxX: 0.9 },
     lamps: [[0, -2.2], [0, -4.6]],
     items: [

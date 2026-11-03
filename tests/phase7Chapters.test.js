@@ -171,7 +171,8 @@ describe('李亭香：年代限縮（名錄只在老屋新生，店屋與地段�
     assert.equal(getShopBuilding(ltx, 'qing-port'), null)
     for (const era of ERAS) {
       const signs = worlds[era.id].signs ?? []
-      const named = signs.some((sign) => /李亭香/.test(sign.text ?? ''))
+      // 老屋新生的外觀依照片：石匾由右往左刻「香亭李」
+      const named = signs.some((sign) => /李亭香|香亭李/.test(sign.text ?? ''))
       assert.equal(named, era.id === 'revival', `${era.id} 的招牌`)
     }
   })
