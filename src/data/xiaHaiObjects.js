@@ -102,6 +102,12 @@ export const XH_OBJECTS = {
           textEn: 'Whether today’s canopy and its patterns are the Qing originals: not found; this site follows the present photographs.',
           status: 'pending',
         },
+        {
+          text: '今天的花罩可能是 1997 年前後整修的樣子：當時報紙寫「座龕鑲上窗櫺、牆面改飾白石」（經維基百科腳註轉引，原報未讀）；1935 年的重修碑記說建廟七十六年來「丹青剝落」——清末的龕應該比今天的舊、比今天的素。',
+          textEn: 'Today’s canopy may be the look of the repair around 1997: a newspaper of the time says the shrine was fitted with lattice and the walls refaced in white stone (cited via a Wikipedia footnote; the paper itself not read). The 1935 restoration stele says that in seventy-six years the paintwork had peeled—so the Qing shrine was probably older and plainer than today’s.',
+          sourceIds: ['xiahai-stele-1935'],
+          status: 'pending',
+        },
       ],
       making: [{ text: '不是食物；神像是木雕，神袍是刺繡。', textEn: 'Not a foodstuff: the images are carved wood, the robes embroidered.', sourceIds: ['tpecitygod-art-04'] }],
       use: [
@@ -109,6 +115,12 @@ export const XH_OBJECTS = {
           text: '開基的神像 1859 年嵌入廟牆之中，看不到；鎮殿的是另雕的。',
           textEn: 'The founding image was sealed into the temple wall in 1859 and cannot be seen; the hall image is a separate carving.',
           sourceIds: ['tpecitygod-art-04'],
+        },
+        {
+          text: '本站只畫兩尊有出處的神像：主神城隍（1853 年從艋舺迎來的霞海城隍；龕中是建廟時雕的鎮殿像）與右室的城隍夫人（1893 年起）。龕內的配祀、謝范將軍與文武判官的大神偶、夫人兩旁的宮娥，清末是否已在沒有出處，不畫，以簾幕示意。',
+          textEn: 'This site draws only the two images with sources: the City God (brought from Bangka in 1853; the shrine holds the hall image carved at the founding) and the consort in the right-hand room (from 1893). The attendant images, the great figures of Generals Xie and Fan and the judges, and the consort’s maids have no source for the Qing period and are not drawn; curtains stand in their place.',
+          sourceIds: ['tpecitygod-art-04', 'tpecitygod-god-02'],
+          status: 'reconstruction',
         },
         {
           text: '本站讓人物只走到神案前，神龕一帶不能進去（示意）。',
@@ -214,10 +226,15 @@ export const XH_OBJECTS = {
           sourceIds: ['nchdb-xiahai-monument', 'tpecitygod-god-04'],
         },
         {
-          text: '牌位今日在正殿左側偏後的配殿；清末的位置查無，本站放在正殿左後角。',
-          textEn: 'Today the tablet is in the side chapel behind and left of the main hall; its Qing position is not found, and this site puts it in the rear left corner of the hall.',
-          sourceIds: ['tpecitygod-art-02'],
-          status: 'pending',
+          text: '1934 年的《臺北霞海城隍廟沿革誌》：三十八人陣亡後，「海內派下感念為公受厄，共議配祀霞海城隍廟西廡，曰義勇公」——義勇公供在西廡（側廊），不在正殿裡；今天在正殿左側偏後的配殿。本站把龕放正殿左後角是示意。',
+          textEn: 'The 1934 temple chronicle: after the thirty-eight died, “the Hainei branch, grieving that they suffered for the common cause, agreed to enshrine them in the west gallery of the Xiahai City God temple as the Righteous and Brave”—so they were kept in a side gallery, not in the main hall; today they are in the side chapel behind and left of the hall. Placing the shrine at the hall’s rear left is this site’s approximation.',
+          sourceIds: ['xiahai-chronicle-1934', 'tpecitygod-god-04'],
+          status: 'reconstruction',
+        },
+        {
+          text: '後來：今天龕上的匾「舍身成仁」是 1934 年海內會立的，清末還沒有，本站港口商街的殿內不畫。',
+          textEn: 'Later: the plaque above the shrine today, “Giving one’s life for righteousness”, was set up by the Hainei Society in 1934; it did not exist in the Qing and is not modelled in this site’s harbour-era hall.',
+          sourceIds: ['tpecitygod-art-06'],
         },
       ],
       where: [{ text: '霞海城隍廟港口商街正殿左後的小龕。', textEn: 'The small shrine at the rear left of Xiahai’s main hall in the harbour era.' }],

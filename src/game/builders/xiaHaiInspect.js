@@ -79,11 +79,8 @@ function buildShrine({ detail }) {
   god.add('#1c1a1a', box(0.24, 0.015, 0.04), { p: [0, 0.945, -0.01] })
   god.add('#b3302a', new SphereGeometry(0.02, 8, 6), { p: [0, 0.98, 0.01] })
   if (detail) for (let k = -3; k <= 3; k++) god.add('#c9a148', box(0.012, 0.03, 0.012), { p: [k * 0.035, 0.6, 0.11] })
-  // 前排的配祀小像（階梯式）
-  for (const [x, h, c] of [[-0.55, 0.36, '#2f4d6a'], [-0.35, 0.36, '#7a2b24'], [0.35, 0.36, '#3a5a3a'], [0.55, 0.36, '#5a3a2a']]) {
-    god.add(c, cyl(0.04, 0.06, h * 0.7, 8), { p: [x, 0.35 + h * 0.35, 0.1] })
-    god.add('#2a221e', new SphereGeometry(0.03, 8, 6), { p: [x, 0.35 + h * 0.8, 0.1] })
-  }
+  // 配祀小像沒有出處的年代，不畫（使用者 2026-11-03）：兩側垂簾
+  for (const x of [-0.45, 0.45]) frame.add('#b8a27a', box(0.4, 0.75, 0.01), { p: [x, 0.75, 0.05] })
   return {
     radius: 0.95,
     centerY: 0.75,

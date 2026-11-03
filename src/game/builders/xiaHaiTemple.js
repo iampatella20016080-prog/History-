@@ -82,34 +82,6 @@ function seatedFigure(b, x, y, z, h, { robe, trim = GILT, face = SOOT, crown = '
   })
 }
 
-/**
- * 立像（大型神偶與配祀小立像）：下襬外張的長袍、上身、頭、帽。
- * hat：'tall' 謝將軍的高帽、'flat' 范將軍的方帽、'judge' 判官的展角帽；sash：斜披的錦帶（大型謝范，靈安社）
- */
-function standingFigure(b, x, y, z, h, { robe, face = SOOT, hat = 'judge', sash = null, rotationY = 0, arms = true }) {
-  b.group([x, y, z], rotationY, () => {
-    b.cylinder('plain', h * 0.1, h * 0.15, h * 0.55, 10, [0, h * 0.275, 0], { tint: robe })
-    b.cylinder('plain', h * 0.1, h * 0.11, h * 0.25, 10, [0, h * 0.67, 0], { tint: shade(robe, 1.08) })
-    b.box('plain', [h * 0.3, h * 0.05, h * 0.16], [0, h * 0.79, 0], { tint: robe })
-    // 寬袖、腰帶、袍下緣與露出的靴尖
-    if (arms) for (const s of [-1, 1]) b.box('plain', [h * 0.09, h * 0.3, h * 0.11], [s * h * 0.14, h * 0.64, h * 0.03], { tint: shade(robe, 0.9) })
-    b.cylinder('plain', h * 0.115, h * 0.115, h * 0.035, 10, [0, h * 0.55, 0], { tint: GILT })
-    b.cylinder('plain', h * 0.152, h * 0.152, h * 0.03, 10, [0, h * 0.015, 0], { tint: shade(robe, 0.7) })
-    b.box('dark', [h * 0.16, h * 0.03, h * 0.08], [0, h * 0.015, h * 0.14], { tint: '#1e1c1c' })
-    b.add('plain', new SphereGeometry(h * 0.065, 10, 8), { position: [0, h * 0.87, 0], tint: face })
-    const top = h * 0.93
-    if (hat === 'tall') {
-      b.cylinder('plain', h * 0.045, h * 0.07, h * 0.2, 8, [0, top + h * 0.08, 0], { tint: '#ece8de' })
-    } else if (hat === 'flat') {
-      b.box('plain', [h * 0.16, h * 0.06, h * 0.16], [0, top + h * 0.02, 0], { tint: '#1e1c1c' })
-    } else {
-      b.box('plain', [h * 0.13, h * 0.07, h * 0.13], [0, top + h * 0.02, 0], { tint: '#1e1c1c' })
-      b.box('plain', [h * 0.36, h * 0.015, h * 0.03], [0, top + h * 0.03, -h * 0.03], { tint: '#1e1c1c' })
-    }
-    if (sash) b.box('plain', [h * 0.05, h * 0.42, 0.015], [0, h * 0.62, h * 0.11], { rotation: [0, 0, 0.5], tint: sash })
-  })
-}
-
 /* ═══════════ 器物 ═══════════ */
 
 const box2 = (x, z, w, d) => rect(x - w / 2, x + w / 2, z - d / 2, z + d / 2)
@@ -171,27 +143,15 @@ function buildMainShrine(b, item, detail) {
     b.box('wood', [w + 0.3, 0.1, d + 0.1], [0, top + 0.05, -0.05], { tint: DARK_WOOD })
     // 鎮殿城隍（三尺六、約 1.1 m）：硬身木雕、公爵帽、刺繡雪衣式神袍、長髯、黑面
     seatedFigure(b, 0, baseH, -0.12, 1.1, { robe: '#7a2b24', trim: '#d6ae52', crown: 'duke', beard: true, detail })
-    // 龕內配祀（前兩排，階梯式）：文武判官、牛馬將軍二尺三（0.7 m）；謝二尺二、范一尺三；劍印童、日夜遊神一尺六
-    b.box('wood', [w - 0.4, 0.18, 0.3], [0, baseH + 0.09, 0.25], { tint: shade(RED, 0.85) })
-    const second = [
-      [-1.15, 0.7, '#2f4d6a', 'judge'], [-0.75, 0.7, '#7a2b24', 'judge'], [0.75, 0.7, '#3a5a3a', 'flat'], [1.15, 0.7, '#5a3a2a', 'flat'],
-    ]
-    for (const [dx, h, robe, hat] of second) standingFigure(b, dx, baseH, -0.05, h, { robe, hat })
-    const first = [
-      [-1.2, 0.67, '#e8e2d4', 'tall'], [-0.85, 0.4, '#2a2a2a', 'flat'], [-0.5, 0.48, '#a8382c', 'flat'], [0.5, 0.48, '#3a6a8a', 'flat'], [0.85, 0.48, '#8a6a2a', 'judge'], [1.2, 0.48, '#4a4a6a', 'judge'],
-    ]
-    for (const [dx, h, robe, hat] of first) standingFigure(b, dx, baseH + 0.18, 0.25, h, { robe, hat, arms: h > 0.5 })
+    // 龕內的配祀沒有出處的年代，不畫（使用者 2026-11-03）：鎮殿城隍兩側垂下素色簾幕
+    for (const side of [-1, 1]) {
+      b.box('plain', [0.85, 1.6, 0.03], [side * 0.95, baseH + 0.85, 0.1], { tint: '#b8a27a' })
+      for (let k = 0; k < 4; k++) b.box('plain', [0.02, 1.6, 0.035], [side * (0.6 + k * 0.23), baseH + 0.85, 0.11], { tint: '#9e8862' })
+    }
   })
 }
 
-/** 大型文武判官神偶（約八尺、2.4 m）：立在主神龕左右的地上 */
-function buildBigPuppet(b, item) {
-  const civil = item.figure === 'civil'
-  b.box('wood', [0.6, 0.12, 0.6], [item.x, 0.06, item.z], { tint: shade(RED, 0.8) })
-  standingFigure(b, item.x, 0.12, item.z, 2.3, { robe: civil ? '#9a2e26' : '#2e5a48', face: civil ? SOOT : '#3c5a3a', hat: 'judge' })
-}
-
-/** 落地神龕（謝將軍八尺、范將軍約六尺；1870 年靈安社塑，身披「台北靈安社」錦帶、白鐵頭盔示意） */
+/** 落地神龕（廟方：供謝范將軍神偶；本站只畫龕與簾幕，神偶不畫） */
 function buildGroundShrine(b, item) {
   const xie = item.figure === 'xie'
   b.group([item.x, 0, item.z], item.rotationY ?? 0, () => {
@@ -199,8 +159,9 @@ function buildGroundShrine(b, item) {
     b.box('wood', [0.9, 0.12, 0.8], [0, 3.2, 0], { tint: RED })
     for (const s of [-1, 1]) b.box('wood', [0.08, 3.0, 0.08], [s * 0.42, 1.7, 0.36], { tint: RED })
     b.box('plaster', [0.86, 3.0, 0.04], [0, 1.7, -0.38], { tint: '#d9cfbd' })
-    const h = xie ? 2.45 : 1.85
-    standingFigure(b, 0, 0.2, 0, h, { robe: xie ? '#ece8de' : '#2a2a2c', face: xie ? '#e9e4da' : SOOT, hat: xie ? 'tall' : 'flat', sash: '#b3302a' })
+    // 謝范將軍的神偶不畫（只畫有出處的主神與夫人；使用者 2026-11-03）：落地龕垂簾
+    b.box('plain', [0.8, 2.6, 0.03], [0, 1.55, 0.34], { tint: xie ? '#b8a27a' : '#a8926a' })
+    for (let k = 0; k < 4; k++) b.box('plain', [0.02, 2.6, 0.035], [-0.3 + k * 0.2, 1.55, 0.35], { tint: '#8e7a56' })
   })
 }
 
@@ -225,11 +186,6 @@ function buildAltarTable(b, item, detail) {
     b.box('wood', [w - 0.2, 0.06, 0.04], [0, 0.22, d / 2 - 0.05], { tint: DARK_WOOD })
     // 令牌（案上）
     b.box('wood', [0.12, 0.3, 0.06], [-0.55, h + 0.15, 0], { tint: '#b23a2c' })
-    // 案下的虎爺（虎頭鍘造型，身長一尺六、約 0.5 m）
-    b.box('plain', [0.5, 0.2, 0.24], [0, 0.18, 0.05], { tint: '#c88a2c' })
-    b.box('plain', [0.2, 0.2, 0.22], [0, 0.26, 0.24], { tint: '#d29a34' })
-    for (let k = -1; k <= 1; k++) b.box('dark', [0.05, 0.16, 0.01], [k * 0.12, 0.19, 0.18], { tint: '#3a2a1e' })
-    if (detail) for (const s of [-1, 1]) detail.add('plain', new SphereGeometry(0.02, 6, 4), { position: [s * 0.05, 0.31, 0.355], tint: '#f2e2a0' })
   })
 }
 
@@ -330,11 +286,8 @@ function buildMadamShrine(b, item, detail) {
     // 城隍夫人：鳳冠、刺繡鳳袍、雲肩霞帔
     seatedFigure(b, 0, 0.45, -0.05, 0.98, { robe: '#a8382c', trim: '#2f5a8a', crown: 'phoenix', detail })
     b.box('plain', [0.42, 0.06, 0.26], [0, 0.45 + 0.98 * 0.6, -0.05], { tint: '#3a6a9a' })
-    // 兩側宮娥（等高、持搖扇）
-    for (const s of [-1, 1]) {
-      standingFigure(b, s * 0.55, 0.45, 0.0, 0.98, { robe: s < 0 ? '#c97a6a' : '#6a8aa8', hat: 'flat' })
-      b.cylinder('plain', 0.12, 0.12, 0.01, 12, [s * 0.55 + s * 0.12, 0.45 + 0.98 * 0.95, 0.08], { rotation: [Math.PI / 2, 0, 0], tint: '#e8dcb8' })
-    }
+    // 兩側宮娥不畫：素色簾幕（使用者 2026-11-03）
+    for (const s of [-1, 1]) b.box('plain', [0.42, 1.5, 0.03], [s * 0.58, 1.25, 0.05], { tint: '#b8a27a' })
   })
 }
 
@@ -348,7 +301,6 @@ function buildMadamTable(b, item) {
 /** 器物登記表：type → { build, footprint（障礙物）, height（鏡頭遮擋高度） } */
 export const XH_FURNITURE = {
   mainShrine: { build: buildMainShrine, footprint: (i) => box2(i.x, i.z, 3.3, 1.0), height: () => 3.1 },
-  bigPuppet: { build: buildBigPuppet, footprint: (i) => box2(i.x, i.z, 0.7, 0.7), height: () => 2.4 },
   groundShrine: { build: buildGroundShrine, footprint: (i) => turned(i, 0.95, 0.85), height: () => 3.3 },
   altarTable: { build: buildAltarTable, footprint: (i) => box2(i.x, i.z, 1.95, 0.7), height: () => 1.7 },
   offeringTable: { build: buildOfferingTable, footprint: (i) => box2(i.x, i.z, 1.6, 0.7), height: () => 1.3 },
@@ -501,12 +453,6 @@ export function buildXiaHaiShell(b, cfg, detail = null) {
   for (const c of COUPLET) {
     b.box('wood', [0.24, 2.1, 0.05], [c.x, 2.05, -6.9], { tint: '#2a1a15' })
     b.addSign({ text: c.text, style: 'lacquer', vertical: true, width: 0.18, height: 1.95, position: [c.x, 2.05, -6.87] })
-  }
-  // 大型謝范神偶的錦帶「台北靈安社」（1870 年靈安社塑；廟方）
-  for (const s of [-1, 1]) {
-    const item = XH_ITEMS.find((i) => i.type === 'groundShrine' && Math.sign(i.x) === s)
-    const h = item.figure === 'xie' ? 2.45 : 1.85
-    b.addSign({ text: '台北靈安社', style: 'red', vertical: true, width: 0.07, height: 0.42, position: [item.x - s * 0.17, 0.2 + h * 0.6, item.z], rotationY: -s * Math.PI / 2 })
   }
 
   // 鏡頭遮擋（殿的本地座標；y 是世界高度）：兩側牆、後牆、正面牆（中門以外）、屋頂、偏殿隔牆、器物
