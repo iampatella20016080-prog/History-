@@ -57,6 +57,8 @@ export const SIGN_STYLES = {
   greenBoard: { bg: '#45b23f', bg2: '#3ea539', border: null, text: '#ffffff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.025)', ltr: true, sizeH: 0.74, sizeW: 0.8, frets: '#ffffff' },
   redPlate: { bg: '#c8282e', bg2: '#b92228', border: '#f6e7c8', text: '#ffffff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', ltr: true, sizeH: 0.6, sizeW: 0.86 },
   redLetters: { bg: null, text: '#c3242b', shadow: '#6f1418', ltr: true, sizeH: 0.8, sizeW: 0.9 },
+  // 新芳春茶行立面上方的紅字「新芳春行」：舊式由右往左讀（使用者提供的照片）
+  redLettersOld: { bg: null, text: '#b8262a', shadow: '#6f1418', sizeH: 0.8, sizeW: 0.9 },
   redOnDark: { bg: '#232526', bg2: '#2b2d2f', border: null, text: '#d8433c', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.02)', ltr: true, sizeH: 0.64 },
   marketWhite: { bg: '#f6f6f2', bg2: '#efefea', border: null, text: '#262626', shadow: 'rgba(0,0,0,0)', grain: 'rgba(0,0,0,0.02)', ltr: true, sizeH: 0.72, sizeW: 0.86 },
   marketBoard: { bg: '#f6f4ef', bg2: '#eeebe4', border: '#c8282e', text: '#c8282e', shadow: 'rgba(0,0,0,0)', grain: 'rgba(0,0,0,0.03)' },

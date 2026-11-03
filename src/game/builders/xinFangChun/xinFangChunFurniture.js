@@ -37,6 +37,28 @@ function exportTin(b, x, y, z, red, s = 1) {
 export const XFC_FURNITURE = {
   ...YJ_FURNITURE,
 
+  /** 正廳的紅磚方柱（使用者提供的照片），上下各一道灰色洗石子線腳 */
+  brickPillar: {
+    build(b, item) {
+      const { x, z } = item
+      b.box('brick', [0.46, 3.3, 0.46], [x, 1.65, z], { tint: '#ffffff' })
+      for (const y of [0.06, 3.22]) b.box('stone', [0.52, 0.12, 0.52], [x, y, z], { tint: '#9a968c' })
+    },
+    footprint: (item) => around(item.x, item.z, 0.25),
+    height: () => 3.3,
+  },
+
+  /** 紅色方磚地坪（使用者提供的照片：正廳往後一段略高的紅磚地坪） */
+  tileFloor: {
+    build(b, item) {
+      const w = item.maxX - item.minX
+      const d = item.maxZ - item.minZ
+      b.box('terracotta', [w, 0.04, d], [(item.minX + item.maxX) / 2, 0.06, (item.minZ + item.maxZ) / 2], { tint: '#b4644c' })
+    },
+    footprint: (item) => rect(item.minX, item.maxX, item.minZ, item.maxZ),
+    height: () => 0,
+  },
+
   /** 天井的馬賽克拼花地坪（Marie Claire：宜蘭石磨石子與拼花馬賽克；〔照片〕修復專文）；花樣是示意 */
   wellFloor: {
     build(b, item, detail) {
@@ -240,6 +262,12 @@ export const XFC_FURNITURE = {
   exhibitTable: {
     build(b, item, detail) {
       const { x, z, width, depth } = item
+      if (item.plinth) {
+        // 故事館的白色展台（使用者提供的照片）：台上一排茶具
+        b.box('plain', [width, 0.8, depth], [x, 0.4, z], { tint: '#f2f0ea' })
+        for (let i = 0; i < 4; i++) b.cylinder('plain', 0.03, 0.025, 0.04, 8, [x - width / 2 + 0.2 + i * ((width - 0.4) / 3), 0.82, z], { tint: '#c8a070' })
+        return
+      }
       b.box('wood', [width, 0.05, depth], [x, 0.78, z], { tint: '#5a4030' })
       for (const sx of [-1, 1]) for (const sz of [-1, 1]) b.box('wood', [0.06, 0.75, 0.06], [x + sx * (width / 2 - 0.08), 0.375, z + sz * (depth / 2 - 0.08)], { tint: '#4a3426' })
       b.add('plain', new SphereGeometry(0.07, 10, 8), { position: [x - 0.3, 0.86, z], scale: [1, 0.8, 1], tint: '#6e3a28' })
