@@ -40,6 +40,126 @@ function adBanner(b, detail, x, y, z) {
 export const JSL_FURNITURE = {
   ...XFC_FURNITURE,
 
+  /** 辦公桌（新芳春的辦公桌）；abacus：桌上一把算盤（江山樓一樓辦公室） */
+  officeDesk: {
+    ...XFC_FURNITURE.officeDesk,
+    build(b, item, detail) {
+      XFC_FURNITURE.officeDesk.build(b, item, detail)
+      if (!item.abacus) return
+      b.box('wood', [0.32, 0.025, 0.13], [item.x + 0.25, 0.82, item.z - 0.05], { tint: '#4a3322' })
+      for (let i = 0; i < 9; i++) detail.box('wood', [0.016, 0.016, 0.1], [item.x + 0.12 + i * 0.03, 0.84, item.z - 0.05], { tint: '#2c1f16' })
+    },
+  },
+
+  /** 一段隔間牆（x0..x1 或 z0..z1，3.1 公尺高）；doors：牆上關著的門（其他宴會廳，沿牆的位置） */
+  wallSeg: {
+    build(b, item) {
+      const alongX = Math.abs(item.x1 - item.x0) >= Math.abs(item.z1 - item.z0)
+      const len = alongX ? Math.abs(item.x1 - item.x0) : Math.abs(item.z1 - item.z0)
+      const cx = (item.x0 + item.x1) / 2
+      const cz = (item.z0 + item.z1) / 2
+      b.box('plaster', alongX ? [len, 3.1, 0.12] : [0.12, 3.1, len], [cx, 1.55, cz], { tint: '#e6dcc6' })
+      b.box('wood', alongX ? [len, 0.1, 0.16] : [0.16, 0.1, len], [cx, 0.05, cz], { tint: DARK })
+      for (const d of item.doors ?? []) {
+        const pos = alongX ? [d, 1.1, cz + 0.08] : [cx + 0.08, 1.1, d]
+        b.box('wood', alongX ? [1.0, 2.2, 0.05] : [0.05, 2.2, 1.0], pos, { tint: LACQUER })
+      }
+    },
+    footprint: (item) => rect(Math.min(item.x0, item.x1) - 0.08, Math.max(item.x0, item.x1) + 0.08, Math.min(item.z0, item.z1) - 0.08, Math.max(item.z0, item.z1) + 0.08),
+    height: () => 3.1,
+  },
+
+  /** 牆上關著的木門（不畫門後的房間）；axis：門所在的牆沿 x 或 z */
+  wallDoor: {
+    build(b, item) {
+      const alongX = item.axis === 'x'
+      b.box('wood', alongX ? [1.05, 2.25, 0.06] : [0.06, 2.25, 1.05], [item.x, 1.125, item.z], { tint: LACQUER })
+      b.box('wood', alongX ? [0.04, 2.15, 0.07] : [0.07, 2.15, 0.04], [item.x, 1.1, item.z], { tint: shade(LACQUER, 0.7) })
+      b.box('steel', [0.05, 0.05, 0.05], [item.x + (alongX ? 0.1 : 0.04), 1.05, item.z + (alongX ? 0.04 : 0.1)], { tint: '#c9a64a' })
+    },
+    footprint: (item) => (item.axis === 'x' ? rect(item.x - 0.55, item.x + 0.55, item.z - 0.06, item.z + 0.06) : rect(item.x - 0.06, item.x + 0.06, item.z - 0.55, item.z + 0.55)),
+    height: () => 2.3,
+  },
+
+  /** 角落的啤酒木箱（立面有啤酒廣告；三樓之後要近看的器物先留的位置，瓶子的形制示意） */
+  beerCrate: {
+    build(b, item, detail) {
+      const { x, z } = item
+      b.box('planks', [0.6, 0.32, 0.42], [x, 0.16, z], { tint: '#8a6a48' })
+      b.box('planks', [0.6, 0.32, 0.42], [x + 0.03, 0.48, z], { rotation: [0, 0.1, 0], tint: '#957452' })
+      for (let i = 0; i < 6; i++) detail.add('glass', new CylinderGeometry(0.035, 0.04, 0.26, 8), { position: [x - 0.2 + (i % 3) * 0.2, 0.77, z - 0.09 + Math.floor(i / 3) * 0.18], tint: '#5a3a20' })
+    },
+    footprint: (item) => around(item.x, item.z, 0.36, 0.28),
+    height: () => 1.0,
+  },
+
+  /** 推開收在門口兩側的木板門屏（吳瀛濤：宴廳每間以木板門屏隔開；板面與格心查無，示意） */
+  doorScreen: {
+    build(b, item, detail) {
+      const { x, z, width } = item
+      for (const s of [-1, 1]) {
+        const px = x + s * (width / 2 + 0.06)
+        for (let k = 0; k < 2; k++) {
+          const pz = z + 0.15 + k * 0.32
+          b.box('wood', [0.05, 2.4, 0.3], [px, 1.2, pz], { rotation: [0, s * 0.15 * (k ? -1 : 1), 0], tint: LACQUER })
+          for (let r = 0; r < 4; r++) detail.box('wood', [0.055, 0.03, 0.26], [px, 0.7 + r * 0.45, pz], { tint: shade(LACQUER, 0.7) })
+        }
+      }
+    },
+    footprint: (item) => rect(item.x - item.width / 2 - 0.1, item.x + item.width / 2 + 0.1, item.z, item.z + 0.5),
+    // 收在門口兩側、不擋路，也不擋鏡頭（遮擋方塊會蓋住整個門口）
+    height: () => 0,
+  },
+
+  /** 屋頂的大理石圓桌與四張石凳（直徑約 1 公尺是設計值）；放茶具不放菜 */
+  marbleTable: {
+    build(b, item, detail) {
+      const { x, z } = item
+      b.cylinder('stone', 0.5, 0.5, 0.07, 18, [x, 0.74, z], { tint: '#e6e2da' })
+      b.cylinder('stone', 0.12, 0.2, 0.7, 10, [x, 0.36, z], { tint: '#cfcac0' })
+      for (let i = 0; i < 4; i++) {
+        const a = (i * Math.PI) / 2 + Math.PI / 4
+        b.cylinder('stone', 0.17, 0.2, 0.44, 10, [x + Math.cos(a) * 0.75, 0.22, z + Math.sin(a) * 0.75], { tint: '#d6d1c6' })
+      }
+      b.add('plain', new SphereGeometry(0.06, 10, 8), { position: [x - 0.1, 0.83, z], scale: [1, 0.8, 1], tint: '#6e3a28' })
+      for (let i = 0; i < 3; i++) detail.cylinder('plain', 0.025, 0.02, 0.035, 8, [x + 0.08 + i * 0.07, 0.795, z + 0.1], { tint: '#f1ece0' })
+    },
+    footprint: (item) => around(item.x, item.z, 0.97),
+    height: () => 0.9,
+  },
+
+  /** 樓頂庭園的假山、盆景與花架柱（模型畫在建築外觀；這裡只是碰撞） */
+  roofObstacle: {
+    build() {},
+    footprint: (item) => rect(item.minX, item.maxX, item.minZ, item.maxZ),
+    height: () => 0,
+  },
+
+  /** 門廳的傘架 */
+  umbrellaStand: {
+    build(b, item) {
+      b.cylinder('steel', 0.16, 0.14, 0.55, 12, [item.x, 0.275, item.z], { tint: '#4a4844', openEnded: true })
+      for (let i = 0; i < 3; i++) b.cylinder('wood', 0.015, 0.015, 0.9, 6, [item.x - 0.05 + i * 0.05, 0.6, item.z], { rotation: [0.1 * (i - 1), 0, 0.08 * (i - 1)], tint: ['#2a2a30', '#5a2a24', '#3a4a3a'][i] })
+    },
+    footprint: (item) => around(item.x, item.z, 0.2),
+    height: () => 1.0,
+  },
+
+  /** 門廳的盆栽（棕櫚；示意） */
+  pottedPalm: {
+    build(b, item) {
+      const { x, z } = item
+      b.cylinder('plain', 0.24, 0.18, 0.45, 12, [x, 0.225, z], { tint: '#7c4a3a' })
+      b.cylinder('wood', 0.03, 0.04, 1.1, 6, [x, 0.95, z], { tint: '#5a4030' })
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2
+        b.box('plain', [0.6, 0.02, 0.12], [x + Math.cos(a) * 0.28, 1.45, z + Math.sin(a) * 0.28], { rotation: [0, -a, -0.35], tint: '#4f6a3a' })
+      }
+    },
+    footprint: (item) => around(item.x, item.z, 0.28),
+    height: () => 1.6,
+  },
+
   /** 廚房門口的布簾（廚房不開放） */
   kitchenCurtain: {
     build(b, item) {
@@ -119,6 +239,10 @@ export const JSL_FURNITURE = {
           b.box('wood', [0.38, 0.45, 0.03], [0, 0.7, -0.17], { tint: '#33241a' })
         })
         detail.cylinder('plain', 0.06, 0.045, 0.03, 10, [x + Math.cos(a) * (r - 0.15), top + 0.04, z + Math.sin(a) * (r - 0.15)], { tint: '#f4f0e6' })
+      }
+      if (item.menu) {
+        // 攤開的菜單（三樓的這一桌；不寫菜名）
+        for (const sx of [-1, 1]) b.box('plain', [0.16, 0.006, 0.24], [x + 0.25 + sx * 0.085, top + 0.035, z + 0.35], { rotation: [0, 0.3, sx * 0.06], tint: sx < 0 ? '#c43a2c' : '#efe6cc' })
       }
       if (item.course) {
         b.cylinder('plain', 0.2, 0.17, 0.04, 18, [x, top + 0.045, z], { tint: '#f1ede2' })

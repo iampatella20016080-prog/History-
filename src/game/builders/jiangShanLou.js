@@ -111,7 +111,7 @@ function windowPediment(b, { x, y, width, z, kind }) {
 
 /* ═══════════ 主體 ═══════════ */
 
-export function buildJiangShanLou(b, cfg) {
+export function buildJiangShanLou(b, cfg, detail = null) {
   const rng = createRng(cfg.seed ?? 1917)
   const w = cfg.width
   const s = w / 11
@@ -208,7 +208,8 @@ export function buildJiangShanLou(b, cfg) {
   }
 
   /* ── 女兒牆、山頭與匾額 ───────────── */
-  buildParapet(b, { w, s, piers, front, topY, text: cfg.sign?.text ?? '江山樓' })
+  // 可以走進去的版本（第 11 階段）依臺史博外觀照的描述：山頭上是「山」字（見下方 nmthSigns）
+  buildParapet(b, { w, s, piers, front, topY, text: cfg.walkIn ? '山' : cfg.sign?.text ?? '江山樓', plaqueWidth: cfg.walkIn ? 1.1 : null })
 
   /* ── 直立招牌 ─────────────────────── */
   projectingSign(b, {
@@ -257,8 +258,10 @@ export function buildJiangShanLou(b, cfg) {
   b.box('brick', [w, 0.9, 0.3], [0, topY + 0.45, -D + 0.15], { tint: BRICK })
   b.box('stucco', [w - 0.3, 0.2, D + front - 0.5], [0, topY + 0.02, (front - D) / 2 - 0.1], { tint: '#b9ae9f' })
   // 屋頂樓梯間（平頂）
-  b.box('brick', [2.6, 2.4, 2.4], [-w * 0.22, topY + 1.2, -D + 2.2], { tint: BRICK })
-  b.box('stucco', [2.8, 0.16, 2.6], [-w * 0.22, topY + 2.46, -D + 2.2], { tint: TRIM })
+  if (!cfg.walkIn) {
+    b.box('brick', [2.6, 2.4, 2.4], [-w * 0.22, topY + 1.2, -D + 2.2], { tint: BRICK })
+    b.box('stucco', [2.8, 0.16, 2.6], [-w * 0.22, topY + 2.46, -D + 2.2], { tint: TRIM })
+  }
 
   /* ── 燈籠（只留少數）、盆栽與燈光 ── */
   for (const [x, scale] of [[-0.78 * s, 1.0], [0.78 * s, 1.0]]) {
@@ -271,6 +274,7 @@ export function buildJiangShanLou(b, cfg) {
   }
   for (const side of [-1, 1]) pottedPlant(b, [side * 2.3 * s, walkH, 0.75], { seed: 70 + side, size: 1.05 })
   b.addPool(0, walkD + 1.1, 3.4, '#ffc07a')
+  if (cfg.walkIn) nmthSigns(b, { w, s, front, topY, walkH, detail: detail ?? b })
   if (!cfg.walkIn) {
     b.addPool(0, 0.9, 1.8, '#ffc888', walkH + 0.01)
     b.addBlocker(-w / 2, w / 2, 0, topY + 2.6, -D, front + 0.9)
@@ -471,7 +475,7 @@ function floorFour(b, { y0, w, s, bays, piers, front, lit, topY }) {
 }
 
 /* ── 女兒牆：欄杆段、柱墩與中央弧形山頭（嵌匾額、燈泡勾勒輪廓） ── */
-function buildParapet(b, { w, s, piers, front, topY, text }) {
+function buildParapet(b, { w, s, piers, front, topY, text, plaqueWidth = null }) {
   const y = topY + 0.06
   const railH = 1.05
   const curve = pedimentCurve(4.6 * s, 1.6, 2.5)
@@ -505,8 +509,9 @@ function buildParapet(b, { w, s, piers, front, topY, text }) {
   b.extrude('stucco', pedimentShape(curve, 0.1), 0.3, { position: [0, y - 0.02, front - 0.36], tint: TRIM, curveSegments: 16 })
   b.box('stucco', [curve.half * 2 + 0.2, 0.14, 0.38], [0, y + 0.07, front - 0.15], { tint: TRIM })
   // 匾額
-  b.box('stucco', [3.3 * s, 1.08, 0.08], [0, y + 1.05, front + 0.03], { tint: shade(TRIM, 0.95) })
-  signBoard(b, { text, style: 'gold', y: y + 1.05, z: front + 0.06, width: 3.0 * s, height: 0.86, frameTint: '#3e2a20' })
+  const pw = plaqueWidth ?? 3.0 * s
+  b.box('stucco', [pw + 0.3 * s, 1.08, 0.08], [0, y + 1.05, front + 0.03], { tint: shade(TRIM, 0.95) })
+  signBoard(b, { text, style: 'gold', y: y + 1.05, z: front + 0.06, width: pw, height: 0.86, frameTint: '#3e2a20' })
   // 頂端寶瓶
   const peakY = y + curve.peak
   b.cylinder('stucco', 0.2, 0.26, 0.16, 12, [0, peakY + 0.08, front - 0.18], { tint: TRIM })
@@ -516,4 +521,55 @@ function buildParapet(b, { w, s, piers, front, topY, text }) {
     const [px, py] = pedimentPoint(curve, k / 14)
     b.add('bulb', new SphereGeometry(0.06, 6, 4), { position: [px, y + py + 0.14, front + 0.02], tint: '#fff2cf' })
   }
+}
+
+/**
+ * 第 11 階段可以走進去的版本：立面與側面的字樣依臺史博典藏「江山樓」（2004.055.0002）外觀照的描述——
+ * 由上而下「山」（山頭）、「KANG SAN LAU」、「ライトビール」、「江山樓□□□□□」（看不清的字不補，只寫江山樓）、
+ * 「かうさんろう」，側面「高砂麥酒」。招牌用中、英、日三種文字（莊永明）。字的位置與大小是歷史情境重建。
+ * 大門上方補一道門楣（原本的入口台階與門廳拿掉，門口由共用室內處理）。
+ */
+function nmthSigns(b, { w, s, front, topY, walkH, detail }) {
+  // 四樓窗上方的英文橫帶
+  b.box('stucco', [4.6 * s, 0.5, 0.1], [0, topY - 0.55, front + 0.08], { tint: shade(TRIM, 0.96) })
+  b.addSign({ text: 'KANG SAN LAU', style: 'latinBand', width: 4.2 * s, height: 0.38, position: [0, topY - 0.55, front + 0.135] })
+  // 三、四樓之間的啤酒廣告橫帶
+  const y34 = GROUND_H + UPPER_H * 2 - 0.42
+  b.box('stucco', [2.9 * s, 0.46, 0.1], [0, y34, front + 0.1], { tint: '#efe6d2' })
+  b.addSign({ text: 'ライトビール', style: 'latinBand', width: 2.6 * s, height: 0.34, position: [0, y34, front + 0.155] })
+  // 大門上方的門楣與假名「かうさんろう」
+  b.box('brick', [2.5 * s, 1.36, 0.3], [0, 2.62 + 0.68, -0.15], { tint: BRICK })
+  b.box('stucco', [2.3 * s, 0.42, 0.06], [0, 3.3, 0.02], { tint: TRIM })
+  b.addSign({ text: 'かうさんろう', style: 'latinBand', width: 2.1 * s, height: 0.32, position: [0, 3.3, 0.055] })
+  // 側面（右側，本地 +x）的「高砂麥酒」直書大字
+  b.box('stucco', [0.08, 3.4, 0.9], [w / 2 + 0.06, GROUND_H + UPPER_H * 1.6, -3.0], { tint: '#efe6d2' })
+  b.addSign({ text: '高砂麥酒', style: 'red', vertical: true, width: 0.74, height: 3.1, position: [w / 2 + 0.105, GROUND_H + UPPER_H * 1.6, -3.0], rotationY: Math.PI / 2 })
+  // 夜間的燈籠：二、三樓陽臺下各一排（歷史情境重建）
+  for (const [y, n] of [[GROUND_H + UPPER_H + 0.12, 4], [GROUND_H + 0.1, 0]]) {
+    for (let i = 0; i < n; i++) {
+      const x = (-1.5 + i) * 1.15 * s
+      b.box('dark', [0.016, 0.25, 0.016], [x, y - 0.12, front + 0.5], { tint: '#3a2f27' })
+      b.addLantern(x, y - 0.38, front + 0.5, { scale: 0.75 })
+    }
+  }
+  // 樓頂庭園：假山、盆景與花架（莊永明「樓頂庭園假山」、陳柔縉「四樓有花園」；形制是歷史情境重建）
+  const roofY = topY + 0.12
+  rockery(b, detail, -2.6 * s, roofY, -6.8)
+  for (const [x, z, k] of [[-4.2, -2.6, 1], [-1.0, -2.2, 2], [1.6, -2.6, 3], [-4.3, -9.6, 4], [0.6, -10.4, 5]]) pottedPlant(b, [x * s, roofY, z], { seed: 80 + k, size: 0.95 })
+  for (const x of [-0.8, 1.8]) for (const z of [-4.8, -7.6]) b.box('wood', [0.1, 2.2, 0.1], [x * s, roofY + 1.1, z], { tint: '#5a3f2b' })
+  for (const z of [-4.8, -7.6]) b.box('wood', [2.8 * s, 0.1, 0.12], [0.5 * s, roofY + 2.2, z], { tint: '#5a3f2b' })
+  for (let i = 0; i < 7; i++) detail.box('wood', [0.06, 0.06, 3.0], [(-0.8 + i * 0.43) * s, roofY + 2.28, -6.2], { tint: '#6a4a32' })
+  // 樓頂的樓梯間（四樓上來的出口，在右後角）
+  b.box('brick', [1.9, 2.5, 2.2], [4.2, topY + 1.25, -10.2], { tint: BRICK })
+  b.box('stucco', [2.1, 0.16, 2.4], [4.2, topY + 2.56, -10.2], { tint: TRIM })
+}
+
+/** 假山：幾塊疊起來的石頭與一棵小樹（形制查無，示意） */
+function rockery(b, detail, x, y, z) {
+  const rocks = [[0, 0, 0, 0.9, 0.7], [0.7, 0, 0.3, 0.6, 0.55], [-0.6, 0, -0.2, 0.55, 0.5], [0.1, 0.6, 0.05, 0.55, 0.6], [0.2, 1.05, -0.05, 0.32, 0.45]]
+  for (const [dx, dy, dz, r, h] of rocks) b.add('stone', new SphereGeometry(r, 7, 5), { position: [x + dx, y + dy + h * 0.5, z + dz], scale: [1, h / r, 0.85], tint: '#8f8a80' })
+  b.box('stone', [2.6, 0.3, 2.0], [x, y + 0.15, z], { tint: '#9a968c' })
+  b.cylinder('wood', 0.05, 0.07, 0.8, 6, [x + 0.25, y + 1.6, z], { tint: '#5a4030' })
+  b.add('plain', new SphereGeometry(0.42, 8, 6), { position: [x + 0.25, y + 2.1, z], scale: [1.2, 0.7, 1.2], tint: '#4f6a3a' })
+  for (let i = 0; i < 6; i++) detail.add('plain', new SphereGeometry(0.12, 6, 4), { position: [x - 0.9 + i * 0.36, y + 0.32, z + 0.85], tint: '#5f7a44' })
 }

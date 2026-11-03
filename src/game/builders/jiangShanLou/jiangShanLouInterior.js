@@ -1,6 +1,7 @@
-import { JSL_SHELL, JSL_VARIANTS, jslToWorld } from '../../../data/jiangShanLouLayout.js'
+import { JSL_SHELL, JSL_UPPER, JSL_VARIANTS, jslToWorld } from '../../../data/jiangShanLouLayout.js'
 import { buildJiangShanLou } from '../jiangShanLou.js'
 import { createShopInterior } from '../shopInterior.js'
+import { createUpperFloors } from '../upperFloors.js'
 import { JSL_FURNITURE } from './jiangShanLouFurniture.js'
 
 /**
@@ -37,7 +38,7 @@ const interior = createShopInterior({
   lookOf: () => LOOK,
   furniture: JSL_FURNITURE,
   siteToWorld: jslToWorld,
-  exterior: (b, cfg) => buildJiangShanLou(b, { ...cfg, walkIn: true }),
+  exterior: (b, cfg, detail) => buildJiangShanLou(b, { ...cfg, walkIn: true }, detail),
   extraObstacles: () => jslArcadeObstacles(),
   buildExtras(b, cfg, variant) {
     const lamp = (x, z, y0, ceiling) => {
@@ -69,8 +70,57 @@ const interior = createShopInterior({
   },
 })
 
+/** 三樓、四樓的樓梯間與樓頂（builders/upperFloors.js；第 11 階段擴充） */
+const upper = createUpperFloors({ id: 'jiang-shan-lou', half: S.half, depth: S.depth, floors: JSL_UPPER, base: S.floor2, furniture: JSL_FURNITURE, siteToWorld: jslToWorld })
+
 export const jslObstacles = interior.obstacles
 export const jslUpstairsObstacles = interior.upstairsObstacles
-export const jiangShanLouCollision = interior.collision
-export const buildJiangShanLouWalkIn = interior.build
-export const buildJiangShanLouInterior = interior.buildInterior
+
+/** 碰撞：一樓、二樓（共用室內）加上三樓以上 */
+export function jiangShanLouCollision(config, transform) {
+  const base = interior.collision(config, transform)
+  const variant = jiangShanLouVariant(config)
+  if (!variant) return base
+  const rectOf = (x0, x1, z0, z1, extra = {}) => {
+    const p = transform(x0, z0)
+    const q = transform(x1, z1)
+    return { minX: Math.min(p.x, q.x), maxX: Math.max(p.x, q.x), minZ: Math.min(p.z, q.z), maxZ: Math.max(p.z, q.z), ...extra }
+  }
+  const more = upper.collision(variant, transform, (x0, x1, z0, z1, extra = {}) => rectOf(x0, x1, z0, z1, { inBuilding: true, ...extra }))
+  return {
+    walkable: [...base.walkable, ...more.walkable],
+    obstacles: [...base.obstacles, ...more.obstacles.map((r) => rectOf(r.minX, r.maxX, r.minZ, r.maxZ, { level: r.level }))],
+  }
+}
+
+/** 街景裡的部分：共用室內（一、二樓）加上三樓以上的外殼、遮擋、室內範圍與人物 */
+export function buildJiangShanLouWalkIn(b, cfg = {}, detail = null) {
+  const result = interior.build(b, cfg, detail)
+  const variant = jiangShanLouVariant(cfg)
+  if (!variant) return result
+  upper.shell(b, LOOK)
+  upper.blockers(b)
+  const start = b.blockers.length
+  upper.itemBlockers(b, variant)
+  const zone = (minX, maxX, minZ, maxZ) => {
+    const p = b.transformPoint(minX, 0, minZ)
+    const q = b.transformPoint(maxX, 0, maxZ)
+    return { minX: Math.min(p.x, q.x), maxX: Math.max(p.x, q.x), minZ: Math.min(p.z, q.z), maxZ: Math.max(p.z, q.z) }
+  }
+  const more = upper.zones(b, variant, zone)
+  return {
+    ...result,
+    cameraOnly: [...(result.cameraOnly ?? []), { start, end: b.blockers.length }],
+    interiors: [...result.interiors, ...more.interiors],
+    viewerRegions: [...result.viewerRegions, ...more.viewerRegions],
+    followAreas: [...result.followAreas, ...more.followAreas],
+    npcs: [...result.npcs, ...more.npcs],
+  }
+}
+
+/** 按需載入的室內：一、二樓的器物加上三樓以上 */
+export function buildJiangShanLouInterior(b, cfg = {}, detail = b) {
+  interior.buildInterior(b, cfg, detail)
+  const variant = jiangShanLouVariant(cfg)
+  if (variant) upper.buildInterior(b, variant, detail)
+}

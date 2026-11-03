@@ -10,7 +10,8 @@ import { LHT_INSPECTABLES, LHT_OBJECTS, LHT_OBJECT_LAYERS } from './linHuaTaiObj
 import { QING_BOARDING_INSPECTABLES, QING_BOARDING_OBJECTS } from './qingBoardingObjects.js'
 import { YJ_INSPECTABLES, YJ_OBJECTS, YJ_WHERE } from './youJiObjects.js'
 import { XFC_EXTRA_NOTES, XFC_INSPECTABLES, XFC_OBJECTS } from './xinFangChunObjects.js'
-import { JSL_INSPECTABLES, JSL_OBJECTS } from './jiangShanLouObjects.js'
+import { JSL_EXTRA_NOTES, JSL_INSPECTABLES, JSL_OBJECTS } from './jiangShanLouObjects.js'
+import { JSL_OBJECTS_2 } from './jiangShanLouObjects2.js'
 import { SHOWA_INSPECTABLES, SHOWA_OBJECTS } from './showaLaundryObjects.js'
 
 /**
@@ -130,6 +131,8 @@ export const INSPECT_OBJECTS = {
   ...XFC_OBJECTS,
   // 江山樓的室內（第 11 階段；data/jiangShanLouObjects.js）：菜單、金錢火雞、賀匾
   ...JSL_OBJECTS,
+  // 江山樓三樓與樓頂庭園（第 2 段補充；data/jiangShanLouObjects2.js）
+  ...JSL_OBJECTS_2,
   // 昭和浪漫洗濯屋（老屋新生）：舊招牌、霜淇淋模型、炭火熨斗、木桶與洗衣板（data/showaLaundryObjects.js）
   ...SHOWA_OBJECTS,
 }
@@ -140,7 +143,8 @@ const addNotes = (id, layerId, notes) => {
   INSPECT_OBJECTS[id] = { ...object, layers: { ...object.layers, [layerId]: [...(object.layers?.[layerId] ?? []), ...notes] } }
 }
 for (const [id, notes] of Object.entries(YJ_WHERE)) addNotes(id, 'where', notes)
-for (const [id, layers] of Object.entries(XFC_EXTRA_NOTES)) for (const [layerId, notes] of Object.entries(layers)) addNotes(id, layerId, notes)
+for (const [id, layers] of Object.entries({ ...XFC_EXTRA_NOTES })) for (const [layerId, notes] of Object.entries(layers)) addNotes(id, layerId, notes)
+for (const [id, layers] of Object.entries(JSL_EXTRA_NOTES)) for (const [layerId, notes] of Object.entries(layers)) addNotes(id, layerId, notes)
 
 export function getInspectObject(id) {
   return INSPECT_OBJECTS[id] ?? null

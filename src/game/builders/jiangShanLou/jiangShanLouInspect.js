@@ -75,7 +75,113 @@ function buildPlaque({ detail }) {
   }
 }
 
+/** 啤酒瓶（瓶形依高砂麥酒海報，酒標示意）與玻璃杯；動作 pour：酒瓶傾斜 */
+function buildBeerBottle({ detail }) {
+  const seg = detail ? 18 : 10
+  const glass = new Parts()
+  glass.add('#d8e4e0', cyl(0.035, 0.03, 0.11, seg, true), { p: [0.12, 0.055, 0] })
+  glass.add('#c89a3a', cyl(0.031, 0.028, 0.07, seg), { p: [0.12, 0.035, 0] })
+  const bottle = new Parts()
+  bottle.add('#3a2414', cyl(0.038, 0.038, 0.17, seg), { p: [0, 0.085, 0] })
+  bottle.add('#3a2414', cyl(0.014, 0.036, 0.06, seg), { p: [0, 0.2, 0] })
+  bottle.add('#3a2414', cyl(0.013, 0.013, 0.07, seg), { p: [0, 0.265, 0] })
+  bottle.add('#c9b37a', cyl(0.0395, 0.0395, 0.06, seg, true), { p: [0, 0.09, 0] })
+  bottle.add('#a8322a', cyl(0.0398, 0.0398, 0.012, seg, true), { p: [0, 0.11, 0] })
+  if (detail) bottle.add('#c9a64a', cyl(0.015, 0.015, 0.012, 10), { p: [0, 0.304, 0] })
+  return {
+    radius: 0.2,
+    centerY: 0.13,
+    viewPitch: 0.25,
+    parts: [
+      { id: 'glass', geometry: glass.build() },
+      { id: 'bottle', geometry: bottle.build(), pivot: [0.03, 0.0, 0], animate: { action: 'pour', axis: 'z', from: 0, to: -1.1 } },
+    ],
+  }
+}
+
+/** 木板門屏（示意）：兩扇木板門；動作 open：右扇推開 */
+function buildPartitionScreen({ detail }) {
+  const fixed = new Parts()
+  const moving = new Parts()
+  for (const [parts, x] of [[fixed, -0.3], [moving, 0.3]]) {
+    parts.add('#5b2c22', box(0.58, 2.2, 0.05), { p: [x, 1.1, 0] })
+    for (let r = 0; r < 4; r++) parts.add('#3e1e16', box(0.48, 0.03, 0.06), { p: [x, 0.6 + r * 0.45, 0] })
+    if (detail) parts.add('#c9a64a', box(0.03, 0.06, 0.07), { p: [x + (x < 0 ? 0.24 : -0.24), 1.05, 0] })
+  }
+  return {
+    radius: 1.2,
+    centerY: 1.1,
+    viewPitch: 0.05,
+    parts: [
+      { id: 'left', geometry: fixed.build() },
+      { id: 'right', geometry: moving.build(), pivot: [0.3, 1.1, 0], animate: { action: 'open', kind: 'slide', axis: 'x', from: 0, to: 0.5 } },
+    ],
+  }
+}
+
+/** 假山（形狀是重建）：幾塊灰石、石台與一棵矮樹；動作 look：整座轉一圈 */
+function buildRockery({ detail }) {
+  const rock = new Parts()
+  rock.add('#9a968c', box(1.3, 0.15, 1.0), { p: [0, 0.075, 0] })
+  for (const [x, y, z, r, h] of [[0, 0.15, 0, 0.45, 0.35], [0.35, 0.15, 0.15, 0.3, 0.27], [-0.3, 0.15, -0.1, 0.27, 0.25], [0.05, 0.45, 0.03, 0.27, 0.3], [0.1, 0.68, -0.02, 0.16, 0.22]]) rock.add('#8f8a80', new SphereGeometry(r, detail ? 10 : 7, 5), { p: [x, y + h * 0.5, z], s: [1, h / r, 0.85] })
+  rock.add('#5a4030', cyl(0.025, 0.035, 0.4, 6), { p: [0.12, 0.98, 0] })
+  rock.add('#4f6a3a', new SphereGeometry(0.21, 8, 6), { p: [0.12, 1.22, 0], s: [1.2, 0.7, 1.2] })
+  return {
+    radius: 0.9,
+    centerY: 0.6,
+    viewPitch: 0.3,
+    parts: [{ id: 'rockery', geometry: rock.build(), pivot: [0, 0, 0], animate: { action: 'look', axis: 'y', from: 0, to: Math.PI * 2 } }],
+  }
+}
+
+/** 盆栽（陶盆與示意的矮樹）與矮架；動作 turn：盆轉一轉 */
+function buildBonsai({ detail }) {
+  const stand = new Parts()
+  stand.add('#5a3f2b', box(0.42, 0.04, 0.42), { p: [0, 0.18, 0] })
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) stand.add('#5a3f2b', box(0.04, 0.18, 0.04), { p: [sx * 0.17, 0.09, sz * 0.17] })
+  const pot = new Parts()
+  pot.add('#7c4a3a', cyl(0.16, 0.12, 0.16, detail ? 16 : 10), { p: [0, 0.28, 0] })
+  pot.add('#5a4030', cyl(0.02, 0.03, 0.22, 6), { p: [0.02, 0.47, 0], r: [0, 0, 0.2] })
+  for (const [x, y, z, r] of [[-0.05, 0.6, 0, 0.12], [0.1, 0.56, 0.05, 0.1], [0.02, 0.66, -0.06, 0.09]]) pot.add('#4f6a3a', new SphereGeometry(r, 8, 6), { p: [x, y, z], s: [1.3, 0.7, 1.3] })
+  return {
+    radius: 0.4,
+    centerY: 0.38,
+    viewPitch: 0.3,
+    parts: [
+      { id: 'stand', geometry: stand.build() },
+      { id: 'pot', geometry: pot.build(), pivot: [0, 0.2, 0], animate: { action: 'turn', axis: 'y', from: 0, to: Math.PI } },
+    ],
+  }
+}
+
+/** 大理石圓桌與一張石凳（尺寸是設計值）；動作 touch：茶杯往前推 */
+function buildMarbleTable({ detail }) {
+  const seg = detail ? 24 : 14
+  const table = new Parts()
+  table.add('#e6e2da', cyl(0.5, 0.5, 0.07, seg), { p: [0, 0.74, 0] })
+  if (detail) for (let i = 0; i < 4; i++) table.add('#bdb8ae', box(0.6 - i * 0.1, 0.002, 0.004), { p: [-0.1 + i * 0.05, 0.776, -0.15 + i * 0.1], r: [0, 0.6 + i * 0.4, 0] })
+  table.add('#cfcac0', cyl(0.12, 0.2, 0.7, 10), { p: [0, 0.36, 0] })
+  table.add('#d6d1c6', cyl(0.17, 0.2, 0.44, 10), { p: [0.75, 0.22, 0] })
+  const cup = new Parts()
+  cup.add('#f1ece0', cyl(0.03, 0.022, 0.04, 10), { p: [0.1, 0.795, 0.1] })
+  cup.add('#6e3a28', new SphereGeometry(0.06, 10, 8), { p: [-0.12, 0.83, 0], s: [1, 0.8, 1] })
+  return {
+    radius: 0.9,
+    centerY: 0.5,
+    viewPitch: 0.45,
+    parts: [
+      { id: 'table', geometry: table.build() },
+      { id: 'cup', geometry: cup.build(), pivot: [0, 0.78, 0], animate: { action: 'touch', kind: 'slide', axis: 'x', from: 0, to: 0.12 } },
+    ],
+  }
+}
+
 export const JSL_INSPECT_BUILDERS = {
+  'beer-bottle': buildBeerBottle,
+  'partition-screen': buildPartitionScreen,
+  'roof-rockery': buildRockery,
+  'roof-bonsai': buildBonsai,
+  'marble-round-table': buildMarbleTable,
   'banquet-menu': buildMenu,
   'banquet-course': buildCourse,
   'congratulatory-plaque': buildPlaque,
