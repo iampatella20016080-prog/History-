@@ -119,6 +119,9 @@ export const NPC_LOOKS = {
   qingPicker: { era: 'qing-port', skin: '#e2bf98', hair: 'bun', top: { kind: 'long', color: '#8a5a62', trim: '#744a52' }, bottom: '#3a4254', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#d9cdb6' } },
   qingPickerBlue: { era: 'qing-port', skin: '#dbb690', hair: 'bun', top: { kind: 'long', color: '#5a7086', trim: '#4a5d70' }, bottom: '#443d36', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#e3d9c2' } },
   qingRoaster: { era: 'qing-port', skin: '#c08f64', hair: 'short', top: { kind: 'singlet', color: '#e0d6c2' }, bottom: '#4b4740', shoes: ['#b59c6c', '#b59c6c'], extras: { towel: '#ddd3bf', queue: true } },
+  // 霞海城隍廟殿內（第 11 階段；不具名）：拜殿櫃台後的廟祝、正殿來拜的街坊婦人
+  xhKeeper: { era: 'qing-port', skin: '#d8ad84', hair: 'short', top: { kind: 'long', color: '#5a4e3e', trim: '#4a4032' }, bottom: '#35312c', shoes: ['#2a2622', '#2a2622'], extras: { queue: true } },
+  xhWorshipper: { era: 'qing-port', skin: '#e2bf98', hair: 'bun', top: { kind: 'long', color: '#4f5f7a', trim: '#3f4d66' }, bottom: '#2f2c34', shoes: ['#2a2622', '#2a2622'] },
   qingClerk: { era: 'qing-port', skin: '#e2b98f', hair: 'short', top: { kind: 'long', color: '#50586a', trim: '#424a5a' }, bottom: '#35312c', shoes: ['#2a2622', '#2a2622'], extras: { queue: true } },
   qingApprentice: { era: 'qing-port', skin: '#d0a07a', hair: 'short', top: { kind: 'long', color: '#9a8a6a', trim: '#827356' }, bottom: '#4a443c', shoes: ['#b59c6c', '#b59c6c'], extras: { apron: '#c9bda0', queue: true } },
   // 1945–1980：米苔目攤的攤販與客人

@@ -36,7 +36,8 @@ const PRE_MOTION = JSON.parse(readFileSync(new URL('./fixtures/preMotionWorld.js
 // 新芳春茶行（第 11 階段）：門聯兩塊與二樓的匾，摩登、庶民生活、老屋新生各多三塊
 // 江山樓（第 11 階段擴充）：依臺史博外觀照的「KANG SAN LAU」「ライトビール」「かうさんろう」與側面「高砂麥酒」多四塊；三樓陽臺下多四盞燈籠
 // 新芳春老屋新生的正廳後牆多一塊木匾「新芳春行」（使用者提供的照片）
-const LATER_SIGNS = { banquet: 4, modern: 3, postwar: 3 + 3, revival: 5 + 14 - 3 + 3 + 1 }
+// 港口商街：霞海城隍廟殿內的六方匾、一對楹聯與謝范神偶的兩條錦帶（第 11 階段）
+const LATER_SIGNS = { 'qing-port': 6 + 2 + 2, banquet: 4, modern: 3, postwar: 3 + 3, revival: 5 + 14 - 3 + 3 + 1 }
 const LATER_LANTERNS = { banquet: 4 }
 const source = (path) => readFileSync(new URL(`../src/${path}`, import.meta.url), 'utf8')
 
@@ -237,7 +238,11 @@ describe('流暢畫質和 #53 之前相同', () => {
       const visible = world.steam
         .filter((s) => s.kind !== 'smoke' || s.smoothAsSteam)
         .map((s) => [...s.position.map((v) => +v.toFixed(4)), s.strength])
-      assert.deepEqual(visible, PRE_MOTION[era.id].steam)
+      // 港口商街：霞海城隍廟的天公爐 1980 年才設，第 11 階段起不畫（廟埕中央那一縷香煙拿掉）
+      const removed = era.id === 'qing-port' ? [[21.1, 1.15, -9.0]] : []
+      const expected = PRE_MOTION[era.id].steam.filter((s) => !removed.some((r) => r.every((v, i) => Math.abs(v - s[i]) < 1e-3)))
+      assert.equal(expected.length, PRE_MOTION[era.id].steam.length - removed.length)
+      assert.deepEqual(visible, expected)
     })
   }
 })

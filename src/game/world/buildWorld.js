@@ -42,6 +42,7 @@ import { buildActionBarInterior } from '../builders/actionBarInterior.js'
 import { buildLuguoCafe } from '../builders/luguoCafe.js'
 import { buildLuguoCafeInterior, cafeFurnitureBlockers, cafeSigns } from '../builders/luguoCafeInterior.js'
 import { buildGrandRestaurant, buildTeaMansion, buildTemple } from '../builders/specials.js'
+import { buildXiaHaiInterior } from '../builders/xiaHaiTemple.js'
 import { buildTempleSquidStall } from '../builders/templeSquidStall.js'
 import { buildLaoPanExterior, laoPanFurnitureBlockers } from '../builders/laoPanExterior.js'
 import { buildLaoPanInterior } from '../builders/laoPanInterior.js'
@@ -178,6 +179,8 @@ export const BUILDING_INTERIORS = {
   'rice-and-shine': buildRiceAndShineInterior,
   shizixuan: buildShizixuanInterior,
   'showa-laundry': buildShowaLaundryInterior,
+  // 廟宇原型：只有霞海城隍廟（cfg.interior === 'xiahai'，港口商街）可以走進殿內
+  temple: buildXiaHaiInterior,
 }
 
 const PROP_BUILDERS = {
@@ -514,6 +517,7 @@ export function* eraInteriorSteps(eraId, buildingId = null) {
   for (const building of layout.buildings) {
     const builder = BUILDING_INTERIORS[building.config.archetype]
     if (!builder || (buildingId && building.id !== buildingId)) continue
+    if (building.config.archetype === 'temple' && !building.config.interior) continue
     b.push([building.x, 0, building.z], building.rotationY)
     detail.push([building.x, 0, building.z], building.rotationY)
     builder(b, building.config, detail)

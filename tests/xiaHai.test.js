@@ -167,12 +167,12 @@ describe('霞海城隍廟：碰撞、互動與鏡頭', () => {
     }
   })
 
-  test('廟埕裡天公爐是障礙物；正殿走不進去', () => {
+  test('港口商街的廟埕不畫天公爐（1980 年才設）；殿內第 11 階段起可以走進去，台基側面走不上去', () => {
     const cx = shop.site.x
-    // 天公爐（本地 z 約 -courtD+1.7 = -4.5；世界 z 約 -9）
-    assert.ok(!walkableAt(world, cx, -9.0), '天公爐應該是障礙物')
-    // 正殿（本地 z < -courtD；世界 z < -10.7）
-    assert.ok(!walkableAt(world, cx, -12), '正殿應該走不進去')
+    // 天公爐的位置（本地 z 約 -courtD+1.7 = -4.5；世界 z 約 -9）現在是空的廟埕
+    assert.ok(walkableAt(world, cx, -9.0), '廟埕中央可以走')
+    // 殿內（世界 z 約 -13）可以走；石階以外的台基正面走不上去（見 tests/xiaHaiInterior.test.js）
+    assert.ok(walkableAt(world, cx + 2.5, -13), '殿內可以走')
     // 廟埕兩側走得到（避開榕樹石座與天公爐）
     assert.ok(walkableAt(world, cx - 2.2, -8.8))
     assert.ok(walkableAt(world, cx + 2.2, -8.8))

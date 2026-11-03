@@ -10,6 +10,8 @@ import { buildJiangShanLou } from './jiangShanLou.js'
 import { bench, foodStall, pottedPlant, stool, teaChest } from './props.js'
 import { ridgeShape } from './shapes.js'
 import { buildTree } from './environment.js'
+import { XH_HALL } from '../../data/xiaHaiLayout.js'
+import { buildXiaHaiShell } from './xiaHaiTemple.js'
 
 /**
  * 特殊建築：江山樓（酒樓）、新芳春茶行（洋樓茶行）、慈聖宮（廟埕與榕樹下的小吃攤）。
@@ -65,6 +67,8 @@ export function buildTemple(b, cfg, detail = null) {
   const hallW = w - 1.4
   const walkD = STREET.walkwayDepth
   const baseH = 0.45
+  // 霞海城隍廟（港口商街）的殿內可以走進去（data/xiaHaiLayout.js；殿內在 xiaHaiTemple.js）
+  const walkIn = cfg.interior === 'xiahai'
 
   // 廟埕鋪面
   b.box('stone', [w, 0.06, courtD + walkD], [0, 0.03, (walkD - courtD) / 2], { tint: condition === 'restored' ? '#e2dccf' : '#d2cab8' })
@@ -88,12 +92,26 @@ export function buildTemple(b, cfg, detail = null) {
     }
     // 正面牆與門
     const wallZ = -1.7
-    b.box('brick', [hallW, 3.9, 0.35], [0, baseH + 1.95, wallZ], { tint: tint('#ffffff'), grime: conditionGrime(0.18, condition) })
-    b.box('plain', [2.0, 2.9, 0.08], [0, baseH + 1.45, wallZ + 0.2], { tint: tint('#9e3328') })
-    b.box('plain', [0.04, 2.9, 0.1], [0, baseH + 1.45, wallZ + 0.22], { tint: '#3a1d17' })
-    for (let row = 0; row < 4; row++) {
-      for (const dx of [-0.6, -0.3, 0.3, 0.6]) {
-        b.add('plain', new SphereGeometry(0.035, 6, 4), { position: [dx, baseH + 0.6 + row * 0.62, wallZ + 0.25], tint: '#d6ae52' })
+    if (walkIn) {
+      // 霞海城隍廟（港口商街）可以走進殿內：中門打開，兩扇門板向內貼在門框兩側
+      const d = XH_HALL.door
+      for (const s of [-1, 1]) {
+        const x0 = s < 0 ? -hallW / 2 : d.maxX
+        const x1 = s < 0 ? d.minX : hallW / 2
+        b.box('brick', [x1 - x0, 3.9, 0.35], [(x0 + x1) / 2, baseH + 1.95, wallZ], { tint: tint('#ffffff'), grime: conditionGrime(0.18, condition) })
+        b.box('plain', [0.08, 2.9, 0.95], [s * (d.maxX - 0.06), baseH + 1.45, wallZ - 0.65], { tint: tint('#9e3328') })
+        b.box('wood', [0.14, d.height, 0.4], [s * (d.maxX + 0.05), baseH + d.height / 2, wallZ], { tint: '#3a1d17' })
+      }
+      b.box('brick', [d.maxX - d.minX, 3.9 - d.height, 0.35], [0, baseH + (3.9 + d.height) / 2, wallZ], { tint: tint('#ffffff') })
+      b.box('wood', [d.maxX - d.minX + 0.3, 0.16, 0.4], [0, baseH + d.height, wallZ], { tint: '#3a1d17' })
+    } else {
+      b.box('brick', [hallW, 3.9, 0.35], [0, baseH + 1.95, wallZ], { tint: tint('#ffffff'), grime: conditionGrime(0.18, condition) })
+      b.box('plain', [2.0, 2.9, 0.08], [0, baseH + 1.45, wallZ + 0.2], { tint: tint('#9e3328') })
+      b.box('plain', [0.04, 2.9, 0.1], [0, baseH + 1.45, wallZ + 0.22], { tint: '#3a1d17' })
+      for (let row = 0; row < 4; row++) {
+        for (const dx of [-0.6, -0.3, 0.3, 0.6]) {
+          b.add('plain', new SphereGeometry(0.035, 6, 4), { position: [dx, baseH + 0.6 + row * 0.62, wallZ + 0.25], tint: '#d6ae52' })
+        }
       }
     }
     for (const side of [-1, 1]) {
@@ -141,8 +159,9 @@ export function buildTemple(b, cfg, detail = null) {
     b.addPool(0, 1.2, 4.2, '#ffad66', 0.08)
   })
 
-  // 天公爐
+  // 天公爐（霞海城隍廟的天公爐 1980 年才設，港口商街不畫）
   const burnerZ = -courtD + 1.7
+  if (!walkIn) {
   b.cylinder('plain', 0.45, 0.35, 0.55, 12, [0, 0.75, burnerZ], { tint: '#6b5a3c' })
   b.cylinder('plain', 0.5, 0.5, 0.06, 12, [0, 1.04, burnerZ], { tint: '#7e6b48' })
   for (let i = 0; i < 3; i++) {
@@ -153,6 +172,7 @@ export function buildTemple(b, cfg, detail = null) {
   b.addSmoke(0, 1.15, burnerZ, 0.6, { smoothAsSteam: true })
   // 戰後的廟埕後段有觀賞鏡頭（cfg.courtCamera）：天公爐也是遮擋方塊，聚焦兩側的攤位時鏡頭不會躲在爐子後面
   if (cfg.courtCamera) b.addBlocker(-0.5, 0.5, 0, 1.1, burnerZ - 0.5, burnerZ + 0.5)
+  }
 
   // 兩棵大榕樹與環樹石座
   const treeZ = -2.4
@@ -192,8 +212,14 @@ export function buildTemple(b, cfg, detail = null) {
     for (const side of [-1, 1]) pottedPlant(b, [side * 2.4, 0.06, -courtD + 0.9], { seed: 60 + side, size: 1.1 })
   }
 
-  b.addBlocker(-hallW / 2 - 0.4, hallW / 2 + 0.4, 0, 8, -courtD - hallD - 0.4, -courtD + 0.2)
   const result = { courtDepth: courtD, treeZ, stalls: !!cfg.stalls }
+  if (walkIn) {
+    Object.assign(result, buildXiaHaiShell(b, cfg, detail))
+    // 台基與殿身在殿內範圍以外的部分（台基兩側的步口、屋脊）
+    b.addBlocker(-hallW / 2 - 0.4, hallW / 2 + 0.4, baseH + 4.0, 8, -courtD - hallD - 0.4, -courtD - 1.5)
+  } else {
+    b.addBlocker(-hallW / 2 - 0.4, hallW / 2 + 0.4, 0, 8, -courtD - hallD - 0.4, -courtD + 0.2)
+  }
   // 戰後的廟埕後段（豆花攤、糕粿攤、用餐區與天公爐一帶，cfg.courtCamera）：
   // 榕樹的樹冠與攤位很近，第三人稱鏡頭在這裡停在障礙物前面，不會退進樹冠裡；建築觀賞模式的注視點也可以移進廟埕
   if (cfg.courtCamera) {
@@ -226,7 +252,7 @@ export function templeCollision(cfg, transform) {
     const c = toWorld(x1, z1)
     obstacles.push({ minX: Math.min(a.x, c.x), maxX: Math.max(a.x, c.x), minZ: Math.min(a.z, c.z), maxZ: Math.max(a.z, c.z) })
   }
-  box(-0.55, 0.55, -courtD + 1.15, -courtD + 2.25) // 天公爐
+  if (cfg.interior !== 'xiahai') box(-0.55, 0.55, -courtD + 1.15, -courtD + 2.25) // 天公爐（霞海城隍廟港口商街不畫）
   for (const side of [-1, 1]) {
     const tx = side * (w / 2 - 2.4)
     box(tx - 0.95, tx + 0.95, -2.4 - 0.95, -2.4 + 0.95) // 榕樹石座
