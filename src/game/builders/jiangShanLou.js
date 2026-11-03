@@ -172,8 +172,11 @@ export function buildJiangShanLou(b, cfg) {
     b.box('stone', [segW, 0.5, 0.36], [(x0 + x1) / 2, walkH + 0.25, -0.12], { tint: GRANITE })
     for (const bx of [bays[side < 0 ? 0 : 4], bays[side < 0 ? 1 : 3]]) storefrontWindow(b, { x: bx, walkH })
   }
-  buildEntrance(b, { s, walkH, doorHalf, friezeY })
-  buildBanquetRoom(b, { s, rng })
+  // 可以走進去（walkIn，第 11 階段）：門廳、宴會廳與鏡頭遮擋改由 builders/jiangShanLou/jiangShanLouInterior.js 的共用室內處理
+  if (!cfg.walkIn) {
+    buildEntrance(b, { s, walkH, doorHalf, friezeY })
+    buildBanquetRoom(b, { s, rng })
+  }
 
   /* ── 樓上立面 ─────────────────────── */
   b.box('brick', [w, topY - GROUND_H + 0.02, 0.32], [0, (GROUND_H + topY) / 2, front - 0.16], { tint: BRICK, grime: 0.06 })
@@ -268,10 +271,11 @@ export function buildJiangShanLou(b, cfg) {
   }
   for (const side of [-1, 1]) pottedPlant(b, [side * 2.3 * s, walkH, 0.75], { seed: 70 + side, size: 1.05 })
   b.addPool(0, walkD + 1.1, 3.4, '#ffc07a')
-  b.addPool(0, 0.9, 1.8, '#ffc888', walkH + 0.01)
-
-  b.addBlocker(-w / 2, w / 2, 0, topY + 2.6, -D, front + 0.9)
-  return { groundHeight: GROUND_H, topHeight: topY, markerHeight: topY + 4.2 }
+  if (!cfg.walkIn) {
+    b.addPool(0, 0.9, 1.8, '#ffc888', walkH + 0.01)
+    b.addBlocker(-w / 2, w / 2, 0, topY + 2.6, -D, front + 0.9)
+  }
+  return { groundHeight: GROUND_H, topHeight: topY, markerHeight: topY + 4.2, ridgeHeight: topY + 2.6 }
 }
 
 /* ── 一樓櫥窗（木框玻璃窗，透出室內暖光） ── */

@@ -201,6 +201,8 @@ export function inTeaHouseLots(rect) {
     { minX: 11.6 - 3.6, maxX: 11.6 + 3.6, minZ: -4.5 - 11.3, maxZ: -0.3 },
     // 新芳春茶行（南側、朝北；第 11 階段，見 tests/xinFangChun.test.js）
     { minX: -27 - 4.2, maxX: -27 + 4.2, minZ: 0.3, maxZ: 4.5 + 12.3 },
+    // 江山樓（不是茶行，但同樣是第 11 階段可以走進去的店家；南側、朝北，見 tests/jiangShanLouInterior.test.js）
+    { minX: -13.5 - 6.0, maxX: -13.5 + 6.0, minZ: 0.3, maxZ: 4.5 + 12.3 },
   ]
   return lots.some(
     (lot) => rect.minX >= lot.minX - 1e-6 && rect.maxX <= lot.maxX + 1e-6 && rect.minZ >= lot.minZ - 1e-6 && rect.maxZ <= lot.maxZ + 1e-6,
@@ -219,6 +221,11 @@ export function inYouJiLot(rect) {
 /** 新芳春茶行的地段（x=-27、z=4.5，朝北；面寬 7.2 m、進深 12 m；含騎樓與店前一段街道） */
 export function inXinFangChunLot(rect) {
   return rect.minX >= -31.2 - 1e-6 && rect.maxX <= -22.8 + 1e-6 && rect.minZ >= 4.5 - 1.7 - 2.4 - 0.5 - 1e-6 && rect.maxZ <= 4.5 + 12.3 + 1e-6
+}
+
+/** 江山樓的地段（x=-13.5、z=4.5，朝北；面寬 11 m、進深 12 m；含騎樓與店前一段街道） */
+export function inJiangShanLouLot(rect) {
+  return rect.minX >= -19.5 - 1e-6 && rect.maxX <= -7.5 + 1e-6 && rect.minZ >= 4.5 - 1.7 - 2.4 - 0.5 - 1e-6 && rect.maxZ <= 4.5 + 12.3 + 1e-6
 }
 
 export function inLinHuaTaiLot(rect) {

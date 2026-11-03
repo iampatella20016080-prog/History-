@@ -5,6 +5,7 @@ import { shade } from './props.js'
  *
  * 一棟街屋分成：簷下步道 → 店門口（兩側門板、捲門或櫥窗下牆）→ 前店 → 隔間牆（中央留門）→ 店後的工作間。
  * 擺設用「器物清單」描述（type、位置、大小），同一份清單產生模型、碰撞的障礙物與鏡頭的遮擋方塊，不會對不上。
+ * 店門口兩側（frontPanels）：'boards' 門板、'shutter' 捲門、'open' 櫥窗下牆、'none' 不畫（立面已經有牆與櫥窗）。
  * 本地座標：原點在立面中心，+z 朝街道，室內在 -z；從街上正對立面時 +x 是右手邊。
  *
  * createShopInterior(spec) 的 spec：
@@ -241,6 +242,8 @@ export function createShopInterior(spec) {
   /** 店門口兩側：門板（frontPanels 'boards'）、捲門（'shutter'）或櫥窗的木框下牆（'open'）；中央是可以走進去的門 */
   function storefront(b, variant, look, openingH) {
     const { door } = variant
+    // 'none'：立面本身已經有店門口兩側的牆與櫥窗（例如江山樓），不另外畫門板
+    if (variant.frontPanels === 'none') return
     const inner = S.half - 0.5
     const sides = [
       [-inner, door.minX],

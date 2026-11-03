@@ -171,6 +171,12 @@ export const NPC_LOOKS = {
   xfcBookkeeper: { era: 'modern', skin: '#dcb08a', hair: 'short', top: { kind: 'long', color: '#3e4a5a', trim: '#323c4a' }, bottom: '#2f2c2a', shoes: ['#2a2622', '#2a2622'] },
   xfcSorterModern: { era: 'modern', skin: '#e2bb94', hair: 'bun', top: { kind: 'long', color: '#9a6a5a', trim: '#84584a' }, bottom: '#3c3a40', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#e6dcc6' } },
   xfcGuide: { era: 'revival', hair: 'bob', top: { kind: 'shirt', color: '#2f4a46', trim: '#263c39' }, bottom: '#2a2b2f', shoes: ['#2a2b2f', '#5c5d60'], extras: { strap: '#c9a64a' } },
+  // 第 11 階段江山樓的人物（不具名；吳江山是真實人物，不出現）：跑堂、女侍、入座的紳商
+  jslWaiter: { era: 'banquet', skin: '#d8ad84', hair: 'short', top: { kind: 'long', color: '#f0ece2', trim: '#d8d2c4' }, bottom: '#2f2c2a', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#e8e2d4' } },
+  jslWaitress: { era: 'banquet', skin: '#e2bd96', hair: 'bun', top: { kind: 'long', color: '#5a6e8a', trim: '#4a5c74' }, bottom: '#2f2c34', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#ece6d6' } },
+  jslGuest: { era: 'banquet', skin: '#dcb08a', hair: 'short', top: { kind: 'long', color: '#efe9dc', trim: '#d8d2c4' }, bottom: '#e8e2d4', shoes: ['#2a2622', '#2a2622'] },
+  jslGuestB: { era: 'banquet', skin: '#d6aa80', hair: 'short', top: { kind: 'long', color: '#3a3a40', trim: '#2e2e34' }, bottom: '#2a2a2e', shoes: ['#2a2622', '#2a2622'] },
+  jslGuestC: { era: 'banquet', skin: '#d8ae86', hair: 'short', top: { kind: 'long', color: '#6a5a44', trim: '#584a38' }, bottom: '#3a3530', shoes: ['#2a2622', '#2a2622'] },
   yjMusician: { era: 'revival', hair: 'bun', hairColor: '#3a3230', top: { kind: 'long', color: '#2e3a4e', trim: '#26303f' }, bottom: '#24262c', shoes: ['#2a2b2f', '#2a2b2f'] },
 }
 
