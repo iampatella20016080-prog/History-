@@ -21,6 +21,7 @@ import { shade } from './props.js'
  *
  * 二樓（可省略；有記名茶是第一個用的店家）：shell.floor2 = { y, ceiling, room, stair: { minX, maxX, bottomZ, topZ, landingZ? }, well? }
  * - landingZ：一樓樓梯頂端之後被平台蓋住、不能走的範圍到哪裡（預設到後牆；新芳春的樓梯在正廳，平台只有一小段）；
+ * - ceilingHoles：二樓天花再開的口（往三樓的樓梯井）；roofBlocker: false：二樓天花以上的鏡頭遮擋由店家自己加（江山樓有三樓與樓頂）；
  * - well：天井（本地矩形，新芳春）：一樓天花、二樓樓板與二樓天花都在這裡開口，上面是天光；一樓可以走，二樓四周有欄杆；
  * - 店後靠牆的木樓梯從 bottomZ（地面）往 topZ 爬到二樓樓板（y），樓板在樓梯上方留樓梯井；
  * - 年代版本的 upstairs = { items, npcs }：二樓的器物清單與人物（人物在二樓，level 1）；
@@ -176,7 +177,9 @@ export function createShopInterior(spec) {
       b.box('wood', [pitch - 0.14, 0.06, 0.08], [x, y + 0.67, r2.maxZ - 0.03], { tint: shade(look.wood, 0.75) })
       b.box('wood', [0.04, 1.5, 0.05], [x, y + 1.45, r2.maxZ - 0.03], { tint: shade(look.wood, 0.75) })
     }
-    for (const r of wellRect ? subtractRect(roomRect(r2), wellRect) : [roomRect(r2)]) {
+    // 二樓天花的開口：天井與往三樓的樓梯井（ceilingHoles，江山樓）
+    const topHoles = [wellRect, ...(F.ceilingHoles ?? []).map(roomRect)].filter(Boolean)
+    for (const r of topHoles.reduce((pieces, hole) => pieces.flatMap((piece) => subtractRect(piece, hole)), [roomRect(r2)])) {
       b.box('plaster', [r.maxX - r.minX, 0.06, r.maxZ - r.minZ], [(r.minX + r.maxX) / 2, y + c2 + 0.03, (r.minZ + r.maxZ) / 2], { tint: look.ceiling2Tint ?? shade(wall, 0.95) })
     }
     if (wellRect) {
@@ -383,7 +386,8 @@ export function createShopInterior(spec) {
     if (F) {
       // 二樓：一樓天花到二樓樓板之間（留樓梯井）、二樓天花以上、臨街的樓上立面與騎樓頂
       for (const r of minusHoles(rect(-half, half, -depth, 0))) b.addBlocker(r.minX, r.maxX, ceiling, F.y, r.minZ, r.maxZ)
-      b.addBlocker(-half, half, F.y + F.ceiling, ridge, -depth, 0)
+      // 三樓以上由店家自己處理時（roofBlocker: false，江山樓），不加二樓天花以上整塊的遮擋
+      if (F.roofBlocker !== false) b.addBlocker(-half, half, F.y + F.ceiling, ridge, -depth, 0)
       b.addBlocker(-half, half, F.y, ridge, F.room.maxZ + 0.02, 0)
       b.addBlocker(-half, half, groundH, ridge, 0, walkD)
     } else {

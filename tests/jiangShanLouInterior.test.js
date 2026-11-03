@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 import { ERAS } from '../src/data/eras.js'
 import { getShop, getShopBuilding } from '../src/data/shops.js'
-import { JIANG_SHAN_LOU_ID, JSL_INTERIOR_HOTSPOTS, JSL_SHELL, JSL_SITE, JSL_VARIANTS, jslToWorld } from '../src/data/jiangShanLouLayout.js'
+import { JIANG_SHAN_LOU_ID, JSL_INTERIOR_HOTSPOTS, JSL_SHELL, JSL_SITE, JSL_UPPER, JSL_VARIANTS, jslToWorld } from '../src/data/jiangShanLouLayout.js'
 import { getInspectObject, inspectablesOfEra } from '../src/data/inspectObjects.js'
 import { hasFullLayers } from '../src/data/inspectLayers.js'
 import { inspectPlaces } from '../src/data/inspectObjects.js'
@@ -116,20 +116,21 @@ describe('江山樓：只有酒樓繁華、地段不變、熱點', () => {
 
   test('店內的熱點：廚房（不開放）、二樓宴會廳、三四樓的說明，都對應存在的章節', () => {
     const shop = getShop(JIANG_SHAN_LOU_ID, 'banquet')
-    assert.deepEqual(shop.hotspots.map((h) => h.id).sort(), ['banquet-room', 'kitchen', 'upper-floors'])
+    assert.deepEqual(shop.hotspots.map((h) => h.id).sort(), ['banquet-room', 'fourth-floor', 'kitchen', 'office', 'roof-garden', 'third-floor'])
     for (const hotspot of shop.hotspots) {
       assert.ok(shop.chapters.some((chapter) => chapter.id === hotspot.chapter), hotspot.id)
       assert.ok(hotspot.label && hotspot.labelEn && hotspot.note && hotspot.noteEn, hotspot.id)
     }
-    for (const hotspot of JSL_INTERIOR_HOTSPOTS) if (hotspot.level === 1) assert.ok(hotspot.prompt[1] > F2 + 1, hotspot.id)
+    const floorY = { 0: 0, 1: F2, ...Object.fromEntries(JSL_UPPER.map((f) => [f.level, f.y])) }
+    for (const hotspot of JSL_INTERIOR_HOTSPOTS) assert.ok(hotspot.prompt[1] > floorY[hotspot.level] + 1 && hotspot.prompt[1] < floorY[hotspot.level] + 3, hotspot.id)
   })
 })
 
 describe('江山樓：室內只畫這一棟、不與其他建築重疊；其他年代不受影響', () => {
-  test('酒樓繁華有一樓與二樓兩個室內範圍（同一棟建築），其他年代沒有；範圍都在地段裡', () => {
+  test('酒樓繁華有一樓、二樓、三樓、四樓樓梯間與樓頂五個室內範圍（同一棟建築），其他年代沒有；範圍都在地段裡', () => {
     for (const eraId of ERA_IDS) {
       const zones = worlds[eraId].interiors.filter((item) => item.id.startsWith(JIANG_SHAN_LOU_ID))
-      assert.deepEqual(zones.map((zone) => zone.id).sort(), ['jiang-shan-lou', 'jiang-shan-lou-2f'], eraId)
+      assert.deepEqual(zones.map((zone) => zone.id).sort(), ['jiang-shan-lou', 'jiang-shan-lou-2f', 'jiang-shan-lou-3f', 'jiang-shan-lou-4f', 'jiang-shan-lou-roof'], eraId)
       for (const zone of zones) {
         assert.equal(zone.building, 'store-jiang-shan-lou', eraId)
         assert.ok(inJiangShanLouLot(zone), eraId)
@@ -167,7 +168,7 @@ describe('江山樓：室內只畫這一棟、不與其他建築重疊；其他�
         for (let i = 0; i < attr.count; i++) {
           const point = { minX: attr.getX(i), maxX: attr.getX(i), minZ: attr.getZ(i), maxZ: attr.getZ(i) }
           assert.ok(inJiangShanLouLot(point), `${eraId} ${batch.material} (${point.minX.toFixed(2)}, ${point.minZ.toFixed(2)})`)
-          assert.ok(attr.getY(i) < F2 + F.ceiling + 0.05, `${eraId} ${batch.material} 高度 ${attr.getY(i).toFixed(2)}`)
+          assert.ok(attr.getY(i) < JSL_UPPER.at(-1).y + 3.0, `${eraId} ${batch.material} 高度 ${attr.getY(i).toFixed(2)}`)
         }
       }
     }
@@ -202,10 +203,11 @@ describe('江山樓：室內只畫這一棟、不與其他建築重疊；其他�
     assert.ok(local(s).z > -7.0, `停在 z=${local(s).z.toFixed(2)}`)
   })
 
-  test('宴會廳依宴席照：白桌布的圓桌三張、題字的匾兩塊、廣告旗；菜單模型不寫菜名（沒有招牌字）', () => {
+  test('二樓依宴席照：大廳三張白桌布圓桌、小間一張，題字的匾、廣告旗；室內沒有招牌字（菜單不寫菜名）', () => {
     const up = variantOf().upstairs.items
-    assert.equal(up.filter((item) => item.type === 'roundTable').length, 3)
-    assert.equal(up.filter((item) => item.type === 'hallPlaque').length, 2)
+    // 大廳三張、後面的小間一張
+    assert.equal(up.filter((item) => item.type === 'roundTable').length, 4)
+    assert.equal(up.filter((item) => item.type === 'hallPlaque').length, 3)
     assert.ok(up.some((item) => item.type === 'adBanner'))
     const inside = worlds.banquet.signs.filter((sign) => Math.abs(sign.position[0] - JSL_SITE.x) < JSL_SHELL.half && sign.position[2] > JSL_SITE.z)
     assert.equal(inside.length, 0)
@@ -255,6 +257,18 @@ describe('江山樓：走進去、上樓、走出來（碰撞）', () => {
         s = walkRoute(world, s, [...STAIRS_UP].reverse(), 0.15)
         s = walkRoute(world, s, [...route.slice(0, 2)].reverse(), 0.15)
         assert.ok(s.level === 0 && local(s).z > 0.5, `第 ${i + 1} 次離開：z=${s.z.toFixed(2)}`)
+      }
+    })
+
+    test(`${eraId}：從街上一路爬到樓頂庭園（二樓、三樓的大廳與走廊、四樓樓梯間），在樓頂走到臨街那一側，再一路走回街上（步長 0.05／0.15／0.4）`, () => {
+      const TO_ROOF = [...STAIRS_UP, [4.5, -6.6], [4.5, -10.9], [3.0, -10.9], [3.0, -7.4], [2.0, -6.0], [2.6, -0.8], [4.5, -0.75], [4.5, -5.0], [4.5, -6.2], [4.5, -10.4], [1.4, -10.4], [1.25, -9.0], [1.25, -3.4]]
+      for (const stepSize of [0.05, 0.15, 0.4]) {
+        let s = walkRoute(world, start(), [route[0], ...TO_ROOF], stepSize)
+        assert.equal(s.level, 4, `樓頂（步長 ${stepSize}） 停在 (${local(s).x.toFixed(2)}, ${local(s).z.toFixed(2)}) 樓層 ${s.level}`)
+        assert.ok(Math.abs(s.y - JSL_UPPER.at(-1).y) < 1e-6 && near(s, 1.25, -3.4), `樓頂 y=${s.y}`)
+        s = walkRoute(world, s, [...TO_ROOF].reverse(), stepSize)
+        s = walkRoute(world, s, [route[0]], stepSize)
+        assert.ok(s.level === 0 && local(s).z > 0.5, `走回 (${local(s).x.toFixed(2)}, ${local(s).z.toFixed(2)}) 樓層 ${s.level}（步長 ${stepSize}）`)
       }
     })
 
@@ -310,7 +324,7 @@ describe('江山樓：鏡頭不穿牆', () => {
       let checked = 0
       for (const r of world.collision.walkable.filter((item) => item.inBuilding && !item.ramp && inJiangShanLouLot(item))) {
         const level = r.level ?? 0
-        const y = (level ? F2 : 0) + 1.6
+        const y = (r.floorY ?? 0) + 1.6
         for (let x = r.minX + PLAYER.radius; x <= r.maxX - PLAYER.radius; x += 0.2) {
           for (let z = r.minZ + PLAYER.radius; z <= r.maxZ - PLAYER.radius; z += 0.2) {
             if (!walkableAt(world, x, z, level)) continue
@@ -386,8 +400,24 @@ describe('江山樓：情境人物與可以近看的器物', () => {
     }
   })
 
-  test('新器物（菜單、金錢火雞、賀匾）五層資訊齊全、3D 模型建得出來，動作有對應的零件；行啟午宴寫明不在江山樓', () => {
-    for (const id of ['banquet-menu', 'banquet-course', 'congratulatory-plaque']) {
+  test('使用者 2026-11-03 的決定：不做錫酒壺；青花碗的 lead 跨年代共用、江山樓的說法在 where 層；吳瀛濤的文字都標轉引自張愛敏 2008（或曾品滄的轉述）；三樓與樓頂標依臺史博明信片', () => {
+    assert.equal(getInspectObject('pewter-wine-pot'), null)
+    const bowl = getInspectObject('blue-white-bowl')
+    assert.doesNotMatch(bowl.lead, /江山樓|鶯歌燒/)
+    assert.ok(bowl.layers.where.some((note) => /江山樓/.test(note.text)))
+    for (const id of ['banquet-menu', 'banquet-course', 'congratulatory-plaque', 'beer-bottle', 'partition-screen', 'roof-rockery', 'roof-bonsai', 'marble-round-table', 'blue-white-bowl']) {
+      const object = getInspectObject(id)
+      const notes = [{ text: object.lead, textEn: object.leadEn }, ...Object.values(object.layers).flat()]
+      for (const note of notes) {
+        if (/吳瀛濤/.test(note.text)) assert.match(note.text, /張愛敏|曾品滄/, `${id} ${note.text}`)
+        if (/Wu Ying-tao/.test(note.textEn ?? '')) assert.match(note.textEn, /Chang|Tseng/, `${id} ${note.textEn}`)
+      }
+    }
+    for (const id of ['third-floor', 'roof-garden']) assert.match(JSL_INTERIOR_HOTSPOTS.find((h) => h.id === id).note, /歷史情境重建（依臺史博明信片 2020\.006\.0807\.000[35]）/, id)
+  })
+
+  test('新器物（菜單、金錢火雞、賀匾、三樓的啤酒瓶與門屏、樓頂的假山、盆栽與大理石圓桌座）五層資訊齊全、3D 模型建得出來，動作有對應的零件；行啟午宴寫明不在江山樓', () => {
+    for (const id of ['banquet-menu', 'banquet-course', 'congratulatory-plaque', 'beer-bottle', 'partition-screen', 'roof-rockery', 'roof-bonsai', 'marble-round-table', 'blue-white-bowl']) {
       const object = getInspectObject(id)
       assert.ok(object && object.titleEn && object.leadEn, id)
       assert.ok(hasFullLayers(object, inspectPlaces(id)), id)
@@ -404,6 +434,12 @@ describe('江山樓：情境人物與可以近看的器物', () => {
       }
     }
     for (const id of ['banquet-menu', 'banquet-course']) assert.ok(Object.values(getInspectObject(id).layers).flat().some((note) => /總督官邸/.test(note.text)), id)
+  })
+
+  test('每一層至少兩件可以近看的器物（一樓到三樓、樓頂）；四樓的樓梯間沒有', () => {
+    const items = inspectablesOfEra('banquet').filter((item) => item.shopId === JIANG_SHAN_LOU_ID)
+    for (const level of [0, 1, 2, 4]) assert.ok(items.filter((item) => (item.level ?? 0) === level).length >= 2, `樓層 ${level}`)
+    assert.equal(items.filter((item) => item.level === 3).length, 0)
   })
 
   test('對話：吳江山不出現；藝旦只在追問裡，一句坊間傳說加一句有出處', () => {

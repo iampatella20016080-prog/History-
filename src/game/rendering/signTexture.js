@@ -57,6 +57,8 @@ export const SIGN_STYLES = {
   greenBoard: { bg: '#45b23f', bg2: '#3ea539', border: null, text: '#ffffff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.025)', ltr: true, sizeH: 0.74, sizeW: 0.8, frets: '#ffffff' },
   redPlate: { bg: '#c8282e', bg2: '#b92228', border: '#f6e7c8', text: '#ffffff', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.03)', ltr: true, sizeH: 0.6, sizeW: 0.86 },
   redLetters: { bg: null, text: '#c3242b', shadow: '#6f1418', ltr: true, sizeH: 0.8, sizeW: 0.9 },
+  // 江山樓立面的英文與假名橫帶（臺史博外觀照描述的「KANG SAN LAU」「ライトビール」「かうさんろう」）
+  latinBand: { bg: '#efe6d2', bg2: '#e6dcc4', border: '#5b2c22', text: '#3a2418', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,95,60,0.08)', ltr: true },
   // 新芳春茶行立面上方的紅字「新芳春行」：舊式由右往左讀（使用者提供的照片）
   redLettersOld: { bg: null, text: '#b8262a', shadow: '#6f1418', sizeH: 0.8, sizeW: 0.9 },
   redOnDark: { bg: '#232526', bg2: '#2b2d2f', border: null, text: '#d8433c', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.02)', ltr: true, sizeH: 0.64 },

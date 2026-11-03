@@ -22,7 +22,7 @@ import { createRequire } from 'node:module'
 import { mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { JSL_SHELL, jslToWorld } from '../../src/data/jiangShanLouLayout.js'
+import { JSL_SHELL, JSL_UPPER, jslToWorld } from '../../src/data/jiangShanLouLayout.js'
 import { getEra } from '../../src/data/eras.js'
 import { getShop } from '../../src/data/shops.js'
 import { inspectablesOfEra } from '../../src/data/inspectObjects.js'
@@ -39,6 +39,9 @@ const CYCLES = Number(process.env.CYCLES ?? 3)
 const TIMEOUT = Number(process.env.TIMEOUT ?? 240000)
 const ID = 'jiang-shan-lou'
 const F2 = JSL_SHELL.floor2.y
+/** 各樓層的地板高度（level → y） */
+const FLOOR_Y = { 0: 0, 1: F2, ...Object.fromEntries(JSL_UPPER.map((f) => [f.level, f.y])) }
+const ROOF_Y = JSL_UPPER.at(-1).y
 const LATER = ['banquet']
 const W = (x, z) => jslToWorld(x, z)
 
@@ -257,7 +260,7 @@ async function runDevice(browser, device) {
         if (face) d.cameraState.targetYaw = d.cameraState.yaw = Math.atan2(-(face.x - p.x), -(face.z - p.z))
         d.cameraState.snap = true
       },
-      { p, face, level, y: level ? F2 : 0 },
+      { p, face, level, y: FLOOR_Y[level] ?? 0 },
     )
   const openSettings = async () => {
     if (await page.locator('#quality-panel').count()) return
@@ -400,6 +403,20 @@ async function runDevice(browser, device) {
     const down = await walk([...upRoute(eraId).slice(1)].reverse())
     const level0 = await page.evaluate(() => window.__DDC__.playerState.level)
     record(test, `${label}：下樓回到門廳`, down.ok && level0 === 0, `第 ${down.i} 點、樓層 ${level0}`)
+    // 一路爬到樓頂庭園：二樓、三樓的大廳與走廊、四樓樓梯間（和單元測試相同的路線），再一路走回門廳
+    const TO_ROOF = toWorld([[0, -0.6], [4.5, -0.75], [4.5, -1.6], [4.5, -6.2], [4.5, -6.6], [4.5, -10.9], [3.0, -10.9], [3.0, -7.4], [2.0, -6.0], [2.6, -0.8], [4.5, -0.75], [4.5, -5.0], [4.5, -6.2], [4.5, -10.4], [1.4, -10.4], [1.25, -9.0], [1.25, -3.4]])
+    await teleport(W(0, -0.6), null, 0)
+    await frames(6)
+    const roof = await walk(TO_ROOF.slice(1))
+    const top = await page.evaluate(() => [window.__DDC__.playerState.level, window.__DDC__.playerState.position.y])
+    record(test, `${label}：一路爬到樓頂庭園`, roof.ok && top[0] === 4 && Math.abs(top[1] - ROOF_Y) < 0.05, `第 ${roof.i} 點、樓層 ${top[0]}、高度 ${round(top[1])}`)
+    await shot('05-third-floor', at(3.2, FLOOR_Y[2] + 1.9, -0.9), at(-1.8, FLOOR_Y[2] + 1.0, -7.0))
+    await shot('06-small-room', at(1.4, FLOOR_Y[1] + 1.8, -8.3), at(-3.0, FLOOR_Y[1] + 0.8, -9.8))
+    await shot('07-roof-garden', at(2.6, ROOF_Y + 2.6, -1.4), at(-2.8, ROOF_Y + 1.0, -6.0))
+    await shot('08-facade', at(0, 1.8, 6.6), at(0, 9.5, 0))
+    const back = await walk([...TO_ROOF].reverse())
+    const lv = await page.evaluate(() => window.__DDC__.playerState.level)
+    record(test, `${label}：從樓頂一路走回門廳`, back.ok && lv === 0, `第 ${back.i} 點、樓層 ${lv}`)
 
     await shot('01-lobby', at(1.6, 1.8, -0.8), at(-3.0, 1.6, -4.0))
     await shot('02-stairs', at(-1.0, 1.8, -1.2), at(4.5, 2.2, -4.6))

@@ -294,8 +294,9 @@ export const TEMPLE_MEAL_OBJECTS = {
     id: 'blue-white-bowl',
     title: '白底青花碗公',
     titleEn: 'Blue-and-white bowl',
-    lead: '戰後鶯歌燒的日用陶碗：碗心手繪一條魚、碗口一圈花邊——廟口的小吃攤，一碗一碗就這樣端上桌。',
-    leadEn: 'An everyday Yingge earthenware bowl from after the war, a fish painted in the well and a scalloped rim—the kind every temple-front stall served from.',
+    // lead 跨年代共用（廟口的一餐、江山樓的備餐桌都會看到）；各店的說法放 where 層（江山樓的在 data/jiangShanLouObjects.js 的 JSL_EXTRA_NOTES）
+    lead: '碗心一條魚、碗口一圈花邊的白底青花碗：戰後廟口小吃攤的碗就是它。',
+    leadEn: 'A white bowl with a fish in the well and a scalloped blue rim: the bowl of every postwar temple-front stall.',
     actions: [{ id: 'flip', label: '翻過來看碗底', labelEn: 'Turn it over', doneLabel: '翻回來', doneLabelEn: 'Turn it back' }],
     paragraphs: [
       '形制依台灣碗盤博物館藏「鶯歌手繪魚紋碗公」（TW-5-01-00-0-B-0030）：陶製，1945–1964 年，口徑 20.5、高 8.5 公分，碗內以藍色與紅褐色手繪鯉魚與水草，碗口飾有花邊。《報導者》書摘寫，白底青花碗是老派小吃裡最常見的食器；鶯歌的日用碗盤在 1950 年代剛起步，靠手工拉坯與手繪。',
@@ -307,6 +308,40 @@ export const TEMPLE_MEAL_OBJECTS = {
     ],
     reconstruction: true,
     sourceIds: ['taiwanceramics-yingge-bowl', 'twreporter-2021-snack-bowl'],
+    layers: {
+      form: [
+        {
+          text: '形制依台灣碗盤博物館藏「鶯歌手繪魚紋碗公」（TW-5-01-00-0-B-0030）：陶製，1945–1964 年，口徑 20.5、高 8.5 公分，碗內以藍色與紅褐色手繪鯉魚與水草，碗口飾花邊。',
+          textEn: 'Modelled on the Taiwan Bowl and Plate Museum’s hand-painted Yingge fish bowl (TW-5-01-00-0-B-0030): earthenware, 1945–1964, 20.5 cm across and 8.5 cm high, a carp and water plants in blue and russet, a scalloped rim.',
+          sourceIds: ['taiwanceramics-yingge-bowl'],
+        },
+        { text: '紋樣是簡化的示意，碗底留空、不畫店號。', textEn: 'The painting is simplified and the base left blank, with no shop mark.', status: 'reconstruction' },
+        { text: '1920 年代酒樓用的碗盤形制：查無。', textEn: 'The form of 1920s restaurant bowls: not found.', status: 'pending' },
+      ],
+      making: [
+        {
+          text: '《報導者》書摘：白底青花碗是老派小吃最常見的食器；鶯歌的日用碗盤 1950 年代剛起步，靠手工拉坯與手繪。',
+          textEn: 'A Reporter book excerpt: blue-and-white bowls are the classic old-style snack tableware; Yingge’s everyday ware was only starting in the 1950s, hand-thrown and hand-painted.',
+          sourceIds: ['twreporter-2021-snack-bowl'],
+        },
+        { text: '日治時期臺北酒樓的餐具產地（鶯歌、北投、日本、中國）：查無。', textEn: 'Where Japanese-era Taipei restaurants bought their tableware (Yingge, Beitou, Japan, China): not found.', status: 'pending' },
+      ],
+      use: [
+        {
+          text: '戰後的小吃攤碗都一樣、容易混淆，後來才有在碗上燒店號的做法。',
+          textEn: 'Postwar stall bowls looked so alike that names came to be fired onto them.',
+          sourceIds: ['twreporter-2021-snack-bowl'],
+        },
+      ],
+      where: [{ text: '庶民生活年代的廟口小吃攤。', textEn: 'The temple-front stalls of the postwar era.' }],
+      evidence: [
+        {
+          text: '台灣碗盤博物館 TW-5-01-00-0-B-0030；《報導者》2021 書摘。',
+          textEn: 'Taiwan Bowl and Plate Museum TW-5-01-00-0-B-0030; the Reporter excerpt (2021).',
+          sourceIds: ['taiwanceramics-yingge-bowl', 'twreporter-2021-snack-bowl'],
+        },
+      ],
+    },
   },
   'squid-soup-bowl': {
     id: 'squid-soup-bowl',
