@@ -33,6 +33,7 @@ import { JSL_INTERIOR_HOTSPOTS, jslToWorld } from './jiangShanLouLayout.js'
 import { XH_INTERIOR_HOTSPOTS, xhToWorld } from './xiaHaiLayout.js'
 import { MUSEUM_RECORD, ORGANIZATIONS, PENDING, PHOTO_OBSERVATIONS, SCENARIO_DESIGN } from './huangYujieMuseum.js'
 import { ACTION_BAR_SITE } from './actionBarLayout.js'
+import { LTX_INTERIOR_HOTSPOTS, ltxToWorld } from './liTingXiangLayout.js'
 import { LI_TING_XIANG_ID, LI_TING_XIANG_SOURCE_IDS, LTX_CHAPTERS, LTX_ERA_NOTES, LTX_YEAR_NOTE, LTX_YEAR_NOTE_EN } from './liTingXiangData.js'
 import { CI_SHENG_ADDRESS, CI_SHENG_ADDRESS_EN, CI_SHENG_CHAPTERS, CI_SHENG_ERA_NOTES, ciShengHotspots } from './ciShengMiaokouData.js'
 import {
@@ -3731,8 +3732,10 @@ export const SHOPS = [
       banquet: { condition: 'new', sign: { text: '餅舖', style: 'gold' } },
       modern: { condition: 'mature', sign: { text: '餅舖', style: 'red' } },
       postwar: { condition: 'aged', sign: { text: '餅舖', style: 'painted' } },
-      revival: { condition: 'restored', sign: { text: '李亭香', style: 'modern' } },
+      // 第 11 階段起可以走進去：前店與內用座位（建築樣式 'li-ting-xiang'；擺設是歷史情境重建，data/liTingXiangLayout.js）
+      revival: { condition: 'restored', archetype: 'li-ting-xiang', variant: 'pastryShop', sign: { text: '李亭香', style: 'modern' } },
     },
+    eras: { revival: { hotspots: hotspotsToWorld(LTX_INTERIOR_HOTSPOTS, ltxToWorld) } },
   },
   {
     id: 'jiang-shan-lou',

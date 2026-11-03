@@ -21,8 +21,8 @@ export const PASTRY_FIGURES = [
   { id: 'pastry-peach', eraId: ERA, look: 'revivalShopper', pose: 'stand', position: [-11.7, -2.2], rotationY: Math.PI + 0.35 },
   // 永樂市場一樓走道中線偏南（不擋直走的人，也和南側攤位留一人寬）：替孫子準備度晬的阿伯，面向北側的好粿緣
   { id: 'pastry-kueh', eraId: ERA, look: 'revivalElder', pose: 'stand', position: [48.7, 0.84], rotationY: Math.PI - 0.4 },
-  // 李亭香（南側街屋）門前：來買收涎餅的外婆，面向店面
-  { id: 'pastry-shouxian', eraId: ERA, look: 'revivalElderWoman', pose: 'stand', position: [15.0, 2.2], rotationY: 0.35 },
+  // 李亭香（南側街屋）門前：來買收涎餅的外婆，面向店面（離騎樓柱留出讓人走過的寬度）
+  { id: 'pastry-shouxian', eraId: ERA, look: 'revivalElderWoman', pose: 'stand', position: [15.5, 2.2], rotationY: 0.35 },
   // 滋養豆餡舖的轉角前（河岸廣場一側）：挑伴手禮的年輕人
   { id: 'pastry-wagashi', eraId: ERA, look: 'revivalYoung', pose: 'phone', position: [-35.4, -2.6], rotationY: Math.PI * 0.75 },
 ]
