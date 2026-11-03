@@ -59,6 +59,8 @@ export const SIGN_STYLES = {
   redLetters: { bg: null, text: '#c3242b', shadow: '#6f1418', ltr: true, sizeH: 0.8, sizeW: 0.9 },
   // 江山樓立面的英文與假名橫帶（臺史博外觀照描述的「KANG SAN LAU」「ライトビール」「かうさんろう」）
   latinBand: { bg: '#efe6d2', bg2: '#e6dcc4', border: '#5b2c22', text: '#3a2418', shadow: 'rgba(0,0,0,0)', grain: 'rgba(120,95,60,0.08)', ltr: true },
+  // 新芳春茶行立面上方的紅字「新芳春行」：舊式由右往左讀（使用者提供的照片）
+  redLettersOld: { bg: null, text: '#b8262a', shadow: '#6f1418', sizeH: 0.8, sizeW: 0.9 },
   redOnDark: { bg: '#232526', bg2: '#2b2d2f', border: null, text: '#d8433c', shadow: 'rgba(0,0,0,0)', grain: 'rgba(255,255,255,0.02)', ltr: true, sizeH: 0.64 },
   marketWhite: { bg: '#f6f6f2', bg2: '#efefea', border: null, text: '#262626', shadow: 'rgba(0,0,0,0)', grain: 'rgba(0,0,0,0.02)', ltr: true, sizeH: 0.72, sizeW: 0.86 },
   marketBoard: { bg: '#f6f4ef', bg2: '#eeebe4', border: '#c8282e', text: '#c8282e', shadow: 'rgba(0,0,0,0)', grain: 'rgba(0,0,0,0.03)' },

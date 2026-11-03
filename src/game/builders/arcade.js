@@ -145,7 +145,7 @@ export function buildArcadeBuilding(b, cfg, detail = null) {
       z: front,
       width: lettersOnly ? sw + 0.4 : sw,
       height: lettersOnly ? 0.7 : 0.58,
-      frame: !lettersOnly,
+      frame: cfg.sign.frame ?? !lettersOnly,
       frameTint: style === 'deco' ? '#2b2724' : '#4d3626',
     })
   }
@@ -271,7 +271,7 @@ function baroqueFacade(b, { cfg, rng, w, floors, groundH, upperH, topY, front, w
       const pitch = (w - 1.3) / row
       for (let i = 0; i < row; i++) {
         const x = -w / 2 + 0.65 + pitch * (i + 0.5)
-        rectWindow(b, { x, y: fy + 1.5, width: pitch - 0.16, height: 1.75, z: front, lit: rng() < litChance, frameTint: '#4d3a2c', barTint: '#b89a74', style: 'panes', ...glass })
+        rectWindow(b, { x, y: fy + (cfg.windowRowY ?? 1.5), width: pitch - 0.16, height: cfg.windowRowHeight ?? 1.75, z: front, lit: rng() < litChance, frameTint: cfg.windowRowFrame ?? '#4d3a2c', barTint: '#b89a74', style: cfg.windowRowStyle ?? 'panes', ...glass })
       }
     }
     for (let i = 0; i < (row ? 0 : count); i++) {

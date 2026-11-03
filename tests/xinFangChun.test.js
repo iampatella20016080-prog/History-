@@ -89,7 +89,7 @@ function followCamera(world, p, yaw, level = 0, y = 0) {
 const BACK = [[0, 1.0], [0, -0.6], [0, -5.6], [0, -7.2], [-0.25, -8.4]]
 const ROUTES = { modern: BACK, postwar: BACK, revival: BACK }
 /** 上二樓：從正廳走到右後的樓梯口、爬上去，到樓梯頂的平台 */
-const STAIRS_UP = [[0, -0.6], [2.7, -0.6], [2.7, -1.3], [2.7, -5.0]]
+const STAIRS_UP = [[0, -0.9], [2.7, -0.9], [2.7, -1.3], [2.7, -5.0]]
 const UPSTAIRS = [[1.8, -5.6], [1.8, -8.4], [1.8, -5.6], [1.6, -3.4]]
 const upstairsRoute = () => UPSTAIRS
 

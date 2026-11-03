@@ -1,7 +1,7 @@
 /**
  * 新芳春茶行的室內配置（第 11 階段；查證與設計見 docs/research/interior-xin-fang-chun.md）
  *
- * 三開間、三層的洋樓，地段在 x=-27、z=4.5（南側、朝北，本地 → 世界轉 180°），面寬 7.2 m、進深 12 m。
+ * 三開間、三層的洋樓（立面與正廳依使用者 2026-11-03 提供的照片：米白磁磚、木格窗、紅磚方柱），地段在 x=-27、z=4.5（南側、朝北，本地 → 世界轉 180°），面寬 7.2 m、進深 12 m。
  * 真實建築縱深三進、約 492 坪；本站壓成「前進正廳 → 天井（日月雙井壓成一井）→ 後進焙籠間與加工廠」兩段加一井，是示意。
  * 正廳右後的木樓梯上二樓（前段揀茶間、後段辦公室與會客廳）；三樓是王家住家與公媽廳，樓梯口封住、不畫。
  * 本地座標：原點在立面中心，+z 朝街道，室內在 -z；從街上正對立面時 +x 是右手邊。
@@ -28,6 +28,13 @@ export const XFC_SHELL = {
 }
 
 const F2 = XFC_SHELL.floor2.y
+
+/** 正廳的紅磚方柱（使用者提供的照片：正廳中央走道兩側成排的紅磚方柱）與天井兩側的紅色方磚地坪 */
+const hallPillars = [-1.65, 1.65].flatMap((x) => [-1.7, -4.3].map((z) => ({ type: 'brickPillar', x, z })))
+const tileFloors = [
+  { type: 'tileFloor', minX: -3.2, maxX: -1.25, minZ: -6.55, maxZ: -4.65, block: false },
+  { type: 'tileFloor', minX: 1.25, maxX: 2.1, minZ: -6.55, maxZ: -4.65, block: false },
+]
 
 /** 天井的馬賽克地坪（一樓，不擋路） */
 const wellFloor = { type: 'wellFloor', x: 0, z: -5.6, width: 2.4, depth: 2.0, block: false }
@@ -59,7 +66,7 @@ export const XFC_VARIANTS = {
    */
   teaMansion1934: {
     door: { minX: -1.2, maxX: 1.2 },
-    frontPanels: 'boards',
+    frontPanels: 'none',
     partition: { z: -6.6, doorMinX: -1.2, doorMaxX: 1.2 },
     lamps: [[-1.6, -1.6], [0, -1.6], [-1.6, -3.6], [0, -3.6]],
     items: [
@@ -69,6 +76,8 @@ export const XFC_VARIANTS = {
       { type: 'packingTable', x: -0.9, z: -3.2, width: 1.3, depth: 0.75, height: 0.8 },
       { type: 'platformScale', x: -2.4, z: -5.7, rotationY: 0, style: 'iron' },
       wellFloor,
+      ...hallPillars,
+      ...tileFloors,
       ...backRoom(someBaskets),
     ],
     upstairs: {
@@ -102,7 +111,7 @@ export const XFC_VARIANTS = {
    */
   limitedPartnership: {
     door: { minX: -1.2, maxX: 1.2 },
-    frontPanels: 'shutter',
+    frontPanels: 'none',
     partition: { z: -6.6, doorMinX: -1.2, doorMaxX: 1.2 },
     lamps: [[-1.6, -2.4], [0, -2.4]],
     items: [
@@ -112,6 +121,8 @@ export const XFC_VARIANTS = {
       { type: 'certificateFrame', x: -2.2, z: -6.5, y: 1.75, block: false },
       { type: 'crates', x: 2.55, z: -6.1 },
       wellFloor,
+      ...hallPillars,
+      ...tileFloors,
       ...backRoom(someBaskets.slice(0, 5)),
     ],
     upstairs: {
@@ -136,16 +147,17 @@ export const XFC_VARIANTS = {
    */
   teaStoryHouse: {
     door: { minX: -1.2, maxX: 1.2 },
-    frontPanels: 'open',
+    frontPanels: 'none',
     partition: { z: -6.6, doorMinX: -1.2, doorMaxX: 1.2 },
     lamps: [[-1.6, -1.6], [0, -1.6], [-1.6, -3.6], [0, -3.6]],
     items: [
       { type: 'counter', x: 1.5, z: -3.0, length: 2.0, depth: 0.6, height: 0.95, goods: 'none', tint: '#6a4a34' },
-      { type: 'exhibitTable', x: -2.35, z: -1.6, width: 1.3, depth: 0.7 },
+      { type: 'exhibitTable', x: -2.5, z: -1.6, width: 1.0, depth: 0.7, plinth: true },
       { type: 'glassCase', x: -2.45, z: -3.7, width: 1.2, depth: 0.6, content: 'machines' },
-      { type: 'exhibitPanel', x: -0.95, z: -4.1, width: 1.1 },
-      { type: 'tastingRound', x: -2.3, z: -5.7 },
+      { type: 'exhibitPanel', x: -0.8, z: -3.6, width: 0.9 },
       wellFloor,
+      ...hallPillars,
+      ...tileFloors,
       ...backRoom(someBaskets, [
         { type: 'timelineWall', x0: -3.2, x1: -1.3, z: -6.72, block: false },
         { type: 'projectorWall', x0: -0.6, x1: 1.6, z: -11.33, block: false },

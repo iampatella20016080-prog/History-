@@ -45,7 +45,7 @@ const W = (x, z) => xfcToWorld(x, z)
 
 /** 和 tests/xinFangChun.test.js 相同的路線（本地座標）：一樓走過正廳、天井到加工廠；上樓梯、二樓走到後段再回前段 */
 const BACK = [[0, 1.0], [0, -0.6], [0, -5.6], [0, -7.2], [-0.25, -8.4]]
-const STAIRS_UP = [[0, -0.6], [2.7, -0.6], [2.7, -1.3], [2.7, -5.0]]
+const STAIRS_UP = [[0, -0.9], [2.7, -0.9], [2.7, -1.3], [2.7, -5.0]]
 const UPSTAIRS = [[1.8, -5.6], [1.8, -8.4], [1.8, -5.6], [1.6, -3.4]]
 const toWorld = (points) => points.map(([x, z]) => W(x, z))
 const route = () => toWorld(BACK)
