@@ -48,19 +48,17 @@ export const XH_ITEMS = [
   { type: 'baxianTable', x: 0, z: -3.05 },
   { type: 'keeperDesk', x: -3.9, z: -2.75, rotationY: Math.PI / 2 },
   { type: 'priestDesk', x: 4.6, z: -2.75, rotationY: -Math.PI / 2 },
-  // 拜殿與正殿交接處兩側牆前的落地神龕：謝將軍八尺、范將軍約六尺（1870 年靈安社塑）
+  // 拜殿與正殿交接處兩側牆前的落地神龕（廟方：謝范將軍神偶；神偶不畫，以簾幕示意——只畫主神與夫人，使用者 2026-11-03）
   { type: 'groundShrine', x: -4.6, z: -3.85, figure: 'xie', rotationY: Math.PI / 2 },
   { type: 'groundShrine', x: 4.6, z: -3.85, figure: 'fan', rotationY: -Math.PI / 2 },
   // ── 正殿 ──
   { type: 'mainShrine', x: 0, z: -7.33 },
-  { type: 'bigPuppet', x: -2.25, z: -7.3, figure: 'civil' },
-  { type: 'bigPuppet', x: 2.25, z: -7.3, figure: 'military' },
   { type: 'altarTable', x: 0, z: -6.45 },
   { type: 'offeringTable', x: 0, z: -5.6 },
   { type: 'cushion', x: -0.45, z: -4.85, block: false },
   { type: 'cushion', x: 0.45, z: -4.85, block: false },
   { type: 'yiyongShrine', x: -4.35, z: -7.37 },
-  // ── 右側偏殿：城隍夫人與兩位宮娥（1893 年起） ──
+  // ── 右側偏殿：城隍夫人（1893 年起；宮娥不畫） ──
   { type: 'madamShrine', x: 4.12, z: -7.42 },
   { type: 'madamTable', x: 4.12, z: -6.65 },
 ]
