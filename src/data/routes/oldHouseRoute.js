@@ -14,8 +14,8 @@
 export const OLD_HOUSE_FIGURES = [
   // 戰後的十字軒（北側街屋）門前：來買餅的鄰居，面向店面
   { id: 'old-house-szx', eraId: 'postwar', look: 'postwarDiner', pose: 'stand', position: [-11.0, -2.3], rotationY: Math.PI + 0.4 },
-  // 老屋新生的新芳春茶葉故事館：一樓正廳裡來參觀的人，看著展桌（第 11 階段可以走進去之後移進館內；data/xinFangChunLayout.js 本地 (-0.7, -2.7)）
-  { id: 'old-house-xfc', eraId: 'revival', look: 'revivalCustomer', pose: 'phone', position: [-26.3, 7.2], rotationY: Math.PI / 2 + 0.3 },
+  // 老屋新生的新芳春茶葉故事館：一樓正廳裡來參觀的人，看著展桌（第 11 階段可以走進去之後移進館內；data/xinFangChunLayout.js 本地 (-2.2, -5.6)，天井旁的紅磚地坪）
+  { id: 'old-house-xfc', eraId: 'revival', look: 'revivalCustomer', pose: 'phone', position: [-24.8, 10.1], rotationY: Math.PI / 2 + 0.3 },
   // 老屋新生的小藝埕轉角（迪化街入口）：看著洋樓立面的人
   { id: 'old-house-artyard', eraId: 'revival', look: 'revivalDinerBackpack', pose: 'stand', position: [32.6, -0.9], rotationY: Math.PI + 0.5 },
 ]

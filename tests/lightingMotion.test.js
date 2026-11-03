@@ -34,7 +34,8 @@ const PRE_MOTION = JSON.parse(readFileSync(new URL('./fixtures/preMotionWorld.js
 // 老屋新生另外加上有記名茶門市與清源堂的兩塊匾（第 11 階段），以及昭和浪漫洗濯屋的 14 面（牆上的大字、山牆的字與暖簾、門牌、
 // 「僑隆洗染」舊招牌、小牌；取代的一般街屋 south-13 原本有 3 面）
 // 新芳春茶行（第 11 階段）：門聯兩塊與二樓的匾，摩登、庶民生活、老屋新生各多三塊
-const LATER_SIGNS = { modern: 3, postwar: 3 + 3, revival: 5 + 14 - 3 + 3 }
+// 新芳春老屋新生的正廳後牆多一塊木匾「新芳春行」（使用者提供的照片）
+const LATER_SIGNS = { modern: 3, postwar: 3 + 3, revival: 5 + 14 - 3 + 3 + 1 }
 const source = (path) => readFileSync(new URL(`../src/${path}`, import.meta.url), 'utf8')
 
 function hexToRgb(hex) {
