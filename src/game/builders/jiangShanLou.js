@@ -1,4 +1,5 @@
-import { Shape, SphereGeometry } from 'three'
+import { Shape, SphereGeometry, TorusGeometry } from 'three'
+import { ROOF_GARDEN } from '../../data/jiangShanLouLayout.js'
 import { STREET } from '../config.js'
 import { createRng } from '../utils/random.js'
 import { archWindow, balcony, cornice, projectingSign, rectWindow, signBoard } from './facade.js'
@@ -552,16 +553,70 @@ function nmthSigns(b, { w, s, front, topY, walkH, detail }) {
       b.addLantern(x, y - 0.38, front + 0.5, { scale: 0.75 })
     }
   }
-  // 樓頂庭園：假山、盆景與花架（莊永明「樓頂庭園假山」、陳柔縉「四樓有花園」；形制是歷史情境重建）
+  // 樓頂庭園（歷史情境重建，依臺史博明信片〈臺灣料理江山樓屋上庭園〉2020.006.0807.0005 的配置；明信片只能瀏覽、不放圖）：
+  // 左前方有圓窗與四面坡頂的角樓（展望台）、一面開大圓洞的牆、中段的假山與花壇、後方高聳的塔柱、
+  // 右後方一排單層磚屋（四樓上來的樓梯就在磚屋裡）、女兒牆邊成排的盆栽。位置與尺寸配合 data/jiangShanLouLayout.js 的 ROOF_GARDEN
   const roofY = topY + 0.12
-  rockery(b, detail, -2.6 * s, roofY, -6.8)
-  for (const [x, z, k] of [[-4.2, -2.6, 1], [-1.0, -2.2, 2], [1.6, -2.6, 3], [-4.3, -9.6, 4], [0.6, -10.4, 5]]) pottedPlant(b, [x * s, roofY, z], { seed: 80 + k, size: 0.95 })
-  for (const x of [-0.8, 1.8]) for (const z of [-4.8, -7.6]) b.box('wood', [0.1, 2.2, 0.1], [x * s, roofY + 1.1, z], { tint: '#5a3f2b' })
-  for (const z of [-4.8, -7.6]) b.box('wood', [2.8 * s, 0.1, 0.12], [0.5 * s, roofY + 2.2, z], { tint: '#5a3f2b' })
-  for (let i = 0; i < 7; i++) detail.box('wood', [0.06, 0.06, 3.0], [(-0.8 + i * 0.43) * s, roofY + 2.28, -6.2], { tint: '#6a4a32' })
-  // 樓頂的樓梯間（四樓上來的出口，在右後角）
-  b.box('brick', [1.9, 2.5, 2.2], [4.2, topY + 1.25, -10.2], { tint: BRICK })
-  b.box('stucco', [2.1, 0.16, 2.4], [4.2, topY + 2.56, -10.2], { tint: TRIM })
+  const G = ROOF_GARDEN
+  // 角樓：紅磚身、灰泥線腳、正面圓窗、四面坡頂與老虎窗
+  {
+    const t = G.turret
+    const cx = (t.minX + t.maxX) / 2
+    const cz = (t.minZ + t.maxZ) / 2
+    const tw = t.maxX - t.minX
+    const td = t.maxZ - t.minZ
+    b.box('brick', [tw, 3.0, td], [cx, roofY + 1.5, cz], { tint: BRICK })
+    b.box('stucco', [tw + 0.12, 0.14, td + 0.12], [cx, roofY + 3.02, cz], { tint: TRIM })
+    b.cylinder('roof', 0.08, Math.hypot(tw, td) / 2 + 0.15, 1.3, 4, [cx, roofY + 3.75, cz], { rotation: [0, Math.PI / 4, 0], tint: '#7a5a4a' })
+    b.cylinder('stucco', 0.36, 0.36, 0.06, 16, [cx, roofY + 1.9, t.maxZ + 0.03], { rotation: [Math.PI / 2, 0, 0], tint: TRIM })
+    b.cylinder('windowLit', 0.27, 0.27, 0.05, 16, [cx, roofY + 1.9, t.maxZ + 0.05], { rotation: [Math.PI / 2, 0, 0], tint: '#6b4b33' })
+    b.box('stucco', [0.5, 0.42, 0.36], [cx, roofY + 3.6, t.maxZ - 0.15], { tint: TRIM })
+    detail.box('windowLit', [0.3, 0.26, 0.02], [cx, roofY + 3.6, t.maxZ + 0.04], { tint: '#6b4b33' })
+  }
+  // 開大圓洞的牆（洞口可以穿過；圓心壓低一點，洞底是平的門檻）：洞的外接方框分成十條橫片，每條補上圓外的兩角
+  {
+    const w0 = G.moonWall
+    const h = 2.7
+    const r = w0.r
+    const cy = roofY + r - 0.15
+    const wall = (x0, x1, y0, y1) => b.box('stucco', [x1 - x0, y1 - y0, 0.25], [(x0 + x1) / 2, (y0 + y1) / 2, w0.z], { tint: '#ece2cc' })
+    wall(w0.x0, w0.cx - r, roofY, roofY + h)
+    wall(w0.cx + r, w0.x1, roofY, roofY + h)
+    wall(w0.cx - r, w0.cx + r, cy + r, roofY + h)
+    const n = 10
+    const step = (cy + r - roofY) / n
+    for (let k = 0; k < n; k++) {
+      const y0 = roofY + k * step
+      const dy = y0 + step / 2 - cy
+      const half = Math.sqrt(Math.max(0, r * r - dy * dy))
+      if (r - half < 0.01) continue
+      wall(w0.cx - r, w0.cx - half, y0, y0 + step)
+      wall(w0.cx + half, w0.cx + r, y0, y0 + step)
+    }
+    b.add('stucco', new TorusGeometry(r, 0.07, 6, 28), { position: [w0.cx, cy, w0.z + 0.13], tint: TRIM })
+    b.box('stucco', [w0.x1 - w0.x0 + 0.1, 0.1, 0.32], [(w0.x0 + w0.x1) / 2, roofY + h + 0.05, w0.z], { tint: TRIM })
+  }
+  // 假山與花壇
+  rockery(b, detail, G.rockery.x, roofY, G.rockery.z)
+  // 後方的塔柱
+  b.box('brick', [G.tower.size, 5.5, G.tower.size], [G.tower.x, roofY + 2.75, G.tower.z], { tint: BRICK })
+  b.box('stucco', [G.tower.size + 0.14, 0.18, G.tower.size + 0.14], [G.tower.x, roofY + 5.55, G.tower.z], { tint: TRIM })
+  // 右後方的單層磚屋（樓梯間）：前牆、左牆（門口開著）、屋頂；後牆與右牆接建築的外牆
+  {
+    const r = G.range
+    const h = 2.6
+    b.box('brick', [r.frontX1 - r.minX, h, 0.22], [(r.minX + r.frontX1) / 2, roofY + h / 2, r.maxZ], { tint: BRICK })
+    b.box('brick', [0.22, h, r.doorMinZ - r.minZ], [r.minX, roofY + h / 2, (r.minZ + r.doorMinZ) / 2], { tint: BRICK })
+    b.box('brick', [0.22, h, r.maxZ - r.doorMaxZ], [r.minX, roofY + h / 2, (r.doorMaxZ + r.maxZ) / 2], { tint: BRICK })
+    b.box('brick', [0.22, h - 2.2, r.doorMaxZ - r.doorMinZ], [r.minX, roofY + 2.2 + (h - 2.2) / 2, (r.doorMinZ + r.doorMaxZ) / 2], { tint: BRICK })
+    b.box('stucco', [r.maxX - r.minX + 0.3, 0.16, r.maxZ - r.minZ + 0.3], [(r.minX + r.maxX) / 2, roofY + h + 0.08, (r.minZ + r.maxZ) / 2], { tint: TRIM })
+    for (const x of [r.minX + 0.6, r.minX + 1.3]) b.box('windowLit', [0.5, 0.7, 0.04], [x, roofY + 1.6, r.maxZ + 0.12], { tint: '#6b4b33' })
+  }
+  // 女兒牆邊成排的盆栽（盆下矮架）
+  for (const [x, z] of G.pots) {
+    b.box('wood', [0.5, 0.18, 0.5], [x, roofY + 0.09, z], { tint: '#5a3f2b' })
+    pottedPlant(b, [x, roofY + 0.18, z], { seed: Math.round(80 + x * 7 + z * 3), size: 0.8 })
+  }
 }
 
 /** 假山：幾塊疊起來的石頭與一棵小樹（形制查無，示意） */

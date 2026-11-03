@@ -400,8 +400,24 @@ describe('江山樓：情境人物與可以近看的器物', () => {
     }
   })
 
+  test('使用者 2026-11-03 的決定：不做錫酒壺；青花碗的 lead 跨年代共用、江山樓的說法在 where 層；吳瀛濤的文字都標轉引自張愛敏 2008（或曾品滄的轉述）；三樓與樓頂標依臺史博明信片', () => {
+    assert.equal(getInspectObject('pewter-wine-pot'), null)
+    const bowl = getInspectObject('blue-white-bowl')
+    assert.doesNotMatch(bowl.lead, /江山樓|鶯歌燒/)
+    assert.ok(bowl.layers.where.some((note) => /江山樓/.test(note.text)))
+    for (const id of ['banquet-menu', 'banquet-course', 'congratulatory-plaque', 'beer-bottle', 'partition-screen', 'roof-rockery', 'roof-bonsai', 'marble-round-table', 'blue-white-bowl']) {
+      const object = getInspectObject(id)
+      const notes = [{ text: object.lead, textEn: object.leadEn }, ...Object.values(object.layers).flat()]
+      for (const note of notes) {
+        if (/吳瀛濤/.test(note.text)) assert.match(note.text, /張愛敏|曾品滄/, `${id} ${note.text}`)
+        if (/Wu Ying-tao/.test(note.textEn ?? '')) assert.match(note.textEn, /Chang|Tseng/, `${id} ${note.textEn}`)
+      }
+    }
+    for (const id of ['third-floor', 'roof-garden']) assert.match(JSL_INTERIOR_HOTSPOTS.find((h) => h.id === id).note, /歷史情境重建（依臺史博明信片 2020\.006\.0807\.000[35]）/, id)
+  })
+
   test('新器物（菜單、金錢火雞、賀匾、三樓的啤酒瓶與門屏、樓頂的假山、盆栽與大理石圓桌座）五層資訊齊全、3D 模型建得出來，動作有對應的零件；行啟午宴寫明不在江山樓', () => {
-    for (const id of ['banquet-menu', 'banquet-course', 'congratulatory-plaque', 'beer-bottle', 'partition-screen', 'roof-rockery', 'roof-bonsai', 'marble-round-table']) {
+    for (const id of ['banquet-menu', 'banquet-course', 'congratulatory-plaque', 'beer-bottle', 'partition-screen', 'roof-rockery', 'roof-bonsai', 'marble-round-table', 'blue-white-bowl']) {
       const object = getInspectObject(id)
       assert.ok(object && object.titleEn && object.leadEn, id)
       assert.ok(hasFullLayers(object, inspectPlaces(id)), id)

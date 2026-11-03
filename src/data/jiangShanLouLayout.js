@@ -32,9 +32,9 @@ export const JSL_SHELL = {
 
 /**
  * 三樓、四樓與樓頂（builders/upperFloors.js；第 11 階段擴充，2026-11-03）：
- * - 三樓（level 2）：宴會場，同二樓的格局（前段大廳、後段一小間可以進去、走廊與其他廳的門關著）
+ * - 三樓（level 2）：一整片宴會大廳（依臺史博明信片 2020.006.0807.0003 重建）
  * - 四樓（level 3）：只有樓梯間可以走，四樓的房間不畫
- * - 樓頂（level 4）：露天的庭園，假山、盆景與花架在建築外觀（jiangShanLou.js 的 nmthSigns），這裡只登記它們的碰撞
+ * - 樓頂（level 4）：露天的庭園（依明信片 2020.006.0807.0005 重建），角樓、圓洞牆、假山、塔柱、磚屋與盆栽在建築外觀（jiangShanLou.js 的 nmthSigns），這裡只登記它們的碰撞
  * 樓梯都沿右牆（x 4.0–5.0）；三、四樓的高度跟外觀的樓層（一樓 4.5 m、樓上每層 3.6 m）對齊。
  */
 const ROOF_Y = 4.5 + 3.6 * 3 + 0.12
@@ -64,6 +64,38 @@ export const JSL_UPPER = [
     stair: { minX: 4.0, maxX: 5.0, bottomZ: -6.0, topZ: -9.6, landingZ: -9.6 },
   },
 ]
+
+/**
+ * 樓頂庭園的配置（歷史情境重建，依臺史博明信片 2020.006.0807.0005；builders/jiangShanLou.js 依這裡畫）：
+ * 左前角的角樓（展望台）、中段開圓洞的牆、假山、左後的塔柱、右後的單層磚屋（四樓的樓梯從磚屋裡上來，門在左牆）、女兒牆邊的盆栽
+ */
+export const ROOF_GARDEN = {
+  turret: { minX: -5.0, maxX: -3.4, minZ: -2.6, maxZ: -0.8 },
+  moonWall: { x0: -5.0, x1: -0.4, cx: -2.7, r: 0.9, z: -4.6 },
+  rockery: { x: -2.4, z: -7.4 },
+  tower: { x: -4.3, z: -10.5, size: 1.2 },
+  range: { minX: 3.4, maxX: 5.0, frontX1: 5.0, minZ: -11.2, maxZ: -5.4, doorMinZ: -10.9, doorMaxZ: -9.4 },
+  pots: [[-2.4, -1.15], [2.6, -1.15], [3.7, -1.15], [4.6, -2.2], [4.6, -3.4], [4.6, -4.6], [-4.65, -5.6], [-4.65, -6.8], [-4.65, -8.0]],
+}
+
+function roofGardenObstacles() {
+  const G = ROOF_GARDEN
+  const o = (minX, maxX, minZ, maxZ) => ({ type: 'roofObstacle', minX, maxX, minZ, maxZ })
+  const w = G.moonWall
+  const r = G.range
+  return [
+    o(G.turret.minX, G.turret.maxX, G.turret.minZ, G.turret.maxZ),
+    // 洞底的門檻寬約 1 公尺，碰撞留 1.1 公尺可以穿過
+    o(w.x0, w.cx - 0.55, w.z - 0.15, w.z + 0.15),
+    o(w.cx + 0.55, w.x1, w.z - 0.15, w.z + 0.15),
+    o(G.rockery.x - 1.35, G.rockery.x + 1.05, G.rockery.z - 1.05, G.rockery.z + 1.05),
+    o(G.tower.x - G.tower.size / 2, G.tower.x + G.tower.size / 2, G.tower.z - G.tower.size / 2, G.tower.z + G.tower.size / 2),
+    o(r.minX - 0.12, r.maxX, r.maxZ - 0.12, r.maxZ + 0.12),
+    o(r.minX - 0.12, r.minX + 0.12, r.minZ, r.doorMinZ),
+    o(r.minX - 0.12, r.minX + 0.12, r.doorMaxZ, r.maxZ),
+    ...G.pots.map(([x, z]) => o(x - 0.28, x + 0.28, z - 0.28, z + 0.28)),
+  ]
+}
 
 /**
  * 二、三樓的後段（z 以後）：通往走廊的牆（中間 x 1.4–2.6 開著）、隔出一小間宴會廳的牆（x=-0.6，門口 1.2 公尺開著）、
@@ -125,20 +157,33 @@ export const JSL_VARIANTS = {
     },
     // 三樓、四樓的樓梯間與樓頂（builders/upperFloors.js）；新器物的位置先留好（器物的分層文字由研究補上後再接成可以近看的器物）
     floors: {
+      // 三樓：一整片大廳（歷史情境重建，依臺史博明信片 2020.006.0807.0003）：深色方柱、白桌布的圓桌與方桌、
+      // 左牆一排長桌長凳、牆高處有欄杆的迴廊、球形吊燈、裡面的備餐櫃、橫匾（明信片裡一面讀得出「得少佳趣」）。
+      // 木板門屏（吳瀛濤：每間以木板門屏隔開，轉引自張愛敏 2008）收起來靠在後牆：拆開門屏就是這一整廳（本站的推測）
       2: {
         items: [
-          { type: 'roundTable', x: -3.0, z: -2.6 },
+          { type: 'roundTable', x: -2.0, z: -2.6 },
           { type: 'roundTable', x: 0.6, z: -2.6, menu: true },
-          { type: 'sideboard', x: -4.85, z: -4.8 },
+          { type: 'roundTable', x: -1.6, z: -9.4 },
+          { type: 'squareTable', x: -1.8, z: -6.0 },
+          { type: 'squareTable', x: 0.4, z: -6.0 },
+          { type: 'squareColumn', x: -0.7, z: -4.3 },
+          { type: 'squareColumn', x: -0.7, z: -7.9 },
+          { type: 'squareColumn', x: 1.6, z: -7.9 },
+          { type: 'longTable', x: -4.75, z: -3.0, length: 2.8 },
+          { type: 'longTable', x: -4.75, z: -7.1, length: 2.8 },
+          { type: 'sideboard', x: -4.85, z: -10.3 },
           { type: 'beerCrate', x: -4.6, z: -0.95 },
-          // 宴廳之間的木板門屏（吳瀛濤：每間以木板門屏隔開；形制是重建），推開收在走廊門口兩側
-          { type: 'doorScreen', x: 2.0, z: -6.5, width: 1.2, block: false },
-          ...backRooms(-6.5),
-          { type: 'hallPlaque', x: -2.4, z: -6.33, y: 2.3, block: false },
-          { type: 'adBanner', x: 0.4, z: -6.25, block: false },
+          { type: 'doorScreen', x: 1.0, z: -11.4, width: 1.2, block: false },
+          { type: 'gallery', x0: -5.1, x1: -4.9, z0: -11.2, z1: -0.6, y: 2.55, inward: 1 },
+          { type: 'gallery', x0: -5.1, x1: 3.8, z0: -11.4, z1: -11.2, y: 2.55, inward: 1 },
+          ...[[-2.0, -2.6], [0.6, -2.6], [-1.8, -6.0], [0.4, -6.0], [-1.6, -9.4], [2.6, -9.6]].map(([x, z]) => ({ type: 'globeLamp', x, z, ceiling: 3.1 })),
+          { type: 'hallPlaque', x: -2.4, z: -11.33, y: 1.95, block: false },
+          { type: 'hallPlaque', x: 0.9, z: -11.33, y: 1.95, block: false },
+          { type: 'adBanner', x: 2.9, z: -11.25, block: false },
         ],
         npcs: [
-          { id: 'jsl-3f-waitress', look: 'jslWaitress', pose: 'stand', x: -4.15, z: -3.8, rotationY: Math.PI / 2, seatY: 0 },
+          { id: 'jsl-3f-waitress', look: 'jslWaitress', pose: 'stand', x: -3.5, z: -5.0, rotationY: Math.PI / 2, seatY: 0 },
           { id: 'jsl-3f-guest-a', look: 'jslGuestC', pose: 'rest', x: 0.6, z: -1.65, rotationY: Math.PI, seatY: 0.46 },
           { id: 'jsl-3f-guest-b', look: 'jslGuest', pose: 'rest', x: 1.55, z: -2.6, rotationY: -Math.PI / 2, seatY: 0.46 },
         ],
@@ -148,13 +193,12 @@ export const JSL_VARIANTS = {
         npcs: [],
       },
       4: {
-        // 樓頂庭園（外觀已畫）：假山、盆景與花架柱的碰撞
+        // 樓頂庭園（外觀已畫，配置依臺史博明信片 2020.006.0807.0005）：角樓、圓洞牆、假山、塔柱、磚屋與盆栽的碰撞
         items: [
-          // 屋頂的大理石圓桌座（吳瀛濤；一桌幾人、桌面大小查無，示意）
-          { type: 'marbleTable', x: 2.8, z: -9.0 },
-          { type: 'roofObstacle', minX: -3.95, maxX: -1.25, minZ: -7.85, maxZ: -5.75 },
-          ...[[-4.2, -2.6], [-1.0, -2.2], [1.6, -2.6], [-4.3, -9.6], [0.6, -10.4]].map(([x, z]) => ({ type: 'roofObstacle', minX: x - 0.3, maxX: x + 0.3, minZ: z - 0.3, maxZ: z + 0.3 })),
-          ...[-0.8, 1.8].flatMap((x) => [-4.8, -7.6].map((z) => ({ type: 'roofObstacle', minX: x - 0.12, maxX: x + 0.12, minZ: z - 0.12, maxZ: z + 0.12 }))),
+          // 大理石圓桌座（吳瀛濤，轉引自張愛敏 2008；一桌幾人、桌面大小查無，示意）
+          { type: 'marbleTable', x: 0.0, z: -9.4 },
+          { type: 'marbleTable', x: -1.2, z: -2.4 },
+          ...roofGardenObstacles(),
         ],
         npcs: [],
       },
@@ -204,7 +248,7 @@ export const JSL_INTERIOR_HOTSPOTS = [
   {
     id: 'office',
     label: '辦公廳', labelEn: 'Office',
-    note: '一樓充作辦公廳、廚房、作業地，使用人經常有五十名以上（吳瀛濤）', noteEn: 'The ground floor served as office, kitchen and workrooms, with fifty or more staff as a rule (Wu Ying-tao)',
+    note: '一樓充作辦公廳、廚房、作業地，使用人經常有五十名以上（吳瀛濤，轉引自張愛敏 2008）', noteEn: 'The ground floor served as office, kitchen and workrooms, with fifty or more staff as a rule (Wu Ying-tao, cited via Chang Ai-min 2008)',
     chapter: 'history',
     level: 0, radius: 1.6,
     point: [1.0, -5.2], prompt: [0.9, 2.6, -5.6],
@@ -213,7 +257,7 @@ export const JSL_INTERIOR_HOTSPOTS = [
   {
     id: 'third-floor',
     label: '三樓的宴會場', labelEn: 'Third-floor banquet rooms',
-    note: '二、三樓都是宴會場（陳柔縉）；這裡畫一間大廳與後面一小間，其他廳的門關著', noteEn: 'The second and third floors were both banquet floors (Chen Rou-chin); one large hall and a small room behind are shown, the other rooms’ doors closed',
+    note: '二、三樓都是宴會場（陳柔縉）。三樓畫成一整片大廳：方柱、圓桌方桌、左牆長桌長凳、迴廊欄杆與球形吊燈，是歷史情境重建（依臺史博明信片 2020.006.0807.0003）；收在後牆的木板門屏是推測', noteEn: 'The second and third floors were both banquet floors (Chen Rou-chin). The third floor is shown as one large hall—square columns, round and square tables, long tables and benches on the left wall, a railed gallery and globe lamps—a historical reconstruction based on NMTH postcard 2020.006.0807.0003; the folded door-screens against the back wall are this site’s inference',
     chapter: 'banquet',
     level: 2, radius: 2.2,
     point: [2.6, -4.6], prompt: [2.6, F3 + 2.2, -4.6],
@@ -231,11 +275,11 @@ export const JSL_INTERIOR_HOTSPOTS = [
   {
     id: 'roof-garden',
     label: '樓頂庭園', labelEn: 'Roof garden',
-    note: '樓頂有庭園與假山（莊永明）；陳柔縉寫四樓有花園。假山、盆景與花架的樣子是示意', noteEn: 'The roof had a garden with an artificial hill (Chuang Yung-ming); Chen Rou-chin says the fourth floor had a garden. The rockery, potted plants and trellis are illustrative',
+    note: '樓頂有庭園與假山（莊永明）；陳柔縉寫四樓有花園。角樓、圓洞牆、磚屋、塔柱與盆栽的配置是歷史情境重建（依臺史博明信片 2020.006.0807.0005），細部是示意', noteEn: 'The roof had a garden with an artificial hill (Chuang Yung-ming); Chen Rou-chin says the fourth floor had a garden. The turret, moon-gate wall, brick range, tower and potted plants are a historical reconstruction based on NMTH postcard 2020.006.0807.0005; details are illustrative',
     chapter: 'history',
     level: 4, radius: 2.4,
     point: [1.6, -6.2], prompt: [1.6, ROOF_Y + 2.2, -6.2],
-    camera: { position: [3.2, ROOF_Y + 2.4, -1.6], target: [-2.6, ROOF_Y + 0.8, -6.8] },
+    camera: { position: [3.2, ROOF_Y + 2.4, -1.6], target: [-3.0, ROOF_Y + 1.2, -4.6] },
   },
 ]
 
@@ -248,9 +292,10 @@ export const JSL_INSPECT_SPOTS = {
   'jsl-abacus': { position: at(2.45, 0.85, -5.65), prompt: at(2.45, 1.4, -4.9), radius: 1.6 },
   'jsl-3f-menu': { position: at(0.85, F3 + 0.82, -2.25), prompt: at(0.85, F3 + 1.4, -1.5), radius: 1.9, level: 2 },
   'jsl-3f-beer': { position: at(-4.6, F3 + 0.8, -0.95), prompt: at(-4.0, F3 + 1.4, -1.2), radius: 1.6, level: 2 },
-  'jsl-3f-screen': { position: at(2.0, F3 + 1.2, -6.5), prompt: at(2.0, F3 + 2.0, -5.9), radius: 1.6, level: 2 },
-  'jsl-roof-rockery': { position: at(-2.6, ROOF_Y + 0.8, -6.8), prompt: at(-1.2, ROOF_Y + 1.8, -6.8), radius: 2.2, level: 4 },
-  'jsl-roof-bonsai': { position: at(-4.3, ROOF_Y + 0.6, -9.6), prompt: at(-3.7, ROOF_Y + 1.4, -9.3), radius: 1.6, level: 4 },
-  'jsl-roof-marble': { position: at(2.8, ROOF_Y + 0.75, -9.0), prompt: at(2.8, ROOF_Y + 1.4, -8.0), radius: 1.8, level: 4 },
-  'jsl-3f-plaque': { position: at(-2.4, F3 + 2.3, -6.3), prompt: at(-2.4, F3 + 1.9, -5.7), radius: 2.0, level: 2 },
+  'jsl-3f-screen': { position: at(1.0, F3 + 1.2, -11.0), prompt: at(1.0, F3 + 2.0, -10.2), radius: 1.6, level: 2 },
+  'jsl-roof-rockery': { position: at(-2.4, ROOF_Y + 0.8, -7.4), prompt: at(-0.6, ROOF_Y + 1.8, -7.0), radius: 2.2, level: 4 },
+  'jsl-roof-bonsai': { position: at(-4.65, ROOF_Y + 0.6, -5.6), prompt: at(-3.8, ROOF_Y + 1.4, -5.6), radius: 1.6, level: 4 },
+  'jsl-roof-marble': { position: at(0.0, ROOF_Y + 0.75, -9.4), prompt: at(0.6, ROOF_Y + 1.4, -8.2), radius: 1.8, level: 4 },
+  'jsl-3f-bowl': { position: at(-4.85, F3 + 0.95, -10.3), prompt: at(-4.0, F3 + 1.5, -10.3), radius: 1.5, level: 2 },
+  'jsl-3f-plaque': { position: at(-2.4, F3 + 1.95, -11.3), prompt: at(-2.4, F3 + 1.9, -10.6), radius: 2.0, level: 2 },
 }

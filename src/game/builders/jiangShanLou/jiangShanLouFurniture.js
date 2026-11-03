@@ -310,4 +310,85 @@ export const JSL_FURNITURE = {
     footprint: (item) => rect(item.x - 0.25, item.x + 0.25, item.z - 0.05, item.z + 0.05),
     height: () => 0,
   },
+
+  // 三樓大廳（歷史情境重建，依臺史博明信片〈臺灣料理江山樓三樓宴會場〉2020.006.0807.0003 目視；只能瀏覽、不放圖）
+
+  /** 深色的方柱 */
+  squareColumn: {
+    build(b, item) {
+      b.box('wood', [0.32, 3.1, 0.32], [item.x, 1.55, item.z], { tint: DARK })
+      b.box('wood', [0.42, 0.12, 0.42], [item.x, 0.06, item.z], { tint: shade(DARK, 0.8) })
+    },
+    footprint: (item) => around(item.x, item.z, 0.18),
+    height: () => 3.1,
+  },
+
+  /** 白桌布的方桌與四張直條靠背木椅（坐墊） */
+  squareTable: {
+    build(b, item, detail) {
+      const { x, z } = item
+      b.box('cloth', [1.0, 0.04, 1.0], [x, 0.78, z], { tint: CLOTH })
+      b.box('cloth', [1.04, 0.3, 1.04], [x, 0.62, z], { tint: '#ece7db' })
+      for (const sx of [-1, 1]) for (const sz of [-1, 1]) b.box('wood', [0.06, 0.48, 0.06], [x + sx * 0.44, 0.24, z + sz * 0.44], { tint: DARK })
+      for (let i = 0; i < 4; i++) {
+        const a = (i * Math.PI) / 2
+        b.group([x + Math.cos(a) * 0.82, 0, z + Math.sin(a) * 0.82], -a - Math.PI / 2, () => {
+          b.box('wood', [0.4, 0.04, 0.38], [0, 0.45, 0], { tint: '#3a281d' })
+          b.box('cloth', [0.34, 0.03, 0.32], [0, 0.48, 0], { tint: '#8a3a2c' })
+          for (const sx of [-1, 1]) for (const sz of [-1, 1]) b.box('wood', [0.03, 0.45, 0.03], [sx * 0.17, 0.225, sz * 0.16], { tint: '#3a281d' })
+          for (let k = 0; k < 5; k++) detail.box('wood', [0.03, 0.42, 0.02], [-0.16 + k * 0.08, 0.7, -0.18], { tint: '#33241a' })
+          b.box('wood', [0.4, 0.04, 0.03], [0, 0.92, -0.18], { tint: '#33241a' })
+        })
+      }
+    },
+    footprint: (item) => around(item.x, item.z, 1.05),
+    height: () => 1.0,
+  },
+
+  /** 沿左牆的一排長桌與長凳 */
+  longTable: {
+    build(b, item) {
+      const { x, z, length } = item
+      b.box('cloth', [0.6, 0.04, length], [x, 0.78, z], { tint: CLOTH })
+      for (const dz of [-1, 1]) for (const dx of [-1, 1]) b.box('wood', [0.05, 0.76, 0.05], [x + dx * 0.24, 0.38, z + dz * (length / 2 - 0.1)], { tint: DARK })
+      b.box('wood', [0.3, 0.05, length], [x + 0.62, 0.45, z], { tint: LACQUER })
+      for (const dz of [-1, 1]) b.box('wood', [0.24, 0.43, 0.05], [x + 0.62, 0.215, z + dz * (length / 2 - 0.12)], { tint: shade(LACQUER, 0.85) })
+    },
+    footprint: (item) => rect(item.x - 0.32, item.x + 0.8, item.z - item.length / 2, item.z + item.length / 2),
+    height: () => 1.0,
+  },
+
+  /** 牆高處有欄杆的迴廊（只是牆上的一條走道與欄杆，走不上去） */
+  gallery: {
+    build(b, item, detail) {
+      const { x0, x1, z0, z1, y } = item
+      const alongX = Math.abs(x1 - x0) > Math.abs(z1 - z0)
+      const len = alongX ? Math.abs(x1 - x0) : Math.abs(z1 - z0)
+      const cx = (x0 + x1) / 2
+      const cz = (z0 + z1) / 2
+      const n = item.inward
+      const ledge = alongX ? [len, 0.08, 0.45] : [0.45, 0.08, len]
+      const off = (v) => (alongX ? [cx, v[0], cz + n * v[1]] : [cx + n * v[1], v[0], cz])
+      b.box('wood', ledge, off([y, 0.22]), { tint: DARK })
+      b.box('wood', alongX ? [len, 0.05, 0.05] : [0.05, 0.05, len], off([y + 0.42, 0.42]), { tint: DARK })
+      const count = Math.floor(len / 0.22)
+      for (let i = 0; i <= count; i++) {
+        const t = -len / 2 + (i * len) / count
+        const pos = alongX ? [cx + t, y + 0.21, cz + n * 0.42] : [cx + n * 0.42, y + 0.21, cz + t]
+        ;(i % 4 ? detail : b).box('wood', [0.03, 0.38, 0.03], pos, { tint: shade(DARK, 1.2) })
+      }
+    },
+    footprint: (item) => rect(item.x0, item.x1, item.z0, item.z1),
+    height: () => 0,
+  },
+
+  /** 白玻璃的球形吊燈 */
+  globeLamp: {
+    build(b, item) {
+      b.box('steel', [0.015, 0.5, 0.015], [item.x, item.ceiling - 0.25, item.z], { tint: '#3a3a3a' })
+      b.add('glass', new SphereGeometry(0.17, 12, 8), { position: [item.x, item.ceiling - 0.62, item.z], tint: '#f6f1df' })
+    },
+    footprint: (item) => around(item.x, item.z, 0.01),
+    height: () => 0,
+  },
 }

@@ -56,8 +56,8 @@ export const JSL_OBJECTS_2 = {
           status: 'hearsay',
         },
         {
-          text: '吳瀛濤說江山樓「以佳餚美酒著稱」；桌上擺的是啤酒、紅酒還是老酒，本站查無，這瓶啤酒是依招牌的推想。',
-          textEn: 'Wu Ying-tao says Jiangshanlou was known for fine food and wine; whether beer, red rice wine or aged wine stood on the tables is not found, so this bottle is inferred from the signs.',
+          text: '吳瀛濤說江山樓「以佳餚美酒著稱」；桌上擺的是啤酒、紅酒還是老酒，本站查無，這瓶啤酒是依招牌的推想。（轉引自張愛敏 2008）',
+          textEn: 'Wu Ying-tao says Jiangshanlou was known for fine food and wine; whether beer, red rice wine or aged wine stood on the tables is not found, so this bottle is inferred from the signs. (cited via Chang Ai-min 2008)',
           sourceIds: ['chang-aimin-thesis-2008'],
           status: 'reconstruction',
         },
@@ -78,8 +78,8 @@ export const JSL_OBJECTS_2 = {
     id: 'partition-screen',
     title: '宴廳的木板門屏',
     titleEn: 'The banquet-room partition screens',
-    lead: '吳瀛濤回憶，江山樓二、三樓各有七間宴廳，每間用木板門屏隔開，牆上掛著一二十幅名流的筆墨。',
-    leadEn: 'Wu Ying-tao recalled that the second and third floors each had seven banquet rooms, divided by wooden door-screens, with ten or twenty pieces of calligraphy by notable guests on the walls.',
+    lead: '吳瀛濤回憶，江山樓二、三樓各有七間宴廳，每間用木板門屏隔開，牆上掛著一二十幅名流的筆墨。（轉引自張愛敏 2008）',
+    leadEn: 'Wu Ying-tao recalled that the second and third floors each had seven banquet rooms, divided by wooden door-screens, with ten or twenty pieces of calligraphy by notable guests on the walls. (cited via Chang Ai-min 2008)',
     actions: [{ id: 'open', label: '推開門屏', labelEn: 'Slide the screens open', doneLabel: '合上', doneLabelEn: 'Close them' }],
     paragraphs: ['板面、格心與高度本站沒有找到照片或描述，模型的樣子是示意。'],
     paragraphsEn: ['No photograph or description of the panels, lattice or height was found; the model is illustrative.'],
@@ -89,7 +89,7 @@ export const JSL_OBJECTS_2 = {
       form: [
         { text: '可開合的木板門屏；板面、格心與高度本站沒有找到照片或描述，模型的樣子是示意。', textEn: 'Wooden door-screens that open and close; no photograph or description of the panels, lattice or height was found, so the model is illustrative.', status: 'reconstruction' },
         {
-          text: '〔照片〕臺史博明信片〈臺灣料理江山樓三樓宴會場〉：一整片大廳，深色方柱、白桌布的圓桌與方桌、有坐墊的直條靠背木椅，左牆邊一排長桌長凳；高處有橫匾（其中一面可以讀出「得少佳趣」）、裱框的扇面畫、一框三面團扇；上方有欄杆的迴廊；白玻璃球形吊燈；最裡面有備餐櫃和一個站著的人。照片裡沒看到門屏——把七間打通成一廳，正合吳瀛濤說的「門屏隔開」，但這是本站的推測。',
+          text: '〔照片〕臺史博明信片〈臺灣料理江山樓三樓宴會場〉：一整片大廳，深色方柱、白桌布的圓桌與方桌、有坐墊的直條靠背木椅，左牆邊一排長桌長凳；高處有橫匾（其中一面可以讀出「得少佳趣」）、裱框的扇面畫、一框三面團扇；上方有欄杆的迴廊；白玻璃球形吊燈；最裡面有備餐櫃和一個站著的人。照片裡沒看到門屏——把七間打通成一廳，正合吳瀛濤說的「門屏隔開」，但這是本站的推測。（轉引自張愛敏 2008）',
           textEn: 'In the NMTH postcard “Jiangshanlou third-floor banquet hall”: one large hall with dark square columns, round and square tables under white cloths, slat-back wooden chairs with cushions, a row of long tables and benches along the left wall; high up, horizontal inscribed boards (one reads 「得少佳趣」), framed fan paintings and a frame of three round fans; a railed gallery above; white globe pendant lamps; a sideboard and a standing figure at the far end. No screens are visible—seven rooms opened into one hall fits Wu’s “divided by door-screens”, but that is this site’s inference.',
           sourceIds: ['nmth-jsl-banquet-hall-postcard'],
           status: 'reconstruction',
@@ -134,8 +134,8 @@ export const JSL_OBJECTS_2 = {
     layers: {
       form: [
         {
-          text: '〔照片〕臺史博明信片〈臺灣料理江山樓屋上庭園〉（2026-11-03 目視）：平屋頂、矮女兒牆；庭園中段有一片用矮緣圍起、種著樹和灌木的花壇；旁邊一面牆開著大圓洞；後方一根高聳的煙囪狀塔柱；左邊是有圓窗和老虎窗、四面坡頂的角樓（可能是吳瀛濤說的「四五樓展望台」）；右邊是一排有窗的單層磚屋（可能是浴場或接應室）。照片小，看不出堆石，假山的形狀是重建。',
-          textEn: 'In the NMTH postcard “Jiangshanlou roof garden” (viewed 3 Nov 2026): a flat roof with a low parapet; mid-way a bed edged with a low kerb and planted with trees and shrubs; beside it a wall pierced by a large round opening; behind, a tall chimney-like tower; on the left a corner turret with a round window, dormers and a hipped roof (perhaps Wu Ying-tao’s “fourth- and fifth-floor lookout”); on the right a single-storey brick range with windows (perhaps the bathhouse or reception room). The print is small and shows no piled stones, so the rockery’s shape is reconstructed.',
+          text: '〔照片〕臺史博明信片〈臺灣料理江山樓屋上庭園〉（2026-11-03 目視）：平屋頂、矮女兒牆；庭園中段有一片用矮緣圍起、種著樹和灌木的花壇；旁邊一面牆開著大圓洞；後方一根高聳的煙囪狀塔柱；左邊是有圓窗和老虎窗、四面坡頂的角樓（可能是吳瀛濤說的「四五樓展望台」）；右邊是一排有窗的單層磚屋（可能是浴場或接應室）。照片小，看不出堆石，假山的形狀是重建。（轉引自張愛敏 2008）',
+          textEn: 'In the NMTH postcard “Jiangshanlou roof garden” (viewed 3 Nov 2026): a flat roof with a low parapet; mid-way a bed edged with a low kerb and planted with trees and shrubs; beside it a wall pierced by a large round opening; behind, a tall chimney-like tower; on the left a corner turret with a round window, dormers and a hipped roof (perhaps Wu Ying-tao’s “fourth- and fifth-floor lookout”); on the right a single-storey brick range with windows (perhaps the bathhouse or reception room). The print is small and shows no piled stones, so the rockery’s shape is reconstructed. (cited via Chang Ai-min 2008)',
           sourceIds: ['nmth-jsl-roof-garden-postcard'],
           status: 'pending',
         },
@@ -146,8 +146,8 @@ export const JSL_OBJECTS_2 = {
         { text: '莊永明：紅磚四層連棟街屋，有宴會廳、廚房、浴室、理髮室，樓頂有庭園假山。', textEn: 'Chuang Yung-ming: a four-storey red-brick row with banquet rooms, kitchens, baths and a barber’s, and a roof garden with rockery.', sourceIds: ['jaung-jiang-shan-lou-2015'] },
         { text: '陳柔縉：「一樓有廚房和辦公室，二、三樓才是宴會場，四樓則有花園。」', textEn: 'Chen Rou-chin: kitchen and office on the ground floor, banquet rooms on the second and third, a garden on the fourth.', sourceIds: ['storm-2022-chen-rouchin-jiangshanlou'] },
         {
-          text: '吳瀛濤：四樓另闢特別接應室一間、洋式洗澡房十房、理髮室、屋頂庭園，還有四五樓展望台。',
-          textEn: 'Wu Ying-tao: on the fourth floor a special reception room, ten Western-style bathrooms, a barber’s and the roof garden, with a lookout on the fourth and fifth floors.',
+          text: '吳瀛濤：四樓另闢特別接應室一間、洋式洗澡房十房、理髮室、屋頂庭園，還有四五樓展望台。（轉引自張愛敏 2008）',
+          textEn: 'Wu Ying-tao: on the fourth floor a special reception room, ten Western-style bathrooms, a barber’s and the roof garden, with a lookout on the fourth and fifth floors. (cited via Chang Ai-min 2008)',
           sourceIds: ['chang-aimin-thesis-2008', 'wu-yingtao-1958-jiangshanlou'],
         },
         {
@@ -213,8 +213,8 @@ export const JSL_OBJECTS_2 = {
     id: 'marble-round-table',
     title: '屋頂的大理石圓桌座',
     titleEn: 'Marble round tables on the roof',
-    lead: '吳瀛濤回憶，江山樓的屋頂庭園有「可容納五七十人的大理圓石桌座」。',
-    leadEn: 'Wu Ying-tao recalled that the roof garden had marble round-table seating for fifty to seventy people.',
+    lead: '吳瀛濤回憶，江山樓的屋頂庭園有「可容納五七十人的大理圓石桌座」。（轉引自張愛敏 2008）',
+    leadEn: 'Wu Ying-tao recalled that the roof garden had marble round-table seating for fifty to seventy people. (cited via Chang Ai-min 2008)',
     actions: [{ id: 'touch', label: '摸一下石面', labelEn: 'Feel the stone top', doneLabel: '收手', doneLabelEn: 'Let go' }],
     paragraphs: ['一桌幾人、幾桌、桌面大小都查無；模型做直徑約 1 公尺的石桌配四張石凳，是設計值。'],
     paragraphsEn: ['How many sat at one, how many there were and their size are not found; the model uses tops about 1 m across with four stools, a design value.'],
@@ -229,11 +229,11 @@ export const JSL_OBJECTS_2 = {
           status: 'reconstruction',
         },
       ],
-      making: [{ text: '不是食物。「大理圓石桌」是吳瀛濤的用詞，石材產地查無。', textEn: 'Not a foodstuff. “Marble round stone tables” is Wu Ying-tao’s phrase; the stone’s origin is not found.', status: 'pending' }],
+      making: [{ text: '不是食物。「大理圓石桌」是吳瀛濤的用詞，石材產地查無。（轉引自張愛敏 2008）', textEn: 'Not a foodstuff. “Marble round stone tables” is Wu Ying-tao’s phrase; the stone’s origin is not found. (cited via Chang Ai-min 2008)', status: 'pending' }],
       use: [
         {
-          text: '吳瀛濤：屋頂庭園可容納五七十人的大理圓石桌座；江山樓竣工時是全臺首屈一指的高樓，設備十分可觀。',
-          textEn: 'Wu Ying-tao: marble round-table seating for fifty to seventy in the roof garden; when completed, Jiangshanlou was the foremost tall building in Taiwan and remarkably equipped.',
+          text: '吳瀛濤：屋頂庭園可容納五七十人的大理圓石桌座；江山樓竣工時是全臺首屈一指的高樓，設備十分可觀。（轉引自張愛敏 2008）',
+          textEn: 'Wu Ying-tao: marble round-table seating for fifty to seventy in the roof garden; when completed, Jiangshanlou was the foremost tall building in Taiwan and remarkably equipped. (cited via Chang Ai-min 2008)',
           sourceIds: ['chang-aimin-thesis-2008', 'wu-yingtao-1958-jiangshanlou'],
         },
         { text: '屋頂的桌座是喝茶、納涼還是開席，查無；本站放茶具不放菜，是歷史情境重建。', textEn: 'Whether the roof tables served tea, cool evenings or full banquets is not found; the model sets tea things, not dishes—a reconstructed scene.', status: 'reconstruction' },

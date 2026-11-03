@@ -104,8 +104,8 @@ export const JSL_OBJECTS = {
           sourceIds: ['jaung-jiang-shan-lou-2015', 'nccu-thesis-jiang-shan-lou-2008'],
         },
         {
-          text: '行啟午宴辦在總督官邸，用的是菊紋的銀餐具（現在是博物館藏品）；吳瀛濤說官邸宴席的銀器一百二十付，六十付由江山樓自備。',
-          textEn: 'The luncheon was served at the Governor-General’s residence on chrysanthemum-crested silver (now in a museum); Wu Ying-tao says that of the one hundred and twenty silver settings there, sixty were Jiangshanlou’s own.',
+          text: '行啟午宴辦在總督官邸，用的是菊紋的銀餐具（現在是博物館藏品）；吳瀛濤說官邸宴席的銀器一百二十付，六十付由江山樓自備。（轉引自張愛敏 2008）',
+          textEn: 'The luncheon was served at the Governor-General’s residence on chrysanthemum-crested silver (now in a museum); Wu Ying-tao says that of the one hundred and twenty silver settings there, sixty were Jiangshanlou’s own. (cited via Chang Ai-min 2008)',
           sourceIds: ['commons-taipei-guesthouse-silverware', 'chang-aimin-thesis-2008'],
         },
       ],
@@ -139,8 +139,8 @@ export const JSL_OBJECTS = {
           sourceIds: ['commons-jiangshanlou-banquet'],
         },
         {
-          text: '〔照片〕臺史博明信片〈臺灣料理江山樓三樓宴會場〉：廳的高處掛橫匾，其中一面讀得出「得少佳趣」（落款讀不出），另有裱框的扇面畫與一框三面團扇。吳瀛濤說各間宴廳懸掛名流筆墨一二十幅，鄒魯留有「觀劍引杯長」橫額。',
-          textEn: 'In the NMTH postcard of the third-floor banquet hall, horizontal boards hang high on the walls—one reads 「得少佳趣」 (the signature is illegible)—with framed fan paintings and a frame of three round fans. Wu Ying-tao says each room hung ten or twenty pieces by notables, among them Zou Lu’s board 「觀劍引杯長」.',
+          text: '〔照片〕臺史博明信片〈臺灣料理江山樓三樓宴會場〉：廳的高處掛橫匾，其中一面讀得出「得少佳趣」（落款讀不出），另有裱框的扇面畫與一框三面團扇。吳瀛濤說各間宴廳懸掛名流筆墨一二十幅，鄒魯留有「觀劍引杯長」橫額。（轉引自張愛敏 2008）',
+          textEn: 'In the NMTH postcard of the third-floor banquet hall, horizontal boards hang high on the walls—one reads 「得少佳趣」 (the signature is illegible)—with framed fan paintings and a frame of three round fans. Wu Ying-tao says each room hung ten or twenty pieces by notables, among them Zou Lu’s board 「觀劍引杯長」. (cited via Chang Ai-min 2008)',
           sourceIds: ['nmth-jsl-banquet-hall-postcard', 'chang-aimin-thesis-2008'],
         },
         { text: '匾是致贈吳江山的，依照片的檔案說明；匾上寫什麼，查無。', textEn: 'That the boards were presented to Wu Jiangshan follows the file description; what they say is not found.', sourceIds: ['commons-jiangshanlou-banquet'], status: 'pending' },
@@ -179,10 +179,33 @@ export const JSL_INSPECTABLES = [
   spot('jsl-3f-screen', 'partition-screen', '宴廳的木板門屏', 'Partition screens'),
   spot('jsl-roof-rockery', 'roof-rockery', '樓頂庭園的假山', 'The roof-garden rockery'),
   spot('jsl-roof-bonsai', 'roof-bonsai', '女兒牆邊的盆栽', 'Potted plants by the parapet'),
+  spot('jsl-3f-bowl', 'blue-white-bowl', '備餐櫃上的青花碗', 'Blue-and-white bowls on the sideboard'),
   spot('jsl-roof-marble', 'marble-round-table', '大理石圓桌座', 'Marble round table'),
 ]
 
 /** 共用器物在江山樓的補充說明（研究文件：算盤「江山樓一樓辦公室（通用）」） */
 export const JSL_EXTRA_NOTES = {
   abacus: { where: [{ text: '江山樓一樓的辦公室（通用的帳房器物）。', textEn: 'The ground-floor office at Jiangshanlou (a general counting-room item).' }] },
+  // 青花碗（第 2 段補充 §1.9）：江山樓的說法只放在 where 層
+  'blue-white-bowl': {
+    where: [
+      {
+        text: '江山樓三樓宴會場的備餐櫃：借用。這件是戰後的碗，江山樓宴席用的碗盤形制查無；三樓宴會場明信片裡的桌上空著。',
+        textEn: 'The sideboard of Jiangshanlou’s third-floor banquet hall: a stand-in. This is a postwar bowl; the form of Jiangshanlou’s banquet ware is not found, and the tables in the banquet-hall postcard are bare.',
+        sourceIds: ['nmth-jsl-banquet-hall-postcard'],
+        status: 'pending',
+      },
+      {
+        text: '吳瀛濤：1923 年總督官邸的臺灣菜宴席一百二十位，「食器都是用銀器，其中六十付由江山樓自備，另六十付由總督府購備」——江山樓自己備有銀餐具，但那是官邸的宴席（轉引自張愛敏 2008）。',
+        textEn: 'Wu Ying-tao: the 1923 Taiwanese-cuisine banquet at the Governor-General’s residence seated one hundred and twenty, and the tableware was all silver, sixty sets supplied by Jiangshanlou and sixty by the Government-General—so Jiangshanlou owned silver, but that was the residence’s banquet (cited via Chang Ai-min 2008).',
+        sourceIds: ['chang-aimin-thesis-2008', 'wu-yingtao-1958-jiangshanlou', 'commons-taipei-guesthouse-silverware'],
+      },
+      {
+        text: '曾品滄：江山樓宴席之外也供清粥小菜、炒麵、米粉等簡易料理；店裡日常用的碗盤是瓷是陶、有沒有店號，查無。',
+        textEn: 'Tseng Pin-tsang: besides banquets Jiangshanlou served congee with side dishes, fried noodles and rice vermicelli; whether its everyday bowls were porcelain or earthenware, or bore the house name, is not found.',
+        sourceIds: ['tseng-2019-jiangshanlou-ntl'],
+        status: 'pending',
+      },
+    ],
+  },
 }
