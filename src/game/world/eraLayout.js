@@ -27,6 +27,7 @@ import { linHuaTaiCollision } from '../builders/linHuaTai/linHuaTai.js'
 import { youJiCollision } from '../builders/youJi/youJi.js'
 import { xinFangChunCollision } from '../builders/xinFangChun/xinFangChun.js'
 import { jiangShanLouCollision } from '../builders/jiangShanLou/jiangShanLouInterior.js'
+import { liTingXiangCollision } from '../builders/liTingXiang/liTingXiang.js'
 import { showaLaundryCollision, showaLaundryFootprint } from '../builders/showaLaundry/showaLaundry.js'
 import { shizixuanCollision, shizixuanFootprint } from '../builders/shizixuan/shizixuanExterior.js'
 
@@ -383,6 +384,8 @@ const LOT_COLLISION = {
   'xin-fang-chun': xinFangChunCollision,
   // 江山樓：騎樓、門廳、樓梯與二樓的宴會廳（廚房不開放）
   'jiang-shan-lou': jiangShanLouCollision,
+  // 李亭香（老屋新生）：簷下步道、前店與內用座位（後門關著）
+  'li-ting-xiang': liTingXiangCollision,
   // 迪化街329號店屋（稻舍）：依年代的 variant 決定能不能走進去（騎樓、前進、天井、後進、樓梯與二樓）
   'rice-and-shine': riceAndShineCollision,
 }

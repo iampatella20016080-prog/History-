@@ -38,7 +38,7 @@ const PRE_MOTION = JSON.parse(readFileSync(new URL('./fixtures/preMotionWorld.js
 // 新芳春老屋新生的正廳後牆多一塊木匾「新芳春行」（使用者提供的照片）
 // 港口商街：霞海城隍廟殿內的六方匾與一對楹聯（第 11 階段）
 // 慈聖宮殿內（第 11 階段）：「惠澤覃敷」匾、右柱的聯、供桌前堵的「慈聖宮」，老屋新生另有拱門上的「慈聖宮」
-const LATER_SIGNS = { 'qing-port': 6 + 2, banquet: 4 + 3, modern: 3 + 3, postwar: 3 + 3 + 3, revival: 5 + 14 - 3 + 3 + 1 + 4 }
+const LATER_SIGNS = { 'qing-port': 6 + 2, banquet: 4 + 3, modern: 3 + 3, postwar: 3 + 3 + 3, revival: 5 + 14 - 3 + 3 + 1 + 1 + 4 }
 const LATER_LANTERNS = { banquet: 4 }
 const source = (path) => readFileSync(new URL(`../src/${path}`, import.meta.url), 'utf8')
 

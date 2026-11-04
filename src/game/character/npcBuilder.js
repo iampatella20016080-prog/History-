@@ -168,6 +168,9 @@ export const NPC_LOOKS = {
   // 昭和浪漫洗濯屋（老屋新生）：吧台裡的店員（不具名、不說話）
   showaStaff: { era: 'revival', hair: 'bob', top: { kind: 'tee', color: '#e9e3d5' }, bottom: '#2f3238', shoes: ['#2a2b2f', '#5c5d60'], extras: { apron: '#3d4a5c' } },
   lhtRevivalStaff: { era: 'revival', hair: 'bob', top: { kind: 'shirt', color: '#8a9a8c', trim: '#768679' }, bottom: '#2f3238', shoes: ['#2a2b2f', '#5c5d60'], extras: { apron: '#3a3a3c' } },
+  // 第 11 階段李亭香（老屋新生）：門市店員與內用的客人（不具名）
+  ltxStaff: { era: 'revival', hair: 'bob', top: { kind: 'shirt', color: '#f1ece2', trim: '#ddd6c8' }, bottom: '#2f3238', shoes: ['#2a2b2f', '#5c5d60'], extras: { apron: '#8a2f2a' } },
+  ltxCustomer: { era: 'revival', hair: 'short', top: { kind: 'tee', color: '#6f8aa0' }, bottom: '#3a3c44', shoes: ['#e8e4dc', '#9a9890'] },
   // 第 11 階段有記名茶各年代室內的人物（不具名的情境人物）：刷嘜頭的夥計、揀茶女、焙茶師傅、南管樂人
   yjBanquetMarker: { era: 'banquet', skin: '#d4a67c', hair: 'short', top: { kind: 'long', color: '#6a6250', trim: '#585140' }, bottom: '#3a3632', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#bfb39a' } },
   yjSorterBanquet: { era: 'banquet', skin: '#e2bd96', hair: 'bun', top: { kind: 'long', color: '#8a5a5a', trim: '#744a4a' }, bottom: '#3c3a44', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#e2d8c2' } },
