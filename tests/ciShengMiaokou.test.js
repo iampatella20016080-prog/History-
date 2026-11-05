@@ -145,7 +145,8 @@ describe('慈聖宮廟口：出處與禁寫內容', () => {
     assert.doesNotMatch(text, /日治時期.{0,10}(已有|就有)/)
     for (const m of text.matchAll(/古蹟/g)) {
       const around = text.slice(Math.max(0, m.index - 40), m.index + 60)
-      assert.match(around, /待核|單一來源|不寫成事實|未核對/, around)
+      // 第 11 階段起古蹟身分改用國家文化資產網的官方出處（2020-12-22 公告）
+      assert.match(around, /待核|單一來源|不寫成事實|未核對|國家文化資產網/, around)
     }
     // 整體標「歷史情境重建」；四神湯「由迪化街口遷入」只當待核例子、不點名
     assert.match(text, /歷史情境重建/)
@@ -186,17 +187,18 @@ describe('慈聖宮廟口：地段、碰撞、互動與鏡頭', () => {
     for (const eraId of TEMPLE_ERAS) {
       const shop = byEra[eraId]
       const placement = getShopPlacement(shop)
-      assert.equal(placement.hotspots.length, 1, eraId)
-      const [hotspot] = placement.hotspots
+      // 廟埕前的街邊一個，加上殿內的兩個（第 11 階段，見 tests/ciShengInterior.test.js）
+      assert.equal(placement.hotspots.length, 3, eraId)
+      const hotspot = placement.hotspots.find((item) => item.id === 'court')
       assert.ok(shop.chapters.some((c) => c.id === hotspot.chapter), `${eraId} ${hotspot.chapter}`)
       const world = worlds[eraId]
       const point = hotspot.interactionPoint
       assert.ok(walkableAt(world, point.x, point.z), eraId)
       for (const side of [-0.6, 0.6]) assert.ok(walkableAt(world, point.x + side, point.z), `${eraId} 旁 ${side} m`)
     }
-    assert.equal(getShopPlacement(byEra.postwar).hotspots[0].chapter, 'miaokou')
-    assert.equal(getShopPlacement(byEra.revival).hotspots[0].chapter, 'today')
-    assert.equal(getShopPlacement(byEra.banquet).hotspots[0].chapter, 'temple')
+    assert.equal(getShopPlacement(byEra.postwar).hotspots.find((h) => h.id === 'court').chapter, 'miaokou')
+    assert.equal(getShopPlacement(byEra.revival).hotspots.find((h) => h.id === 'court').chapter, 'today')
+    assert.equal(getShopPlacement(byEra.banquet).hotspots.find((h) => h.id === 'court').chapter, 'temple')
   })
 
   test('熱點（連同離開時的緩衝）不和同年代其他已開放店家的互動範圍重疊（含廟口四攤）', () => {

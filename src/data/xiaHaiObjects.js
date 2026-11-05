@@ -14,8 +14,8 @@ export const XH_OBJECTS = {
     id: 'incense-burner',
     title: '神案上的香爐',
     titleEn: 'The altar censer',
-    lead: '正殿供桌上一只銅鑄的圓爐，八寸高、直徑約一尺；香插進去，煙往上，神像都被燻黑了。',
-    leadEn: 'A round cast-bronze censer on the offering table, eight inches tall and about a foot across; the sticks go in, the smoke goes up, and the images above are black with it.',
+    lead: '霞海城隍廟正殿供桌上一只銅鑄的圓爐，八寸高、直徑約一尺；香插進去，煙往上，神像都被燻黑了。慈聖宮的是長案上一件深色圓爐，形制待核。',
+    leadEn: 'At Xiahai, a round cast-bronze censer on the offering table, eight inches tall and about a foot across; the sticks go in, the smoke goes up, and the images above are black with it. Cisheng’s is a dark round censer on a long table, its form to be verified.',
     actions: [{ id: 'offer', label: '插一炷香', labelEn: 'Offer a stick', doneLabel: '退開', doneLabelEn: 'Step back' }],
     paragraphs: ['尺寸與材質依廟方「廟宇藝術」祭祀用具頁；清末殿內的香與供品的樣式查無，本站不畫供品。'],
     paragraphsEn: ['Size and material follow the temple’s page on ritual objects; what incense and offerings looked like in the Qing interior is not found, and this site draws no offerings.'],
@@ -33,9 +33,9 @@ export const XH_OBJECTS = {
           status: 'pending',
         },
         {
-          text: '慈聖宮：〔照片〕2025 年正殿供桌上一只金色小爐；材質、年款、捐獻者都查無——Commons 檔名裡的「古老金爐」「舊金爐」是燒金紙的金爐，不是香爐。之後慈聖宮的模型借霞海城隍廟的銅爐形制、改成金色。',
-          textEn: 'Cisheng: in a 2025 photograph a small gilt censer stands on the main offering table; material, date and donor are not found—the “old furnaces” in Commons filenames are paper-burning furnaces, not censers. Cisheng’s model will borrow the bronze form of the Xiahai censer and gild it.',
-          sourceIds: ['commons-cisheng-furnace'],
+          text: '慈聖宮：〔照片〕2025 年正殿供桌兩端的金色器物是插百合的花瓶，不是爐；香爐在神將前的長案上，是一件深色圓爐，只有遠景，材質與款識查無，形制待核——Commons 檔名裡的「古老金爐」「舊金爐」是燒金紙的金爐，不是香爐。本站近看的模型借霞海城隍廟銅爐的形制。',
+          textEn: 'Cisheng: in the 2025 photographs the gilt objects at the ends of the offering table are vases holding lilies, not censers; the censer is a dark round one on the long table before the guardians, seen only from a distance, its material and inscription unknown and its form to be verified—the “old furnaces” in Commons filenames are paper-burning furnaces, not censers. This site’s close-up model borrows the form of the Xiahai bronze censer.',
+          sourceIds: ['commons-cisheng-interior', 'commons-cisheng-furnace'],
           status: 'pending',
         },
       ],
@@ -54,7 +54,10 @@ export const XH_OBJECTS = {
           status: 'reconstruction',
         },
       ],
-      where: [{ text: '霞海城隍廟正殿的供桌（港口商街）。', textEn: 'The offering table in the main hall of Xiahai (harbour era).' }],
+      where: [
+        { text: '霞海城隍廟正殿的供桌（港口商街，銅爐）。', textEn: 'The offering table in the main hall of Xiahai (harbour era; the bronze censer).' },
+        { text: '慈聖宮正殿（酒樓繁華到老屋新生）：2025 年的照片裡供桌兩端是金色花瓶，不是爐；香爐在旁邊的長案上，是一件深色圓爐，只有遠景，材質與款識查無。', textEn: 'Cisheng’s main hall (banquet to revival eras): in the 2025 photographs the gilt objects at the ends of the offering table are flower vases, not censers; the censer is a dark round one on the long side table, seen only from a distance, its material and inscription unknown.', sourceIds: ['commons-cisheng-interior'], status: 'pending' },
+      ],
       evidence: [
         {
           text: '廟方「廟宇藝術」祭祀用具頁；Wikimedia Commons 殿內照片（2020–2023，CC BY-SA 4.0，本站只引用觀察）。',

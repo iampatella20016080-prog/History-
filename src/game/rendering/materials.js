@@ -140,6 +140,8 @@ export function getMaterials() {
     // 室內陳設：帶一點暖色自發光，在騎樓的陰影下仍看得清楚
     interior: toon({ emissive: new Color('#ffdcae'), emissiveIntensity: 0.22 }),
     plain: toon(),
+    // 慈聖宮殿內的黑漆、貼金與神袍：只在室內用，不加室內材質的白色自發光（白色自發光不隨頂點色，黑漆會變灰、紅袍變粉紅）
+    lacquer: toon(),
     dark: toon(),
     cloth: toon({ side: DoubleSide }),
     // 亮窗與店內後牆：依 UV 標記畫假室內或後牆的漸層，沒標記的維持平面發光（shopGlow.js）
@@ -256,7 +258,7 @@ export function getInteriorMaterials() {
   interiorCache = { gradientMap: base.gradientMap }
   for (const [name, material] of Object.entries(base)) {
     if (name === 'gradientMap') continue
-    if (name in GLOW_BASE || name === 'glassClear' || name === 'contact' || name === 'interior' || name === 'woodLight' || !material.isMaterial) {
+    if (name in GLOW_BASE || name === 'glassClear' || name === 'contact' || name === 'interior' || name === 'woodLight' || name === 'lacquer' || !material.isMaterial) {
       interiorCache[name] = material
       continue
     }

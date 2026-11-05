@@ -14,6 +14,7 @@ import { JSL_EXTRA_NOTES, JSL_INSPECTABLES, JSL_OBJECTS } from './jiangShanLouOb
 import { JSL_OBJECTS_2 } from './jiangShanLouObjects2.js'
 import { LTX_INSPECTABLES, LTX_OBJECTS } from './liTingXiangObjects.js'
 import { XH_INSPECTABLES, XH_OBJECTS } from './xiaHaiObjects.js'
+import { CS_INSPECTABLES, CS_OBJECTS } from './ciShengObjects.js'
 import { SHOWA_INSPECTABLES, SHOWA_OBJECTS } from './showaLaundryObjects.js'
 
 /**
@@ -139,6 +140,8 @@ export const INSPECT_OBJECTS = {
   ...LTX_OBJECTS,
   // 霞海城隍廟殿內（第 11 階段；data/xiaHaiObjects.js）：香爐（共用）、主神龕、清代匾額、義勇公祿位
   ...XH_OBJECTS,
+  // 慈聖宮殿內（第 11 階段；data/ciShengObjects.js）：媽祖神龕、同治六年石柱、「惠澤覃敷」匾（香爐與霞海共用）
+  ...CS_OBJECTS,
   // 昭和浪漫洗濯屋（老屋新生）：舊招牌、霜淇淋模型、炭火熨斗、木桶與洗衣板（data/showaLaundryObjects.js）
   ...SHOWA_OBJECTS,
 }
@@ -224,6 +227,8 @@ export const STREET_INSPECTABLES = [
   ...LTX_INSPECTABLES,
   // 霞海城隍廟殿內（港口商街；data/xiaHaiObjects.js）
   ...XH_INSPECTABLES,
+  // 慈聖宮殿內（酒樓繁華到老屋新生，四個年代同一套；data/ciShengObjects.js）
+  ...CS_INSPECTABLES,
   // 昭和浪漫洗濯屋的門口與一樓（data/showaLaundryObjects.js）
   ...SHOWA_INSPECTABLES,
 ]

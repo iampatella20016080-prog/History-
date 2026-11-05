@@ -12,6 +12,7 @@ import { ridgeShape } from './shapes.js'
 import { buildTree } from './environment.js'
 import { XH_HALL } from '../../data/xiaHaiLayout.js'
 import { buildXiaHaiShell } from './xiaHaiTemple.js'
+import { buildCiShengShell } from './ciShengTemple.js'
 
 /**
  * 特殊建築：江山樓（酒樓）、新芳春茶行（洋樓茶行）、慈聖宮（廟埕與榕樹下的小吃攤）。
@@ -67,8 +68,9 @@ export function buildTemple(b, cfg, detail = null) {
   const hallW = w - 1.4
   const walkD = STREET.walkwayDepth
   const baseH = 0.45
-  // 霞海城隍廟（港口商街）的殿內可以走進去（data/xiaHaiLayout.js；殿內在 xiaHaiTemple.js）
-  const walkIn = cfg.interior === 'xiahai'
+  // 霞海城隍廟（港口商街）與慈聖宮（酒樓繁華到老屋新生）的殿內可以走進去
+  // （data/xiaHaiLayout.js、ciShengLayout.js；殿內在 xiaHaiTemple.js、ciShengTemple.js）
+  const walkIn = cfg.interior === 'xiahai' || cfg.interior === 'cisheng'
 
   // 廟埕鋪面
   b.box('stone', [w, 0.06, courtD + walkD], [0, 0.03, (walkD - courtD) / 2], { tint: condition === 'restored' ? '#e2dccf' : '#d2cab8' })
@@ -161,7 +163,7 @@ export function buildTemple(b, cfg, detail = null) {
 
   // 天公爐（霞海城隍廟的天公爐 1980 年才設，港口商街不畫）
   const burnerZ = -courtD + 1.7
-  if (!walkIn) {
+  if (cfg.interior !== 'xiahai') {
   b.cylinder('plain', 0.45, 0.35, 0.55, 12, [0, 0.75, burnerZ], { tint: '#6b5a3c' })
   b.cylinder('plain', 0.5, 0.5, 0.06, 12, [0, 1.04, burnerZ], { tint: '#7e6b48' })
   for (let i = 0; i < 3; i++) {
@@ -214,7 +216,7 @@ export function buildTemple(b, cfg, detail = null) {
 
   const result = { courtDepth: courtD, treeZ, stalls: !!cfg.stalls }
   if (walkIn) {
-    Object.assign(result, buildXiaHaiShell(b, cfg, detail))
+    Object.assign(result, cfg.interior === 'cisheng' ? buildCiShengShell(b, cfg, detail) : buildXiaHaiShell(b, cfg, detail))
     // 台基與殿身在殿內範圍以外的部分（台基兩側的步口、屋脊）
     b.addBlocker(-hallW / 2 - 0.4, hallW / 2 + 0.4, baseH + 4.0, 8, -courtD - hallD - 0.4, -courtD - 1.5)
   } else {
@@ -228,8 +230,9 @@ export function buildTemple(b, cfg, detail = null) {
       const q = b.transformPoint(maxX, 0, maxZ)
       return { minX: Math.min(p.x, q.x), maxX: Math.max(p.x, q.x), minZ: Math.min(p.z, q.z), maxZ: Math.max(p.z, q.z) }
     }
-    result.followAreas = [zone(-w / 2 + 0.3, w / 2 - 0.3, -courtD + 0.3, -0.8)]
-    result.viewerRegions = [{ ...zone(-w / 2 + 0.6, w / 2 - 0.6, -courtD + 0.6, 0.5), maxY: 2.0, cameraMaxY: 2.1 }]
+    // 慈聖宮的殿內（cfg.interior === 'cisheng'）已經有自己的範圍：廟埕後段的範圍加在後面
+    result.followAreas = [...(result.followAreas ?? []), zone(-w / 2 + 0.3, w / 2 - 0.3, -courtD + 0.3, -0.8)]
+    result.viewerRegions = [...(result.viewerRegions ?? []), { ...zone(-w / 2 + 0.6, w / 2 - 0.6, -courtD + 0.6, 0.5), maxY: 2.0, cameraMaxY: 2.1 }]
   }
   return result
 }

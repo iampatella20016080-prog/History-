@@ -29,13 +29,13 @@ export const TEMPLE_HISTORY_CHAPTER = {
   paragraphs: [
     '中央研究院人社中心 GIS 專題的說明寫，嘉慶年間泉州同安商人從福建分靈媽祖，先供奉於艋舺八甲庄；咸豐三年（1853年）頂下郊拚後，同安人遷至大稻埕。在大稻埕初建廟的年份各說不一：維基百科的資訊框寫1864年、正文寫1866年遷至今民樂街與民生西路口面對碼頭，中研院專題寫1869年建於中街與南街交界，另有1855年林佑藻籌建一說。本站不寫成單一年份，只寫「約1860年代，各說不一、待核」。',
     '日治時期的市區改正讓廟再遷一次：中研院專題寫1909年6月25日起拆除、遷至日新街的農地，1914年重建完成，改稱「大稻埕慈聖宮」；維基百科寫1910年遷建、1914年完成；另有1914年起建、1916年完工一說。遷建的時間（1909／1910）與完工（1914／1916）本站並列、標待核。中研院專題提到1905年臺北市區改正計畫圖、1907年全圖與1910年地圖可以看到廟址的變化，這是遷建主線可以佐證的部分。',
-    '現址是臺北市大同區保安街49巷17號（維基百科）。維基百科寫慈聖宮是直轄市定古蹟（2020年12月22日評定），但本站沒有找到臺北市文化局的公告頁，古蹟身分與日期只有單一來源，標待核、不寫成事實。',
+    '現址是臺北市大同區保安街49巷17號（維基百科）。慈聖宮是直轄市定古蹟：國家文化資產網的古蹟頁記 2020年12月22日公告（北市文化文資字第10930433461號），指定理由寫同治五年（1866）已具正殿、前殿、兩廊格局，大正三年（1914）因市區改正遷至現址，大木工程由名匠陳應彬負責，廟內保有同治、大正年間的石柱與木雕。',
     '說明｜街上這座廟是情境示意：規模、格局、榕樹與廟埕沿用本站的廟宇原型，相對位置也不是精確復原。酒樓繁華（1895–1930）的年代裡，廟在1910年代才遷到這裡，年代前段這塊地的樣子本站沒有史料，不另外重建。',
   ],
   paragraphsEn: [
     'The GIS project of the Research Center for Humanities and Social Sciences, Academia Sinica, says that during the Jiaqing era merchants from Tong’an in Quanzhou brought a branch image of Mazu from Fujian and first enshrined her in Bajia hamlet, Bangka. After the Dingxiajiao feud of the third year of Xianfeng (1853), the Tong’an people moved to Dadaocheng. Accounts differ on the year the temple was first built there: the Wikipedia infobox gives 1864 and its main text says 1866, at today’s corner of Minle Street and Minsheng West Road facing the wharf; the Academia Sinica project says 1869, at the junction of Middle Street and South Street; and another account has Lin Youzao raising funds in 1855. This site does not give a single year, only “around the 1860s; accounts differ, to be verified.”',
     'Urban improvement under Japanese rule moved the temple once more. The Academia Sinica project says demolition began on 25 June 1909 and the temple moved to farmland on Rixin Street, with rebuilding completed in 1914 and the name changed to “Dadaocheng Cisheng Temple”; Wikipedia gives relocation in 1910 and completion in 1914; another account has construction starting in 1914 and finishing in 1916. This site lists the relocation date (1909/1910) and the completion date (1914/1916) side by side, marked to be verified. The Academia Sinica project notes that the 1905 Taipei urban improvement plan map, the 1907 general map and the 1910 map show the change in the temple’s site; this is the part of the main story that maps can corroborate.',
-    'The present address is No. 17, Lane 49, Bao’an Street, Datong District, Taipei (Wikipedia). Wikipedia says Cisheng Temple is a municipal historic monument (designated 22 December 2020), but this site could not find a notice from the Taipei Department of Cultural Affairs; the monument status and date rest on a single source, are marked to be verified and are not stated as fact.',
+    'The present address is No. 17, Lane 49, Bao’an Street, Datong District, Taipei (Wikipedia). Cisheng Temple is a municipal historic monument: the National Cultural Heritage Database records the notice of 22 December 2020 (Taipei City Cultural Heritage notice no. 10930433461). Its reasons for designation say that by 1866 the temple already had a main hall, front hall and two galleries, that in 1914 urban improvement moved it to the present site with the timber work by the master builder Chen Yingbin, and that it keeps stone pillars and carvings of the Tongzhi and Taishō years.',
     'Note | The temple on the street is an illustrative scene: its scale, layout, banyan tree and forecourt reuse this site’s temple prototype, and relative positions are not an exact reconstruction. In the Banquet Hall Boom era (1895–1930) the temple only moved here in the 1910s; there is no historical material on how this plot looked earlier in the era, so it is not separately reconstructed.',
   ],
   timeline: [
@@ -43,14 +43,14 @@ export const TEMPLE_HISTORY_CHAPTER = {
     { place: '1853', text: '頂下郊拚後同安人遷至大稻埕。', textEn: 'After the Dingxiajiao feud, the Tong’an people move to Dadaocheng.' },
     { place: '約1860年代', placeEn: 'c. 1860s', text: '在大稻埕建廟：1855／1864／1866／1869各說不一，待核。', textEn: 'The temple is built in Dadaocheng: accounts differ between 1855, 1864, 1866 and 1869; to be verified.' },
     { place: '1909／1910', text: '市區改正拆除、遷建至日新街（兩說並列，待核）。', textEn: 'Urban improvement leads to demolition and relocation to Rixin Street (two accounts listed side by side; to be verified).' },
-    { place: '1914／1916', text: '重建完成，稱「大稻埕慈聖宮」（兩說並列，待核）。', textEn: 'Rebuilding completed; the temple is called “Dadaocheng Cisheng Temple” (two accounts listed side by side; to be verified).' },
-    { place: '2020（待核）', placeEn: '2020 (to be verified)', text: '維基百科寫評定為直轄市定古蹟；官方公告未核對。', textEn: 'Wikipedia says it was designated a municipal historic monument; the official notice has not been checked.' },
+    { place: '1914／1916', text: '1914 年起建、1916 年落成（廟方）；文資網寫 1914。稱「大稻埕慈聖宮」。', textEn: 'Rebuilding begun in 1914 and finished in 1916 (the temple’s account); the heritage register says 1914. The temple is called “Dadaocheng Cisheng Temple”.' },
+    { place: '2020', text: '12月22日公告為直轄市定古蹟（國家文化資產網）。', textEn: 'Designated a municipal historic monument on 22 December (National Cultural Heritage Database).' },
   ],
   glossary: [
     { term: '市區改正', termEn: 'Urban improvement (shiqu gaizheng)', definition: '日治時期以拓寬道路、整理街廓為主的都市改造；大稻埕的市區改正讓慈聖宮從原址遷到日新街。', definitionEn: 'Urban reconstruction under Japanese rule, chiefly road widening and the reorganisation of street blocks; in Dadaocheng it led to Cisheng Temple moving from its original site to Rixin Street.' },
     { term: '頂下郊拚', termEn: 'Dingxiajiao feud', definition: '1853年艋舺的泉州三邑人（頂郊）與同安人（下郊）之間的分類械鬥；同安人落敗後遷往大稻埕。', definitionEn: 'The 1853 communal fight in Bangka between the Sanyi people of Quanzhou (the Upper Jiao, or Shangjiao) and the Tong’an people (the Lower Jiao, or Xiajiao); the defeated Tong’an people moved to Dadaocheng.' },
   ],
-  sourceIds: ['sinica-gis-2025-cisheng', 'wiki-ci-sheng-gong'],
+  sourceIds: ['sinica-gis-2025-cisheng', 'nchdb-cisheng-monument', 'commons-cisheng-yange-board', 'wiki-ci-sheng-gong'],
 }
 
 /** 庶民生活：廟口的情境示意攤位 */
@@ -189,11 +189,11 @@ function sourcesChapter(chapters, disclaimer, disclaimerEn) {
 }
 
 const TEMPLE_DISCLAIMER =
-  '慈聖宮的初建與遷建年份各說不一，本站並列、標待核；古蹟身分只有維基百科一個來源。街上這座廟是情境示意，不是精確復原。'
+  '慈聖宮的初建與遷建年份各說不一，本站並列、標待核；古蹟身分依國家文化資產網（2020年公告）。街上這座廟是情境示意，不是精確復原。'
 const MIAOKOU_DISCLAIMER =
   '廟口的小吃攤是「歷史情境重建」：攤販聚集的年代只有中研院 GIS 專題一句未附出處的說明（民國50年間，待核），各攤的店名、攤主、年份與傳承代數查無可靠出處且互相矛盾，本站一律不寫，也不使用任何現在店家的店名、招牌或商標。食物的做法特色整理自媒體與臺北市市場處對現在攤位的描述，不代表1945–1980年間的配方、份量或價格。'
 const TEMPLE_DISCLAIMER_EN =
-  'The years of Cisheng Temple’s founding and relocation differ between accounts; this site lists them side by side and marks them to be verified, and its monument status rests on Wikipedia alone. The temple on the street is an illustrative scene, not an exact reconstruction.'
+  'The years of Cisheng Temple’s founding and relocation differ between accounts; this site lists them side by side and marks them to be verified Its monument status follows the National Cultural Heritage Database (designated 2020). The temple on the street is an illustrative scene, not an exact reconstruction.'
 const MIAOKOU_DISCLAIMER_EN =
   'The temple-front snack stalls are a “reconstructed historical scene”: the period when vendors gathered rests on a single unsourced line in the Academia Sinica GIS project (Minguo 50s, to be verified), and the names, owners, years and generations of succession of individual stalls have no reliable source and contradict each other, so this site omits all of them and uses no present-day shop’s name, sign or logo. The preparation characteristics of the foods are compiled from media and Taipei Market Administration Office descriptions of today’s stalls and do not represent the recipes, portions or prices of 1945–1980.'
 

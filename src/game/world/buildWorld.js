@@ -43,6 +43,7 @@ import { buildLuguoCafe } from '../builders/luguoCafe.js'
 import { buildLuguoCafeInterior, cafeFurnitureBlockers, cafeSigns } from '../builders/luguoCafeInterior.js'
 import { buildGrandRestaurant, buildTeaMansion, buildTemple } from '../builders/specials.js'
 import { buildXiaHaiInterior } from '../builders/xiaHaiTemple.js'
+import { buildCiShengInterior } from '../builders/ciShengTemple.js'
 import { buildTempleSquidStall } from '../builders/templeSquidStall.js'
 import { buildLaoPanExterior, laoPanFurnitureBlockers } from '../builders/laoPanExterior.js'
 import { buildLaoPanInterior } from '../builders/laoPanInterior.js'
@@ -183,8 +184,8 @@ export const BUILDING_INTERIORS = {
   'rice-and-shine': buildRiceAndShineInterior,
   shizixuan: buildShizixuanInterior,
   'showa-laundry': buildShowaLaundryInterior,
-  // 廟宇原型：只有霞海城隍廟（cfg.interior === 'xiahai'，港口商街）可以走進殿內
-  temple: buildXiaHaiInterior,
+  // 廟宇原型：霞海城隍廟（cfg.interior === 'xiahai'，港口商街）與慈聖宮（'cisheng'，酒樓繁華到老屋新生）可以走進殿內
+  temple: (b, cfg, detail) => (cfg.interior === 'cisheng' ? buildCiShengInterior(b, cfg, detail) : buildXiaHaiInterior(b, cfg, detail)),
 }
 
 const PROP_BUILDERS = {

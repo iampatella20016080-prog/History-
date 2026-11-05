@@ -34,7 +34,7 @@ const RED = '#8e2f25'
 const SOOT = '#2a221e'
 
 /** 同時移動主要零件與精緻畫質的細部（detail 可以是 null） */
-function grp(b, detail, position, rotationY, callback) {
+export function grp(b, detail, position, rotationY, callback) {
   b.push(position, rotationY)
   detail?.push(position, rotationY)
   try {
@@ -48,44 +48,49 @@ function grp(b, detail, position, rotationY, callback) {
 /* ═══════════ 神像（簡化的人形） ═══════════ */
 
 /**
- * 坐像：座、下袍、上身、肩、頭、冠；beard：長髯垂到腰（鎮殿城隍）；crown：'duke' 公爵帽、'phoenix' 鳳冠、'plain'
+ * 坐像：座、下袍、上身、肩、頭、冠；beard：長髯垂到腰（鎮殿城隍）；crown：'duke' 公爵帽、'phoenix' 鳳冠、'mianliu' 冕旒（慈聖宮鎮殿媽祖）、'plain'；material：袍與冠的材質（預設 'plain'）
  * h 是坐像總高（含座）。座底在 y。
  */
-function seatedFigure(b, x, y, z, h, { robe, trim = GILT, face = SOOT, crown = 'plain', beard = false, rotationY = 0, detail = null }) {
+export function seatedFigure(b, x, y, z, h, { robe, trim = GILT, face = SOOT, crown = 'plain', beard = false, rotationY = 0, detail = null, material = 'plain' }) {
   grp(b, detail, [x, y, z], rotationY, () => {
     const seatH = h * 0.18
     b.box('wood', [h * 0.5, seatH, h * 0.42], [0, seatH / 2, 0], { tint: shade(RED, 0.9) })
     // 下袍（膝到腳，往前垂）
-    b.box('plain', [h * 0.44, h * 0.26, h * 0.4], [0, seatH + h * 0.13, h * 0.06], { tint: robe })
-    b.box('plain', [h * 0.42, h * 0.22, h * 0.06], [0, seatH + h * 0.04, h * 0.27], { tint: shade(robe, 0.85) })
+    b.box(material, [h * 0.44, h * 0.26, h * 0.4], [0, seatH + h * 0.13, h * 0.06], { tint: robe })
+    b.box(material, [h * 0.42, h * 0.22, h * 0.06], [0, seatH + h * 0.04, h * 0.27], { tint: shade(robe, 0.85) })
     // 上身
-    b.cylinder('plain', h * 0.14, h * 0.19, h * 0.34, 10, [0, seatH + h * 0.42, -h * 0.03], { tint: robe })
-    b.box('plain', [h * 0.42, h * 0.07, h * 0.24], [0, seatH + h * 0.57, -h * 0.03], { tint: robe })
+    b.cylinder(material, h * 0.14, h * 0.19, h * 0.34, 10, [0, seatH + h * 0.42, -h * 0.03], { tint: robe })
+    b.box(material, [h * 0.42, h * 0.07, h * 0.24], [0, seatH + h * 0.57, -h * 0.03], { tint: robe })
     // 胸前的補子與袍緣（金線示意）
-    b.box('plain', [h * 0.16, h * 0.14, 0.01], [0, seatH + h * 0.44, h * 0.13], { tint: trim })
+    b.box(material, [h * 0.16, h * 0.14, 0.01], [0, seatH + h * 0.44, h * 0.13], { tint: trim })
     // 頭與臉
     const headY = seatH + h * 0.69
-    b.add('plain', new SphereGeometry(h * 0.085, 10, 8), { position: [0, headY, 0], tint: face })
+    b.add(material, new SphereGeometry(h * 0.085, 10, 8), { position: [0, headY, 0], tint: face })
     if (beard) b.box('dark', [h * 0.08, h * 0.3, 0.02], [0, headY - h * 0.2, h * 0.12], { tint: '#1a1614' })
     if (crown === 'duke') {
-      b.box('plain', [h * 0.22, h * 0.09, h * 0.2], [0, headY + h * 0.1, 0], { tint: '#1c1a1a' })
-      b.box('plain', [h * 0.36, h * 0.025, h * 0.06], [0, headY + h * 0.12, -h * 0.02], { tint: '#1c1a1a' })
+      b.box(material, [h * 0.22, h * 0.09, h * 0.2], [0, headY + h * 0.1, 0], { tint: '#1c1a1a' })
+      b.box(material, [h * 0.36, h * 0.025, h * 0.06], [0, headY + h * 0.12, -h * 0.02], { tint: '#1c1a1a' })
       // 冠上的紅絨飾（照片）
-      b.add('plain', new SphereGeometry(h * 0.03, 8, 6), { position: [0, headY + h * 0.17, 0.02], tint: '#b3302a' })
+      b.add(material, new SphereGeometry(h * 0.03, 8, 6), { position: [0, headY + h * 0.17, 0.02], tint: '#b3302a' })
+    } else if (crown === 'mianliu') {
+      // 冕旒：平板冕、前後垂珠旒
+      b.cylinder(material, h * 0.09, h * 0.09, h * 0.05, 10, [0, headY + h * 0.09, 0], { tint: '#d9b04a' })
+      b.box(material, [h * 0.3, h * 0.025, h * 0.22], [0, headY + h * 0.12, 0], { tint: '#1c1a1a' })
+      for (let i = -3; i <= 3; i++) b.box(material, [0.008, h * 0.1, 0.008], [i * h * 0.04, headY + h * 0.05, h * 0.11], { tint: '#e6c35c' })
     } else if (crown === 'phoenix') {
-      b.cylinder('plain', h * 0.11, h * 0.09, h * 0.12, 10, [0, headY + h * 0.11, 0], { tint: '#d9b04a' })
-      for (const s of [-1, 1]) b.box('plain', [0.01, h * 0.16, 0.01], [s * h * 0.1, headY - h * 0.02, h * 0.04], { tint: '#d9b04a' })
-      if (detail) for (let i = -2; i <= 2; i++) detail.add('plain', new SphereGeometry(h * 0.014, 6, 4), { position: [i * h * 0.04, headY + h * 0.18, h * 0.05], tint: '#e6c35c' })
+      b.cylinder(material, h * 0.11, h * 0.09, h * 0.12, 10, [0, headY + h * 0.11, 0], { tint: '#d9b04a' })
+      for (const s of [-1, 1]) b.box(material, [0.01, h * 0.16, 0.01], [s * h * 0.1, headY - h * 0.02, h * 0.04], { tint: '#d9b04a' })
+      if (detail) for (let i = -2; i <= 2; i++) detail.add(material, new SphereGeometry(h * 0.014, 6, 4), { position: [i * h * 0.04, headY + h * 0.18, h * 0.05], tint: '#e6c35c' })
     } else {
-      b.box('plain', [h * 0.18, h * 0.06, h * 0.18], [0, headY + h * 0.09, 0], { tint: '#262222' })
+      b.box(material, [h * 0.18, h * 0.06, h * 0.18], [0, headY + h * 0.09, 0], { tint: '#262222' })
     }
   })
 }
 
 /* ═══════════ 器物 ═══════════ */
 
-const box2 = (x, z, w, d) => rect(x - w / 2, x + w / 2, z - d / 2, z + d / 2)
-const turned = (item, w, d) => (Math.abs(Math.sin(item.rotationY ?? 0)) > 0.5 ? box2(item.x, item.z, d, w) : box2(item.x, item.z, w, d))
+export const box2 = (x, z, w, d) => rect(x - w / 2, x + w / 2, z - d / 2, z + d / 2)
+export const turned = (item, w, d) => (Math.abs(Math.sin(item.rotationY ?? 0)) > 0.5 ? box2(item.x, item.z, d, w) : box2(item.x, item.z, w, d))
 
 /** 主神龕：台、木雕透雕安金的花罩（上方三格人物堵、兩側透雕格子）、白底蟠龍背板；鎮殿城隍與龕內配祀 */
 function buildMainShrine(b, item, detail) {
@@ -315,9 +320,9 @@ export const XH_FURNITURE = {
 
 /* ═══════════ 碰撞 ═══════════ */
 
-const NO_PARTITION = { z: -1e3, doorMinX: 0, doorMaxX: 0 }
+export const NO_PARTITION = { z: -1e3, doorMinX: 0, doorMaxX: 0 }
 
-function disjoint(list) {
+export function disjoint(list) {
   const result = []
   for (const r of list) {
     let pieces = [r]
@@ -338,13 +343,13 @@ export function xhObstacles() {
   return disjoint(list)
 }
 
-const rectOf = (transform, r, extra = {}) => {
+export const rectOf = (transform, r, extra = {}) => {
   const p = transform(r.minX, r.minZ)
   const q = transform(r.maxX, r.maxZ)
   return { minX: Math.min(p.x, q.x), maxX: Math.max(p.x, q.x), minZ: Math.min(p.z, q.z), maxZ: Math.max(p.z, q.z), ...extra }
 }
 /** 殿的本地矩形 → 廟的本地矩形 */
-const toTemple = (r) => ({ ...r, minZ: hz(r.minZ), maxZ: hz(r.maxZ) })
+export const toTemple = (r) => ({ ...r, minZ: hz(r.minZ), maxZ: hz(r.maxZ) })
 
 /**
  * 可行走範圍（世界座標）：石階的斜面（廟埕 y 0 → 台基 y 0.45）、拜亭、中門、殿內；都標 inBuilding
