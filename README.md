@@ -20,7 +20,7 @@
 - **章節**：古蹟身分改用國家文化資產網的官方出處（2020-12-22 公告），不再寫「只有維基百科」。
 - **出處**：新增文資網古蹟頁、Commons 殿內／石柱／匾額／神將／平樂社／沿革板照片、1917 捐題碑記拓本、教育局大稻埕學習單、臺灣記憶庫〈陳應彬〉、謝宗榮〈臺灣寺廟建築的風格與格局〉、樂風 1924 慶成醮專欄、傅明蔚 2023（待讀）、永樂國小網頁、Hsu 部落格與 PTT（只作「據說」）。
 - **材質**：殿內的黑漆、貼金、神袍與石柱用只在室內的 `lacquer` 材質（不加室內材質的白色自發光，否則黑漆變灰、紅袍變粉紅）。
-- **預算**：流暢畫質的街景批次不變（20／25／27／37）；殿內按需載入 4 批（精緻畫質細部另 1–2 批），頂點約 1.1 萬（酒樓繁華、摩登）、3.2 萬（庶民生活）、3.7 萬（老屋新生），上限 7 萬；街景招牌多 7 塊（老屋新生 8 塊，同一張圖集）。實測繪製呼叫（`?stats=1`，桌面視窗、一個固定視角，廟埕前／殿內）：流暢 214–295／202–234，精緻 275–372／245–296，都沒有超過 340–390 的上限。截圖在 `docs/ci-sheng-gong/`。
+- **預算**：流暢畫質的街景批次不變（20／25／27／37）；殿內按需載入 4 批（精緻畫質細部另 1–2 批），頂點約 1.1 萬（酒樓繁華、摩登）、3.2 萬（庶民生活）、3.7 萬（老屋新生），上限 7 萬；街景招牌多 7 塊（老屋新生 8 塊，同一張圖集）。實測繪製呼叫（`?stats=1`，桌面視窗、一個固定視角，廟埕前／殿內）：流暢 214–295／202–234，精緻 275–372／245–296，都沒有超過 340–390 的上限。截圖在 `docs/ci-sheng-gong/`（桌面精緻，每個年代四張 JPEG：`<年代 id>-01-forecourt.jpg` 廟埕、`-02-entrance-hall.jpg` 三川殿、`-03-main-hall.jpg` 正殿、`-04-object.jpg` 一件近看的器物）。
 
 ## 新增：李亭香的店內（第 11 階段，老屋新生）
 
@@ -1420,7 +1420,7 @@ node tests/e2e/era-switching.e2e.mjs http://127.0.0.1:4173/
 ## 測試狀態
 
 - 李亭香的店內（第 11 階段）：新增 `tests/liTingXiangInterior.test.js` 24 項與 `tests/e2e/liTingXiang.e2e.mjs`（`tests/helpers.js` 加 `inLiTingXiangLot`）；`smoothBaseline.json` 更新老屋新生（批次數 37 不變）與港口商街（main 上的基準和殿內不一致，一併重產，批次數 15 不變）。`npm test` 1370 項全部通過。瀏覽器端桌面精緻與 iPad 流暢共 22 項全部通過（走進店內、4 件器物、2 位人物交談、走回街上、連續進出 3 次、店內切換年代、沒有頁面錯誤）；截圖在 `docs/li-ting-xiang-interior/`。**沒有驗證**：iPad 實機；店內擺設沒有照片可以對照。
-- 慈聖宮的殿內（第 11 階段）：新增 `tests/ciShengInterior.test.js` 50 項與 `tests/e2e/ciShengGong.e2e.mjs`；改 `tests/actionbar.test.js`、`tests/yongle.test.js`、`tests/inspect.test.js`、`tests/lightingMotion.test.js`（招牌多 7 塊、老屋新生 8 塊）、`tests/ciShengMiaokou.test.js`（古蹟身分改用文資網、熱點三個）；`smoothBaseline.json` 更新酒樓繁華到老屋新生（批次數不變）。`npm test` 全部通過。瀏覽器端桌面精緻與 iPad 流暢各 34 項全部通過（四個年代走進殿內、4 件器物、人物交談、走回廟埕，連續進出 3 次，殿內切換年代，沒有頁面錯誤）；截圖在 `docs/ci-sheng-gong/`。**沒有驗證**：iPad 實機與實機的幀率；殿內照片都是現況，日治時期查無；文資網指定理由全文、捐題碑甲件與傅明蔚全文要人工開。
+- 慈聖宮的殿內（第 11 階段）：新增 `tests/ciShengInterior.test.js` 50 項與 `tests/e2e/ciShengGong.e2e.mjs`；改 `tests/actionbar.test.js`、`tests/yongle.test.js`、`tests/inspect.test.js`、`tests/lightingMotion.test.js`（招牌多 7 塊、老屋新生 8 塊）、`tests/ciShengMiaokou.test.js`（古蹟身分改用文資網、熱點三個）；`smoothBaseline.json` 更新酒樓繁華到老屋新生（批次數不變）。`npm test` 全部通過。瀏覽器端桌面精緻與 iPad 流暢各 34 項全部通過（四個年代走進殿內、4 件器物、人物交談、走回廟埕，連續進出 3 次，殿內切換年代，沒有頁面錯誤）；代表畫面在 `docs/ci-sheng-gong/`（四個年代各四張 JPEG；e2e 另外可以用 `SHOTS` 輸出完整截圖）。**沒有驗證**：iPad 實機與實機的幀率；殿內照片都是現況，日治時期查無；文資網指定理由全文、捐題碑甲件與傅明蔚全文要人工開。
 - 霞海城隍廟的殿內（第 11 階段）：新增 `tests/xiaHaiInterior.test.js` 26 項與 `tests/e2e/xiaHai.e2e.mjs`；改 `tests/xiaHai.test.js`（天公爐拿掉、殿內可以走）、`tests/lightingMotion.test.js`（港口商街招牌多 8 塊、廟埕少一縷香煙）、`tests/actionbar.test.js`、`tests/yongle.test.js`、`tests/teaInteriors.test.js`、`tests/miTaiMu.test.js`、`tests/inspect.test.js`（港口商街的殿內範圍與器物 14 件）；`smoothBaseline.json` 更新港口商街（批次數 15 不變）。`npm test` 1342 項全部通過。瀏覽器端桌面精緻與 iPad 流暢共 22 項全部通過（走上石階進殿內與偏殿、4 件器物、2 位人物交談、走回廟埕、連續進出 3 次、殿內切換年代、沒有頁面錯誤）；截圖在 `docs/xia-hai-cheng-huang/`。**沒有驗證**：iPad 實機；神像與花罩只依現況照片的描述，清末樣子查無。
 - 江山樓的室內（第 11 階段）：新增 `tests/jiangShanLouInterior.test.js` 24 項與 `tests/e2e/jiangShanLou.e2e.mjs`；`smoothBaseline.json` 更新酒樓繁華（批次數 20 不變）。瀏覽器端桌面精緻與 iPad 流暢共 28 項全部通過（走進門廳、上下樓、4 件器物、3 位人物交談、連續上下樓進出、一樓與二樓切換年代、沒有頁面錯誤）。截圖在 `docs/jiang-shan-lou/`。**沒有驗證**：iPad 實機；宴席照的年份、匾上的字、廣告旗的片假名讀不出來（只畫標誌與筆畫）。
 - 新芳春茶行三個年代的室內（第 11 階段）：新增 `tests/xinFangChun.test.js` 35 項與 `tests/e2e/xinFangChun.e2e.mjs`；`smoothBaseline.json` 更新酒樓繁華到老屋新生（批次數不變）。瀏覽器端桌面精緻與 iPad 流暢共 70 項全部通過（三個年代走過正廳、天井到加工廠、上下樓、14 件器物、4 位人物交談、連續上下樓進出、一樓與二樓切換年代、沒有頁面錯誤）。截圖在 `docs/xin-fang-chun/`。**沒有驗證**：iPad 實機；焙籠坑數量與機具在 1934 年是否已有仍待核。
