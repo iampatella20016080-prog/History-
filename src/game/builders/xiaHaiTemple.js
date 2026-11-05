@@ -48,41 +48,41 @@ export function grp(b, detail, position, rotationY, callback) {
 /* ═══════════ 神像（簡化的人形） ═══════════ */
 
 /**
- * 坐像：座、下袍、上身、肩、頭、冠；beard：長髯垂到腰（鎮殿城隍）；crown：'duke' 公爵帽、'phoenix' 鳳冠、'mianliu' 冕旒（慈聖宮鎮殿媽祖）、'plain'
+ * 坐像：座、下袍、上身、肩、頭、冠；beard：長髯垂到腰（鎮殿城隍）；crown：'duke' 公爵帽、'phoenix' 鳳冠、'mianliu' 冕旒（慈聖宮鎮殿媽祖）、'plain'；material：袍與冠的材質（預設 'plain'）
  * h 是坐像總高（含座）。座底在 y。
  */
-export function seatedFigure(b, x, y, z, h, { robe, trim = GILT, face = SOOT, crown = 'plain', beard = false, rotationY = 0, detail = null }) {
+export function seatedFigure(b, x, y, z, h, { robe, trim = GILT, face = SOOT, crown = 'plain', beard = false, rotationY = 0, detail = null, material = 'plain' }) {
   grp(b, detail, [x, y, z], rotationY, () => {
     const seatH = h * 0.18
     b.box('wood', [h * 0.5, seatH, h * 0.42], [0, seatH / 2, 0], { tint: shade(RED, 0.9) })
     // 下袍（膝到腳，往前垂）
-    b.box('plain', [h * 0.44, h * 0.26, h * 0.4], [0, seatH + h * 0.13, h * 0.06], { tint: robe })
-    b.box('plain', [h * 0.42, h * 0.22, h * 0.06], [0, seatH + h * 0.04, h * 0.27], { tint: shade(robe, 0.85) })
+    b.box(material, [h * 0.44, h * 0.26, h * 0.4], [0, seatH + h * 0.13, h * 0.06], { tint: robe })
+    b.box(material, [h * 0.42, h * 0.22, h * 0.06], [0, seatH + h * 0.04, h * 0.27], { tint: shade(robe, 0.85) })
     // 上身
-    b.cylinder('plain', h * 0.14, h * 0.19, h * 0.34, 10, [0, seatH + h * 0.42, -h * 0.03], { tint: robe })
-    b.box('plain', [h * 0.42, h * 0.07, h * 0.24], [0, seatH + h * 0.57, -h * 0.03], { tint: robe })
+    b.cylinder(material, h * 0.14, h * 0.19, h * 0.34, 10, [0, seatH + h * 0.42, -h * 0.03], { tint: robe })
+    b.box(material, [h * 0.42, h * 0.07, h * 0.24], [0, seatH + h * 0.57, -h * 0.03], { tint: robe })
     // 胸前的補子與袍緣（金線示意）
-    b.box('plain', [h * 0.16, h * 0.14, 0.01], [0, seatH + h * 0.44, h * 0.13], { tint: trim })
+    b.box(material, [h * 0.16, h * 0.14, 0.01], [0, seatH + h * 0.44, h * 0.13], { tint: trim })
     // 頭與臉
     const headY = seatH + h * 0.69
-    b.add('plain', new SphereGeometry(h * 0.085, 10, 8), { position: [0, headY, 0], tint: face })
+    b.add(material, new SphereGeometry(h * 0.085, 10, 8), { position: [0, headY, 0], tint: face })
     if (beard) b.box('dark', [h * 0.08, h * 0.3, 0.02], [0, headY - h * 0.2, h * 0.12], { tint: '#1a1614' })
     if (crown === 'duke') {
-      b.box('plain', [h * 0.22, h * 0.09, h * 0.2], [0, headY + h * 0.1, 0], { tint: '#1c1a1a' })
-      b.box('plain', [h * 0.36, h * 0.025, h * 0.06], [0, headY + h * 0.12, -h * 0.02], { tint: '#1c1a1a' })
+      b.box(material, [h * 0.22, h * 0.09, h * 0.2], [0, headY + h * 0.1, 0], { tint: '#1c1a1a' })
+      b.box(material, [h * 0.36, h * 0.025, h * 0.06], [0, headY + h * 0.12, -h * 0.02], { tint: '#1c1a1a' })
       // 冠上的紅絨飾（照片）
-      b.add('plain', new SphereGeometry(h * 0.03, 8, 6), { position: [0, headY + h * 0.17, 0.02], tint: '#b3302a' })
+      b.add(material, new SphereGeometry(h * 0.03, 8, 6), { position: [0, headY + h * 0.17, 0.02], tint: '#b3302a' })
     } else if (crown === 'mianliu') {
       // 冕旒：平板冕、前後垂珠旒
-      b.cylinder('plain', h * 0.09, h * 0.09, h * 0.05, 10, [0, headY + h * 0.09, 0], { tint: '#d9b04a' })
-      b.box('plain', [h * 0.3, h * 0.025, h * 0.22], [0, headY + h * 0.12, 0], { tint: '#1c1a1a' })
-      for (let i = -3; i <= 3; i++) b.box('plain', [0.008, h * 0.1, 0.008], [i * h * 0.04, headY + h * 0.05, h * 0.11], { tint: '#e6c35c' })
+      b.cylinder(material, h * 0.09, h * 0.09, h * 0.05, 10, [0, headY + h * 0.09, 0], { tint: '#d9b04a' })
+      b.box(material, [h * 0.3, h * 0.025, h * 0.22], [0, headY + h * 0.12, 0], { tint: '#1c1a1a' })
+      for (let i = -3; i <= 3; i++) b.box(material, [0.008, h * 0.1, 0.008], [i * h * 0.04, headY + h * 0.05, h * 0.11], { tint: '#e6c35c' })
     } else if (crown === 'phoenix') {
-      b.cylinder('plain', h * 0.11, h * 0.09, h * 0.12, 10, [0, headY + h * 0.11, 0], { tint: '#d9b04a' })
-      for (const s of [-1, 1]) b.box('plain', [0.01, h * 0.16, 0.01], [s * h * 0.1, headY - h * 0.02, h * 0.04], { tint: '#d9b04a' })
-      if (detail) for (let i = -2; i <= 2; i++) detail.add('plain', new SphereGeometry(h * 0.014, 6, 4), { position: [i * h * 0.04, headY + h * 0.18, h * 0.05], tint: '#e6c35c' })
+      b.cylinder(material, h * 0.11, h * 0.09, h * 0.12, 10, [0, headY + h * 0.11, 0], { tint: '#d9b04a' })
+      for (const s of [-1, 1]) b.box(material, [0.01, h * 0.16, 0.01], [s * h * 0.1, headY - h * 0.02, h * 0.04], { tint: '#d9b04a' })
+      if (detail) for (let i = -2; i <= 2; i++) detail.add(material, new SphereGeometry(h * 0.014, 6, 4), { position: [i * h * 0.04, headY + h * 0.18, h * 0.05], tint: '#e6c35c' })
     } else {
-      b.box('plain', [h * 0.18, h * 0.06, h * 0.18], [0, headY + h * 0.09, 0], { tint: '#262222' })
+      b.box(material, [h * 0.18, h * 0.06, h * 0.18], [0, headY + h * 0.09, 0], { tint: '#262222' })
     }
   })
 }

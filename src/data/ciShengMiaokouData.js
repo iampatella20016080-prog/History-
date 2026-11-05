@@ -43,14 +43,14 @@ export const TEMPLE_HISTORY_CHAPTER = {
     { place: '1853', text: '頂下郊拚後同安人遷至大稻埕。', textEn: 'After the Dingxiajiao feud, the Tong’an people move to Dadaocheng.' },
     { place: '約1860年代', placeEn: 'c. 1860s', text: '在大稻埕建廟：1855／1864／1866／1869各說不一，待核。', textEn: 'The temple is built in Dadaocheng: accounts differ between 1855, 1864, 1866 and 1869; to be verified.' },
     { place: '1909／1910', text: '市區改正拆除、遷建至日新街（兩說並列，待核）。', textEn: 'Urban improvement leads to demolition and relocation to Rixin Street (two accounts listed side by side; to be verified).' },
-    { place: '1914／1916', text: '重建完成，稱「大稻埕慈聖宮」（兩說並列，待核）。', textEn: 'Rebuilding completed; the temple is called “Dadaocheng Cisheng Temple” (two accounts listed side by side; to be verified).' },
+    { place: '1914／1916', text: '1914 年起建、1916 年落成（廟方）；文資網寫 1914。稱「大稻埕慈聖宮」。', textEn: 'Rebuilding begun in 1914 and finished in 1916 (the temple’s account); the heritage register says 1914. The temple is called “Dadaocheng Cisheng Temple”.' },
     { place: '2020', text: '12月22日公告為直轄市定古蹟（國家文化資產網）。', textEn: 'Designated a municipal historic monument on 22 December (National Cultural Heritage Database).' },
   ],
   glossary: [
     { term: '市區改正', termEn: 'Urban improvement (shiqu gaizheng)', definition: '日治時期以拓寬道路、整理街廓為主的都市改造；大稻埕的市區改正讓慈聖宮從原址遷到日新街。', definitionEn: 'Urban reconstruction under Japanese rule, chiefly road widening and the reorganisation of street blocks; in Dadaocheng it led to Cisheng Temple moving from its original site to Rixin Street.' },
     { term: '頂下郊拚', termEn: 'Dingxiajiao feud', definition: '1853年艋舺的泉州三邑人（頂郊）與同安人（下郊）之間的分類械鬥；同安人落敗後遷往大稻埕。', definitionEn: 'The 1853 communal fight in Bangka between the Sanyi people of Quanzhou (the Upper Jiao, or Shangjiao) and the Tong’an people (the Lower Jiao, or Xiajiao); the defeated Tong’an people moved to Dadaocheng.' },
   ],
-  sourceIds: ['sinica-gis-2025-cisheng', 'nchdb-cisheng-monument', 'wiki-ci-sheng-gong'],
+  sourceIds: ['sinica-gis-2025-cisheng', 'nchdb-cisheng-monument', 'commons-cisheng-yange-board', 'wiki-ci-sheng-gong'],
 }
 
 /** 庶民生活：廟口的情境示意攤位 */

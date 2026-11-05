@@ -200,10 +200,16 @@ describe('慈聖宮殿內：建模、預算、不與其他建築重疊', () => {
       assert.equal(count(eraId, 'mazuShrine'), 1, eraId)
       assert.equal(count(eraId, 'altarLong'), 1, eraId)
     }
-    // 招牌：「惠澤覃敷」與右柱的字四個年代都有（右柱是「慈孃」不是「慈顏」）；誤讀的「海國慈□」不出現
+    // 使用者 2026-11-05：神將垂簾、哼哈二將拿掉、香爐在長案上
+    assert.ok(!CS_ITEMS.some((item) => ['bigGuard', 'gateGuardian'].includes(item.type)))
+    for (const eraId of CS_ERAS) {
+      assert.equal(count(eraId, 'wallCurtain'), 1, eraId)
+      assert.equal(count(eraId, 'sideTable'), 1, eraId)
+    }
+    // 招牌：匾與款識、右柱的字四個年代都有（右柱是「慈孃」不是「慈顏」）；誤讀的「海國慈□」不出現
     for (const eraId of CS_ERAS) {
       const texts = worlds[eraId].signs.map((sign) => sign.text)
-      assert.ok(texts.includes('惠澤覃敷') && texts.includes('慈孃印菩薩之心西天衣鉢'), eraId)
+      assert.ok(['惠澤覃敷', '慈孃印菩薩之心西天衣鉢', '海國陽春', '大正九年元月吉日', '稻江平樂社', '□□□仝敬獻'].every((text) => texts.includes(text)), eraId)
       assert.ok(!texts.some((text) => text.startsWith('海國慈')), eraId)
     }
   })
@@ -239,10 +245,10 @@ describe('慈聖宮殿內：走進去、走出來（碰撞）', () => {
     }
   })
 
-  test('神龕一帶、供桌、神將、石柱與人物都不能穿越；兩側牆、後牆走不出去', () => {
+  test('神龕一帶、供桌、長案、石柱與人物都不能穿越；兩側牆、後牆走不出去', () => {
     for (const eraId of CS_ERAS) {
       const world = worlds[eraId]
-      for (const [x, z] of [[0, -7.3], [0, -6.4], [0, -5.4], [-4.35, -6.9], [1.85, -2.45], [2.7, -2.95], [-2.7, -3.95], [3.5, -4.8]]) {
+      for (const [x, z] of [[0, -7.3], [0, -6.4], [0, -5.4], [4.55, -4.65], [2.7, -2.95], [-2.7, -3.95], [3.5, -4.8]]) {
         const p = W(x, z)
         assert.ok(!walkableAt(world, p.x, p.z), `${eraId} (${x}, ${z})`)
       }

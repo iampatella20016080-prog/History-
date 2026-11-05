@@ -57,13 +57,13 @@ export const CS_OBJECTS = {
       ],
       use: [
         {
-          text: '同安人的媽祖：嘉慶年間從福建分靈，先供奉在艋舺八甲庄，1853 年頂下郊拚後隨同安人遷到大稻埕；1866 年已具正殿、前殿、兩廊格局；1914 年因市區改正遷到現址，大木工程由陳應彬負責。',
-          textEn: 'The Tong’an people’s Mazu: brought from Fujian in the Jiaqing years, first housed at Bajiazhuang in Bangka, moved with the Tong’an people to Dadaocheng after the 1853 feud; by 1866 the temple had a main hall, front hall and two galleries; in 1914 urban improvement moved it to the present site, with Chen Yingbin in charge of the timber work.',
-          sourceIds: ['nchdb-cisheng-monument', 'sinica-gis-2025-cisheng'],
+          text: '同安人的媽祖：嘉慶年間從福建分靈，先供奉在艋舺八甲庄，1853 年頂下郊拚後隨同安人遷到大稻埕；1866 年已具正殿、前殿、兩廊格局；因市區改正遷到現址，1914 年起建、1916 年落成（廟方；文資網寫 1914），大木工程由陳應彬負責。',
+          textEn: 'The Tong’an people’s Mazu: brought from Fujian in the Jiaqing years, first housed at Bajiazhuang in Bangka, moved with the Tong’an people to Dadaocheng after the 1853 feud; by 1866 the temple had a main hall, front hall and two galleries; urban improvement moved it to the present site, begun in 1914 and finished in 1916 (the temple’s account; the heritage register says 1914), with Chen Yingbin in charge of the timber work.',
+          sourceIds: ['nchdb-cisheng-monument', 'sinica-gis-2025-cisheng', 'commons-cisheng-yange-board'],
         },
         {
-          text: '正殿側牆一排四尊真人高的神將（藍袍、金冠、黑面，最前一尊持羽扇），照片沒有註明身分；據說是謝、范將軍與千里眼、順風耳（遊記與學校網頁，無官方出處）。本站的兩尊大型神將是示意，不定身分。',
-          textEn: 'Along the side wall of the main hall stand four life-size guardian figures in blue robes and gold crowns, black-faced, the foremost holding a feather fan; the photographs do not say who they are. Reportedly Generals Xie and Fan with Qianliyan and Shunfeng’er (travel blogs and a school web page, no official source). The two large guardians on this site are illustrative, their identity unassigned.',
+          text: '正殿側牆一排四尊真人高的神將（藍袍、金冠、黑面，最前一尊持羽扇），照片沒有註明身分；據說是謝、范將軍與千里眼、順風耳（遊記與學校網頁，無官方出處）。本站不畫這幾尊，以簾幕示意。',
+          textEn: 'Along the side wall of the main hall stand four life-size guardian figures in blue robes and gold crowns, black-faced, the foremost holding a feather fan; the photographs do not say who they are. Reportedly Generals Xie and Fan with Qianliyan and Shunfeng’er (travel blogs and a school web page, no official source). This site does not model them; a curtain stands in their place.',
           sourceIds: ['commons-cisheng-guardians', 'ylps-dadaocheng-cisheng'],
           status: 'hearsay',
         },
@@ -101,7 +101,7 @@ export const CS_OBJECTS = {
     id: 'tongzhi-stone-pillars',
     title: '同治六年的石柱',
     titleEn: 'The stone pillars of 1867',
-    lead: '中庭兩廊的黑石柱，上款「同治六年丁卯端午日」，是 1867 年舊廟的柱子，1914 年遷廟時搬過來的（推定）——殿裡最老的東西。',
+    lead: '中庭兩廊的黑石柱，上款「同治六年丁卯端午日」，是 1867 年舊廟的柱子，遷廟時搬過來的（推定）——殿裡最老的東西。',
     leadEn: 'The black stone pillars in the galleries are dated “the Duanwu day of the sixth year of Tongzhi, dingmao”: columns of the old temple of 1867, brought here when the temple moved (presumed)—the oldest things in the building.',
     actions: [{ id: 'read', label: '讀柱上的字', labelEn: 'Read the inscription', doneLabel: '退開', doneLabelEn: 'Step back' }],
     paragraphs: ['柱上的字依 Commons 的照片：右柱楷書「慈孃印菩薩之心西天衣鉢」可讀，左柱篆書只認得聯首的「慈」；其餘的字本站不補。兩柱各是一副聯的一邊，對面的柱子沒有照片。柱子在哪一進各說不一（學習單：左右廂廊；部落格：天井的柱子是 1916 年新的），本站放在中庭是示意。'],
@@ -136,8 +136,8 @@ export const CS_OBJECTS = {
       ],
       use: [
         {
-          text: '1909 年舊廟因市區改正開始拆除，1914 年起在日新街重建；同治年的石柱是從舊廟搬來的，所以 1914 年以後的四個年代都看得到。',
-          textEn: 'The old temple was demolished from 1909 for urban improvement and rebuilt on Rixin Street from 1914; the Tongzhi pillars came from the old temple, so they are there in all four eras after 1914.',
+          text: '1909 年舊廟因市區改正開始拆除，1914 年起在日新街重建、1916 年落成（廟方；文資網寫 1914）；同治年的石柱是從舊廟搬來的，所以遷來以後的四個年代都看得到。',
+          textEn: 'The old temple was demolished from 1909 for urban improvement and rebuilt on Rixin Street from 1914, finished in 1916 (the temple’s account; the heritage register says 1914); the Tongzhi pillars came from the old temple, so they are there in all four eras since.',
           sourceIds: ['sinica-gis-2025-cisheng', 'nchdb-cisheng-monument'],
         },
         {
@@ -165,8 +165,8 @@ export const CS_OBJECTS = {
     lead: '三川殿中門上方，廟名額「慈聖宮」下面一方紅底金字的大匾「惠澤覃敷」，大正九年（1920）元月稻江平樂社仝敬獻。',
     leadEn: 'Over the central door of the entrance hall, under the temple’s name board, hangs a big red plaque with gold characters, “Grace spreads wide”, presented in January 1920 by the Pingle Society of Daojiang.',
     actions: [{ id: 'read', label: '抬頭讀', labelEn: 'Read it', doneLabel: '低頭', doneLabelEn: 'Look down' }],
-    paragraphs: ['匾的款識依 Commons 的兩張照片放大：右款大正九年元月，左款稻江平樂社與社員姓名（小字未辨讀）。街景裡的廟名額「慈聖宮」掛在中門外，這方匾在本站掛在中門內側，進門後回頭可讀。'],
-    paragraphsEn: ['The dedication follows two enlarged Commons photographs: January 1920 on the right, the Pingle Society of Daojiang and its members’ names (too small to read) on the left. The name board “Cisheng Gong” hangs outside the central door in the street scene; on this site the plaque hangs on the inner side of the door and can be read by turning around once inside.'],
+    paragraphs: ['匾的款識依 Commons 的兩張照片放大：右款大正九年元月，左款稻江平樂社與社員姓名（小字未辨讀）。模型只寫看得清楚的款，看不清的姓名用「□」。街景裡的廟名額「慈聖宮」掛在中門外，這方匾在本站掛在中門內側，進門後回頭可讀。'],
+    paragraphsEn: ['The dedication follows two enlarged Commons photographs: January 1920 on the right, the Pingle Society of Daojiang and its members’ names (too small to read) on the left. The model writes only the legible part of the dedication, with “□” for the unread names. The name board “Cisheng Gong” hangs outside the central door in the street scene; on this site the plaque hangs on the inner side of the door and can be read by turning around once inside.'],
     sourceIds: ['commons-cisheng-plaque', 'commons-cisheng-pingleshe'],
     layers: {
       form: [
@@ -205,8 +205,8 @@ const spot = (base, eraId, objectId, label, labelEn) => ({ id: `${base}-${eraId}
 
 export const CS_INSPECTABLES = CS_ERAS.flatMap((eraId) => [
   spot('cs-shrine', eraId, 'mazu-shrine', '正殿的媽祖神龕', 'The Mazu shrine in the main hall'),
-  // 香爐：照片裡在神將前的長案上（深色、只有遠景），本站放在供桌正中示意；改成長案上的爐或拿掉近看點待使用者決定
-  spot('cs-censer', eraId, 'incense-burner', '供桌上的香爐（示意）', 'Censer on the offering table (illustrative)'),
+  // 香爐：照片裡在神將前的長案上（深色、只有遠景）；形制待核（使用者 2026-11-05）
+  spot('cs-censer', eraId, 'incense-burner', '長案上的深色圓爐（形制待核）', 'The dark round censer on the long table (form to be verified)'),
   spot('cs-pillars', eraId, 'tongzhi-stone-pillars', '中庭的同治六年石柱', 'The Tongzhi stone pillars in the court'),
   eraId === 'banquet'
     ? spot('cs-plaque', eraId, 'huize-tanfu-plaque', '三川殿的「惠澤覃敷」匾（1920 年以後）', 'The “Grace spreads wide” plaque (after 1920)')

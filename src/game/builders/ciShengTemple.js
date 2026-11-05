@@ -1,4 +1,4 @@
-import { CylinderGeometry, SphereGeometry, TorusGeometry } from 'three'
+import { SphereGeometry, TorusGeometry } from 'three'
 import {
   COURT_D,
   CS_AGE,
@@ -23,7 +23,7 @@ import { NO_PARTITION, box2, disjoint, grp, rectOf, seatedFigure, toTemple } fro
  * - ciShengCollision：拜亭的石階（看不見的斜面）、拜亭、中門與殿內（地面在台基上 0.45 m，都標 inBuilding）。
  *
  * 神像都是簡化的人形（座、袍、頭、冠），不做臉部細節。廟的原則（第 5 階段）：沒有出處的神像、供品與祭祀細節不畫——
- * 只畫照片可見的鎮殿媽祖（5 尊，使用者 2026-11-02 決定）與兩對神將；龕前小尊侍神、門神圖案、「海國陽春」匾的字（待決）都不畫。
+ * 只畫照片可見的媽祖（5 尊）；四尊大型神將垂簾、哼哈二將不畫（使用者 2026-11-05 照建議），龕前小尊侍神、門神圖案也不畫。
  * 純裝飾的細部（梁架的瓜筒、宮燈、神龕的透雕小件）只在精緻畫質（detail）。
  */
 
@@ -35,10 +35,10 @@ const RED = '#6e2219'
 
 /** 依年代老化的木色：新廟（原色）→ 燻黑 → 重修後 */
 const AGE = {
-  new: { beam: '#6a4c34', plank: '#5e432f', wall: '#ece3cf', black: '#2a1e18', floor: '#bdb09a', soot: 1.0 },
-  mature: { beam: '#5f4432', plank: '#523a2a', wall: '#e0d5bd', black: '#1e1612', floor: '#b0a38c', soot: 0.9 },
-  aged: { beam: '#43322a', plank: '#3a2b23', wall: '#cfc3aa', black: '#161110', floor: '#a79a84', soot: 0.78 },
-  restored: { beam: '#5a4332', plank: '#4d3a2c', wall: '#eee9dd', black: '#1c1512', floor: '#cfc7b6', soot: 0.95 },
+  new: { beam: '#6a4c34', plank: '#5e432f', wall: '#ece3cf', black: '#3a2c24', floor: '#bdb09a', soot: 1.0 },
+  mature: { beam: '#5f4432', plank: '#523a2a', wall: '#e0d5bd', black: '#302620', floor: '#b0a38c', soot: 0.9 },
+  aged: { beam: '#43322a', plank: '#3a2b23', wall: '#cfc3aa', black: '#2a201c', floor: '#a79a84', soot: 0.78 },
+  restored: { beam: '#5a4332', plank: '#4d3a2c', wall: '#eee9dd', black: '#302620', floor: '#cfc7b6', soot: 0.95 },
 }
 const ageOf = (cfg) => AGE[CS_AGE[cfg.variant] ?? 'mature']
 
@@ -55,11 +55,11 @@ function buildMazuShrine(b, item, detail, cfg) {
   const top = 3.15
   grp(b, detail, [item.x, 0, item.z], 0, () => {
     // 台座與正面的堵
-    b.box('plain', [w, 0.85, d], [0, 0.425, 0], { tint: black })
-    b.box('plain', [w + 0.06, 0.06, d + 0.06], [0, 0.85, 0], { tint: GILT })
-    for (let k = -3; k <= 3; k++) b.box('plain', [0.34, 0.5, 0.02], [k * 0.4, 0.45, d / 2 + 0.01], { tint: k % 2 ? '#b48a3a' : shade(black, 1.5) })
+    b.box('lacquer', [w, 0.85, d], [0, 0.425, 0], { tint: black })
+    b.box('lacquer', [w + 0.06, 0.06, d + 0.06], [0, 0.85, 0], { tint: GILT })
+    for (let k = -3; k <= 3; k++) b.box('lacquer', [0.34, 0.5, 0.02], [k * 0.4, 0.45, d / 2 + 0.01], { tint: k % 2 ? '#b48a3a' : shade(black, 1.5) })
     // 背板：黑底、金色格子
-    b.box('plain', [w - 0.16, top - 0.85, 0.05], [0, (top + 0.85) / 2, -d / 2 + 0.03], { tint: shade(black, 0.9) })
+    b.box('lacquer', [w - 0.16, top - 0.85, 0.05], [0, (top + 0.85) / 2, -d / 2 + 0.03], { tint: shade(black, 0.9) })
     for (let k = 0; k < 6; k++) b.box('lattice', [w - 0.5, 0.05, 0.02], [0, 1.1 + k * 0.36, -d / 2 + 0.07], { tint: GILT })
     // 三層階梯：媽祖坐在上面
     b.box('wood', [2.7, 0.22, 0.78], [0, 0.96, 0.02], { tint: shade(RED, 0.85) })
@@ -67,32 +67,32 @@ function buildMazuShrine(b, item, detail, cfg) {
     b.box('wood', [1.0, 0.22, 0.42], [0, 1.4, -0.14], { tint: shade(RED, 0.75) })
     // 兩側龕柱、橫樑與花罩
     for (const s of [-1, 1]) {
-      b.box('plain', [0.16, top - 0.85, 0.16], [s * (w / 2 - 0.08), (top + 0.85) / 2, d / 2 - 0.1], { tint: black })
+      b.box('lacquer', [0.16, top - 0.85, 0.16], [s * (w / 2 - 0.08), (top + 0.85) / 2, d / 2 - 0.1], { tint: black })
       for (let k = 0; top - 0.7 - k * 0.38 > 1.1; k++) b.box('lattice', [0.36, 0.3, 0.04], [s * (w / 2 - 0.36), top - 0.7 - k * 0.38, d / 2 - 0.08], { tint: GILT })
     }
-    b.box('plain', [w + 0.1, 0.46, 0.14], [0, top - 0.3, d / 2 - 0.05], { tint: black })
-    for (const k of [-1, 0, 1]) b.box('plain', [0.8, 0.3, 0.02], [k * 0.95, top - 0.3, d / 2 + 0.03], { tint: '#b48a3a' })
-    b.box('plain', [w + 0.3, 0.1, d + 0.1], [0, top + 0.05, -0.05], { tint: shade(black, 0.8) })
-    // 上方黑底金字的橫匾「海國陽春」（2026-11-04 補查讀出；模型要不要寫上四個字待使用者決定，目前不寫字）
-    b.box('plain', [1.9, 0.5, 0.06], [0, top + 0.42, -0.1], { tint: shade(black, 0.85) })
-    b.box('plain', [1.8, 0.04, 0.02], [0, top + 0.64, -0.06], { tint: GILT })
-    b.box('plain', [1.8, 0.04, 0.02], [0, top + 0.2, -0.06], { tint: GILT })
-    for (const s of [-1, 1]) b.box('plain', [0.04, 0.46, 0.02], [s * 0.9, top + 0.42, -0.06], { tint: GILT })
+    b.box('lacquer', [w + 0.1, 0.46, 0.14], [0, top - 0.3, d / 2 - 0.05], { tint: black })
+    for (const k of [-1, 0, 1]) b.box('lacquer', [0.8, 0.3, 0.02], [k * 0.95, top - 0.3, d / 2 + 0.03], { tint: GILT })
+    b.box('lacquer', [w + 0.3, 0.1, d + 0.1], [0, top + 0.05, -0.05], { tint: shade(black, 0.8) })
+    // 上方黑底金字的橫匾「海國陽春」（字在街景的招牌圖集；款識照片看不到，不寫）
+    // 匾掛在花罩頂的前緣，從供桌前看得到（字的 z 與 signs() 相同）
+    b.box('lacquer', [1.9, 0.44, 0.06], [0, 3.48, 0.36], { tint: shade(black, 0.85) })
+    for (const dy of [-0.2, 0.2]) b.box('lacquer', [1.8, 0.03, 0.02], [0, 3.48 + dy, 0.395], { tint: GILT })
+    for (const s of [-1, 1]) b.box('lacquer', [0.03, 0.4, 0.02], [s * 0.9, 3.48, 0.395], { tint: GILT })
     // 花罩下緣的垂飾、神龕上緣的透雕小件（精緻畫質）
     if (detail) {
-      for (let k = -7; k <= 7; k++) detail.cylinder('plain', 0.03, 0.01, 0.16, 6, [k * 0.2, top - 0.6, d / 2 - 0.02], { tint: GILT })
-      for (let k = -6; k <= 6; k++) detail.add('plain', new SphereGeometry(0.035, 6, 4), { position: [k * 0.22, top + 0.13, d / 2 - 0.02], tint: '#e0b545' })
+      for (let k = -7; k <= 7; k++) detail.cylinder('lacquer', 0.03, 0.01, 0.16, 6, [k * 0.2, top - 0.6, d / 2 - 0.02], { tint: GILT })
+      for (let k = -6; k <= 6; k++) detail.add('lacquer', new SphereGeometry(0.035, 6, 4), { position: [k * 0.22, top + 0.13, d / 2 - 0.02], tint: '#e0b545' })
     }
     // 鎮殿媽祖（正中、較大、冕旒）與兩層各兩尊（鳳冠）；紅底金繡袍、貼金的臉
-    const robe = '#7a1e16'
-    const face = '#a88030'
-    seatedFigure(b, 0, 1.52, -0.14, 1.0, { robe, trim: '#c09440', face, crown: 'mianliu', detail })
-    for (const s of [-1, 1]) seatedFigure(b, s * 0.62, 1.3, -0.06, 0.8, { robe, trim: '#c09440', face, crown: 'phoenix', detail })
-    for (const s of [-1, 1]) seatedFigure(b, s * 1.12, 1.08, 0.02, 0.72, { robe, trim: '#c09440', face, crown: 'phoenix', detail })
+    const robe = '#a32a20'
+    const face = '#c9a23e'
+    seatedFigure(b, 0, 1.52, -0.14, 1.0, { robe, trim: '#c09440', face, crown: 'mianliu', detail, material: 'lacquer' })
+    for (const s of [-1, 1]) seatedFigure(b, s * 0.62, 1.3, -0.06, 0.8, { robe, trim: '#c09440', face, crown: 'phoenix', detail, material: 'lacquer' })
+    for (const s of [-1, 1]) seatedFigure(b, s * 1.12, 1.08, 0.02, 0.72, { robe, trim: '#c09440', face, crown: 'phoenix', detail, material: 'lacquer' })
   })
 }
 
-/** 黑色長供桌：前堵金字「慈聖宮」與龍紋（字在街景的招牌圖集；年款「民國甲□年」，供桌是戰後之物）；正中一只深色香爐（示意）；老屋新生多金色花瓶插百合、橘塔與供品盒 */
+/** 黑色長供桌：前堵金字「慈聖宮」與龍紋（字在街景的招牌圖集；年款「民國甲□年」，供桌是戰後之物）；老屋新生多金色花瓶插百合、橘塔與供品盒 */
 function buildAltarLong(b, item, detail, cfg) {
   const age = ageOf(cfg)
   const black = BLACK(age)
@@ -100,39 +100,33 @@ function buildAltarLong(b, item, detail, cfg) {
   const d = 0.7
   const h = 0.9
   grp(b, detail, [item.x, 0, item.z], 0, () => {
-    b.box('plain', [w, 0.08, d], [0, h - 0.04, 0], { tint: black })
-    for (const s of [-1, 1]) b.box('plain', [0.12, h - 0.08, d - 0.08], [s * (w / 2 - 0.1), (h - 0.08) / 2, 0], { tint: shade(black, 1.1) })
-    b.box('plain', [w - 0.2, h - 0.2, 0.05], [0, (h - 0.2) / 2 + 0.05, d / 2 - 0.05], { tint: shade(black, 1.15) })
+    b.box('lacquer', [w, 0.08, d], [0, h - 0.04, 0], { tint: black })
+    for (const s of [-1, 1]) b.box('lacquer', [0.12, h - 0.08, d - 0.08], [s * (w / 2 - 0.1), (h - 0.08) / 2, 0], { tint: shade(black, 1.1) })
+    b.box('lacquer', [w - 0.2, h - 0.2, 0.05], [0, (h - 0.2) / 2 + 0.05, d / 2 - 0.05], { tint: shade(black, 1.15) })
     // 前堵的龍紋（金色筆觸；中央留給金字）
     for (const s of [-1, 1]) {
-      for (let k = 0; k < 6; k++) b.box('plain', [0.16, 0.035, 0.012], [s * (0.55 + k * 0.14), 0.42 + Math.sin(k * 1.3) * 0.1, d / 2 - 0.015], { tint: k % 2 ? '#c9a043' : '#b58a32', rotation: [0, 0, Math.sin(k * 1.3) * 0.5] })
+      for (let k = 0; k < 6; k++) b.box('lacquer', [0.16, 0.035, 0.012], [s * (0.55 + k * 0.14), 0.42 + Math.sin(k * 1.3) * 0.1, d / 2 - 0.015], { tint: k % 2 ? '#c9a043' : '#b58a32', rotation: [0, 0, Math.sin(k * 1.3) * 0.5] })
     }
-    // 香爐（深色圓爐；2025 年的照片裡在神將前的長案上、只有遠景，本站放在供桌正中示意；材質與款識查無）
-    b.cylinder('plain', 0.13, 0.1, 0.17, 18, [0, h + 0.085, 0], { tint: '#3a2e22' })
-    b.cylinder('plain', 0.14, 0.14, 0.025, 18, [0, h + 0.18, 0], { tint: '#4a3a28' })
-    b.cylinder('plain', 0.12, 0.12, 0.01, 14, [0, h + 0.17, 0], { tint: '#b8b0a2' })
-    for (const s of [-1, 1]) b.add('plain', new TorusGeometry(0.035, 0.01, 6, 10), { position: [s * 0.145, h + 0.13, 0], rotation: [0, Math.PI / 2, 0], tint: '#4a3a28' })
-    for (const dx of [-0.03, 0, 0.03]) b.cylinder('wood', 0.004, 0.004, 0.3, 4, [dx, h + 0.32, 0], { tint: '#8a3a2a' })
     if (cfg.variant === 'revival') {
       // 供桌兩端的金色花瓶插百合、橘子疊成塔的高腳盤、紅色供品盒（老屋新生；其他年代的供品查無，不畫）
       for (const s of [-1, 1]) {
-        b.cylinder('plain', 0.05, 0.08, 0.16, 12, [s * 0.95, h + 0.08, 0], { tint: '#a87a28' })
-        b.cylinder('plain', 0.03, 0.05, 0.08, 10, [s * 0.95, h + 0.2, 0], { tint: '#a87a28' })
+        b.cylinder('lacquer', 0.05, 0.08, 0.16, 12, [s * 0.95, h + 0.08, 0], { tint: '#a87a28' })
+        b.cylinder('lacquer', 0.03, 0.05, 0.08, 10, [s * 0.95, h + 0.2, 0], { tint: '#a87a28' })
         for (let k = 0; k < 5; k++) {
           const a = (k / 5) * Math.PI * 2
-          b.add('plain', new SphereGeometry(0.055, 6, 5), { position: [s * 0.95 + Math.cos(a) * 0.07, h + 0.34 + (k % 2) * 0.05, Math.sin(a) * 0.07], tint: '#f4efe6' })
+          b.add('lacquer', new SphereGeometry(0.055, 6, 5), { position: [s * 0.95 + Math.cos(a) * 0.07, h + 0.34 + (k % 2) * 0.05, Math.sin(a) * 0.07], tint: '#f4efe6' })
         }
       }
-      b.cylinder('plain', 0.12, 0.05, 0.14, 12, [-0.45, h + 0.07, 0], { tint: '#b8442f' })
+      b.cylinder('lacquer', 0.12, 0.05, 0.14, 12, [-0.45, h + 0.07, 0], { tint: '#b8442f' })
       const tier = [[0, 4], [0.1, 2]]
       for (const [dy, n] of tier) {
         for (let k = 0; k < n; k++) {
           const a = (k / n) * Math.PI * 2
-          b.add('plain', new SphereGeometry(0.06, 8, 6), { position: [-0.45 + Math.cos(a) * 0.065 * (n > 2 ? 1 : 0.4), h + 0.2 + dy, Math.sin(a) * 0.065 * (n > 2 ? 1 : 0.4)], tint: '#e8902f' })
+          b.add('lacquer', new SphereGeometry(0.06, 8, 6), { position: [-0.45 + Math.cos(a) * 0.065 * (n > 2 ? 1 : 0.4), h + 0.2 + dy, Math.sin(a) * 0.065 * (n > 2 ? 1 : 0.4)], tint: '#e8902f' })
         }
       }
-      b.box('plain', [0.2, 0.1, 0.14], [0.5, h + 0.05, 0.02], { tint: '#b3302a' })
-      b.box('plain', [0.2, 0.01, 0.14], [0.5, h + 0.105, 0.02], { tint: GILT })
+      b.box('lacquer', [0.2, 0.1, 0.14], [0.5, h + 0.05, 0.02], { tint: '#b3302a' })
+      b.box('lacquer', [0.2, 0.01, 0.14], [0.5, h + 0.105, 0.02], { tint: GILT })
     }
   })
 }
@@ -143,14 +137,14 @@ function buildStonePillar(b, item, detail, cfg) {
   const dir = item.x > 0 ? -1 : 1
   grp(b, detail, [item.x, 0, item.z], 0, () => {
     b.box('stone', [0.5, 0.18, 0.5], [0, 0.09, 0], { tint: '#a39a8a' })
-    b.box('plain', [0.3, 3.5, 0.3], [0, 1.93, 0], { tint: '#232326' })
+    b.box('lacquer', [0.3, 3.5, 0.3], [0, 1.93, 0], { tint: '#3a3a40' })
     // 柱頂的看架與彩繪瓜筒（上方彩繪、金色木雕）
     b.box('wood', [0.46, 0.2, 0.46], [0, 3.78, 0], { tint: age.beam })
-    b.box('plain', [0.34, 0.14, 0.34], [0, 3.95, 0], { tint: '#3f6f66' })
-    if (detail) for (const sx of [-1, 1]) detail.box('plain', [0.05, 0.12, 0.5], [sx * 0.2, 3.78, 0], { tint: GILT })
+    b.box('lacquer', [0.34, 0.14, 0.34], [0, 3.95, 0], { tint: '#3f6f66' })
+    if (detail) for (const sx of [-1, 1]) detail.box('lacquer', [0.05, 0.12, 0.5], [sx * 0.2, 3.78, 0], { tint: GILT })
     // 左柱（篆書）：只畫幾列筆畫，不寫字（字查無）
     if (item.script === 'seal') {
-      for (let k = 0; k < 8; k++) b.box('plain', [0.1, 0.02, 0.006], [dir * 0.152, 2.9 - k * 0.2, 0], { tint: '#c9a148', rotation: [0, (dir * Math.PI) / 2, 0] })
+      for (let k = 0; k < 8; k++) b.box('lacquer', [0.1, 0.02, 0.006], [dir * 0.152, 2.9 - k * 0.2, 0], { tint: '#c9a148', rotation: [0, (dir * Math.PI) / 2, 0] })
     }
   })
 }
@@ -160,55 +154,30 @@ function buildRoundPillar(b, item, detail, cfg) {
   const age = ageOf(cfg)
   grp(b, detail, [item.x, 0, item.z], 0, () => {
     b.cylinder('stone', 0.3, 0.3, 0.22, 12, [0, 0.11, 0], { tint: '#a39a8a' })
-    b.cylinder('plain', 0.2, 0.22, 3.55, 14, [0, 2.0, 0], { tint: BLACK(age) })
-    b.cylinder('plain', 0.22, 0.22, 0.06, 14, [0, 3.7, 0], { tint: GILT })
+    b.cylinder('lacquer', 0.2, 0.22, 3.55, 14, [0, 2.0, 0], { tint: BLACK(age) })
+    b.cylinder('lacquer', 0.22, 0.22, 0.06, 14, [0, 3.7, 0], { tint: GILT })
   })
 }
 
-/** 大型神將（依位置推測是千里眼、順風耳；約 2.2 m）：藍底金繡袍、金冠垂黃流蘇、黑面；一手舉到額前或耳旁 */
-function buildBigGuard(b, item, detail) {
-  grp(b, detail, [item.x, 0, item.z], item.rotationY ?? 0, () => {
-    b.box('wood', [0.9, 0.3, 0.9], [0, 0.15, 0], { tint: '#3a2a22' })
-    b.box('plain', [0.92, 0.04, 0.92], [0, 0.32, 0], { tint: GILT })
-    for (const s of [-1, 1]) b.box('plain', [0.16, 0.6, 0.18], [s * 0.15, 0.62, 0], { tint: '#2e2a30' })
-    // 袍（下擺較寬）與上身、肩甲
-    b.cylinder('plain', 0.3, 0.38, 0.55, 12, [0, 1.15, 0], { tint: '#2f4a8a' })
-    b.cylinder('plain', 0.2, 0.28, 0.5, 12, [0, 1.6, 0], { tint: '#2f4a8a' })
-    b.box('plain', [0.22, 0.28, 0.02], [0, 1.55, 0.27], { tint: GILT })
-    b.box('plain', [0.5, 0.07, 0.04], [0, 1.4, 0.3], { tint: '#a8382c' })
-    for (const s of [-1, 1]) b.add('plain', new SphereGeometry(0.12, 8, 6), { position: [s * 0.3, 1.82, 0], tint: '#d6ae52' })
-    // 手臂：千里眼右手舉到額前（手搭涼棚）、順風耳左手貼耳
-    const raised = item.figure === 'qianli' ? 1 : -1
-    b.box('plain', [0.1, 0.4, 0.1], [-raised * 0.32, 1.5, 0.04], { tint: '#2f4a8a', rotation: [0.2, 0, -raised * 0.2] })
-    b.box('plain', [0.1, 0.34, 0.1], [raised * 0.34, 1.9, 0.12], { tint: '#2f4a8a', rotation: [-0.5, 0, raised * 0.5] })
-    b.add('plain', new SphereGeometry(0.06, 6, 5), { position: [raised * 0.28, 2.06, 0.26], tint: '#2a221e' })
-    // 頭與冠
-    b.add('plain', new SphereGeometry(0.14, 10, 8), { position: [0, 2.0, 0.01], tint: '#2a221e' })
-    b.cylinder('plain', 0.16, 0.14, 0.12, 10, [0, 2.17, 0], { tint: '#d6ae52' })
-    b.box('plain', [0.3, 0.05, 0.12], [0, 2.26, 0], { tint: '#d6ae52' })
-    for (const s of [-1, 1]) for (let k = 0; k < 3; k++) b.box('plain', [0.012, 0.18, 0.012], [s * (0.15 + k * 0.012), 2.0 - k * 0.01, 0.02], { tint: '#e2c34a' })
-  })
+/** 右側牆的垂簾：照片裡一排四尊大型神將的位置；身分沒有官方出處，不畫（比照霞海城隍廟的簾幕） */
+function buildWallCurtain(b, item) {
+  const len = 3.6
+  b.box('lacquer', [0.03, 3.0, len], [item.x, 1.6, item.z], { tint: '#b8a27a' })
+  for (let k = 0; k < 9; k++) b.box('lacquer', [0.035, 3.0, 0.02], [item.x - 0.002, 1.6, item.z - len / 2 + 0.2 + k * 0.4], { tint: '#9e8862' })
+  b.box('wood', [0.06, 0.08, len + 0.1], [item.x, 3.12, item.z], { tint: '#3a2a22' })
 }
 
-/** 哼哈二將（三川殿；木雕、裸上身、裙擺飛揚、立於岩座）；年代不詳，標現況 */
-function buildGateGuardian(b, item, detail) {
-  grp(b, detail, [item.x, 0, item.z], item.rotationY ?? 0, () => {
-    b.add('stone', new CylinderGeometry(0.4, 0.5, 0.35, 7), { position: [0, 0.175, 0], tint: '#8e8678' })
-    const open = item.figure === 'ha' ? 1 : 0
-    for (const s of [-1, 1]) b.box('plain', [0.15, 0.7, 0.17], [s * 0.18, 0.7, 0], { tint: '#a8794e', rotation: [0, 0, s * 0.08] })
-    // 裙擺
-    b.cylinder('plain', 0.22, 0.36, 0.4, 10, [0, 1.08, 0], { tint: '#7a2b24' })
-    // 裸露的胸腹與手臂（肌肉用幾個起伏的圓塊示意）
-    b.cylinder('plain', 0.2, 0.24, 0.62, 10, [0, 1.58, 0], { tint: '#b9895c' })
-    for (const s of [-1, 1]) {
-      b.add('plain', new SphereGeometry(0.1, 8, 6), { position: [s * 0.1, 1.72, 0.17], scale: [1, 0.8, 0.6], tint: '#c19466' })
-      b.add('plain', new SphereGeometry(0.1, 8, 6), { position: [s * 0.3, 1.8, 0], tint: '#b9895c' })
-      b.box('plain', [0.1, 0.46, 0.1], [s * 0.38, 1.54, 0.08], { tint: '#b9895c', rotation: [-0.6, 0, s * 0.5] })
-    }
-    b.add('plain', new SphereGeometry(0.13, 10, 8), { position: [0, 2.0, 0.01], tint: '#b9895c' })
-    b.box('plain', [0.2, 0.08, 0.16], [0, 2.17, 0], { tint: '#2a221e' })
-    // 飄帶
-    for (const s of [-1, 1]) b.box('plain', [0.05, 0.5, 0.2], [s * 0.34, 1.35 + open * 0.05, -0.1], { tint: '#a8382c', rotation: [0.4, 0, s * 0.3] })
+/** 神將前的長案（沿牆，黑色）與深色圓爐（2025 年的照片，只有遠景；材質與款識查無，形制待核；不畫香與供品） */
+function buildSideTable(b, item, detail, cfg) {
+  const black = BLACK(ageOf(cfg))
+  const h = 0.85
+  grp(b, detail, [item.x, 0, item.z], 0, () => {
+    b.box('lacquer', [0.6, 0.07, 1.4], [0, h - 0.035, 0], { tint: black })
+    for (const s of [-1, 1]) b.box('lacquer', [0.5, h - 0.07, 0.08], [0, (h - 0.07) / 2, s * 0.62], { tint: shade(black, 1.1) })
+    b.box('lacquer', [0.04, h - 0.25, 1.2], [-0.25, (h - 0.25) / 2 + 0.1, 0], { tint: shade(black, 1.15) })
+    b.cylinder('lacquer', 0.15, 0.11, 0.18, 18, [0, h + 0.09, 0], { tint: '#3a2e22' })
+    b.cylinder('lacquer', 0.16, 0.16, 0.025, 18, [0, h + 0.19, 0], { tint: '#4a3a28' })
+    b.cylinder('lacquer', 0.14, 0.14, 0.01, 14, [0, h + 0.18, 0], { tint: '#b8b0a2' })
   })
 }
 
@@ -216,8 +185,8 @@ function buildGateGuardian(b, item, detail) {
 function buildLightTower(b, item, detail) {
   grp(b, detail, [item.x, 0, item.z], 0, () => {
     b.box('wood', [0.5, 0.18, 0.5], [0, 0.09, 0], { tint: '#3a2a22' })
-    b.cylinder('plain', 0.12, 0.25, 1.35, 12, [0, 0.855, 0], { tint: '#b3302a' })
-    b.cylinder('plain', 0.03, 0.12, 0.2, 10, [0, 1.62, 0], { tint: '#d6ae52' })
+    b.cylinder('lacquer', 0.12, 0.25, 1.35, 12, [0, 0.855, 0], { tint: '#b3302a' })
+    b.cylinder('lacquer', 0.03, 0.12, 0.2, 10, [0, 1.62, 0], { tint: '#d6ae52' })
     const rows = detail ? 7 : 4
     for (let r = 0; r < rows; r++) {
       const t = (r + 0.5) / rows
@@ -225,7 +194,7 @@ function buildLightTower(b, item, detail) {
       const n = detail ? 8 : 5
       for (let k = 0; k < n; k++) {
         const a = (k / n) * Math.PI * 2 + r * 0.4
-        b.add('plain', new SphereGeometry(0.028, 5, 4), { position: [Math.cos(a) * rad, 0.3 + t * 1.2, Math.sin(a) * rad], tint: '#f3d36a' })
+        b.add('lacquer', new SphereGeometry(0.028, 5, 4), { position: [Math.cos(a) * rad, 0.3 + t * 1.2, Math.sin(a) * rad], tint: '#f3d36a' })
       }
     }
   })
@@ -238,34 +207,34 @@ function buildArch(b, item, detail, cfg) {
   grp(b, detail, [item.x, 0, item.z], 0, () => {
     for (const s of [-1, 1]) {
       b.cylinder('stone', 0.24, 0.24, 0.18, 12, [s * span, 0.09, 0], { tint: '#a39a8a' })
-      b.cylinder('plain', 0.14, 0.15, 2.7, 12, [s * span, 1.53, 0], { tint: BLACK(age) })
+      b.cylinder('lacquer', 0.14, 0.15, 2.7, 12, [s * span, 1.53, 0], { tint: BLACK(age) })
     }
-    b.add('plain', new TorusGeometry(span, 0.09, 6, 22, Math.PI), { position: [0, 2.75, 0], scale: [1, 0.26, 1], tint: BLACK(age) })
-    b.box('plain', [0.7, 0.34, 0.08], [0, 3.38, 0], { tint: BLACK(age) })
-    // 兩側的「安」「平」字燈（字查無年代，只畫素紅燈）與橫樑上的透雕小件
+    b.add('lacquer', new TorusGeometry(span, 0.09, 6, 22, Math.PI), { position: [0, 2.75, 0], scale: [1, 0.26, 1], tint: BLACK(age) })
+    b.box('lacquer', [0.7, 0.34, 0.08], [0, 3.38, 0], { tint: BLACK(age) })
+    // 橫樑下的素紅小燈籠與橫樑上的透雕小件
     if (detail) {
       for (const s of [-1, 1]) {
-        detail.add('plain', new SphereGeometry(0.15, 10, 8), { position: [s * 1.5, 2.32, 0], scale: [1, 1.2, 1], tint: '#c0392b' })
-        detail.box('plain', [0.03, 0.3, 0.03], [s * 1.5, 2.6, 0], { tint: '#3a2a22' })
+        detail.add('lacquer', new SphereGeometry(0.09, 10, 8), { position: [s * 1.5, 2.42, 0], scale: [1, 1.2, 1], tint: '#c0392b' })
+        detail.box('lacquer', [0.02, 0.28, 0.02], [s * 1.5, 2.65, 0], { tint: '#3a2a22' })
       }
-      for (let k = -4; k <= 4; k++) detail.add('plain', new SphereGeometry(0.03, 6, 4), { position: [k * 0.5, 2.75 + Math.sqrt(Math.max(0, 1 - (k * 0.5 / span) ** 2)) * span * 0.26, 0], tint: '#e0b545' })
+      for (let k = -4; k <= 4; k++) detail.add('lacquer', new SphereGeometry(0.03, 6, 4), { position: [k * 0.5, 2.75 + Math.sqrt(Math.max(0, 1 - (k * 0.5 / span) ** 2)) * span * 0.26, 0], tint: '#e0b545' })
     }
   })
 }
 
 /** 蒲團 */
 function buildCushion(b, item) {
-  b.cylinder('plain', 0.22, 0.24, 0.12, 14, [item.x, 0.06, item.z], { tint: '#9a3a2c' })
+  b.cylinder('lacquer', 0.22, 0.24, 0.12, 14, [item.x, 0.06, item.z], { tint: '#9a3a2c' })
 }
 
 /** 器物登記表：type → { build, footprint（障礙物）, height（鏡頭遮擋高度） } */
 export const CS_FURNITURE = {
-  gateGuardian: { build: buildGateGuardian, footprint: (i) => box2(i.x, i.z, 0.95, 0.95), height: () => 2.4 },
   stonePillar: { build: buildStonePillar, footprint: (i) => box2(i.x, i.z, 0.52, 0.52), height: () => 4.1 },
   roundPillar: { build: buildRoundPillar, footprint: (i) => box2(i.x, i.z, 0.6, 0.6), height: () => 3.8 },
   mazuShrine: { build: buildMazuShrine, footprint: (i) => box2(i.x, i.z, 3.3, 1.0), height: () => 3.7 },
   altarLong: { build: buildAltarLong, footprint: (i) => box2(i.x, i.z, 2.7, 0.8), height: () => 1.4 },
-  bigGuard: { build: buildBigGuard, footprint: (i) => box2(i.x, i.z, 1.0, 1.0), height: () => 2.4 },
+  wallCurtain: { build: buildWallCurtain, footprint: (i) => box2(i.x, i.z, 0.1, 3.6), height: () => 3.2 },
+  sideTable: { build: buildSideTable, footprint: (i) => box2(i.x, i.z, 0.65, 1.45), height: () => 1.2 },
   cushion: { build: buildCushion, footprint: (i) => box2(i.x, i.z, 0.5, 0.5), height: () => 0.12 },
   lightTower: { build: buildLightTower, footprint: (i) => box2(i.x, i.z, 0.55, 0.55), height: () => 1.8 },
   // 拱門：只有兩根柱子擋路，中間可以走過（橫樑在頭上）
@@ -316,8 +285,13 @@ function signs(b, eraId) {
   const room = H.room
   // 三川殿中門內側上方（朝殿內）：紅底金字的大匾「惠澤覃敷」（大正九年稻江平樂社獻；外側門楣與廟名額之間沒有空間）
   b.group([0, 0, room.maxZ - 0.06], Math.PI, () => {
-    b.box('plain', [1.46, 0.56, 0.06], [0, 3.28, 0.03], { tint: GILT })
-    b.addSign({ text: '惠澤覃敷', style: 'red', width: 1.3, height: 0.42, position: [0, 3.28, 0.065] })
+    b.box('plain', [1.6, 0.72, 0.06], [0, 3.36, 0.03], { tint: GILT })
+    b.addSign({ text: '惠澤覃敷', style: 'red', width: 1.0, height: 0.56, position: [0, 3.36, 0.065] })
+    // 款識在兩側的紅底上：只寫看得清楚的字，社員姓名看不清，用「□」（使用者 2026-11-05）
+    for (const s of [-1, 1]) b.box('plain', [0.26, 0.62, 0.012], [s * 0.65, 3.36, 0.062], { tint: '#8e2a1e' })
+    b.addSign({ text: '大正九年元月吉日', style: 'letters', vertical: true, width: 0.16, height: 0.58, position: [0.65, 3.36, 0.072] })
+    b.addSign({ text: '稻江平樂社', style: 'letters', vertical: true, width: 0.12, height: 0.56, position: [-0.59, 3.36, 0.072] })
+    b.addSign({ text: '□□□仝敬獻', style: 'letters', vertical: true, width: 0.12, height: 0.56, position: [-0.71, 3.36, 0.072] })
   })
   for (const item of csItemsFor(eraId)) {
     // 右柱：陰刻描金楷書（上款同治六年丁卯端午日；一副聯的一邊，另一邊查無）
@@ -325,6 +299,9 @@ function signs(b, eraId) {
       b.group([item.x, 0, item.z], -Math.PI / 2, () => {
         b.addSign({ text: '慈孃印菩薩之心西天衣鉢', style: 'lacquer', vertical: true, width: 0.2, height: 2.4, position: [0, 1.95, 0.155] })
       })
+    }
+    if (item.type === 'mazuShrine') {
+      b.addSign({ text: '海國陽春', style: 'gold', width: 1.6, height: 0.34, position: [item.x, 3.48, item.z + 0.395] })
     }
     if (item.type === 'altarLong') {
       b.addSign({ text: '慈聖宮', style: 'gold', width: 0.9, height: 0.34, position: [item.x, 0.42, item.z + 0.335] })
@@ -399,7 +376,7 @@ export function buildCiShengShell(b, cfg, detail = null) {
   // 拜亭的屋簷
   b.addBlocker(H.porch.minX - 0.4, H.porch.maxX + 0.4, Y + 3.5, ridge, room.maxZ, 0.2)
   for (const item of csItemsFor(eraId)) {
-    if (item.type === 'cushion') continue
+    if (item.block === false) continue
     const height = CS_FURNITURE[item.type].height(item)
     for (const fp of footprintsOf(item)) b.addBlocker(fp.minX, fp.maxX, 0, Y + height, fp.minZ, fp.maxZ)
   }
@@ -461,10 +438,13 @@ export function buildCiShengInterior(b, cfg = {}, detail = b) {
   // 宮燈（六角木框；老屋新生，2025 年的照片；純裝飾，只在精緻畫質）
   if (fine && cfg.variant === 'revival') {
     for (const [x, z] of [[-1.2, -4.0], [1.2, -4.0], [-2.4, -3.2], [2.4, -3.2], [-1.2, -5.0], [1.2, -5.0]]) {
-      fine.cylinder('wood', 0.005, 0.005, 0.9, 4, [x, H.wallTop - 0.55, z], { tint: '#2a2622' })
-      fine.cylinder('wood', 0.17, 0.17, 0.3, 6, [x, H.wallTop - 1.2, z], { tint: '#2a1d17' })
-      fine.cylinder('plain', 0.13, 0.13, 0.24, 6, [x, H.wallTop - 1.2, z], { tint: '#f1dca0' })
-      fine.cylinder('wood', 0.2, 0.05, 0.08, 6, [x, H.wallTop - 1.0, z], { tint: '#2a1d17' })
+      fine.cylinder('lacquer', 0.005, 0.005, 0.9, 4, [x, H.wallTop - 0.55, z], { tint: '#2a2622' })
+      fine.cylinder('plain', 0.16, 0.16, 0.26, 6, [x, H.wallTop - 1.2, z], { tint: '#f1dca0' })
+      for (const dy of [-0.14, 0.14]) fine.cylinder('lacquer', 0.18, 0.18, 0.04, 6, [x, H.wallTop - 1.2 + dy, z], { tint: '#2a1d17' })
+      for (let k = 0; k < 6; k++) {
+        const a = (k / 6) * Math.PI * 2
+        fine.box('lacquer', [0.02, 0.26, 0.02], [x + Math.cos(a) * 0.165, H.wallTop - 1.2, z + Math.sin(a) * 0.165], { tint: '#2a1d17' })
+      }
     }
   }
   if (fine) fine.pop()

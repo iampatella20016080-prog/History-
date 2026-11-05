@@ -15,7 +15,7 @@ export const CS_TALK = [
     doingEn: 'Standing by the stone pillars in the court',
     objectId: 'tongzhi-stone-pillars',
     lines: [
-      sourced('舊廟在中街、南街那邊，明治四十二年（1909）市區改正拆了，大正三年（1914）在這裡蓋好。', 'The old temple stood near Zhongjie and Nanjie; it was pulled down for urban improvement in 1909, and the new one was finished here in 1914.', ['sinica-gis-2025-cisheng']),
+      sourced('舊廟在中街、南街那邊（今民樂街口），明治四十二年（1909）市區改正拆了；大正三年（1914）在這裡起建，大正五年（1916）落成——這是廟方的說法，文資網寫 1914。', 'The old temple stood near Zhongjie and Nanjie (today’s Minle Street); it was pulled down for urban improvement in 1909. Building began here in 1914 and finished in 1916—so the temple says; the heritage register says 1914.', ['sinica-gis-2025-cisheng', 'commons-cisheng-yange-board', 'tcmb-cisheng-donation-stele-1917', 'nchdb-cisheng-monument']),
       sourced('大木是陳應彬師傅做的。', 'The timber work was done by Master Chen Yingbin.', ['nchdb-cisheng-monument']),
       sourced('這兩根柱子是同治六年端午刻的。', 'These two pillars were cut on the Duanwu day of 1867.', ['commons-cisheng-pillars']),
       sourced('說是舊廟搬來的——大家都這麼說，報紙也這麼寫。', 'They say they came over from the old temple—everyone says so, and so did a newspaper.', ['wiki-ci-sheng-gong']),

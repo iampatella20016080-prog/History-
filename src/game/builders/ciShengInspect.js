@@ -4,7 +4,7 @@ import { Parts } from './inspectParts.js'
 /**
  * 慈聖宮殿內可以近看的器物（第 11 階段）的 3D 檢視模型：媽祖神龕、同治六年的石柱、「惠澤覃敷」匾。
  * 形制依據與分層資訊在 data/ciShengObjects.js；只產生幾何（頂點色），可以在 Node 測試。
- * 匾與柱上的字只畫筆畫（「海國陽春」匾目前不寫字，待決）；神像是簡化的人形，不做臉部細節。detail：精緻畫質多一些小零件與段數。
+ * 匾與柱上的字只畫筆畫；神像是簡化的人形，不做臉部細節。detail：精緻畫質多一些小零件與段數。
  */
 
 const box = (x, y, z) => new BoxGeometry(x, y, z)
@@ -47,18 +47,19 @@ function buildMazuShrine({ detail }) {
   }
   frame.add(BLACK, box(w + 0.06, 0.24, 0.08), { p: [0, 1.58, 0.2] })
   for (const k of [-1, 0, 1]) frame.add('#b48a3a', box(0.42, 0.16, 0.01), { p: [k * 0.48, 1.58, 0.245] })
-  // 上方的橫匾「海國陽春」（黑底、金邊；寫不寫字待決，目前不寫）
+  // 上方的橫匾「海國陽春」（黑底、金邊；檢視模型的字只畫筆畫，街景的匾寫字）
   frame.add('#1f1814', box(0.95, 0.26, 0.04), { p: [0, 1.82, -0.05] })
   frame.add(GILT, box(0.9, 0.02, 0.01), { p: [0, 1.93, -0.025] })
   frame.add(GILT, box(0.9, 0.02, 0.01), { p: [0, 1.71, -0.025] })
+  for (let c = 0; c < 4; c++) for (let k = 0; k < 3; k++) frame.add('#d4ad5c', box(0.11, 0.012, 0.004), { p: [-0.3 + c * 0.2, 1.87 - k * 0.05, -0.028] })
   if (detail) for (let k = -6; k <= 6; k++) frame.add('#e0b545', new SphereGeometry(0.02, 6, 4), { p: [k * 0.12, 1.66, 0.25] })
   const gods = new Parts()
   addMazu(gods, 0, 0.77, 1.15, 'mianliu', detail)
   for (const s of [-1, 1]) addMazu(gods, s * 0.34, 0.67, 0.95, 'phoenix', detail)
   for (const s of [-1, 1]) addMazu(gods, s * 0.6, 0.57, 0.8, 'phoenix', detail)
   return {
-    radius: 1.0,
-    centerY: 0.95,
+    radius: 1.25,
+    centerY: 1.05,
     viewPitch: 0.1,
     parts: [
       { id: 'frame', geometry: frame.build() },

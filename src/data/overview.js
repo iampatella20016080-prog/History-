@@ -23,7 +23,7 @@ export const TIMELINE_EVENTS = [
   { year: 1881, text: '同安茶商在大稻埕設源隆行，專製包種茶外銷。', textEn: 'Tong\'an tea merchants set up the Yuanlong hong in Dadaocheng, making Baozhong tea for export.', sourceIds: ['tcmb-tea-trade'] },
   { year: 1889, text: '林維源與李春生成立建昌公司，建昌街、千秋街（今貴德街）成為洋樓街。', textEn: 'Lin Weiyuan and Lee Chun-sheng found the Jianchang Company, and Jianchang Street and Qianqiu Street (now Guide Street) become a street of Western-style buildings.', sourceIds: ['chen-ciyu-li-family-2015'] },
   { year: 1896, text: '日本人調查：大稻埕茶商252店、從業3,612人。', textEn: 'A Japanese survey counts 252 tea merchants in Dadaocheng employing 3,612 people.', sourceIds: ['chen-ciyu-li-family-2015'] },
-  { year: 1914, text: '慈聖宮因市區改正遷至日新街（今保安街49巷）重建完成；遷建起於1909／1910、完工另有1916一說，年份待核。', textEn: 'Cisheng Temple, moved because of urban redevelopment, is rebuilt on Rixin Street (now Lane 49, Baoan Street). The move began in 1909/1910; one account puts completion in 1916, so the year is yet to be verified.', sourceIds: ['sinica-gis-2025-cisheng', 'wiki-ci-sheng-gong'] },
+  { year: 1914, text: '慈聖宮因市區改正遷至日新街（今保安街49巷）：1914 年起建、1916 年落成（廟方）；文資網寫 1914。舊廟 1909／1910 拆除，年份待核。', textEn: 'Cisheng Temple, moved because of urban redevelopment, is rebuilt on Rixin Street (now Lane 49, Baoan Street): begun in 1914 and finished in 1916 (the temple’s account); the heritage register says 1914. The old temple came down in 1909/1910, to be verified.', sourceIds: ['sinica-gis-2025-cisheng', 'commons-cisheng-yange-board', 'nchdb-cisheng-monument', 'wiki-ci-sheng-gong'] },
   LI_CHUNSHENG_TIMELINE_EVENTS[1],
   // 第 8 階段人物：蔣渭水（1916 大安醫院、1921 文協、2020 渭水驛站）、王井泉（1941《台灣文學》、1943 厚生演劇研究會）
   JIANG_WEISHUI_TIMELINE_EVENTS[0],

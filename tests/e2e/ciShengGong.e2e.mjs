@@ -63,8 +63,8 @@ function standNear(world, [x, , z], radius, others, minDistance = 0, level = 0, 
     for (let gz = z - radius; gz <= z + radius; gz += 0.1) {
       const d = Math.hypot(gx - x, gz - z)
       if (d > radius - 0.3 || d < minDistance || !walkableAt(world, gx, gz, level)) continue
-      // 離殿的兩側牆至少 1.4 公尺（殿的本地 |x| < 3.6）：貼牆站時 iPad 的近鏡頭會被牆擋住，提示卡在畫面外
-      if (Math.abs(4 - gx) > 3.6 && gz > 10.5) continue
+      // 離殿的兩側牆至少 0.85 公尺（殿的本地 |x| < 4.2）：貼牆站時 iPad 的近鏡頭會被牆擋住，提示卡在畫面外
+      if (Math.abs(4 - gx) > 4.2 && gz > 10.5) continue
       // 和人物交談的位置（minDistance > 0）：四周 0.4 公尺也站得到，不挑在神將、石柱與牆之間的夾縫裡，鏡頭才退得開
       if (minDistance > 0 && gz > 10.5 && ![[0.4, 0], [-0.4, 0], [0, 0.4], [0, -0.4]].every(([dx, dz]) => walkableAt(world, gx + dx, gz + dz, level))) continue
       const rival = Math.min(...others.map(([ox, oz, r]) => (Math.hypot(gx - ox, gz - oz) < r ? Math.hypot(gx - ox, gz - oz) : Infinity)))
@@ -340,8 +340,8 @@ async function runDevice(browser, device) {
   /** 走近一件器物、開啟檢視、檢查五個分頁與小動作 */
   const inspectItem = async (eraId, item, shotName) => {
     if (!item.stand) return { ok: false, detail: '找不到可以站的位置' }
-    // 先離開上一件器物的範圍（提示有離開的緩衝：相鄰的小爐與神龕不會沿用上一件）
-    await teleport({ ...W(0, -2.2), y: Y })
+    // 先到廟埕，離開上一件器物的範圍（提示有離開的緩衝，不會沿用上一件）
+    await teleport({ ...W(-1.2, 2.0), y: 0 })
     await frames(6)
     await teleport(item.stand, { x: item.position[0], z: item.position[2] }, item.level ?? 0)
     const near = await waitFor(page, (id) => window.__DDC__.useGameStore.getState().nearbyInspectableId === id, item.id, 20000)
@@ -370,16 +370,19 @@ async function runDevice(browser, device) {
   }
   const talkTo = async (npc) => {
     if (!npc.stand) return false
-    // 先離開上一件器物的範圍（提示有離開的緩衝），再站到人物旁
-    await teleport({ ...W(0, -2.2), y: Y })
+    // 先到廟埕，離開上一件器物的範圍（提示有離開的緩衝），再站到人物旁
+    await teleport({ ...W(-1.2, 2.0), y: 0 })
     await frames(6)
     // 人物的提示在頭頂上方：站在 1.2 公尺以外、面向人物，提示才在畫面裡
     await teleport(npc.stand, npc.at, npc.level)
     const near = await waitFor(page, (id) => window.__DDC__.useGameStore.getState().nearbyTalkNpcId === id, npc.id, 20000)
-    if (!near) return false
+    if (!near) {
+      console.log('    沒有交談提示：', JSON.stringify(await state(page)))
+      return false
+    }
     await frames(4)
     await interactVisible(talkForNpc(npc.eraId, npc.id).role)
-    const open = await waitFor(page, () => document.querySelector('.dialogue-layer[data-state="open"] .dialogue__line'), null, 15000)
+    const open = await waitFor(page, () => document.querySelector('.dialogue-layer[data-state="open"] .dialogue__line'), null, 60000)
     await press(page.locator('.dialogue__close'))
     await waitFor(page, () => !window.__DDC__.useGameStore.getState().talk, null, 10000)
     await page.waitForTimeout(400)
@@ -412,6 +415,7 @@ async function runDevice(browser, device) {
       await shot(`${eraId}-02-shrine`, at(1.2, Y + 1.5, -4.4), at(0, Y + 2.0, -7.3))
       await shot(`${eraId}-03-court`, at(-0.6, Y + 1.7, -4.2), at(2.7, Y + 1.6, -2.9))
       await shot(`${eraId}-04-entrance`, at(0.3, Y + 1.7, -4.0), at(0, Y + 2.6, -1.9))
+      await shot(`${eraId}-05-side-table`, at(3.5, Y + 1.5, -2.9), at(4.6, Y + 1.0, -4.8))
     } else {
       await shot(`${eraId}-02-shrine`, at(1.2, Y + 1.5, -4.4), at(0, Y + 2.0, -7.3))
     }
