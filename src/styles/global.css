@@ -2905,7 +2905,7 @@ kbd {
   white-space: nowrap;
 }
 
-/* 隱藏介面：只留 3D 街景；右上角保留一塊隱形的觸發區 */
+/* 隱藏介面：只留 3D 街景；右上角留一顆看得見的「顯示介面」按鈕（觸控沒有 Esc，不能只靠隱形的區域） */
 .hud.is-ui-hidden > :not(.ui-reveal) {
   visibility: hidden;
   opacity: 0;
@@ -2919,15 +2919,29 @@ kbd {
 
 .ui-reveal {
   position: absolute;
-  top: 0;
-  right: 0;
-  width: calc(96px + var(--safe-right));
-  height: calc(96px + var(--safe-top));
-  padding: 0;
+  top: calc(14px + var(--safe-top));
+  right: calc(14px + var(--safe-right));
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 16px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+  color: var(--ink);
   pointer-events: auto;
-  background: transparent;
-  border: none;
+  cursor: pointer;
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  box-shadow: var(--shadow-soft);
+  opacity: 0.88;
+  animation: rise-in 0.3s ease;
   -webkit-tap-highlight-color: transparent;
+}
+
+.ui-reveal:hover {
+  opacity: 1;
 }
 
 .ui-reveal:focus-visible {
