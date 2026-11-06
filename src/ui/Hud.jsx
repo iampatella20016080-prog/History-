@@ -237,7 +237,7 @@ function ViewerBar() {
   )
 }
 
-/** 隱藏介面時：右上角的隱形觸發區，點一下（或按 Esc）重新顯示介面 */
+/** 隱藏介面時：右上角一顆看得見的小按鈕，點一下（或按 Esc）重新顯示介面 */
 function RevealUi() {
   const t = useT()
   const L = useLocalizer()
@@ -245,13 +245,15 @@ function RevealUi() {
   return (
     <button
       type="button"
-      className="ui-reveal"
+      className="ui-reveal paper"
       data-reveal-ui
       aria-label={t('revealUi.label')}
       title={t('revealUi.title')}
       onPointerDown={(event) => event.stopPropagation()}
       onClick={() => setUiHidden(false)}
-    />
+    >
+      {t('revealUi.label')}
+    </button>
   )
 }
 

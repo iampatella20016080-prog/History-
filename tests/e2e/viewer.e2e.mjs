@@ -387,6 +387,28 @@ async function runDevice(browser, device) {
     `設定 ${h.gear}、名錄 ${h.menu}、工具列 ${h.bar}、操作說明 ${h.controls}；畫面亮度 ${pure.mean.toFixed(2)}`,
   )
   const reveal = await page.locator('[data-reveal-ui]').boundingBox()
+  // 觸控沒有 Esc：「顯示介面」必須是看得見、夠大、在畫面內的按鈕（不能是透明的區域）
+  const revealLook = await page.evaluate(() => {
+    const el = document.querySelector('[data-reveal-ui]')
+    const style = getComputedStyle(el)
+    return { text: el.textContent.trim(), opacity: Number(style.opacity), visibility: style.visibility, background: style.backgroundColor }
+  })
+  const vp = page.viewportSize()
+  record(
+    test,
+    '隱藏介面後有看得見的「顯示介面」按鈕',
+    revealLook.text.length > 0 &&
+      revealLook.visibility === 'visible' &&
+      revealLook.opacity >= 0.5 &&
+      revealLook.background !== 'rgba(0, 0, 0, 0)' &&
+      reveal.width >= 44 &&
+      reveal.height >= 44 &&
+      reveal.x >= 0 &&
+      reveal.y >= 0 &&
+      reveal.x + reveal.width <= vp.width &&
+      reveal.y + reveal.height <= vp.height,
+    `文字「${revealLook.text}」、透明度 ${revealLook.opacity}、${Math.round(reveal.width)}×${Math.round(reveal.height)}`,
+  )
   await tapAt(reveal.x + reveal.width / 2, reveal.y + reveal.height / 2)
   // 介面以 0.4 秒淡入：等工具列完全顯示再檢查
   await waitFor(
@@ -399,7 +421,7 @@ async function runDevice(browser, device) {
     30000,
   )
   h = await hiddenState()
-  record(test, '點右上角隱形觸發區恢復介面', !h.hidden && h.bar && !h.reveal)
+  record(test, '點右上角的「顯示介面」按鈕恢復介面', !h.hidden && h.bar && !h.reveal)
   await press(page.locator('.hud-quality__toggle'))
   await press(page.locator('#quality-panel [data-hide-ui]'))
   await page.waitForFunction(() => document.querySelector('.hud.is-ui-hidden'))
@@ -503,7 +525,7 @@ async function runDevice(browser, device) {
   await press(page.locator('[data-era-option="qing-port"]'))
   await waitFor(page, () => document.documentElement.dataset.eraTransition === 'idle' && document.documentElement.dataset.sceneEra === 'qing-port', null, TRANSITION_TIMEOUT)
   await page.keyboard.press('Escape')
-  await press(page.locator('.hud-menu__toggle'))
+  await press(page.locator('[aria-controls="shop-menu-panel"]'))
   await press(page.locator('.menu-shop', { hasText: '林復振' }).locator('.button-ghost'))
   const prompt = await waitFor(page, () => document.querySelector('.shop-prompt.is-visible'), null, 60000)
   if (touch) {
