@@ -98,10 +98,11 @@ describe('永樂市場：只在「老屋新生」的街底', () => {
       // tests/shizixuan.test.js）；港口商街有寶順洋行與林華泰（第 10 階段，見 tests/teaInteriors.test.js）；
       // 戰後另外有慈聖宮廟埕後段的觀賞範圍（豆花攤與糕粿攤，見 tests/templeSnacks.test.js）；任何年代都沒有市場的
       // 林華泰茶行五個年代、有記名茶酒樓繁華以後、新芳春摩登以後都可以走進去（第 11 階段，見 tests/linHuaTai.test.js、tests/youJi.test.js）
-      const expected = { 'qing-port': ['dodd-tea-house', 'lin-hua-tai', 'xia-hai-cheng-huang'], banquet: ['ci-sheng-gong', 'lin-hua-tai', 'you-ji', 'you-ji-2f', 'jiang-shan-lou', 'jiang-shan-lou-2f', 'jiang-shan-lou-3f', 'jiang-shan-lou-4f', 'jiang-shan-lou-roof'], modern: ['ci-sheng-gong', 'lin-hua-tai', 'rice-and-shine-329', 'shizixuan', 'you-ji', 'you-ji-2f', 'xin-fang-chun', 'xin-fang-chun-2f'], postwar: ['ci-sheng-gong', 'lin-hua-tai', 'rice-and-shine-329', 'shizixuan', 'you-ji', 'you-ji-2f', 'xin-fang-chun', 'xin-fang-chun-2f'] }[era.id] ?? []
+      const expected = { 'qing-port': ['dodd-tea-house', 'lin-hua-tai', 'xia-hai-cheng-huang'], banquet: ['ci-sheng-gong', 'lin-hua-tai', 'rice-and-shine-329', 'you-ji', 'you-ji-2f', 'jiang-shan-lou', 'jiang-shan-lou-2f', 'jiang-shan-lou-3f', 'jiang-shan-lou-4f', 'jiang-shan-lou-roof'], modern: ['ci-sheng-gong', 'lin-hua-tai', 'rice-and-shine-329', 'shizixuan', 'you-ji', 'you-ji-2f', 'xin-fang-chun', 'xin-fang-chun-2f'], postwar: ['ci-sheng-gong', 'lin-hua-tai', 'rice-and-shine-329', 'shizixuan', 'you-ji', 'you-ji-2f', 'xin-fang-chun', 'xin-fang-chun-2f'] }[era.id] ?? []
       assert.deepEqual([...world.interiors.map((item) => item.id)].sort(), expected.sort(), era.id)
-      const walkIn = era.id === 'modern' || era.id === 'postwar'
-      assert.equal(world.viewerRegions.filter(inRiceAndShineLot).length, walkIn ? 5 : 0, `${era.id} 稻舍`)
+      // 酒樓繁華的前店只有騎樓與前店兩個觀賞範圍（店後不開放）
+      const riceRegions = { banquet: 2, modern: 5, postwar: 5 }[era.id] ?? 0
+      assert.equal(world.viewerRegions.filter(inRiceAndShineLot).length, riceRegions, `${era.id} 稻舍`)
       // 港口商街：寶順洋行與林華泰各有騎樓與室內兩個觀賞範圍（第 10 階段）；戰後：慈聖宮廟埕後段
       // 港口商街另外有霞海城隍廟殿內的觀賞範圍（第 11 階段，見 tests/xiaHaiInterior.test.js）
       // 酒樓繁華到庶民生活另外有慈聖宮殿內的觀賞範圍（第 11 階段，見 tests/ciShengInterior.test.js）

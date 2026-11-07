@@ -1,7 +1,7 @@
 /**
  * 迪化街一段329號店屋（稻舍 Rice & Shine）的年代版本：同一棟建築、同一個 ID，隨年代替換立面、招牌、擺設、人物、室內與燈光。
  *
- * 1853 這塊地是一般街屋（不是可以探索的地點）；1895 開始出現米業用途；1930 才完整建立 329 號紅磚店屋的建築語彙；
+ * 1853 這塊地是一般街屋（不是可以探索的地點）；1895 開始出現米業用途（前店可以走進去，店後不開放）；1930 才完整建立 329 號紅磚店屋的建築語彙；
  * 1945 同一棟店屋老化、米業衰退；2000 起才出現現在的「稻舍 Rice & Shine」。早期年代不出現「稻舍」的品牌。
  * 切換年代時只替換這棟建築的立面、招牌、擺設、人物、室內擺設、燈光與店家狀態；renderer、鏡頭、操作與整個場景都不重建。
  */
@@ -22,9 +22,9 @@ export function riceVariantForEra(eraId) {
   return RICE_AND_SHINE_BY_ERA[eraId] ?? null
 }
 
-/** 各版本可以走到的範圍（1895 的街屋不能進去，只有街邊的米業擺設；1930 起可以走進店屋） */
+/** 各版本可以走到的範圍（1895 的前店可以走進去、店後不開放；1930 起可以走進整棟店屋） */
 export const VARIANT_SPACES = {
-  earlyRiceTrade: ['street'],
+  earlyRiceTrade: ['street', 'arcade', 'front'],
   riceMill: ['arcade', 'front', 'courtyard', 'back'],
   postwarRiceHouse: ['arcade', 'front', 'courtyard', 'back'],
   riceAndShineModern: ['arcade', 'front', 'courtyard', 'back', 'stairs', 'upstairs'],

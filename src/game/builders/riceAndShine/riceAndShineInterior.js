@@ -3,7 +3,7 @@ import { MILL, MODERN, POSTWAR, RS } from '../../../data/riceAndShineLayout.js'
 import { createRng } from '../../utils/random.js'
 import { sack, shade } from '../props.js'
 import { buildRiceCourtyard } from './riceAndShineCourtyard.js'
-import { riceMeasure, ricePanel } from './riceAndShineExterior.js'
+import { banquet, riceMeasure, ricePanel } from './riceAndShineExterior.js'
 import { buildRiceSecondFloor, rattanChair } from './riceAndShineSecondFloor.js'
 import { abacus, bambooBasket, bambooSieve, exhibitShelf, husker, measureStand, steelyard, wallHangings } from './riceCultureExhibit.js'
 import { emptyTableSet, mealSet, teaCup } from './riceMealProps.js'
@@ -20,7 +20,7 @@ import { bareBulb, drawerCabinet, farmTools, flatPanel, lineShaftRig, millMachin
  * - riceAndShineModern（2000–現在）：稻舍。外露的紅磚牆、深色木梁、木板天花、紅陶地磚、暖色軌道燈；
  *   前段的米食用餐區（小方桌、藤編木椅、托盤套餐）、櫃台、雕花木櫃、老屋再生說明板；左牆的米業文化展示；
  *   天井；後段的舊碾米機與出菜櫃台；木樓梯與二樓。
- * - earlyRiceTrade（1895–1930）：街屋不能進去，沒有室內。
+ * - earlyRiceTrade（1895–1930）：前店可以走進去（米箱、桿秤與米斗的櫃台、米籮、麻袋、米篩、帳桌），店後不開放；見 riceAndShineBanquet.js。
  * 只產生幾何；文字招牌、燈火、遮擋方塊與碰撞在 riceAndShineExterior.js（街景資料）。細小的擺飾放在 detail。
  */
 const IN = RS.half - RS.wallT
@@ -381,7 +381,9 @@ function modernInterior(b, detail) {
 
 export function buildRiceAndShineInterior(b, config = {}, detail = b) {
   const variant = config.variant ?? 'riceMill'
-  if (variant === 'earlyRiceTrade' || !STYLE[variant]) return
+  // 酒樓繁華（1895–1930）：前店的器物清單（riceAndShineBanquet.js，共用的街屋室內）
+  if (variant === 'earlyRiceTrade') return banquet.buildInterior(b, config, detail)
+  if (!STYLE[variant]) return
   shellFinishes(b, detail, variant)
   if (variant === 'riceMill') riceMillInterior(b, detail)
   else if (variant === 'postwarRiceHouse') postwarInterior(b, detail)

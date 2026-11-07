@@ -20,7 +20,7 @@ import { inRiceAndShineLot } from './helpers.js'
 
 /**
  * 迪化街一段329號店屋（稻舍 Rice & Shine）：同一棟建築、同一個 ID，五個年代各有不同的版本。
- * 1853 是一般街屋；1895 初期米業（不能進去）；1930 米行與碾米間；1945 戰後；2000 稻舍（含天井、樓梯與二樓）。
+ * 1853 是一般街屋；1895 初期米業（前店可以走進去、店後不開放）；1930 米行與碾米間；1945 戰後；2000 稻舍（含天井、樓梯與二樓）。
  * 驗證：年代版本、早期不出現「稻舍」、禁止事項、碰撞（從街上走進去、走上二樓再走出來）、熱點與鏡頭、
  * 按需載入的室內、觀賞範圍、換年代時人物的位置、文獻、共用地段不變、不和其他建築重疊。
  */
@@ -186,15 +186,18 @@ describe('早期年代不出現「稻舍」；禁止事項', () => {
     assert.equal(modern.b.glows.filter((g) => Math.abs(g.position[1] - (RS.ceiling1 - 0.2)) < 0.01).length, 8, '軌道燈')
   })
 
-  test('每個年代的室內都不一樣（不是同一套室內）；1895 沒有室內', () => {
+  test('每個年代的室內都不一樣（不是同一套室內）；1895 是前店的米箱、櫃台、米籮、麻袋與米篩', () => {
     const counts = {}
-    for (const variant of ['riceMill', 'postwarRiceHouse', 'riceAndShineModern']) {
+    for (const variant of ['earlyRiceTrade', 'riceMill', 'postwarRiceHouse', 'riceAndShineModern']) {
       const { inner } = build(variant)
       counts[variant] = [...inner.groups.keys()].sort().join(',') + '|' + [...inner.groups.values()].reduce((n, list) => n + list.length, 0)
     }
-    assert.equal(new Set(Object.values(counts)).size, 3)
+    assert.equal(new Set(Object.values(counts)).size, 4)
     const early = build('earlyRiceTrade')
-    assert.equal(early.inner.groups.size, 0)
+    assert.ok(early.inner.groups.size >= 6, '前店有米箱、竹籮、麻袋、桌櫃等多種材質')
+    // 酒樓繁華還沒有玻璃門、軌道燈、托盤套餐與紅陶地磚（稻舍的）；地面是三和土
+    assert.ok(!early.inner.groups.has('terracotta') && !early.inner.groups.has('woodLight'))
+    assert.ok(!early.b.groups.has('glassClear'))
   })
 
   test('不是咖啡廳：稻舍的介紹與分類是米食料理與稻米文化', () => {
@@ -258,12 +261,42 @@ describe('碰撞：從街上走進去、走過一樓、天井、二樓，再走�
     }
   })
 
-  test('1895：街屋不能進去，但街邊的米袋、木桶、米斗與手推車擋住人物', () => {
+  test('1895：前店可以走進去，店後的隔間門關著；米箱、櫃台、麻袋與街邊的米袋、木桶、手推車擋住人物', () => {
     const world = WORLDS.banquet
-    assert.ok(!walkableAt(world, L(0, -1.5).x, L(0, -1.5).z), '店裡')
+    assert.ok(walkableAt(world, L(0, -1.2).x, L(0, -1.2).z), '前店')
+    assert.ok(walkableAt(world, L(0.2, -4.4).x, L(0.2, -4.4).z), '前店後段')
+    for (const [x, z] of [
+      [0, -5.9],
+      [0, -6.9],
+      [0, -9],
+    ]) assert.ok(!walkableAt(world, L(x, z).x, L(x, z).z), `店後 (${x}, ${z}) 不開放`)
+    for (const [x, z] of [
+      [-2.05, -2.5],
+      [2.15, -2.8],
+      [1.85, -0.95],
+      [1.5, -4.75],
+    ]) assert.ok(!walkableAt(world, L(x, z).x, L(x, z).z), `器物 (${x}, ${z})`)
     for (const r of [EARLY.arcadeSacks, EARLY.barrels, EARLY.cart]) {
       const c = L((r.minX + r.maxX) / 2, (r.minZ + r.maxZ) / 2)
       assert.ok(!walkableAt(world, c.x, c.z), JSON.stringify(r))
+    }
+    // 沒有二樓與天井
+    assert.ok(!world.collision.walkable.some((r) => r.inBuilding && inRiceAndShineLot(r) && ((r.level ?? 0) === 1 || r.levels)))
+  })
+
+  test('1895：街道 → 步道 → 店門 → 米箱 → 櫃台 → 帳桌，再原路走出來（多種步長；連續進出 5 次）', () => {
+    const world = WORLDS.banquet
+    const route = RICE_ROUTE.earlyRiceTrade
+    for (const step of STEPS) {
+      const p = player(L(route[0].x, route[0].z).x, L(route[0].x, route[0].z).z)
+      for (const m of followRoute(world, p, route.slice(1), step)) assert.ok(m.miss < 0.25, `每步 ${step}：${m.id} 差 ${m.miss.toFixed(2)}`)
+      for (const m of followRoute(world, p, [...route].reverse().slice(1), step)) assert.ok(m.miss < 0.25, `每步 ${step}（回程）：${m.id} 差 ${m.miss.toFixed(2)}`)
+    }
+    const p = player(L(0, 3).x, L(0, 3).z)
+    for (let i = 0; i < 5; i++) {
+      const step = STEPS[i % STEPS.length]
+      for (const m of followRoute(world, p, route.slice(1), step)) assert.ok(m.miss < 0.25, `第 ${i + 1} 次進去：${m.id}`)
+      for (const m of followRoute(world, p, [...route].reverse().slice(1), step)) assert.ok(m.miss < 0.25, `第 ${i + 1} 次出來：${m.id}`)
     }
   })
 
@@ -302,22 +335,28 @@ describe('碰撞：從街上走進去、走過一樓、天井、二樓，再走�
     }
   })
 
-  test('換年代：在稻舍裡換到 1930 仍在同一棟店屋裡；換到 1895 被移到街上（不會被推進隔壁）', () => {
+  test('換年代：在稻舍裡換到 1930 仍在同一棟店屋裡；換到 1895 留在前店、天井與二樓被移到街上；換到港口商街被移到街上（不會被推進隔壁）', () => {
     const inside = L(0.95, -3.25)
     const p = { ...inside }
     resolvePlayerPosition(p, PLAYER.radius, WORLDS.modern.collision, 0, { relocate: true })
     assert.ok(Math.hypot(p.x - inside.x, p.z - inside.z) < 0.6, '留在店裡')
-    for (const eraId of ['banquet', 'qing-port']) {
-      for (const [x, z, level] of [
-        [0.95, -3.25, 0],
-        [0, -6.9, 0],
-        [0.0, 0.4, 1],
-      ]) {
-        const q = { ...L(x, z) }
-        resolvePlayerPosition(q, PLAYER.radius, WORLDS[eraId].collision, level, { relocate: true })
-        assert.ok(walkableAt(WORLDS[eraId], q.x, q.z), `${eraId} (${x}, ${z})`)
-        assert.ok(q.z < RS.position.z - RS.pierZ[0] + PLAYER.radius + 0.05, `${eraId} (${x}, ${z}) → z ${q.z.toFixed(2)}：在街上`)
-      }
+    // 1895 的前店是同一棟店屋的一部分：人物留在店裡
+    const stay = { ...inside }
+    resolvePlayerPosition(stay, PLAYER.radius, WORLDS.banquet.collision, 0, { relocate: true })
+    assert.ok(Math.hypot(stay.x - inside.x, stay.z - inside.z) < 0.6, '1895 留在前店')
+    const cases = [
+      ['banquet', [0, -6.9, 0]],
+      ['banquet', [0, -9, 0]],
+      ['banquet', [0.0, 0.4, 1]],
+      ['qing-port', [0.95, -3.25, 0]],
+      ['qing-port', [0, -6.9, 0]],
+      ['qing-port', [0.0, 0.4, 1]],
+    ]
+    for (const [eraId, [x, z, level]] of cases) {
+      const q = { ...L(x, z) }
+      resolvePlayerPosition(q, PLAYER.radius, WORLDS[eraId].collision, level, { relocate: true })
+      assert.ok(walkableAt(WORLDS[eraId], q.x, q.z), `${eraId} (${x}, ${z})`)
+      assert.ok(q.z < RS.position.z - RS.pierZ[0] + PLAYER.radius + 0.05, `${eraId} (${x}, ${z}) → z ${q.z.toFixed(2)}：在街上`)
     }
   })
 })
@@ -358,14 +397,14 @@ describe('熱點、鏡頭、室內與觀賞範圍', () => {
     assert.match(renewal.summary.text, /米行.*產業衰退.*歷史建築保存.*稻舍/)
   })
 
-  test('室內按需載入：1930、1945、2000 各自一套；細部另外合併；頂點數有上限；1895 沒有', () => {
-    for (const eraId of ['modern', 'postwar', 'revival']) {
+  test('室內按需載入：1895、1930、1945、2000 各自一套；細部另外合併；頂點數有上限', () => {
+    for (const eraId of ['banquet', 'modern', 'postwar', 'revival']) {
       const world = WORLDS[eraId]
       const zones = world.interiors.filter((z) => z.building === BUILDING_ID)
       assert.equal(zones.length, eraId === 'revival' ? 2 : 1, eraId)
       const interior = buildEraInteriorSync(eraId, BUILDING_ID)
       const verts = (list) => list.reduce((n, batch) => n + batch.geometry.attributes.position.count, 0)
-      assert.ok(interior.batches.length >= 8, eraId)
+      assert.ok(interior.batches.length >= (eraId === 'banquet' ? 6 : 8), eraId)
       assert.ok(interior.detailBatches.length > 0, eraId)
       assert.ok(verts(interior.batches) < 115000, `${eraId}：室內 ${verts(interior.batches)}`)
       assert.ok(verts(interior.detailBatches) < 50000, `${eraId}：細部 ${verts(interior.detailBatches)}`)
@@ -375,8 +414,6 @@ describe('熱點、鏡頭、室內與觀賞範圍', () => {
       // 街景的網格裡沒有室內的細部（室內另外產生）
       assert.ok(zones[0].loadRadius > 0 && zones[0].showRadius >= zones[0].loadRadius)
     }
-    assert.ok(!WORLDS.banquet.interiors.some((z) => z.building === BUILDING_ID))
-    assert.equal(buildEraInteriorSync('banquet', BUILDING_ID).batches.length, 0)
   })
 
   test('室內鏡頭：在一樓、天井與二樓都算在室內；爬樓梯時切換到二樓的室內範圍', () => {
@@ -422,7 +459,7 @@ describe('熱點、鏡頭、室內與觀賞範圍', () => {
   })
 
   test('鏡頭不穿牆：店屋裡每個可以站的位置（一樓、天井、樓梯以外的二樓），頭頂高度都不在任何遮擋方塊裡', () => {
-    for (const eraId of ['modern', 'postwar', 'revival']) {
+    for (const eraId of ['banquet', 'modern', 'postwar', 'revival']) {
       const world = WORLDS[eraId]
       let checked = 0
       // 只看稻舍的店屋（其他可以走進去的店家各有自己的測試）
@@ -439,7 +476,7 @@ describe('熱點、鏡頭、室內與觀賞範圍', () => {
           }
         }
       }
-      assert.ok(checked > 60, `${eraId}：${checked} 個位置`)
+      assert.ok(checked > (eraId === 'banquet' ? 20 : 60), `${eraId}：${checked} 個位置`)
     }
   })
 
@@ -459,8 +496,8 @@ describe('熱點、鏡頭、室內與觀賞範圍', () => {
   })
 
   test('人物：各年代的情境人物不一樣；坐著用餐的人坐在椅子上，站著的人不擋在動線上', () => {
-    const looks = (eraId) => WORLDS[eraId].npcs.filter((n) => n.id.startsWith('rice-')).map((n) => n.look)
-    assert.deepEqual(looks('banquet').sort(), ['riceMerchant', 'riceMiller', 'ricePorter'])
+    const looks = (eraId) => WORLDS[eraId].npcs.filter((n) => n.id.startsWith('rice-') || n.id.startsWith('rs-')).map((n) => n.look)
+    assert.deepEqual(looks('banquet').sort(), ['riceCustomer', 'riceMerchant', 'riceMiller', 'ricePorter', 'riceShopman'])
     assert.ok(looks('modern').includes('riceMillerModern') && looks('modern').includes('riceClerk'))
     assert.ok(looks('revival').includes('revivalDiner'))
     assert.ok(!looks('modern').includes('revivalDiner'))

@@ -42,6 +42,7 @@ export const RICE_SCENARIO = [
   { id: 'murals', text: '騎樓與天井的壁畫、展板與老照片是本站原創的簡化圖樣，不複製照片裡的壁畫或任何畫作。', textEn: 'The murals in the arcade and courtyard, the display boards and the old photographs are simplified patterns created by this site; they do not copy the murals in the photographs or any painting.' },
   { id: 'meals', text: '料理與餐具依照片簡化建模，每張桌子的狀態與套餐略有不同；不代表現在的菜單，也不寫價格。', textEn: 'The dishes and tableware are modelled in simplified form from photographs, and each table\'s state and set meal differs slightly; they do not represent the current menu, and no prices are given.' },
   { id: 'size', text: '尺寸依照片估算；照片沒有拍到的後進與二樓細部是簡化的配置。', textEn: 'Dimensions are estimated from photographs; the rear hall and upper-floor details that the photographs do not show are simplified layouts.' },
+  { id: 'banquet-interior', text: '1895–1930 的前店（米箱、櫃台上的桿秤與米斗、米籮、麻袋、米篩與帳桌）是歷史情境重建：資料記這棟紅磚店屋建於 1907 年，建屋以前與 1916 年以前的使用者查無；擺設依 2020 年宜蘭一家傳統米店的照片說明和博物館典藏的器物重建。後進在這個年代沒有重建，門關著（情境設定）。', textEn: 'The front shop for 1895–1930 (the rice bin, the steelyard and dou on the counter, the baskets, sacks, sieves and the account desk) is a reconstructed historical scene: the records date this red-brick shophouse to 1907, and who used the site before then, or before 1916, is not found; the furnishings follow the caption of a 2020 photograph of a traditional rice shop in Yilan and objects in museum collections. The rear hall is not rebuilt for this era and its door is shut (a scene setting).' },
 ]
 
 export const RICE_PENDING = [

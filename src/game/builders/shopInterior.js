@@ -11,7 +11,8 @@ import { shade } from './props.js'
  * createShopInterior(spec) 的 spec：
  * - id：室內範圍的 id（室內人物的 zone 用同一個）
  * - shell：外殼尺寸 { half, depth, wallT, groundH, ceiling, walkD, room: { minX, maxX, minZ, maxZ } }
- * - variantOf(cfg)：這個年代的版本 { door, frontPanels, partition, lamps, items, npcs }（沒有時回傳 null）
+ * - variantOf(cfg)：這個年代的版本 { door, frontPanels, partition, lamps, items, npcs }（沒有時回傳 null）；
+ *   partition.closed: true 時隔間牆的門關著（門板封住），店後走不進去：不畫店後的小窗、碰撞不含隔間門與店後，room 只到隔間牆為止（稻舍酒樓繁華）
  * - lookOf(cfg)：外殼的材質與顏色 { floor: [材質, 顏色], wall, ceiling: 'beams' | 'plaster', partition, wood, partitionWindows }
  * - furniture：器物的登記表（type → { build(b, item, detail), footprint(item), height(item), bounds?(item) }）
  * - siteToWorld(x, z)：本地 → 世界座標（地段固定，人物的位置用）
@@ -126,7 +127,7 @@ export function createShopInterior(spec) {
     }
     for (const s of [-1, 1]) b.box('plaster', [0.04, ceiling, depth], [s * (room.maxX + 0.02), ceiling / 2, midZ], { tint: look.wall, grime: 0.2 })
     b.box('plaster', [width, ceiling, 0.04], [0, ceiling / 2, room.minZ - 0.02], { tint: shade(look.wall, 0.97), grime: 0.2 })
-    b.box('windowLit', [1.0, 0.8, 0.06], [1.2, 1.9, room.minZ + 0.01], { tint: '#453823' })
+    if (!partition.closed) b.box('windowLit', [1.0, 0.8, 0.06], [1.2, 1.9, room.minZ + 0.01], { tint: '#453823' })
     // 隔間牆（中央留門）與門楣
     const pz = partition.z
     const mat = look.partition
@@ -150,6 +151,13 @@ export function createShopInterior(spec) {
     const doorX = (partition.doorMinX + partition.doorMaxX) / 2
     b.box('wood', [doorW + 0.2, 0.14, 0.14], [doorX, 2.15, pz], { tint: shade(look.wood, 0.62) })
     b.box(mat, [doorW, ceiling - 2.22, 0.1], [doorX, (2.22 + ceiling) / 2, pz], { tint })
+    if (partition.closed) {
+      // 關著的門：直立的木板拼成的門板、橫木條與門閂
+      const leafTint = shade(look.wood, 0.88)
+      b.box('planks', [doorW, 2.15, 0.07], [doorX, 1.075, pz + 0.01], { tint: leafTint, grime: 0.2 })
+      for (const y of [0.45, 1.7]) b.box('wood', [doorW - 0.1, 0.1, 0.04], [doorX, y, pz + 0.06], { tint: shade(look.wood, 0.7) })
+      b.box('dark', [0.04, 0.04, 0.05], [doorX + doorW / 2 - 0.14, 1.05, pz + 0.07], { tint: '#2a2622' })
+    }
   }
 
   /**
@@ -342,9 +350,14 @@ export function createShopInterior(spec) {
       inB(-half + 0.1, half - 0.1, -0.05, walkD + 0.35),
       inB(door.minX, door.maxX, room.maxZ, 0.05),
       inB(room.minX + 0.05, room.maxX - 0.05, partition.z + 0.1, room.maxZ + 0.02),
-      inB(partition.doorMinX + 0.05, partition.doorMaxX - 0.05, partition.z - 0.1, partition.z + 0.12),
-      inB(room.minX + 0.05, room.maxX - 0.05, room.minZ + 0.05, partition.z - 0.08),
     ]
+    // 隔間門關著時，店後與隔間門不能走
+    if (!partition.closed) {
+      walkable.push(
+        inB(partition.doorMinX + 0.05, partition.doorMaxX - 0.05, partition.z - 0.1, partition.z + 0.12),
+        inB(room.minX + 0.05, room.maxX - 0.05, room.minZ + 0.05, partition.z - 0.08),
+      )
+    }
     if (F) {
       // 樓梯（斜面，從一樓到二樓）與二樓（樓梯井以外）
       const st = F.stair
@@ -380,9 +393,13 @@ export function createShopInterior(spec) {
     b.addBlocker(-half, door.minX, 0, groundH, -wallT, 0)
     b.addBlocker(door.maxX, half, 0, groundH, -wallT, 0)
     b.addBlocker(door.minX, door.maxX, openingH - 0.17, groundH, -wallT, 0)
-    b.addBlocker(room.minX, partition.doorMinX, 0, ceiling, partition.z - 0.06, partition.z + 0.06)
-    b.addBlocker(partition.doorMaxX, room.maxX, 0, ceiling, partition.z - 0.06, partition.z + 0.06)
-    b.addBlocker(partition.doorMinX, partition.doorMaxX, 2.15, ceiling, partition.z - 0.06, partition.z + 0.06)
+    if (partition.closed) {
+      b.addBlocker(room.minX, room.maxX, 0, ceiling, partition.z - 0.06, partition.z + 0.06)
+    } else {
+      b.addBlocker(room.minX, partition.doorMinX, 0, ceiling, partition.z - 0.06, partition.z + 0.06)
+      b.addBlocker(partition.doorMaxX, room.maxX, 0, ceiling, partition.z - 0.06, partition.z + 0.06)
+      b.addBlocker(partition.doorMinX, partition.doorMaxX, 2.15, ceiling, partition.z - 0.06, partition.z + 0.06)
+    }
     if (F) {
       // 二樓：一樓天花到二樓樓板之間（留樓梯井）、二樓天花以上、臨街的樓上立面與騎樓頂
       for (const r of minusHoles(rect(-half, half, -depth, 0))) b.addBlocker(r.minX, r.maxX, ceiling, F.y, r.minZ, r.maxZ)
