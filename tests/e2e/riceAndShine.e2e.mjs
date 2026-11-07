@@ -5,14 +5,14 @@
  *   1. 2000–現在的店家名錄有「稻舍 Rice & Shine」（老屋再生・稻舍、可探索）
  *   2. 動線：街道 → 紅磚騎樓 → 入口 → 米食用餐區 → 米業展示 → 天井 → 後段（舊碾米機）→ 樓梯 → 二樓（《南街殷賑》）
  *      每一站的提示都是稻舍的熱點，按 E／點提示開啟對應章節；碾米是步驟動畫
- *   3. 點米斗桌與土礱：開啟「米斗」（可以拖曳旋轉的模型）與「竹籮與竹篩」；出口旁的「老屋再生」有時間軸
+ *   3. 點米斗桌與土礱：開啟「米斗」（3D 檢視）與「竹籮與竹篩」；出口旁的「老屋再生」有時間軸
  *   4. 在店裡切換畫質：細部隱藏／顯示，室內仍在
  *   5. 建築觀賞模式：點米業展示的木架只聚焦、不開啟介紹
  *   6. 從街上走上二樓再走出來，連續 CYCLES 次：不卡住、鏡頭不在方塊裡
  *   7. 在店裡連續切換 10 次年代：每次都完成轉場、畫面不是黑的、人物在合法的位置；1930 的米行可以走進去、開啟「碾米」
  *   8. 年代、服裝、音樂不被重置；沒有頁面錯誤
  * 截圖（SHOTS，只在桌面）：2000 的立面、騎樓、用餐區、套餐、米業展示、天井、後段與樓梯、二樓、《南街殷賑》、
- * 1895 的街邊、1930 的立面與碾米間、米倉、1945 的立面與店內、碾米與米斗的介紹視窗。
+ * 1895 的街邊與前店（米箱、櫃台、後門）、1930 的立面與碾米間、米倉、1945 的立面與店內、碾米與米斗的介紹視窗。
  *
  * 用法：
  *   npm run dev -- --host 127.0.0.1 --port 5173
@@ -302,6 +302,25 @@ async function runDevice(browser, device) {
     if (touch) await page.locator('.shop-prompt.is-visible .shop-prompt__card').tap()
     else await page.keyboard.press('KeyE')
   }
+  /** 街上的器物提示：提示卡要在畫面裡才點得到（玩家會轉鏡頭），不在畫面裡就把鏡頭往左右轉 */
+  const interactVisible = async () => {
+    if (!touch) return page.keyboard.press('KeyE')
+    const card = page.locator('.street-prompt.is-visible .shop-prompt__card').first()
+    const viewport = page.viewportSize()
+    for (const turn of [0, 0.6, -0.6, 1.2, -1.2, 2.0, -2.0, Math.PI]) {
+      if (turn) {
+        await page.evaluate((turn) => {
+          const d = window.__DDC__
+          d.cameraState.targetYaw = d.cameraState.yaw = d.cameraState.yaw + turn
+          d.cameraState.snap = true
+        }, turn)
+        await frames(6)
+      }
+      const box = await card.boundingBox().catch(() => null)
+      if (box && box.x > 0 && box.y > 0 && box.x + box.width < viewport.width && box.y + box.height < viewport.height) return card.tap()
+    }
+    return card.tap({ force: true })
+  }
   const openSettings = async () => {
     if (await page.locator('#quality-panel').count()) return
     await press(page.locator('.hud-quality__toggle'))
@@ -417,12 +436,12 @@ async function runDevice(browser, device) {
   await page.waitForTimeout(2500)
 
   // 店家名錄
-  await press(page.locator('.hud-menu__toggle'))
+  await press(page.locator('.hud-menu__toggle[aria-controls="shop-menu-panel"]'))
   const entry = page.locator('.menu-shop', { has: page.locator('.menu-shop__name', { hasText: '稻舍 Rice & Shine' }) })
   const count = await entry.count()
   const notes = await entry.locator('.menu-shop__note').allTextContents()
   const open = await entry.locator('.menu-shop__badge.is-open').count()
-  await press(page.locator('.hud-menu__toggle'))
+  await press(page.locator('.hud-menu__toggle[aria-controls="shop-menu-panel"]'))
   await page.waitForSelector('#shop-menu-panel', { state: 'detached', timeout: 10000 }).catch(() => {})
   record(test, '店家名錄有「稻舍 Rice & Shine」，標示「老屋再生・稻舍」、可以探索', count === 1 && open === 1 && notes.includes('老屋再生・稻舍'), notes.join('、'))
 
@@ -473,29 +492,19 @@ async function runDevice(browser, device) {
       ok = (await storyOpen('稻舍 Rice & Shine')) && (await activeTab()) === tab
       if (ok && check) {
         await storyShot('17-story-measure')
-        await page.waitForSelector('.measure3d__model', { state: 'attached', timeout: 30000 })
-        const box = await page.locator(check).boundingBox()
-        const before = await page.evaluate(() => document.querySelector('.measure3d__model')?.style.transform ?? null)
-        if (touch) {
-          await touchSend('touchStart', [{ x: box.x + box.width / 2, y: box.y + box.height / 2, id: 3 }])
-          await touchSend('touchMove', [{ x: box.x + box.width / 2 + 80, y: box.y + box.height / 2 + 10, id: 3 }])
-          await touchSend('touchEnd', [])
-        } else {
-          await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
-          await page.mouse.down()
-          await page.mouse.move(box.x + box.width / 2 + 80, box.y + box.height / 2 + 10, { steps: 6 })
-          await page.mouse.up()
-        }
-        const after = await page.evaluate(() => document.querySelector('.measure3d__model')?.style.transform ?? null)
-        // 拖曳只旋轉模型、不會換到別的章節
-        ok = before !== null && after !== null && before !== after && (await activeTab()) === tab
+        // 器物章節：開啟主畫面的 3D 檢視（第 10 階段起取代原本的 CSS 模型），關掉後回到同一個章節
+        await press(page.locator('.object-launch'))
+        const opened = await waitFor(page, () => document.querySelector('.inspect-layer[data-state="open"]'), null, 20000)
+        await press(page.locator('.inspect-close'))
+        const closed = await waitFor(page, () => !window.__DDC__.useGameStore.getState().inspect, null, 10000)
+        ok = opened && closed && (await activeTab()) === tab
       }
       await closeStory()
     }
     await page.evaluate(() => delete window.__DDC__.cameraOverride)
     clicks.push(ok)
   }
-  record(test, '點米斗桌開啟「米斗」（可以拖曳旋轉的模型）、點土礱開啟「竹籮與竹篩」（直接點物件）', down.ok && clicks.every(Boolean), clicks.join('、'))
+  record(test, '點米斗桌開啟「米斗」（3D 檢視）、點土礱開啟「竹籮與竹篩」（直接點物件）', down.ok && clicks.every(Boolean), clicks.join('、'))
 
   // 出口旁的「老屋再生」
   const renewal = await walk([L(-0.6, -2.0), L(-1.15, -1.0)])
@@ -591,7 +600,8 @@ async function runDevice(browser, device) {
     const s = await state(page)
     const png = await page.screenshot({ clip: touch ? { x: 290, y: 205, width: 600, height: 410 } : { x: 400, y: 225, width: 800, height: 450 } })
     const { mean, std } = pngStats(png)
-    const placeOk = eraId === 'banquet' || eraId === 'qing-port' ? !inBuilding(s) && s.y === 0 : true
+    // 1895 的前店是同一棟店屋的一部分，人物留在店裡；1853 沒有店屋，人物被移到街上
+    const placeOk = eraId === 'qing-port' ? !inBuilding(s) && s.y === 0 : eraId === 'banquet' ? s.y === 0 && s.level === 0 : true
     const buildingOk = eraId === 'qing-port' ? !s.building : s.building
     const pass = ok && s.era === eraId && mean > 18 && std > 4 && placeOk && buildingOk && !s.camInside
     switches.push(pass)
@@ -607,9 +617,95 @@ async function runDevice(browser, device) {
       await shot('13-1930-granary', at(0.4, 1.6, -7.9), at(-1.0, 1.0, -10.4))
     }
     // 回到店裡，下一次切換時人物在店裡
-    if (eraId !== 'banquet' && eraId !== 'qing-port' && !inBuilding(s)) await walk(route(['arcade', 'entrance', 'aisle', 'dining']))
+    if (eraId !== 'qing-port' && !inBuilding(s)) await walk(route(['arcade', 'entrance', 'aisle', 'dining']))
   }
-  record(test, '在店裡連續切換 10 次年代：每次都完成轉場、畫面不是黑的；1895 與 1853 把人物移到街上', switches.every(Boolean), switches.join('、'))
+  record(test, '在店裡連續切換 10 次年代：每次都完成轉場、畫面不是黑的；1895 人物留在前店、1853 把人物移到街上', switches.every(Boolean), switches.join('、'))
+
+  // 1895：前店可以走進去（米箱、櫃台、帳桌），店後的隔間門關著；連續進出，鏡頭不在方塊裡
+  await switchEra('banquet')
+  await teleport(0, 3.0)
+  await frames(10)
+  await startSampler(page)
+  const EARLY_ROUTE = RICE_ROUTE.earlyRiceTrade
+  const earlyIds = EARLY_ROUTE.map((r) => r.id).filter((id) => id !== 'street')
+  const earlyPoints = (ids) => ids.map((id) => EARLY_ROUTE.find((r) => r.id === id)).map((r) => ({ ...L(r.x, r.z), level: 0 }))
+  const earlyCycles = []
+  for (let i = 0; i < CYCLES; i++) {
+    const a = await walk(earlyPoints(earlyIds))
+    const sa = await state(page)
+    const b = await walk(earlyPoints([...[...earlyIds].reverse().slice(1), 'street']), { tolerance: 0.3 })
+    const sb = await state(page)
+    earlyCycles.push(a.ok && b.ok && inBuilding(sa) && !sa.camInside && !sb.camInside)
+  }
+  const earlyStats = await samplerStats(page)
+  record(test, `1895：街上 ↔ 前店（米箱、櫃台、帳桌）連續進出 ${CYCLES} 次：不卡門、器物，鏡頭不在方塊裡`, earlyCycles.every(Boolean) && earlyStats.inside === 0, `${earlyCycles.filter(Boolean).length}/${CYCLES}、鏡頭在方塊裡 ${earlyStats.inside}`)
+  // 進門的介紹與關著的後門：走向後門被隔間牆擋住
+  await walk(earlyPoints(['arcade', 'entrance']))
+  await walk([{ ...L(0.2, -1.0), level: 0 }])
+  await frames(8)
+  const sShop = await state(page)
+  let shopOk = false
+  if (sShop.hotspot === 'early-shop') {
+    await interact()
+    shopOk = await storyOpen('北街米業店屋（迪化街329號）')
+    await storyShot('17-story-1895-shop')
+    await closeStory()
+  }
+  record(test, '1895：進門的提示開啟介紹', shopOk, `${sShop.prompt}（${sShop.hotspot}）`)
+  await walk(earlyPoints(['back-door']))
+  await frames(8)
+  const sBack = await state(page)
+  const behind = await walk([{ ...L(0, -9), level: 0 }], { tolerance: 0.3 })
+  const sBehind = await state(page)
+  // 建築本地的 z（地段旋轉 180 度）：停在隔間牆（z = -5.5）前面
+  const stoppedByDoor = !behind.ok && -(sBehind.z - RS.position.z) > -5.5
+  record(test, '1895：後門有提示，走向關著的後門被隔間牆擋住', sBack.hotspot === 'early-back' && stoppedByDoor, `${sBack.hotspot}；停在 (${round(sBehind.x)}, ${round(sBehind.z)})`)
+  // 器物：走近出現提示，按 E／點提示開啟 3D 檢視，七件都有五層
+  for (const [id, x, z, layered] of [
+    ['rs-banquet-rice-bin', -1.3, -2.6, true],
+    ['rs-banquet-rice-measure', 1.4, -2.85, true],
+    ['rs-banquet-steelyard', 1.4, -3.35, true],
+    ['rs-banquet-abacus', 1.4, -2.2, true],
+    ['rs-banquet-rice-sieve', -1.9, -3.9, true],
+    ['rs-banquet-jute-sack', 0.9, -1.2, true],
+    ['rs-banquet-carrying-basket', -0.85, -0.75, true],
+  ]) {
+    await teleport(x, z)
+    const near = await waitFor(page, (id) => window.__DDC__.useGameStore.getState().nearbyInspectableId === id, id, 20000)
+    let ok = false
+    let detail = near ? '' : JSON.stringify(await page.evaluate(() => window.__DDC__.useGameStore.getState().nearbyInspectableId))
+    if (near) {
+      await frames(4)
+      await interactVisible()
+      const open = await waitFor(page, () => document.querySelector('.inspect-layer[data-state="open"]'), null, 20000)
+      const tabs = await page.locator('.inspect-layers__tab').count()
+      // 新器物：按小動作、拍照
+      if (['rs-banquet-rice-bin', 'rs-banquet-jute-sack', 'rs-banquet-carrying-basket'].includes(id)) {
+        await press(page.locator('.inspect-card__actions button').first())
+        await page.waitForTimeout(1000)
+        if (SHOTS && !touch) await page.screenshot({ path: join(SHOTS, `21-1895-inspect-${id.replace('rs-banquet-', '')}.png`), timeout: 240000 })
+      }
+      await press(page.locator('.inspect-close'))
+      const closed = await waitFor(page, () => !window.__DDC__.useGameStore.getState().inspect, null, 10000)
+      ok = open && closed && tabs === (layered ? 5 : 0)
+      detail = `分頁 ${tabs}`
+    }
+    record(test, `1895：近看 ${id}`, ok, detail)
+  }
+  // 人物：走近可以交談（路人與器物只提示比較近的）
+  for (const [id, x, z] of [
+    ['rs-banquet-shopman', -1.3, -1.3],
+    ['rs-banquet-customer', -0.3, -2.5],
+  ]) {
+    await teleport(x, z)
+    const near = await waitFor(page, (id) => window.__DDC__.useGameStore.getState().nearbyTalkNpcId === id, id, 20000)
+    record(test, `1895：可以和 ${id} 交談`, near)
+  }
+  await teleport(0.2, -1.0)
+  await frames(20)
+  await shot('18-1895-bin', at(0.3, 1.55, -1.0), at(-2.0, 0.7, -2.5))
+  await shot('19-1895-counter', at(0.0, 1.6, -1.6), at(2.1, 0.9, -3.0))
+  await shot('20-1895-shop', at(0.6, 1.75, -0.7), at(-0.4, 1.0, -4.6))
 
   // 1930：米行與碾米間
   await switchEra('modern')

@@ -16,6 +16,7 @@ import { LTX_INSPECTABLES, LTX_OBJECTS } from './liTingXiangObjects.js'
 import { XH_INSPECTABLES, XH_OBJECTS } from './xiaHaiObjects.js'
 import { CS_INSPECTABLES, CS_OBJECTS } from './ciShengObjects.js'
 import { SHOWA_INSPECTABLES, SHOWA_OBJECTS } from './showaLaundryObjects.js'
+import { RICE_EXTRA_NOTES, RICE_INSPECTABLES, RICE_LAYERS, RICE_OBJECTS } from './riceAndShineObjects.js'
 
 /**
  * 器物 3D 檢視的器物資料（第 10 階段）：標題、說明、小動作與出處。
@@ -144,6 +145,8 @@ export const INSPECT_OBJECTS = {
   ...CS_OBJECTS,
   // 昭和浪漫洗濯屋（老屋新生）：舊招牌、霜淇淋模型、炭火熨斗、木桶與洗衣板（data/showaLaundryObjects.js）
   ...SHOWA_OBJECTS,
+  // 迪化街 329 號酒樓繁華版的前店（第 11 階段第 9 項）：米箱、麻袋、米籮（米斗與米篩補分層資訊，桿秤、算盤共用；data/riceAndShineObjects.js）
+  ...RICE_OBJECTS,
 }
 for (const [id, layers] of Object.entries(LHT_OBJECT_LAYERS)) INSPECT_OBJECTS[id] = { ...INSPECT_OBJECTS[id], layers }
 // 共用器物在其他店家的補充說明（「在哪家店可以接觸到」這一層）
@@ -152,6 +155,8 @@ const addNotes = (id, layerId, notes) => {
   INSPECT_OBJECTS[id] = { ...object, layers: { ...object.layers, [layerId]: [...(object.layers?.[layerId] ?? []), ...notes] } }
 }
 for (const [id, notes] of Object.entries(YJ_WHERE)) addNotes(id, 'where', notes)
+for (const [id, layers] of Object.entries(RICE_LAYERS)) INSPECT_OBJECTS[id] = { ...INSPECT_OBJECTS[id], layers }
+for (const [id, layers] of Object.entries(RICE_EXTRA_NOTES)) for (const [layerId, notes] of Object.entries(layers)) addNotes(id, layerId, notes)
 for (const [id, layers] of Object.entries({ ...XFC_EXTRA_NOTES })) for (const [layerId, notes] of Object.entries(layers)) addNotes(id, layerId, notes)
 for (const [id, layers] of Object.entries(JSL_EXTRA_NOTES)) for (const [layerId, notes] of Object.entries(layers)) addNotes(id, layerId, notes)
 
@@ -231,6 +236,8 @@ export const STREET_INSPECTABLES = [
   ...CS_INSPECTABLES,
   // 昭和浪漫洗濯屋的門口與一樓（data/showaLaundryObjects.js）
   ...SHOWA_INSPECTABLES,
+  // 迪化街 329 號酒樓繁華版的前店（data/riceAndShineObjects.js）
+  ...RICE_INSPECTABLES,
 ]
 
 export function inspectablesOfEra(eraId) {

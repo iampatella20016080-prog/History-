@@ -159,7 +159,7 @@ export function createHarness({ load = () => ({ frames: 3 }), renderer = true, m
 }
 
 /**
- * 範圍是否在稻舍（迪化街329號店屋）的地段裡：這棟店屋從 1930 起可以走進去（室內、觀賞範圍、貼近障礙物的範圍），
+ * 範圍是否在稻舍（迪化街329號店屋）的地段裡：這棟店屋從 1895 起可以走進去（1895 只有前店；室內、觀賞範圍、貼近障礙物的範圍），
  * 其他店家的測試檢查「這個年代沒有室內」時排除它（稻舍本身在 riceAndShine.test.js 驗證）
  */
 export function inRiceAndShineLot(rect) {

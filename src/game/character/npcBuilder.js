@@ -94,6 +94,9 @@ export const NPC_LOOKS = {
   riceMerchant: { era: 'banquet', skin: '#e2b98f', hair: 'short', top: { kind: 'long', color: '#3c4a5e', trim: '#2f3a4b' }, bottom: '#2f2a28', shoes: ['#2a2622', '#2a2622'] },
   ricePorter: { era: 'banquet', skin: '#c9996e', hair: 'short', top: { kind: 'singlet', color: '#e9e3d4' }, bottom: '#4a4a48', shoes: ['#6a5040', '#6a5040'], extras: { towel: '#e6dfcf', douli: '#d8bd7a', shoulderSack: '#d9c8a2' } },
   riceMiller: { era: 'banquet', skin: '#d0a07a', hair: 'short', top: { kind: 'shirt', color: '#d8cdb5', trim: '#c4b89e' }, bottom: '#3d4652', shoes: ['#3a2c22', '#3a2c22'], extras: { apron: '#8a7a62', douli: '#cfb06b' } },
+  // 迪化街329號酒樓繁華版的前店（第 11 階段；歷史情境重建，不具名）：米店夥計與提米袋來買米的客人
+  riceShopman: { era: 'banquet', skin: '#dcb088', hair: 'short', top: { kind: 'long', color: '#7d6a52', trim: '#665541' }, bottom: '#35302a', shoes: ['#2a2622', '#2a2622'], extras: { apron: '#d9ccb2', towel: '#e6dfcf' } },
+  riceCustomer: { era: 'banquet', skin: '#e2bf98', hair: 'bun', top: { kind: 'long', color: '#6a5a72', trim: '#55475c' }, bottom: '#3a3632', shoes: ['#2a2622', '#2a2622'] },
   riceClerk: { era: 'modern', skin: '#e2b98f', hair: 'short', top: { kind: 'long', color: '#ece6d6', trim: '#d7cfbc' }, bottom: '#3b3734', shoes: ['#2a2622', '#2a2622'] },
   riceMillerModern: { era: 'modern', skin: '#cf9f78', hair: 'short', top: { kind: 'singlet', color: '#efe9db' }, bottom: '#53514c', shoes: ['#3a2c22', '#3a2c22'], extras: { apron: '#6f6656', towel: '#e8e1d0' } },
   // 1853–1895：清末碼頭的挑夫（歷史情境重建：短衫或赤膊加背心、捲起的褲管、草鞋、斗笠與辮子；見 data/qingWharfLayout.js）

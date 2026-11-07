@@ -191,7 +191,7 @@ export const EARLY = {
 
 export const RICE_NPCS = {
   earlyRiceTrade: [
-    { id: 'merchant', look: 'riceMerchant', pose: 'stand', x: 0.6, z: 0.9, rotationY: 0.25, walkway: true },
+    { id: 'merchant', look: 'riceMerchant', pose: 'stand', x: 1.55, z: 0.95, rotationY: 0.25, walkway: true },
     { id: 'porter', look: 'ricePorter', pose: 'carry', x: 1.4, z: 4.4, rotationY: Math.PI / 2 + 0.3 },
     { id: 'miller', look: 'riceMiller', pose: 'ladle', x: -0.55, z: 2.95, rotationY: -2.6 },
   ],
@@ -210,6 +210,16 @@ export const RICE_NPCS = {
 /* ═══════════ 動線（建築本地座標；level 1 是二樓） ═══════════ */
 
 export const RICE_ROUTE = {
+  earlyRiceTrade: [
+    { id: 'street', x: 0, z: 3.0 },
+    { id: 'arcade', x: 0, z: 1.0 },
+    { id: 'entrance', x: 0, z: -0.8 },
+    { id: 'aisle', x: -0.3, z: -1.3 },
+    { id: 'bin', x: -1.25, z: -2.6 },
+    { id: 'counter', x: 1.2, z: -2.8 },
+    { id: 'ledger', x: 0.3, z: -4.5 },
+    { id: 'back-door', x: 0.4, z: -4.9 },
+  ],
   riceAndShineModern: [
     { id: 'street', x: 0, z: 3.0 },
     { id: 'arcade', x: 0, z: 1.0 },
@@ -260,6 +270,9 @@ export const RICE_HOTSPOTS = {
   earlyRiceTrade: [
     { id: 'early-street', label: '北街米業逐漸形成', labelEn: 'The rice trade takes shape on North Street', note: '米袋、竹籮與木牌', noteEn: 'Rice sacks, bamboo baskets and wooden signboards', chapter: 'early', point: [-0.25, 2.25], level: 0, radius: 1.2, prompt: [0, 3.2, 1.2], camera: { position: [-1.9, 2.0, 6.4], target: [0.2, 1.9, 0.4] } },
     { id: 'early-measure', label: '米斗', labelEn: 'Rice measure', note: '量米的木斗', noteEn: 'A wooden measure for rice', chapter: 'rice-measure', clickOnly: true, point: [-0.6, 2.25], level: 0, radius: 0, prompt: [-0.98, 1.6, 2.2], camera: { position: [0.3, 1.5, 3.7], target: [-0.98, 0.75, 2.2] } },
+    // 前店（歷史情境重建）：進門的介紹與關著的後門；米箱、櫃台上的器物各自可以近看（按 E 時器物優先，熱點要離開器物的範圍）
+    { id: 'early-shop', label: '北街米店的前店', labelEn: 'The front of a North Street rice shop', note: '米箱、櫃台、米籮與麻袋', noteEn: 'Rice bin, counter, baskets and sacks', chapter: 'early', point: [0.2, -1.0], level: 0, radius: 1.0, prompt: [0.2, 2.3, -1.4], camera: { position: [0.6, 1.7, -0.7], target: [-0.8, 1.1, -3.2] } },
+    { id: 'early-back', label: '店後', labelEn: 'Behind the shop', note: '後進這個年代沒有重建，門關著（情境設定，不開放）', noteEn: 'The rear hall is not rebuilt for this era; the door is shut (scene setting, not open)', chapter: 'early', point: [0.4, -4.6], level: 0, radius: 1.1, prompt: [0, 2.2, -5.4], camera: { position: [0.5, 1.6, -2.4], target: [0, 1.2, -5.5] } },
   ],
   riceMill: [
     { id: 'mill-front', label: '迪化街329號米行／碾米間', labelEn: '329 Dihua Street rice shop and mill', note: '紅磚拱券的米行', noteEn: 'A rice shop with red-brick arches', chapter: 'rice-mill', point: [0, 1.0], level: 0, radius: 1.0, prompt: [0, 3.0, 1.0], camera: { position: [-1.7, 2.0, 5.8], target: [0, 2.8, 0.6] } },

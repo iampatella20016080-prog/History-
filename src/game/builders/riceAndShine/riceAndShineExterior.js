@@ -1,9 +1,12 @@
 import { CylinderGeometry, IcosahedronGeometry, PlaneGeometry, Shape, TorusGeometry } from 'three'
+import { RB_SHELL } from '../../../data/riceAndShineBanquetLayout.js'
 import { EARLY, MILL, MODERN, POSTWAR, RICE_HOTSPOTS, RICE_NPCS, RS, diningTableBox, longTableBox } from '../../../data/riceAndShineLayout.js'
 import { riceUV } from '../../rendering/riceAtlas.js'
 import { createRng } from '../../utils/random.js'
 import { barrel, basket, carryingPole, handcart, sack, shade } from '../props.js'
 import { buildShophouse } from '../shophouse.js'
+import { createRiceBanquet } from './riceAndShineBanquet.js'
+import { riceMeasure } from './riceMeasure.js'
 
 /**
  * 迪化街一段329號店屋（RiceAndShineExterior；同一棟建築、同一個 ID，依年代的 variant 替換外觀）
@@ -388,7 +391,8 @@ function interiorShell(b, variant) {
 
 function earlyRiceTrade(b, config, detail) {
   // 閩南式街屋：紅磚、木構、瓦屋頂、亭仔腳；「米」字木牌、「碾米」直式木牌與「糧」布幡
-  buildShophouse(b, {
+  // walkIn：門面留空讓人走進去（店內的外殼、器物與碰撞見 riceAndShineBanquet.js）；店前的米貨改放店內的米箱與櫃台
+  const result = buildShophouse(b, {
     ...config,
     width: RS.half * 2,
     depth: RS.depth,
@@ -400,7 +404,9 @@ function earlyRiceTrade(b, config, detail) {
     gable: 'horseback',
     ridge: 'plain',
     storefront: 'open',
-    goods: 'rice',
+    walkIn: true,
+    goods: false,
+    display: null,
     sign: { text: '米', style: 'wood' },
     hangingSign: { text: '碾米', style: 'wood', side: 'right' },
     banner: { text: '糧' },
@@ -426,40 +432,16 @@ function earlyRiceTrade(b, config, detail) {
   handcart(b, [(cart.minX + cart.maxX) / 2, 0, (cart.minZ + cart.maxZ) / 2], { rotationY: Math.PI / 2 + 0.2, load: 'sacks', seed: 7 })
   const pole = EARLY.pole
   carryingPole(b, [(pole.minX + pole.maxX) / 2, 0, (pole.minZ + pole.maxZ) / 2 - 0.05], { rotationY: 0.04, content: 'rice', seed: 9 })
+  // 前店的暖色燈光（門口灑進店裡的光與店內的亮處；店內只有街景的光，沒有另外的燈）
+  b.addGlow(0, 2.3, -1.8, 1.1, '#ffc98a')
+  b.addPool(0, -0.9, 1.4, '#ffc98a', 0.07)
+  return result
 }
 
-/** 米斗：上寬下窄的木斗，四片木板、金屬角件與斗裡的米（size 是斗口的半寬） */
-export function riceMeasure(b, detail, x, y, z, size = 0.2, rotationY = 0) {
-  const h = size * 1.05
-  b.group([x, y, z], rotationY, () => {
-    const bottom = size * 0.72
-    for (const [rx, rz, sx, sz] of [
-      [0, 1, 0, 1],
-      [0, -1, 0, -1],
-      [1, 0, 1, 0],
-      [-1, 0, -1, 0],
-    ]) {
-      const tilt = Math.atan2(size - bottom, h)
-      const len = (size + bottom) + 0.03
-      if (rz) b.box('wood', [len, h, 0.025], [0, h / 2, rz * (size + bottom) / 2], { rotation: [rz * tilt, 0, 0], tint: rz > 0 ? '#9a6e44' : '#8a6038' })
-      else b.box('wood', [0.025, h, len], [rx * (size + bottom) / 2, h / 2, 0], { rotation: [0, 0, -rx * tilt], tint: rx > 0 ? '#a37548' : '#80583a' })
-      void sx
-      void sz
-    }
-    b.box('wood', [bottom * 2, 0.025, bottom * 2], [0, 0.0125, 0], { tint: '#6e4a2e' })
-    // 金屬角件與斗口的磨損
-    for (const [cx, cz] of [
-      [1, 1],
-      [-1, 1],
-      [1, -1],
-      [-1, -1],
-    ]) b.box('steel', [0.035, 0.05, 0.035], [cx * size * 0.98, h - 0.03, cz * size * 0.98], { tint: '#3f3a34' })
-    // 斗裡的米（少量米粒在細部）
-    b.box('plain', [size * 1.7, 0.02, size * 1.7], [0, h - 0.05, 0], { tint: '#efe9d8' })
-    const rng = createRng(Math.round(x * 100 + z * 10))
-    for (let i = 0; i < 18; i++) detail.add('plain', new IcosahedronGeometry(0.006, 0), { position: [x + (rng() - 0.5) * size * 1.5, y + h - 0.035, z + (rng() - 0.5) * size * 1.5], scale: [1.8, 0.8, 1], tint: '#f5f1e4' })
-  })
-}
+/** 酒樓繁華版：街邊的米業擺設（earlyRiceTrade）+ 店內（共用的街屋室內）；室內的外殼、碰撞與範圍由 banquet 產生 */
+export const banquet = createRiceBanquet((b, config, detail) => earlyRiceTrade(b, config, detail))
+
+export { riceMeasure } from './riceMeasure.js'
 
 /* ═══════════ 遮擋方塊、點選範圍、碰撞 ═══════════ */
 
@@ -472,7 +454,7 @@ function registerBlockers(b, variant) {
     ranges[name] = { start, end: b.blockers.length }
   }
   if (variant === 'earlyRiceTrade') {
-    mark('street', () => b.addBlocker(-half + 0.05, half - 0.05, 0, 5.2, -depth, 0.0))
+    // 建築本體的遮擋由 banquet（共用的街屋室內）分成牆面、門面與屋頂；這裡只有街邊的米斗
     const m = EARLY.measureStool
     mark('measure', () => b.addBlocker(m.minX, m.maxX, 0, 0.75, m.minZ, m.maxZ))
     return ranges
@@ -595,8 +577,12 @@ export function riceAndShineCollision(config, transform) {
   const room = (minX, maxX, minZ, maxZ, extra = {}) => rect(minX, maxX, minZ, maxZ, { inBuilding: true, ...extra })
   const ob = (r, extra = {}) => rect(r.minX, r.maxX, r.minZ, r.maxZ, extra)
   if (variant === 'earlyRiceTrade') {
+    // 酒樓繁華：騎樓、店門口與前店可以走進去（共用的街屋室內，標 inBuilding）；街邊的米業擺設與站在步道上的米商是障礙物
     const { arcadeSacks, barrels, measureStool, cart, pole } = EARLY
-    return { walkable: [], obstacles: [ob(arcadeSacks), ob(barrels), ob(measureStool), ob(cart), ob(pole)] }
+    const inner = banquet.collision(config, transform)
+    const street = [ob(arcadeSacks), ob(barrels), ob(measureStool), ob(cart), ob(pole)]
+    for (const npc of RICE_NPCS.earlyRiceTrade) if (npc.walkway) street.push(rect(npc.x - 0.25, npc.x + 0.25, npc.z - 0.25, npc.z + 0.25))
+    return { walkable: inner.walkable, obstacles: [...street, ...inner.obstacles] }
   }
   const { half, pierZ, piers, door, front, courtyard, back, wallT, courtyardDoor: cd, backDoor: bd } = RS
   const inner = half - 0.2
@@ -690,10 +676,12 @@ export function buildRiceAndShineExterior(b, config = {}, detail = b) {
   })
 
   if (variant === 'earlyRiceTrade') {
-    earlyRiceTrade(b, config, detail)
+    // 街邊的米業擺設 + 店內（外殼、器物、人物、室內範圍與鏡頭遮擋都在 banquet）
+    const result = banquet.build(b, config, detail)
     const ranges = registerBlockers(b, variant)
     const street = hotspots[0]
     return {
+      ...result,
       groundHeight: 3.3,
       topHeight: 6.4,
       anchors: { prompt: local(...street.prompt), marker: local(0, 7.2, -1.0) },
@@ -701,7 +689,9 @@ export function buildRiceAndShineExterior(b, config = {}, detail = b) {
       subStores: [
         { id: 'rice-early-measure', storeId: RS.id, detail: true, hotspot: 'early-measure', range: ranges.measure, focus: { center: toWorld((EARLY.measureStool.minX + EARLY.measureStool.maxX) / 2, EARLY.measureStool.maxZ), forward: dir(0, 1), width: 1.2, height: 1.0, viewHeight: 0.7, maxDistance: 2.2, maxPitch: 0.7, maxYawOffset: 0.6 } },
       ],
-      npcs,
+      // 貼近障礙物的跟隨鏡頭範圍：只有店屋裡（其他年代相同，不含店前的街道）
+      followAreas: [zone(-RS.half, RS.half, RB_SHELL.room.minZ, RS.pierZ[1] + 0.3)],
+      npcs: [...npcs, ...(result.npcs ?? [])],
     }
   }
 

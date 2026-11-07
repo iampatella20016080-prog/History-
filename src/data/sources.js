@@ -5608,6 +5608,106 @@ SOURCES['vocus-yidan-delivery'] = {
   contextEn: "A blog post relaying research.",
 }
 
+/* ── 迪化街 329 號酒樓繁華版室內（第 11 階段第 9 項；2026-11-07 逐筆核對，見 docs/research/interior-rice-and-shine-329.md「第 2 段補充」） ── */
+SOURCES['nmth-rice-measure-2000-001-0044'] = {
+  id: 'nmth-rice-measure-2000-001-0044',
+  citation: '國立臺灣歷史博物館典藏，「圓形米斗」，登錄號2000.001.0044。',
+  citationEn: 'National Museum of Taiwan History collection, “Round rice measure” (「圓形米斗」), accession no. 2000.001.0044.',
+  publisher: '國立臺灣歷史博物館',
+  publisherEn: 'National Museum of Taiwan History',
+  title: '圓形米斗',
+  titleEn: 'Round Rice Measure (圓形米斗)',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2000.001.0044',
+  published: '典藏網（2026年11月查閱）',
+  publishedEn: 'Online collection (consulted November 2026)',
+  usage: '米斗的形制與用途依據：25.7×25.3×24.9公分，木質，推測1906–1945年，製造者臺灣總督府；上記「官」「五升」及已模糊的字樣（館方推測「穀類用」），五升約9000毫升；清代方形、日治圓形。1906年總督府頒《臺灣度量衡規則》，除特許外，度衡量器的製作、修復及販賣均官製官營；米斗有木、竹、籐編，邊角有時鑲銅皮，某些地區象徵財富地位。重量欄「2.17g」疑為筆誤，不引用；授權欄為動態載入，未讀到（研究文件記 CC BY-NC 4.0，待核）。',
+  usageEn: 'Basis for the form and use of the rice measure: 25.7 × 25.3 × 24.9 cm, wood, thought to date 1906–1945, made by the Government-General; marked “official”, “five sheng” and a now faint mark the museum reads as “for grain”, five sheng being about 9,000 ml; the Qing measure was square, the Japanese-era one round. Under the 1906 Weights and Measures Regulations, measures were made, repaired and sold by the state except under licence; measures came in wood, bamboo or rattan, the corners sometimes copper-fitted, and in some districts a dou was a token of wealth. The weight field “2.17 g” is probably a slip and is not cited; the licence field loads dynamically and was not read (CC BY-NC 4.0 in the research file, to be verified).',
+}
+SOURCES['nmth-rice-measure-2003-001-0898'] = {
+  id: 'nmth-rice-measure-2003-001-0898',
+  citation: '國立臺灣歷史博物館典藏，「圓形米斗」，登錄號2003.001.0898。',
+  citationEn: 'National Museum of Taiwan History collection, “Round rice measure” (「圓形米斗」), accession no. 2003.001.0898.',
+  publisher: '國立臺灣歷史博物館',
+  publisherEn: 'National Museum of Taiwan History',
+  title: '圓形米斗',
+  titleEn: 'Round Rice Measure (圓形米斗)',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2003.001.0898',
+  published: '典藏網（2026年11月查閱）',
+  publishedEn: 'Online collection (consulted November 2026)',
+  usage: '米斗火戳的依據：25.8×25.8×24.5公分、1.98公斤，木質，1906–1945年，製造者臺灣總督府；記「五升」「穀類用」（沒有「官」字），蓋總督府認可量器的火戳（兩個倒三角形各立四腳的圖徽）；館方通則：米斗邊角有時鑲銅皮。授權欄未讀到（研究文件記 PDM，待核）。',
+  usageEn: 'Basis for the branded stamp on the rice measure: 25.8 × 25.8 × 24.5 cm, 1.98 kg, wood, 1906–1945, made by the Government-General; marked “five sheng” and “for grain” (no “official” mark), with the Government-General’s approval brand, an emblem of two inverted triangles each on four legs; the museum notes generally that the corners of measures were sometimes copper-fitted. The licence field was not read (PDM in the research file, to be verified).',
+}
+SOURCES['nmth-jute-sack-2002-005-0289'] = {
+  id: 'nmth-jute-sack-2002-005-0289',
+  citation: '國立臺灣歷史博物館典藏，「麻袋」，登錄號2002.005.0289。',
+  citationEn: 'National Museum of Taiwan History collection, “Jute sack” (「麻袋」), accession no. 2002.005.0289.',
+  publisher: '國立臺灣歷史博物館',
+  publisherEn: 'National Museum of Taiwan History',
+  title: '麻袋',
+  titleEn: 'Jute Sack (麻袋)',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2002.005.0289',
+  published: '典藏網（2026年11月查閱）；歷史分期「無法判斷」',
+  publishedEn: 'Online collection (consulted November 2026); period “undeterminable”',
+  usage: '麻袋 3D 模型的形制依據：麻布袋，中間印一條綠色粗線，107×74.5×3公分、1.07公斤；館方說明1902年引進黃麻、當時麻袋需由中國輸入、1905年葫蘆墩黃麻紡績工場、1912年臺灣製麻株式會社，所製麻袋以米袋與砂糖袋為主。館方參考中研院臺史所「從家庭到職場」圖像資料。授權欄未讀到（研究文件記 CC0，待核）。',
+  usageEn: 'Basis for the form of the jute-sack 3D model: a jute bag with a thick green line printed down the middle, 107 × 74.5 × 3 cm, 1.07 kg; the museum’s note covers the 1902 introduction of jute, sacks then being imported from China, the 1905 jute spinning works at Hulutun (Fengyuan), the 1912 Taiwan Hemp Manufacturing Company, and sacks made mainly for rice and sugar. The museum draws on the Institute of Taiwan History’s “From Home to Workplace” pictorial material. The licence field was not read (CC0 in the research file, to be verified).',
+}
+SOURCES['nmth-rice-basket-2003-001-0530'] = {
+  id: 'nmth-rice-basket-2003-001-0530',
+  citation: '國立臺灣歷史博物館典藏，「米籮」，登錄號2003.001.0530。',
+  citationEn: 'National Museum of Taiwan History collection, “Rice basket” (「米籮」), accession no. 2003.001.0530.',
+  publisher: '國立臺灣歷史博物館',
+  publisherEn: 'National Museum of Taiwan History',
+  title: '米籮',
+  titleEn: 'Rice Basket (米籮)',
+  url: 'https://collections.nmth.gov.tw/CollectionContent.aspx?a=132&rno=2003.001.0530',
+  published: '典藏網（2026年11月查閱）；推測年份1661–1970',
+  publishedEn: 'Online collection (consulted November 2026); thought to date 1661–1970',
+  usage: '米籮 3D 模型的形制依據：底方口圓、上闊下窄、圓腹，竹篾一寬一窄壓一挑一平編，口框繫二繩供扁擔挑；54.8×54.5×34.7公分、1.9公斤；農家盛放稻米、穀物或白米。材質欄寫「木質」、類別歸「交通運輸與通訊」，與竹篾描述不一。授權欄未讀到（研究文件記 PDM，待核）。',
+  usageEn: 'Basis for the form of the rice-basket 3D model: square base, round mouth, wider above than below with a rounded belly, alternating wide and narrow bamboo strips in plain weave, two cords at the rim for a carrying pole; 54.8 × 54.5 × 34.7 cm, 1.9 kg; a farm vessel for paddy, grain or milled rice. The material field says “wood” and the class “transport and communication”, at odds with the bamboo-strip description. The licence field was not read (PDM in the research file, to be verified).',
+}
+SOURCES['tcmb-rice-measures-260251'] = {
+  id: 'tcmb-rice-measures-260251',
+  citation: '林思玲、王奕維、余樂筑撰，國家文化記憶庫，「米升、米斗」（國立屏東科技大學農機具陳列館），編號260251。',
+  citationEn: 'Lin Szu-ling (林思玲), Wang Yi-wei (王奕維) and Yu Le-chu (余樂筑), National Cultural Memory Bank (國家文化記憶庫), “Rice sheng and dou” (「米升、米斗」), National Pingtung University of Science and Technology Agricultural Machinery Exhibition Hall, no. 260251.',
+  publisher: '文化部國家文化記憶庫',
+  publisherEn: 'National Cultural Memory Bank, Ministry of Culture (文化部國家文化記憶庫)',
+  title: '米升、米斗',
+  titleEn: 'Rice Sheng and Dou (米升、米斗)',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_Object&id=260251',
+  published: '照片攝於2019-07-13（三張）；線上典藏（2026年11月查閱）',
+  publishedEn: 'Photographs taken 13 July 2019 (three); online archive (consulted November 2026)',
+  context: '傳統社會沒有秤子時用來計算大米數量的容器；木板拼接、邊角鑲銅皮的米升與米斗；「10合為1升，10升為1斗」；將米斗裝到滿後，再以斗界沿斗邊將超出部分去掉；米升方形、小巧，多用於糯米等少量材料；清朝方形、日治圓筒形。創作者卡米爾股份有限公司，建檔屏東縣政府文化處。數位物件 CC BY-NC-ND 3.0 TW+，描述文字 CC BY 3.0 TW+。',
+  contextEn: 'Vessels for reckoning rice in traditional society, before there were scales; a sheng and dou of joined boards with copper-fitted corners; “ten ge make one sheng, ten sheng one dou”; fill the dou full, then draw the strickle along the rim to take off the excess; the small square sheng was mostly for small quantities such as glutinous rice; square in the Qing, cylindrical in the Japanese era. Created by Camille Co., Ltd. (卡米爾股份有限公司), catalogued by the Pingtung County Cultural Affairs Department. Digital objects CC BY-NC-ND 3.0 TW+, descriptive text CC BY 3.0 TW+.',
+}
+SOURCES['tcmb-rice-shop-559158'] = {
+  id: 'tcmb-rice-shop-559158',
+  citation: '陳冠君撰，國家文化記憶庫，「傳統米店」（宜蘭南館市場，2020年攝），編號559158。',
+  citationEn: 'Chen Kuan-chun (陳冠君), National Cultural Memory Bank (國家文化記憶庫), “A traditional rice shop” (「傳統米店」), Nanguan market, Yilan, photographed 2020, no. 559158.',
+  publisher: '文化部國家文化記憶庫',
+  publisherEn: 'National Cultural Memory Bank, Ministry of Culture (文化部國家文化記憶庫)',
+  title: '傳統米店',
+  titleEn: 'A Traditional Rice Shop (傳統米店)',
+  url: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_Object&id=559158',
+  published: '2020年攝；線上典藏（2026年11月查閱）',
+  publishedEn: 'Photographed 2020; online archive (consulted November 2026)',
+  context: '木製大米箱盛米；早期以升、斗計價，買米自備米袋；「斗」圓形、「升」方形；1斗＝10升＝11.5台斤＝6.9公斤、1台斤＝600公克（2020年這家店的戰後台制換算，不是日治官斗）；「現在都是用重量計價」；改建前有7間米店，稱「米市街」，改建後僅存一間。創作者與建檔單位財團法人仰山文教基金會。照片 CC BY-NC 3.0 TW+，描述文字 CC BY 3.0 TW+。',
+  contextEn: 'Rice kept in large wooden bins; once priced by the sheng and the dou, buyers bringing their own bags; the dou round, the sheng square; one dou = ten sheng = 11.5 Taiwanese catties = 6.9 kg, one catty = 600 g (this shop’s postwar conversion in 2020, not the Japanese-era official measure); “these days it is all priced by weight”; before the rebuilding seven rice shops made up “Rice Market Street”, and one remains. Created and catalogued by the Yang Shan Culture and Education Foundation (財團法人仰山文教基金會). Photograph CC BY-NC 3.0 TW+, descriptive text CC BY 3.0 TW+.',
+}
+SOURCES['culture-taipei-2022-rice-shine'] = {
+  id: 'culture-taipei-2022-rice-shine',
+  citation: '臺北市政府文化局新聞稿（2022-06-08），〈臺北老房子文化運動再添生力軍「稻舍」、「貝殼好室」以創意活化歷史建築 延續大稻埕人文故事〉。',
+  citationEn: 'Taipei City Department of Cultural Affairs press release, 8 June 2022, on “Rice & Shine” (稻舍) and “Shell House” (貝殼好室) joining the Old House Culture Movement (〈臺北老房子文化運動再添生力軍「稻舍」、「貝殼好室」以創意活化歷史建築 延續大稻埕人文故事〉).',
+  publisher: '臺北市政府文化局',
+  publisherEn: 'Department of Cultural Affairs, Taipei City Government',
+  title: '臺北老房子文化運動再添生力軍「稻舍」、「貝殼好室」以創意活化歷史建築 延續大稻埕人文故事',
+  titleEn: 'Rice & Shine and Shell House Join Taipei’s Old House Culture Movement (臺北老房子文化運動再添生力軍「稻舍」、「貝殼好室」以創意活化歷史建築 延續大稻埕人文故事)',
+  url: 'https://culture.gov.taipei/News_Content.aspx?n=621F0409A1ABDD34&sms=72544237BBE4C5F6&s=BFD8798AF6AC230B',
+  published: '2022-06-08',
+  publishedEn: '8 June 2022',
+  context: '迪化街一段329號於2020年登錄歷史建築；前身「益興碾米工廠」，後轉為商業及住宅使用；營運團隊投入近200萬元修復，保留碾米工廠氛圍，展示早期米斗與碾米機，辦理稻米文化策展與米食餐飲體驗。同場剪綵的貝殼好室在迪化街一段155號。未寫建築年代，沒有提到唐家。',
+  contextEn: 'No. 329 Dihua Street, Section 1 was registered as a historic building in 2020; its predecessor was the “Yixing rice-milling plant”, later turned to commercial and residential use; the operating team spent nearly NT$2 million on restoration, keeping the atmosphere of a rice mill, displaying early rice measures and milling machines, and running rice-culture exhibitions and rice-food dining. Shell House, opened at the same ceremony, is at 155 Dihua Street, Section 1. No construction date is given and the Tang family is not mentioned.',
+}
+
 export function getSource(id) {
   return SOURCES[id] ?? null
 }
